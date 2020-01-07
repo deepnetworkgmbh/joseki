@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  height: 100vh;
+}
+
+body {
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-smooth: subpixel-antialiased;
+  -webkit-font-smoothing: subpixel-antialiased;
+  background-color: #f5f5f5;
+}
+
+@import "charts.css";
+ 
