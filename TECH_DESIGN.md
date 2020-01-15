@@ -235,14 +235,18 @@ The message consists of headers and payload, where `headers` is a set of key-val
     "scanner-id": "string",
     "scanner-periodicity": "string",
     "payload-version": "string",
-    "payload-chunks": "int", // if payload is too big to be transmitted with a single message, this property would have number > 1
-    "payload-current-chunk": "int" // represents current message chunk
+    "payload-chunks": "int",
+    "payload-current-chunk": "int"
   },
-  "payload": "base64-json" // scan/audit result might contain characters, that can corrupt message envelop or not unsupported by Messaging Service
+  "payload": "base64-json"
 }
 ```
 
-Note, `payload-chunks` and `payload-current-chunk` helps to split huge message into parts as any **Messaging Service** might have own message-size limitations.
+Where:
+
+- `payload-chunks` and `payload-current-chunk` helps to split huge message into parts as any **Messaging Service** might have own message-size limitations.
+- if payload is too big to be transmitted with a single message, `payload-chunks` would have number > 1
+- `payload` is encoded in base64, because scan/audit result might contain characters, that can corrupt message envelop or are not unsupported by **Messaging Service**
 
 ### Technologies
 
