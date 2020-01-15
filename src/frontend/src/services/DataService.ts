@@ -40,7 +40,8 @@ export class DataService {
   }
 
   public async getImageScanResultData(imageUrl: string) {
-    const url = "/image/" + this.fixedEncodeURIComponent(imageUrl);
+    const url =
+      "/api/container-image/" + this.fixedEncodeURIComponent(imageUrl);
     console.log(`[] calling ${url}`);
 
     // can't continue as there is no live data

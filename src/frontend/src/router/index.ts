@@ -22,12 +22,11 @@ const routes = [
     component: ImageOverview
   },
   {
-    path: "/detail/:imageid",
+    path: "/image-detail/:imageid",
     name: "ImageDetail",
     component: ImageDetail,
     props: true
   }
-
 ];
 
 const router = new VueRouter({
