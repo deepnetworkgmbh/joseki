@@ -1,0 +1,57 @@
+- Fundamentally this product focuses on configurations you have in your system and help you improve it.
+    - (V2) Cost analysis under this umbrella?
+- The product is not designed to prevent issues being introduced to a system but rather catch issues on a given system.
+    - Therefore, it's not suitable to use as part of CI/CD pipelines and associated tasks.
+- The product can expose some metrics & information that can be added to Grafana. Can be used for alerting.
+    - We need to decide on the interface of this.
+    - Prometheus metrics schema is probably a good idea.
+- Initial version is designed to be installed to the customer's own systems (i.e. on premise or on cloud)
+    - SaaS is out of scope currently
+- The product installation supports configuration.
+- Individual scanners can be enabled / disabled.
+- The product can be installed into a single node / VM with all of its components, as long as it has access to targets to be scanned.
+    - Individual scanners *maybe* installed separately and to provide horizontal scaling. This depends on the scanner type and would require some configuration during the installation.
+        - For example: Multiple instances of `trivy` can be installed and our product will divide the work between these instances to increase throughput.
+- (V2) A manual scan can be triggered from the UI.
+    - This is harder to achieve.
+- The product supports scheduled scans.
+    - The schedule can be configured to run with certain periods
+    - In the initial version, from the UI you cannot select a subset of targets to be scanned. However, via configuration, you can limit what the scanners can access and will scan.
+- The product will rank all found issues based on their severity.
+    - The user can override the severity of specific types of issues.
+- The product will offer remedies or solutions to discovered issues whenever possible.
+    - e.g. A CVE that we discovered may not be addressed already. There may not be a solution to offer.
+- Reporting:
+    - The product supports on demand reports (i.e. the user explicitly requests a scan report)
+    - System can be configured to automatically send reports / scan results to predefined e-mail addresses.
+    - The user can see previously generated reports
+    - The product can produced scheduled reports
+        - can be sent to email
+        - can be downloaded later from the product
+- All types of checks will a unique identifier.
+    - (Implementation detail: every scanner already has its own internal unique identifiers. We can just add our own prefix to them)
+- The product supports suppressions / tolerations.
+    - User can specifically suppress an issue or basically asked it to be not reported.
+    - This can be done via the UI or can be done via a configuration file.
+- The product UI runs on the browser.
+- The product API is meant to be used by the UI only and is not designed to be used by other developers atm.
+- Historical data:
+    - (V2) The users can see the past scans (i.e. scan x done on day y)
+    - (v2) The users can diff the results of two scans.
+- Issue tracking:
+    - (V2) integrates with Jira / Azure DevOps etc
+        - Create an issue/task etc in the bug tracking system for a found issue.
+        - Status of these issues can be tracked from the product.
+- (V1) The product cannot be used to address any of the issues directly. (i.e. you cannot fix any issue from the product itself, it just displays results + suggestions)
+- (v2) **proposed**: The product runs in read & write mode and can - in some cases - actively fix address an issue (e.g. `kubelet` config)
+- The product can scan different types of objects via different underlying scanners.
+    - These objects are:
+        - k8s objects: deployment, statefulset, .. etc.
+        - docker images: **what kind of resources can these images be? ACI? K8s only?**
+        - **azure resources: (azsk??)**
+    - Individual scanners can be configured during setup to make sure they have permission to access target objects to be scanned.
+- The product needs read-only access to targets to be scanned.
+- (V2) The product supports target discovery.
+    - It lists all the scannable targets discovered to the user
+    - User can select/unselect targets from the list.
+-
