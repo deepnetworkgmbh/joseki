@@ -4,10 +4,14 @@ import router from "./router";
 
 // include font awesome
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faShieldAlt } from "@fortawesome/free-solid-svg-icons";
+import {
+  faShieldAlt,
+  faTimes,
+  faQuestionCircle
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-library.add(faShieldAlt);
+library.add(faShieldAlt, faTimes, faQuestionCircle);
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 Vue.config.productionTip = false;
 

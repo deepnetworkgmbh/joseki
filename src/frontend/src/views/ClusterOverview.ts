@@ -9,7 +9,7 @@ var Tabulator = require("tabulator-tables"); //import Tabulator library
 @Component({
   components: {Spinner}
 })
-export default class Home extends Vue {
+export default class ClusterOverview extends Vue {
 
   loaded: boolean = false;
   service:DataService = new DataService();
@@ -71,7 +71,7 @@ export default class Home extends Vue {
                   const value = cell.getValue();
                   const desc = cell.getData().description;
                   if(desc){
-                      return value + '<i class="far fa-question-circle tipicon"></i>' ;
+                      return value + '<i class="far fa-question-circle tip-icon"></i>' ;
                   }
                   return value;
               }

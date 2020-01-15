@@ -1,20 +1,38 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
+import ClusterOverview from "@/views/ClusterOverview.vue";
+import ImageOverview from "@/views/ImageOverview.vue";
+import ImageDetail from "@/views/ImageDetail.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/",
-    name: "home",
-    component: Home
+    redirect: "cluster-overview"
+  },
+  {
+    path: "/cluster-overview",
+    name: "ClusterOverview",
+    component: ClusterOverview
+  },
+  {
+    path: "/image-overview",
+    name: "ImageOverview",
+    component: ImageOverview
+  },
+  {
+    path: "/detail/:imageid",
+    name: "ImageDetail",
+    component: ImageDetail,
+    props: true
   }
+
 ];
 
 const router = new VueRouter({
   mode: "history",
-  base: process.env.BASE_URL,
+  //base: process.env.BASE_URL,
   routes
 });
 

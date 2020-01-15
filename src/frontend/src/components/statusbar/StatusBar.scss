@@ -1,0 +1,48 @@
+.status-bar {
+  padding-top: 7px;
+  float: right;
+}
+
+.status-bar .status {
+  float: right;
+  animation: fadeIn 2s;
+}
+
+.status {
+  width: 200px;
+}
+
+.status div {
+  height: 12px;
+  border-radius: 9px;
+}
+
+
+.status .nodata {
+  background-color: gray;
+  float: left;
+}
+
+.status .passing {
+  background-color: green;
+  float: left;
+}
+
+.status .warning {
+  background-color: #f26c21;
+  float: left;
+}
+
+.status .failing {
+  background-color: red;
+  width: 100%;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}

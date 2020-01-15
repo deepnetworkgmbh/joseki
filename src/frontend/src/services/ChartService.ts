@@ -1,6 +1,7 @@
 import { ResultSummary } from '../models';
 import { BarChartOptions } from '../types/BarChartOptions';
 import { PieChartOptions } from '../types/PieChartOptions';
+import { ImageScan } from '@/models/ImageScan';
 
 export class ChartService {
 	public static groupColors = [ 'gray', 'red', 'orange', 'green' ];
@@ -83,5 +84,56 @@ export class ChartService {
 		let chart = new google.visualization.BarChart(element);
 		let data = google.visualization.arrayToDataTable(rawdata);
 		chart.draw(data, options);
+	}
+
+	public static drawSeverityPieChart(summary: ImageScan, element: HTMLInputElement) {
+		let jdata: any[][] = [
+			['Severity', 'Number']
+		];
+		let sevcolors = [];
+		for(let i=0;i<summary.groups.length;i++){
+			let group = summary.groups[i];
+			jdata.push([group.title, group.count]);
+			sevcolors.push(this.getSeverityColor(group.title));
+		}
+	
+		let data = google.visualization.arrayToDataTable(jdata);
+		let options:PieChartOptions = {
+			titlePosition: 'none',
+			width: 400,
+			height: 250,
+			slices: {
+				0: {color: sevcolors[0]},
+				1: {color: sevcolors[1]},
+				2: {color: sevcolors[2]},
+				3: {color: sevcolors[3]}
+			},
+			pieHole: 0.5,
+			chartArea: {'width': '100%', 'height': '80%'},
+			legend: {
+				position: 'bottom',
+				alignment: 'center',
+				textStyle: {
+					fontSize: 9
+				}
+			},
+		};
+	
+		let chart = new google.visualization.PieChart(element);
+		chart.draw(data, options);
+	}
+
+
+	private static getSeverityColor(severity:string) {
+		switch (severity) {
+			case 'CRITICAL':
+				return ChartService.groupColors[1];
+			case 'MEDIUM':
+				return ChartService.groupColors[2];
+			case 'NOISSUES':
+				return ChartService.groupColors[3];
+			case 'NODATA':
+				return ChartService.groupColors[0];
+		}	
 	}
 }

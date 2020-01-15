@@ -1,211 +1,213 @@
 .image-result-Succeeded {
-    color: green;
+  color: green;
 }
 
 .image-result-Failed {
-    color: red;
+  color: red;
 }
 
 .severity-CRITICAL {
-    color: red;
+  color: red;
 }
 
 .severity-HIGH {
-    color: orange;
+  color: orange;
 }
 
 .severity-MEDIUM {
-    color: orange;
+  color: gold;
 }
 
 .severity-LOW {
-    color: #008000;
+  color: #008000;
 }
 
 .severity-NOISSUES {
-    color: green;
+  color: green;
 }
 
 .severity-NODATA {
-    color: #777777;
+  color: #777777;
 }
 
 h1.image-name {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    word-break: keep-all;
-    height: 40px;
-    line-height: 40px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: keep-all;
+  height: 40px;
+  line-height: 40px;
 }
 
 .warning-icon {
-    color: red;
-    font-size: 12px;
-    float: left;
-    margin-top: 4px;
-    margin-right: 5px;
+  color: red;
+  font-size: 11px;
+  float: left;
+  margin-top: 4px;
+  margin-right: 2px;
 }
 
 .noissues-icon {
-    color: green;
-    font-size: 12px;
-    float: left;
-    margin-top: 4px;
-    margin-right: 5px;
+  color: green;
+  font-size: 12px;
+  float: left;
+  margin-top: 8px;
+  margin-right: 6px;
 }
 
 .nodata-icon {
-    color: gray;
-    font-size: 12px;
-    float: left;
-    margin-top: 4px;
-    margin-right: 5px;
+  color: gray;
+  font-size: 12px;
+  float: left;
+  margin-top: 8px;
+  margin-right: 6px;
 }
 
 .searchbox {
-    width: 380px;
-    height: 25px;
-    border: solid 1px #ccc;
-    border-radius: 20px;
-    padding-left: 10px;
-    color: #444;
-    float: left;
+  width: 380px;
+  height: 25px;
+  border: solid 1px #ccc;
+  border-radius: 20px;
+  padding-left: 10px;
+  color: #444;
+  float: left;
 }
 
 .search-icon {
-    float: left;
-    display: revert;
-    margin-left: -26px;
-    margin-top: 5px;
-    color: #ccc;
+  float: left;
+  display: revert;
+  margin-left: -26px;
+  margin-top: 5px;
+  color: #ccc;
 }
 
 .highlight {
-    color: black;
-    background-color: yellow;
+  color: black;
+  background-color: yellow;
 }
 
 .chart-title {
-    text-align: center;
-    font-size: 10px;
-    margin-top: 5px;
+  text-align: center;
+  font-size: 10px;
+  margin-top: 5px;
 }
 
-svg > g:last-child > g:last-child { pointer-events: none }
-svg > g > g.google-visualization-tooltip { pointer-events: none }
+svg > g:last-child > g:last-child {
+  pointer-events: none;
+}
+svg > g > g.google-visualization-tooltip {
+  pointer-events: none;
+}
 
 .tabulator-col-title {
-    text-align: center;
+  text-align: center;
 }
 
-.tabulator-col[role=columnheader] {
-    border-bottom: solid 2px #acc91e;
+.tabulator-col[role="columnheader"] {
+  border-bottom: solid 2px #acc91e;
 }
-
 
 .context-menu {
-    position: absolute;
-    padding: 2px;
-    border: solid 2px #ccc;
-    background-color: #eee;
-    border-radius: 2px;
-    width: 150px;
-    min-height: 40px;
+  position: absolute;
+  padding: 2px;
+  border: solid 2px #ccc;
+  background-color: #eee;
+  border-radius: 2px;
+  width: 150px;
+  min-height: 40px;
 }
 
 .context-menu a {
-    font-size: 10px;
-    text-decoration: none;
+  font-size: 10px;
+  text-decoration: none;
 }
 
 .circular-chart {
-    display: block;
-    margin: 5px auto;
-    max-width: 80%;
-    max-height: 100px;
-    height: 200px;
+  display: block;
+  margin: 5px auto;
+  max-width: 80%;
+  max-height: 100px;
+  height: 200px;
 }
 
 .circle-bg {
-    fill: none;
-    stroke: #eee;
-    stroke-width: 3.8;
+  fill: none;
+  stroke: #eee;
+  stroke-width: 3.8;
 }
 
 .circle {
-    fill: none;
-    stroke-width: 2.8;
-    stroke-linecap: round;
-    animation: progress 1s ease-out forwards;
+  fill: none;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  animation: progress 1s ease-out forwards;
 }
 
 @keyframes progress {
-    0% {
-        stroke-dasharray: 0 100;
-    }
+  0% {
+    stroke-dasharray: 0 100;
+  }
 }
 
 .circular-chart.orange .circle {
-    stroke: #ff9f00;
+  stroke: #ff9f00;
 }
 
 .circular-chart.green .circle {
-    stroke: #008800;
-    /* 4CC790 */
-    ;
+  stroke: #008800;
+  /* 4CC790 */
 }
 
 .circular-chart.blue .circle {
-    stroke: #3c9ee5;
+  stroke: #3c9ee5;
 }
 
 .percentage {
-    fill: #666;
-    font-family: sans-serif;
-    font-size: 0.5em;
-    text-anchor: middle;
+  fill: #666;
+  font-family: sans-serif;
+  font-size: 0.5em;
+  text-anchor: middle;
 }
 
 .info-tab {
-    flex: 1;
-    padding-left: 10px;
-    flex-grow: 1.5;
-    flex-direction: column;
-    display: flex;
-    align-content: center;
-    justify-content: center;
+  flex: 1;
+  padding-left: 10px;
+  flex-grow: 1.5;
+  flex-direction: column;
+  display: flex;
+  align-content: center;
+  justify-content: center;
 }
 
 .tabulator-row .tabulator-cell {
-    padding: 6px 4px;
-    font-size: 12px;
+  padding: 6px 4px;
+  font-size: 12px;
 }
 
 .segment {
-    border-radius: 5px;
-    border: solid 1px #ddd;
-    margin: 10px;
-    padding:5px;
+  border-radius: 5px;
+  border: solid 1px #ddd;
+  margin: 10px;
+  padding: 0px;
 }
 
 .segment-toolbar {
-    height: 45px;
-    clear: both;
-    padding: 10px;
-    border-bottom: solid 1px #ccc;
-    background-color: #eee;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
+  height: 45px;
+  clear: both;
+  padding: 10px;
+  border-bottom: solid 1px #ccc;
+  background-color: #eee;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
 }
 
-.tipicon {
-    font-size: 10px;
-    color: #bbb;
-    padding-left: 2px;
+.tip-icon {
+  font-size: 10px;
+  color: #bbb;
+  padding-left: 2px;
 }
 
 .shadow {
-    -webkit-box-shadow: 10px 10px 5px -5px rgba(0,0,0,0.07);
-    -moz-box-shadow: 10px 10px 5px -5px rgba(0,0,0,0.07);
-    box-shadow: 10px 10px 5px -5px rgba(0,0,0,0.07);
+  -webkit-box-shadow: 10px 10px 5px -5px rgba(0, 0, 0, 0.07);
+  -moz-box-shadow: 10px 10px 5px -5px rgba(0, 0, 0, 0.07);
+  box-shadow: 10px 10px 5px -5px rgba(0, 0, 0, 0.07);
 }

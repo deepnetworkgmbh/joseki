@@ -1,0 +1,45 @@
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+label {
+  padding: 3px;
+  color: black;
+  width: 100%;
+  cursor: pointer;
+}
+li {
+  padding: 2px;
+  margin: 5px 5px 5px 20px;
+}
+input[type="checkbox"] {
+  visibility: hidden;
+}
+input[type="checkbox"] ~ ul {
+  visibility: hidden;
+  display: none;
+}
+input[type="checkbox"]:checked ~ ul {
+  visibility: visible;
+  display: block;
+}
+input[type="checkbox"] + label:before {
+  margin-left: -15px;
+  width: 0;
+  height: 0;
+  display: inline-block;
+  text-align: center;
+  content: "\f105";
+  color: #666;
+  position: absolute;
+  margin-top: -3px;
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  font-size: 19px;
+}
+input[type="checkbox"]:checked + label:before {
+  content: "\f107";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+}

@@ -16,20 +16,6 @@ module.exports = {
     autoprefixer({
       add: true,
       grid: true
-    }),
-    purgecss({
-      content: [
-        './src/**/*.html',
-        './src/**/*.vue',
-        './src/**/*.js',
-        './public/**/*.html'
-      ],
-      extractors: [
-        {
-          extractor: TailwindExtractor,
-          extensions: ['html', 'vue', 'js']
-        }
-      ]
-    })
+    })   
   ]
 }
