@@ -48,11 +48,11 @@
                   <div style="float:right;" v-html="image.rowText"></div>
                   <i :class="image.icon"></i>
                   {{ image.shortImageName }}
-                  <a :href="image.link" class="more-info">
+                  <router-link :to="image.link" class="more-info">
                     <span class="tool" :data-tip="image.tip">
                       <i class="far fa-question-circle tip-icon"></i>
                     </span>
-                  </a>
+                  </router-link>
                 </li>
               </ul>
             </li>
