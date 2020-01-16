@@ -25,7 +25,7 @@
         <h4>Kubernetes Version: {{ data.cluster.version }}</h4>
         <h4>Nodes: {{ data.cluster.nodes }}</h4>
         <h4>Namespaces: {{ data.cluster.namespaces }}</h4>
-        <h4>Pods: {{ data.cluster.Pods }}</h4>
+        <h4>Pods: {{ data.cluster.pods }}</h4>
       </div>
     </div>
     <div v-show="loaded" class="segment chart-group shadow">

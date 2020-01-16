@@ -22,17 +22,43 @@
         <ul v-for="(target,i) in data.targets" :key="target.target">
           <li>
             <input type="checkbox" :id="`target${i}`" checked />
-            <label :for="`target${i}`">Target: {{ target.target }}</label>
-            <ul v-for="(vul, g) in target.vulnerabilities" :key="vul.VulnerabilityID">
+            <label :for="`target${i}`" class="target">Target: {{ target.name }}</label>
+            <ul v-for="(vul, g) in target.vulgroups" :key="`${vul.Severity}${i}`">
               <li>
                 <input type="checkbox" :id="`t${i}g${g}`" checked />
-                <label :for="`t${i}g${g}`">
-                  {{ vul.Count }} issues with
-                  <strong
-                    :class="`severity-${vul.Severity}`"
-                  >{{ vul.Severity }}</strong>
+                <label :for="`t${i}g${g}`" class="target-severities">
+                  {{ vul.Count }} issues with <strong :class="`severity-${vul.Severity}`">{{ vul.Severity }}</strong>
                   severity
                 </label>
+                <ul v-for="(cve, c) in vul.CVEs" :key="`${vul.Severity}${i}-${c}`">
+                  <li>
+                    <input type="checkbox" :id="`t${i}g${g}${c}`" checked />
+                    <label :for="`t${i}g${g}${c}`" class="severity">
+                      <i>{{ cve.VulnerabilityID }}</i> in <strong>{{ cve.PackageName }}</strong> 
+                      version {{ cve.InstalledVersion }}
+                    </label>
+                    <ul>
+                      <li>
+                        <div class="cve-detail">
+                          <p v-if="cve.Title" class='cve-title'>{{ cve.Title }}</p>
+                          <p v-if="cve.FixedVersion">
+                            <strong>Remediation:</strong> Update package to {{ cve.FixedVersion }}
+                          </p>
+                          <p class='cve-desc'>{{ cve.Description }}</p>
+                          <div v-if="cve.References" style="margin-top:5px;">
+                            <input type="checkbox" :id="`t${i}g${g}${c}ref`" />
+                            <label :for="`t${i}g${g}${c}ref`" class='references-title'>References</label>
+                            <ul>
+                              <li v-for="(ref, ri) in cve.References" :key="`ref${ri}`" class="reference">
+                                &bull;&nbsp;<a :href="ref" target="_blank">{{ ref }}</a>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
               </li>
             </ul>
           </li>

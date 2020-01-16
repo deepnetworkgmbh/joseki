@@ -16,3 +16,29 @@
 .scan-info {
   padding: 10px;
 }
+
+.target, .target-severities {
+  font-size:15px;
+}
+
+.severity {
+  font-size:14px;
+}
+
+.cve-title {
+  font-size:14px;
+  font-weight: bold;
+  text-decoration: underline;
+}
+.cve-desc {
+  font-size:13px;
+}
+
+.references-title {
+  font-size:13px;
+  font-weight: bold;
+}
+.reference {
+  font-size:12px;
+  line-height: 12px;
+}

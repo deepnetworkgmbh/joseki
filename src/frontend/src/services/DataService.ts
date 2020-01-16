@@ -2,7 +2,7 @@ import axios from "axios";
 import { ContainerImageScan, VulnerabilityCounter } from "@/models";
 import { ImageScan } from "@/models/ImageScan";
 import { ImageScanGroup } from "@/models/ImageScanGroup";
-import { VulnerabilityGroup } from "@/models/VulnerabilityGroup";
+import { VulnerabilityGroup, TargetGroup, ImageScanDetailModel } from "@/models/VulnerabilityGroup";
 
 export class DataService {
   public async getOverviewData() {
@@ -10,65 +10,79 @@ export class DataService {
 
     return axios
       .get("/api/kube/overview/")
-      .then(function(response) {
-        console.log(response);
-        return response.data;
-      })
-      .catch(function(error) {
-        console.log(error);
-      })
-      .finally(function() {
-        console.log("overview request finished.");
-      });
+      .then((response)=>response.data)
+      .catch((error)=>console.log(error))
+      .finally(()=> console.log("overview request finished."));
   }
 
   public async getContainerImagesData() {
     console.log(`[] calling api/container-images/`);
-
     return axios
       .get("/api/container-images/")
-      .then(function(response) {
-        console.log(response.data);
-        return response.data.images;
-      })
-      .catch(function(error) {
-        console.log(error);
-      })
-      .finally(function() {
-        console.log("container images request finished.");
-      });
+      .then((response) => response.data.images)
+      .catch((error) => console.log(error))
+      .finally(()=> console.log("container images request finished."));
   }
 
   public async getImageScanResultData(imageUrl: string) {
-    const url =
-      "/api/container-image/" + this.fixedEncodeURIComponent(imageUrl);
+    const url = "/api/container-image/" + 
+      this.fixedEncodeURIComponent(imageUrl);
     console.log(`[] calling ${url}`);
-
-    // can't continue as there is no live data
-    // all current scans fail
-
     return axios
       .get(url)
-      .then(function(response) {
-        console.log(response);
-        return response.data;
-      })
-      .catch(function(error) {
-        console.log(error);
-      })
-      .finally(function() {
-        console.log("container images request finished.");
-      });
+      .then((response) => response.data)
+      .catch((error) => console.log(error))
+      .finally(() => console.log("container images scan request finished."));
   }
 
-  public regroupDataBySeverities(data: ContainerImageScan): VulnerabilityGroup {
-    let result = new VulnerabilityGroup();
-    // for (let i = 0; i < data.targets.length; i++) {
+  public regroupDataBySeverities(data: any): ImageScanDetailModel {
 
-    // }
+    let result = new ImageScanDetailModel();    
+    result.description = data.description
+    result.scanResult = data.scanResult
+    result.image = data.image
+    
+    try{
+
+      for (let i = 0; i < data.targets.length; i++) {
+        let target = new TargetGroup(data.targets[i].Target);
+        
+        for (let j = 0; j < data.targets[i].Vulnerabilities.length; j++) {
+          let vulnerability = data.targets[i].Vulnerabilities[j];
+          let index = target.vulgroups.findIndex((v) => v.Severity === vulnerability.Severity);
+          if(index<0){
+            let vulgroup = new VulnerabilityGroup(vulnerability.Severity);
+            vulgroup.Count=1;
+            vulgroup.Order = this.getOrderBySeverity(vulnerability.Severity);
+            vulgroup.CVEs.push(vulnerability);
+            target.vulgroups.push(vulgroup);
+          }else{
+            target.vulgroups[index].CVEs.push(vulnerability);
+            target.vulgroups[index].Count+=1;
+          }
+        }
+        target.vulgroups.sort((a, b) => a.Order > b.Order ? -1 : a.Order < b.Order ? 1 : 0);
+        result.targets.push(target);
+      }
+
+    }catch(e){
+        console.log(`error parsing image scan detail data ${e}`)
+    }
 
     return result;
   }
+
+  public getOrderBySeverity(severity: string): number {
+    switch(severity){
+      case 'CRITICAL': return 10;
+      case 'HIGH'    : return  9;
+      case 'MEDIUM'  : return  8;
+      case 'LOW'     : return  7;
+      case 'UNKNOWN' : return  0;
+    }
+    return 0;
+  }
+
   public calculateImageSummaries(data: ContainerImageScan[]): ImageScan {
     let result = new ImageScan();
     result.scans = data;
@@ -134,7 +148,7 @@ export class DataService {
   }
 
   public fixedEncodeURIComponent(str: string) {
-    return encodeURIComponent(str).replace(/[!*]/g, function(c) {
+    return encodeURIComponent(str).replace(/[!*]/g, function (c) {
       return "%" + c.charCodeAt(0).toString(16);
     });
   }

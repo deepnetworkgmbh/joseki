@@ -18,14 +18,11 @@ export default class StatusBar extends Vue {
 
   noDataWidth() {
     const noDataPx = 200 - this.failingSum;
-    console.log(`[] no data : ${noDataPx}`);
     return noDataPx + 'px';    
   }
 
   passingWidth() {
     const passingPx = 200 - this.failingSum - this.noDataSum;
-    console.log(`[] passingPx : ${passingPx}`);
     return passingPx + 'px';
-    //return { 'width': passingPx + 'px'};
   }
 }

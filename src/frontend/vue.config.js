@@ -1,7 +1,7 @@
 module.exports = {
   devServer: {
     proxy: {
-      "/api|/image": {
+      "/api": {
         target: "http://localhost:8888",
         ws: true,
         changeOrigin: true

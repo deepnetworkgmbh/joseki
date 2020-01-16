@@ -107,7 +107,6 @@ export default class ImageOverview extends Vue {
       NOISSUES: 0,
       NODATA: 0
     };
-    //console.log(image);
     const severity_critical = this.getSeveritFromImage(image, "CRITICAL");
     const severity_high = this.getSeveritFromImage(image, "HIGH");
     const severity_medium = this.getSeveritFromImage(image, "MEDIUM");
