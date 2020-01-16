@@ -9,7 +9,8 @@ module.exports = {
     '@vue/typescript'
   ],
   rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    /* TODO: get rid of console.log() in sources 'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',*/
+    'no-console': 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
   },
   parserOptions: {

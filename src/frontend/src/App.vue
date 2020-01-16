@@ -5,7 +5,7 @@
       <router-view />
     </div>
     <div class="footer">
-      ©2019
+      ©2020
       <a href="http://www.deepnetwork.com" target="_blank">Deep Network GmbH</a>
     </div>
   </div>
