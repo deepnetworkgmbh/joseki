@@ -1,96 +1,21 @@
-# Kubegaard
+# Technical Design
 
-- [Kubegaard](#kubegaard)
-  - [Motivation](#motivation)
-  - [Features](#features)
-    - [Integrates multiple *scanner* types](#integrates-multiple-scanner-types)
-    - [Historical data](#historical-data)
-    - [Reporting](#reporting)
-    - [Create follow-up tasks based on checks results](#create-follow-up-tasks-based-on-checks-results)
-    - [Real-time configuration](#real-time-configuration)
-    - [User Interface](#user-interface)
-  - [Technical Design](#technical-design)
-    - [Easy to start, but customizable](#easy-to-start-but-customizable)
-    - [Components](#components)
-      - [Scanners](#scanners)
-      - [Backend](#backend)
-      - [Frontend](#frontend)
-      - [Infrastructure](#infrastructure)
-      - [Inter-service communication](#inter-service-communication)
-        - [Frontend and Backend](#frontend-and-backend)
-        - [Backend and Scanners](#backend-and-scanners)
-    - [Technologies](#technologies)
+- [Technical Design](#technical-design)
+  - [Easy to start, but customizable](#easy-to-start-but-customizable)
+  - [Components](#components)
+    - [Scanners](#scanners)
+    - [Backend](#backend)
+    - [Frontend](#frontend)
+    - [Infrastructure](#infrastructure)
+    - [Inter-service communication](#inter-service-communication)
+      - [Frontend and Backend](#frontend-and-backend)
+      - [Backend and Scanners](#backend-and-scanners)
+  - [Technologies](#technologies)
   - [Development process](#development-process)
     - [Single repository](#single-repository)
     - [Ready to run at any commit in master](#ready-to-run-at-any-commit-in-master)
     - [Getting Started examples](#getting-started-examples)
     - [CI/CD](#cicd)
-
-## Motivation
-
-Security is a massive and complicated topic, but there are dozens of open sourced tools on the market that can help to make a product safer. The tools often are summoned to force known best-practices to docker images, containers, infrastructure.
-
-Unfortunately, there are problems:
-
-- a lot of tools cover just a single aspect of security management
-- also they are disconnected and just figuring out how to use them together is a hassle
-- often, they have no reporting capabilities,
-- and no historical overview.
-
-## Features
-
-*Kubegaard* is expected to have the following features
-
-### Integrates multiple *scanner* types
-
-- Container Image vulnerabilities scanners. For example, [trivy](https://github.com/aquasecurity/trivy), [clair](https://github.com/quay/clair).
-- Kubernetes objects validators. For example, [polaris](https://github.com/FairwindsOps/polaris), [cluster-lint](https://github.com/digitalocean/clusterlint).
-- Kubernetes cluster configuration validation. For example, [kube-bench.](https://github.com/aquasecurity/kube-bench) [kube-hunter](https://github.com/aquasecurity/kube-hunter)
-- Kubernetes anomaly detectors. For example, [falco](https://github.com/falcosecurity/falco)
-- Cloud infrastructure auditors. For example, [az-sk](https://github.com/azsk/DevOpsKit), [cloud-sploit](https://github.com/cloudsploit), [scout-suite](https://github.com/nccgroup/ScoutSuite), [security-monkey](https://github.com/Netflix/security_monkey).
-- Web application scanners. For example, [ZAProxy](https://github.com/zaproxy/zaproxy)
-
-### Historical data
-
-- Persisting all scan results according to a defined retention period
-- Providing read interface to historical data
-
-### Reporting
-
-- send reports via email, webhooks, slack, ms-teams, and others.
-- multiple report types:
-  - the current state of the system,
-  - diff from the last report,
-  - include only subset of scanners to report on.
-- expose a subset of data as metrics (well-known grafana dashboards, alerting)
-
-### Create follow-up tasks based on checks results
-
-- Jira/Azure DevOps tasks
-- emails/slack/...
-
-### Real-time configuration
-
-- enable/disable security check:
-
-  - for the whole solution
-  - for a subset of objects (tolerations) based on scanned object metadata
-  - suppress a check for a period (for a week, month, etc)
-- creating new security checks (likely, [Open Policy Agent](https://www.openpolicyagent.org/) integration)
-- enable/disable scanner types (image, k8s-objects, k8s, cloud)
-- reports management: define report types and schedules, download existing reports
-- create follow-up tasks based on audit results
-- RBAC
-
-### User Interface
-
-- interactive dashboards
-  - cloud view
-  - kubernetes view
-  - vm/container-image issues
-- web-interface to manage all listed features: configuration, follow-up tasks, reporting
-
-## Technical Design
 
 *Kubegaard* should:
 
@@ -137,13 +62,13 @@ Unfortunately, there are problems:
   - reporting destinations
   - task-tracking integrations
 
-### Easy to start, but customizable
+## Easy to start, but customizable
 
 When a new user starts working with *Kubegaard*, the application needs to *just work*, but once it works, it needs to be fully customizable and fully adaptable.
 
 Therefore, each service should be able to run with good-enough defaults, but also be flexible to change these defaults by experienced user.
 
-### Components
+## Components
 
 *Kubegaard* consists of three main parts:
 
@@ -153,7 +78,7 @@ Therefore, each service should be able to run with good-enough defaults, but als
 
 ![General-overview](./docs/diagrams/kubegaard-white.png)
 
-#### Scanners
+### Scanners
 
 **Scanners** are independent short-lived applications, that perform a single infrastructure audit.
 
@@ -166,7 +91,7 @@ Each scanner lifecycle is similar to the following:
 
 Detailed scanners technical design is located next to scanner sources: `/src/scanners/{scanner-type}/README.md`, where `{scanner-type}` is one of `trivy`, `polaris`, `az-sk`, `kube-bench`.
 
-#### Backend
+### Backend
 
 **Backend** - is monolithic application, which encapsulate the most of *Kubegaard* business logic:
 
@@ -182,7 +107,7 @@ The application is hosted as docker-container and gets own configuration through
 
 Detailed technical design is described in [backend technical design](./src/backend/TECH_DESIGN.md) document.
 
-#### Frontend
+### Frontend
 
 `Frontend` is web application to interact with end-user. The application provides interactive dashboards, configuration panel for overall product settings, and others.
 
@@ -190,7 +115,7 @@ The application hosted in docker-container and gets own configuration from confi
 
 Detailed technical design is described in [frontent technical design](./src/frontend/TECH_DESIGN.md) document.
 
-#### Infrastructure
+### Infrastructure
 
 All the services are wrapped in docker-containers and could run on any infrastructure, which has container runtime.
 
@@ -204,20 +129,20 @@ All the services are wrapped in docker-containers and could run on any infrastru
 
 `Scanners` uses **Messaging Service** to publish audit/scan results to it and some of them might use it as trigger source.
 
-#### Inter-service communication
+### Inter-service communication
 
 There are two types of communication:
 
 - `Frontend` and `Backend`;
 - `Backend` and `Scanners`.
 
-##### Frontend and Backend
+#### Frontend and Backend
 
 `Frontend` application depends only on `Backend` REST API. The services communicates through HTTPs. At the moment, user authentication and authorization are not supported, but it's in [product roadmap](./ROADMAP.md).
 
 Available API endpoints are described at `https://{scanners-url:port}/swagger`.
 
-##### Backend and Scanners
+#### Backend and Scanners
 
 `Backend` and `Scanners` asynchronously interact through **Messaging Service**:
 
@@ -248,7 +173,7 @@ Where:
 - if payload is too big to be transmitted with a single message, `payload-chunks` would have number > 1
 - `payload` is encoded in base64, because scan/audit result might contain characters, that can corrupt message envelop or are not unsupported by **Messaging Service**
 
-### Technologies
+## Technologies
 
 For initial implementation *Kubegaard* uses:
 
