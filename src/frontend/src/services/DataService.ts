@@ -5,11 +5,22 @@ import { ImageScanGroup } from "@/models/ImageScanGroup";
 import { VulnerabilityGroup, TargetGroup, ImageScanDetailModel } from "@/models/VulnerabilityGroup";
 
 export class DataService {
+
+  private get baseUrl() {
+    if(process.env.NODE_ENV === 'production'){
+      // prefix the api url because devServer is not being used in production
+      // as devServer was wiring the api calls using vue.config.js
+      // the cors must be adjusted on the Production server
+      return process.env.VUE_APP_API_URL;     
+    }
+    return ''
+  }
+
   public async getOverviewData() {
     console.log(`[] calling api/kube/overview`);
 
     return axios
-      .get("/api/kube/overview/")
+      .get(this.baseUrl + "/api/kube/overview/")
       .then((response)=>response.data)
       .catch((error)=>console.log(error))
       .finally(()=> console.log("overview request finished."));
@@ -18,14 +29,14 @@ export class DataService {
   public async getContainerImagesData() {
     console.log(`[] calling api/container-images/`);
     return axios
-      .get("/api/container-images/")
+      .get(this.baseUrl + "/api/container-images/")
       .then((response) => response.data.images)
       .catch((error) => console.log(error))
       .finally(()=> console.log("container images request finished."));
   }
 
   public async getImageScanResultData(imageUrl: string) {
-    const url = "/api/container-image/" + 
+    const url = this.baseUrl + "/api/container-image/" + 
       this.fixedEncodeURIComponent(imageUrl);
     console.log(`[] calling ${url}`);
     return axios
