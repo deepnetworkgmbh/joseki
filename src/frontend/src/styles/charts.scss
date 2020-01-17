@@ -1,13 +1,14 @@
+
 .image-result-Succeeded {
-  color: green;
+  color: $color-low-severity;
 }
 
 .image-result-Failed {
-  color: red;
+  color: $color-critical;
 }
 
 .severity-CRITICAL {
-  color: red;
+  color: $color-critical;
 }
 
 .severity-HIGH {
@@ -19,11 +20,11 @@
 }
 
 .severity-LOW {
-  color: #008000;
+  color: $color-low-severity;
 }
 
 .severity-NOISSUES {
-  color: green;
+  color: $color-low-severity;
 }
 
 .severity-NODATA {
@@ -36,30 +37,6 @@ h1.image-name {
   word-break: keep-all;
   height: 40px;
   line-height: 40px;
-}
-
-.warning-icon {
-  color: red;
-  font-size: 11px;
-  float: left;
-  margin-top: 4px;
-  margin-right: 2px;
-}
-
-.noissues-icon {
-  color: green;
-  font-size: 12px;
-  float: left;
-  margin-top: 8px;
-  margin-right: 6px;
-}
-
-.nodata-icon {
-  color: gray;
-  font-size: 12px;
-  float: left;
-  margin-top: 8px;
-  margin-right: 6px;
 }
 
 .searchbox {
@@ -100,10 +77,6 @@ svg > g > g.google-visualization-tooltip {
 
 .tabulator-col-title {
   text-align: center;
-}
-
-.tabulator-col[role="columnheader"] {
-  border-bottom: solid 2px #acc91e;
 }
 
 .context-menu {
@@ -153,7 +126,7 @@ svg > g > g.google-visualization-tooltip {
 }
 
 .circular-chart.green .circle {
-  stroke: #008800;
+  stroke: $color-low-severity;
   /* 4CC790 */
 }
 
@@ -198,6 +171,31 @@ svg > g > g.google-visualization-tooltip {
   background-color: #eee;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
+}
+
+
+.warning-icon {
+  color: $color-critical;
+  font-size: 11px;
+  margin-top: 4px;
+  margin-right: 2px;
+}
+
+.noissues-icon {
+  color: $color-low-severity;
+  font-size: 12px;
+  float: left;
+  margin-top: 8px;
+  margin-right: 2px;
+}
+
+.nodata-icon {
+  color: gray;
+  font-size: 14px;
+  color: #bbb;
+  padding-left: 1px;
+  margin-top:0px;
+  margin-right: 2px;
 }
 
 .tip-icon {

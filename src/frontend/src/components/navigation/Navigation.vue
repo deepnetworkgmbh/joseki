@@ -1,8 +1,9 @@
 <template>
   <div id="nav">
     <div class="logo">
+      <router-link to="/">
       <font-awesome-icon icon="shield-alt" />
-      KubeGaard
+      KubeGaard</router-link>
     </div>
     <div class="links">
       <router-link to="/">Cluster Overview</router-link>

@@ -1,3 +1,6 @@
+@import "@/styles/colors.scss";
+
+
 .status-bar {
   padding-top: 7px;
   float: right;
@@ -19,22 +22,22 @@
 
 
 .status .nodata {
-  background-color: gray;
+  background-color: $color-no-data;
   float: left;
 }
 
 .status .passing {
-  background-color: green;
+  background-color:$color-low-severity;
   float: left;
 }
 
 .status .warning {
-  background-color: #f26c21;
+  background-color: $color-high-severity;
   float: left;
 }
 
 .status .failing {
-  background-color: red;
+  background-color: $color-critical;
   width: 100%;
 }
 

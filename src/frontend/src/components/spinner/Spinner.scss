@@ -1,3 +1,5 @@
+@import "@/styles/colors.scss";
+
 .lds-roller {
 	display: inline-block;
 	position: relative;
@@ -10,7 +12,7 @@
 }
 .lds-roller div:after {
     content: " ";
-    background-color:#aaa;
+    background-color:$color-link;
 	display: block;
 	position: absolute;
 	width: 7px;

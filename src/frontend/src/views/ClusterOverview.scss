@@ -1,3 +1,5 @@
+@import "@/styles/colors.scss";
+
 .chart-group {
   display: flex;
   flex-direction: row;
@@ -43,19 +45,19 @@
 }
 
 .tblr-nodata {
-  color: gray;
+  color: $color-no-data;
 }
 
 .tblr-error {
-  color: red;
+  color: $color-critical;
 }
 
 .tblr-warning {
-  color: orange;
+  color: $color-medium-severity;
 }
 
 .tblr-success {
-  color: green;
+  color: $color-low-severity;
 }
 
 .tabulator-row .tabulator-cell {
