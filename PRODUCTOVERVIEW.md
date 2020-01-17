@@ -1,6 +1,6 @@
 # Product Overview
 
-Security is a massive and complicated topic, but there are dozens of open sourced tools on the market that can help to make a product safer. The tools often are summoned to force known best-practices to docker images, kubernetes, cloud infrastructure.
+Security is a massive and complicated topic and there are dozens of open sourced tools on the market that can help to make a product safer. The tools often are summoned to enforce known best-practices to docker images, kubernetes, and cloud infrastructure at large.
 
 Unfortunately, there are problems:
 
@@ -8,9 +8,11 @@ Unfortunately, there are problems:
 - tools are disconnected and just figuring out how to use them together is a hassle
 - often, they have no reporting capabilities and no historical overview.
 
-*Kubegaard* comes to fill in these gaps.
+*Kubegaard* is here to fill in these gaps.
 
 ## Kubegaard cornerstones
+
+Kubegaard 
 
 Fundamentally the product focuses on configuration that you **already** have in your system and help you to improve it.
 
@@ -117,6 +119,8 @@ Fundamentally the product focuses on configuration that you **already** have in 
 - The product could expose check-results as metrics, that can be visualized in 3rd party tools (for example, Grafana) or be alerted (for example, alert-manager or Grafana). In this case we need to decide on the interface of this (Prometheus metrics schema is probably a good idea).
 
 ## V3
+
+service discover - component relationship
 
 - alternative scanners:
   - Container Image vulnerabilities scanners. For example, [clair](https://github.com/quay/clair).
