@@ -2,9 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
-body {
-  height: 100vh;
+html, body {
+  margin:0;
+  padding:0;
+  height: 98vh;
+  line-height: normal;
 }
 
 body {
