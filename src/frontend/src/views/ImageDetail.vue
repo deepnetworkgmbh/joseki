@@ -4,6 +4,7 @@
     <div v-show="loaded" class="segment shadow">
       <div style="border-bottom: solid 1px #ddd;background-color: #eee;">
         <h3 :class="`scanStatus image-result-${data.scanResult}`">{{ data.scanResult }}</h3>
+        <h3 class="scanStatus">Scan:</h3>
         <h1 class="image-name" style="margin-left: 15px;">{{ imageid }}</h1>
       </div>
 
