@@ -15,8 +15,7 @@ library.add(faShieldAlt, faTimes, faQuestionCircle);
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 Vue.config.productionTip = false;
 
-// include main css
-import "@/assets/main.css";
+import "@/styles/main.scss";
 
 new Vue({
   router,

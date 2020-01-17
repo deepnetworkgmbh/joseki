@@ -4,7 +4,7 @@ import { PieChartOptions } from '../types/PieChartOptions';
 import { ImageScan } from '@/models/ImageScan';
 
 export class ChartService {
-	public static groupColors = [ 'gray', 'red', 'orange', 'green' ];
+	public static groupColors = [ '#B7B8A8', '#E33035', '#F8A462', '#21CCA5' ];
 
 	public static drawPieChart(summary: ResultSummary, element: HTMLInputElement) {
 		var data = google.visualization.arrayToDataTable([
@@ -19,7 +19,7 @@ export class ChartService {
 			title: summary.resultName,
 			titlePosition: 'none',
 			//width:320,
-			height: 250,
+			//height: 250,
 			slices: {
 				0: { color: this.groupColors[0] },
 				1: { color: this.groupColors[1] },
@@ -27,7 +27,7 @@ export class ChartService {
 				3: { color: this.groupColors[3] }
 			},
 			pieHole: 0.5,
-			chartArea: { width: '100%', height: '70%' },
+			chartArea: { top:0, width: '100%', height: '250' },
 			legend: {
 				position: 'top',
 				alignment: 'center',

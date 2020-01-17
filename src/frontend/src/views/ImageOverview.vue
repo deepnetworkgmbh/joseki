@@ -2,8 +2,8 @@
   <div>
     <Spinner v-if="!loaded" class="centered" />
     <div v-show="loaded" class="segment shadow" style="display: flex;flex-direction: row;">
-      <div style="padding: 10px;" id="chart" ref="chart1"></div>
-      <div style="padding: 10px;display: flex;flex-direction: column;justify-content: center;">
+      <div style="padding: 5px;" id="chart" ref="chart1"></div>
+      <div style="padding: 5px;display: flex;flex-direction: column;justify-content: center;">
         <div>
           This cluster uses
           <b>{{ data.length }} unique container images</b>:
@@ -36,7 +36,7 @@
           </div>
         </div>
       </div>
-      <div style="margin-top:25px;margin-left:10px;">
+      <div style="margin-top:15px;">
         <div v-for="(result,i) in results" v-bind:key="result.title">
           <ul>
             <li>
@@ -44,7 +44,7 @@
               <label v-bind:for="`target${i}`">{{ result.title }} ({{ result.images.length }})</label>
               <StatusBar :counters="result.counter" />
               <ul>
-                <li v-for="(image,j) in result.images" :key="`sub${j}`">
+                <li v-for="(image,j) in result.images" :key="`sub${j}`" class="sub-item">
                   <div style="float:right;" v-html="image.rowText"></div>
                   <i :class="image.icon"></i>
                   {{ image.shortImageName }}
