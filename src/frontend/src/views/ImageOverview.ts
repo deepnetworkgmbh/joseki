@@ -24,6 +24,7 @@ export default class ImageOverview extends Vue {
   groupByOptions: HTMLOptionElement[] = [];
   selectedAttribute: string = "namespace";
   results: Result[] = [];
+  filter: string = '';
 
   created() {
     this.service.getContainerImagesData().then(response => {
@@ -152,6 +153,13 @@ export default class ImageOverview extends Vue {
     return chunks[chunks.length - 1];
   }
 
+  paintFilterName(text:string){    
+    if (this.filter && this.filter.length > 1) {
+      return text.replace(this.filter, '<span class="highlight">' + this.filter + '</span>');
+    }
+    return text;
+  }
+
   renderList() {
     this.results = [];
 
@@ -163,9 +171,7 @@ export default class ImageOverview extends Vue {
         if (attribute.split(":")[0] === this.selectedAttribute) {
           // check if the image with the attribute value exists under the group
           const attributeValue = attribute.split(":")[1];
-          const imageIndex = this.results.findIndex(
-            o => o.title === attributeValue
-          );
+          const imageIndex = this.results.findIndex(o => o.title === attributeValue);
           if (imageIndex === -1) {
             this.results.push({
               // create new image under group
@@ -181,32 +187,31 @@ export default class ImageOverview extends Vue {
       }
     }
 
-    // ??
-    this.results.sort((a, b) =>
-      a.title < b.title ? -1 : a.title > b.title ? 1 : 0
-    );
+    // sort results by title
+    this.results.sort((a, b) => a.title < b.title ? -1 : a.title > b.title ? 1 : 0);
 
     // sort result groups by severity
     for (let i = 0; i < this.results.length; i++) {
       let resultGroup = this.results[i];
       resultGroup.counter = new NamespaceCounters();
 
+      if(this.filter && this.filter.length>1) { 
+        if(
+          resultGroup.title.indexOf(this.filter)===-1
+        ){ continue }
+        else{resultGroup.title = this.paintFilterName(resultGroup.title); }
+      }
+
       for (let j = 0; j < resultGroup.images.length; j++) {
         const rowAnalysis = this.parseSeverities(resultGroup.images[j]);
         resultGroup.images[j].rowText = rowAnalysis.text;
         resultGroup.images[j].order = rowAnalysis.score;
         if (rowAnalysis.text === "No Issues") {
-          //resultGroup.images[j].order = 1;
           resultGroup.counter.passing += 1;
-          //if (resultGroup.order > 1) resultGroup.order = 1;
         } else if (rowAnalysis.text === "No Data") {
-          //resultGroup.images[j].order = 2;
           resultGroup.counter.nodata += 1;
-          //if (resultGroup.order > 2) resultGroup.order = 2;
         } else {
-          //resultGroup.images[j].order = 0;
           resultGroup.counter.failing += 1;
-          //if (resultGroup.order > 0) resultGroup.order = 0;
         }
       }
     }
@@ -219,11 +224,9 @@ export default class ImageOverview extends Vue {
     // sort images by severity order
     for (let i = 0; i < this.results.length; i++) {
       const r = this.results[i];
-      r.images.sort((a, b) =>
-        a.order > b.order ? -1 : a.order < b.order ? 1 : 0
-      );
+      r.images.sort((a, b) => a.order > b.order ? -1 : a.order < b.order ? 1 : 0);
       for (let j = 0; j < r.images.length; j++) {
-        r.images[j].shortImageName = this.shortenImageName(r.images[j].image);
+        r.images[j].shortImageName = this.paintFilterName(this.shortenImageName(r.images[j].image));
         if (r.images[j].rowText === "No Issues") {
           r.images[j].icon = "fas fa-check noissues-icon";
           r.images[j].tip = "Click to see detailed image analysis";
@@ -234,9 +237,15 @@ export default class ImageOverview extends Vue {
           r.images[j].icon = "fas fa-exclamation-triangle warning-icon";
           r.images[j].tip = "Click to see detailed image analysis";
         }
-        r.images[j].link =
-          "/image-detail/" + encodeURIComponent(r.images[j].image);
+        r.images[j].link = "/image-detail/" + encodeURIComponent(r.images[j].image);
       }
+
+      if(this.filter && this.filter.length>1) { 
+        r.images = r.images.filter(x=> x.shortImageName.includes(this.filter));
+      }
+
     }
+
+    
   }
 }
