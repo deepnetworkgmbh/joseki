@@ -31,7 +31,7 @@
         </div>
         <div style="float:left;">
           <div>
-            <input type="search" class="searchbox" onkeyup="search(this)" />
+            <input type="search" class="searchbox" v-model="filter" v-on:keyup="renderList()" />
             <i class="fas fa-search search-icon"></i>
           </div>
         </div>
@@ -39,15 +39,15 @@
       <div style="margin-top:15px;">
         <div v-for="(result,i) in results" v-bind:key="result.title">
           <ul>
-            <li>
+            <li v-if="result.images.length>0">
               <input type="checkbox" v-bind:id="`target${i}`" checked />
-              <label v-bind:for="`target${i}`">{{ result.title }} ({{ result.images.length }})</label>
+              <label v-bind:for="`target${i}`" v-html='`${result.title} (${result.images.length})`'></label>
               <StatusBar :counters="result.counter" />
               <ul>
                 <li v-for="(image,j) in result.images" :key="`sub${j}`" class="sub-item">
                   <div style="float:right;" v-html="image.rowText"></div>
                   <i :class="image.icon"></i>
-                  {{ image.shortImageName }}
+                  <span v-html="image.shortImageName"></span>
                   <router-link :to="image.link" class="more-info">
                     <span class="tool" :data-tip="image.tip">
                       <i class="far fa-question-circle tip-icon"></i>
