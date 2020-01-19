@@ -1,72 +1,67 @@
 # Product Overview
 
-Security is a massive and complicated topic and there are dozens of open sourced tools on the market that can help to make a product safer. The tools often are summoned to enforce known best-practices to docker images, kubernetes, and cloud infrastructure at large.
-
-Unfortunately, there are problems:
+Security is a massive and complicated topic and there are dozens of open-sourced tools on the market that can help to make a product safer. The tools often are summoned to enforce known best-practices to docker images, kubernetes, and cloud infrastructure at large. However, this approach that relies on many tools comes up with its own set of problems:
 
 - a lot of tools cover just a single aspect of security management
 - tools are disconnected and just figuring out how to use them together is a hassle
 - often, they have no reporting capabilities and no historical overview.
 
-*Kubegaard* is here to fill in these gaps.
+*Kubegaard* is here to address these problems.
 
-## Kubegaard cornerstones
+## What is Kubegaard?
 
-Kubegaard 
+Kubegaard is an open source security tool that is mainly designed to **audit the configuration of cloud systems**. It differs from other tools by combining various scanners to **target many object types**, reducing the number of tools needed to be learned, installed and maintained.
 
-Fundamentally the product focuses on configuration that you **already** have in your system and help you to improve it.
+Audit results are seamlessly combined in the user interface, making it easier to consume and understand. The results are **ranked based on severity** and each discovered issue is accompanied with a **recommended action** to resolve.
 
-- The product supports scheduled configuration audits/scans.
-  - The schedule can be configured to run with certain periods
-  - In the V1 version, from the UI you cannot select a subset of targets to be scanned. However, via scanners configuration, you can limit what the scanners can access and will scan.
+Kubegaard also offers **a historical view** and **reporting** to monitor the security of your systems over time and inform relevant parties from the state of affairs.
 
-- The product can audit different types of objects via different underlying scanners. These objects are:
-  - cloud infrastructure: databases, networks, vendor-specific products.
+### Kubegaard cornerstones
+
+- Scheduled configuration audits via scans
+  - Scan periods can be adjusted (e.g. daily, weekly, etc.)
+  - Currently, scan targets can be limited via configuration only. In the future, we're planning to allow this via the UI.
+- In the V1 version, from the UI you cannot select a subset of targets to be scanned. However, via scanners configuration, you can limit what the scanners can access and will scan.
+
+- Audit different types of objects via different underlying scanners. These objects are:
+  - azure cloud infrastructure: databases, networks, vendor-specific products.
   - k8s objects: deployment, statefulset, etc.
   - docker images.
-
-- The product ranks all found issues based on their severity.
+- Rank all found issues based on their severity.
   - The user can override the severity of specific types of issues.
+- Suggestions for remedies or solutions to discovered issues whenever possible.
+  - Some problems may not have a solution at the moment. (e.g. a CVE that is recently discovered and is not yet addressed) 
+- Reporting and historical overview
 
-- The product suggests remedies or solutions to discovered issues whenever possible.
-  - a CVE that is discovered may not be addressed yet. There may not be a solution to offer.
+### Out of scope
 
-- The product offers reporting and historical overview.
-
-**The V1 version of the product is not designed**:
-
-- to prevent issues being introduced to a system but rather catch issues on a given system. Therefore, it's not suitable to use as part of CI/CD pipelines and associated tasks.
-- for real-time protection - scans/audit are expected to be scheduled daily/hourly.
-- to address any of found issues directly. (i.e. you cannot fix any issue from the product itself, it just displays results + suggestions)
+- Preventing issues being introduced to a system but rather catch issues on a given system. Therefore, it's not suitable to use as part of CI/CD pipelines and associated tasks.
+- Real-time protection - scans/audit are expected to be scheduled daily/hourly.
+- Addressing any of the found issues directly. (i.e. you cannot fix any issue from the product itself, it just displays results + suggestions)
 
 ## Installation, Hosting, Runtime
 
-- Initial version is designed to be installed to the customer's own systems (i.e. on premise or on cloud).
-  - SaaS is out of scope currently
+Kubegaard is currently designed to be installed in your systems (i.e. on premise or on cloud). SaaS is currently out of scope.
 
-- The product consists of:
-  - `backend` and `frontend` applications. `Frontend` depends on `Backend` API.
-  - `scanners` jobs, that depends only on scanned target.
-  - auxiliary infrastructure: database, blob storage, messaging service (possible to use a cloud-provider for all of these).
+The product, at a high level, consists of:
 
-- The product can be installed into a single node / VM with all of its components, as long as it has access to targets to be scanned.
-  - Individual scanners *might be* installed separately and be horizontally scalable. This depends on the scanner type and would require some configuration during the installation.
-    - For example: Multiple instances of `trivy` can be installed and the product would divide the work between these instances to increase throughput.
+- `backend` and `frontend` applications. `Frontend` depends on `Backend` API.
+- `scanners` jobs, that depends only on the scanned target.
+- auxiliary infrastructure: database, blob storage, messaging service (possible to use a cloud-provider for all of these).
 
-- The product needs read-only access to targets to be scanned (cloud-vendor and/or kubernetes apis).
+The entire product can be installed into a single node (i.e. a VM) with all of its components, as long as it has access to targets to be scanned. We recommend installing the product into your private network and not exposing publicly as it doesn't support any authentication.
 
-- The product installation supports configuration.
-  - individual scanners can be enabled / disabled.
+Individual scanners *can be* installed separately and scaled horizontally. This depends on the scanner type and would require some configuration during the installation. For example, multiple instances of `trivy` can be installed and the product would divide the work between these instances to increase throughput. It may not necessarily be as simple for other types of scanners due to the nature of the scan being performed.
 
-- The product UI runs on the browser.
+The product needs read-only access to targets to be scanned (cloud-vendor and/or kubernetes APIs). Scanners have each their own configuration. They can be enabled or disabled based on needs.
 
-- The product API is meant to be used by the UI only and is not designed to be used by other developers atm.
+The product `frontend` is a SPA that runs on the browser. The `backend` exposes a set of APIs that are designed to be consumed by the UI. Currently, the APIs are not meant to be used by other developers.
 
-- The V1 version of the product is expected to be used in customer's private network.
+The installation requires system or platform engineer who understands system topology and security implications of installed components. However, the end-product (web-interface) could be used by any team members: dev/ops/dev-ops teams, security experts, and management.
 
-- Installation process requires system/platform engineer, who understands system topology and security implications of installed components. However the end-product (web-interface) could be used by any team members: dev/ops/dev-ops teams, security experts, management.
+## Roadmap
 
-## V1 Features
+### V1 - Initial Release
 
 - Scanner Types:
   - Container Image vulnerabilities scanner [trivy](https://github.com/aquasecurity/trivy)
@@ -97,9 +92,7 @@ Fundamentally the product focuses on configuration that you **already** have in 
   - User can specifically suppress an issue or basically asked it to be not reported.
   - This can be done via the UI or can be done via a configuration file.
 
-## Further enhancement
-
-## V2
+### V2
 
 - New scanner types:
   - Web application scanners. For example, [ZAProxy](https://github.com/zaproxy/zaproxy)
@@ -118,7 +111,7 @@ Fundamentally the product focuses on configuration that you **already** have in 
   - The product supports scanners provisioning from UI
 - The product could expose check-results as metrics, that can be visualized in 3rd party tools (for example, Grafana) or be alerted (for example, alert-manager or Grafana). In this case we need to decide on the interface of this (Prometheus metrics schema is probably a good idea).
 
-## V3
+### V3
 
 service discover - component relationship
 
