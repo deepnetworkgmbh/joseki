@@ -8,7 +8,7 @@ Security is a massive and complicated topic and there are dozens of open-sourced
 
 *Kubegaard* is here to address these problems.
 
-## What is Kubegaard?
+## What is Kubegaard
 
 Kubegaard is an open source security tool that is mainly designed to **audit the configuration of cloud systems**. It differs from other tools by combining various scanners to **target many object types**, reducing the number of tools needed to be learned, installed and maintained.
 
@@ -18,19 +18,18 @@ Kubegaard also offers **a historical view** and **reporting** to monitor the sec
 
 ### Kubegaard cornerstones
 
-- Scheduled configuration audits via scans
+- *Scans* - scheduled configuration audits
   - Scan periods can be adjusted (e.g. daily, weekly, etc.)
   - Currently, scan targets can be limited via configuration only. In the future, we're planning to allow this via the UI.
 - In the V1 version, from the UI you cannot select a subset of targets to be scanned. However, via scanners configuration, you can limit what the scanners can access and will scan.
-
 - Audit different types of objects via different underlying scanners. These objects are:
   - azure cloud infrastructure: databases, networks, vendor-specific products.
   - k8s objects: deployment, statefulset, etc.
   - docker images.
 - Rank all found issues based on their severity.
   - The user can override the severity of specific types of issues.
-- Suggestions for remedies or solutions to discovered issues whenever possible.
-  - Some problems may not have a solution at the moment. (e.g. a CVE that is recently discovered and is not yet addressed) 
+- Suggest remedies or solutions to discovered issues whenever possible.
+  - Some problems may not have a solution at the moment. (e.g. a CVE that is recently discovered and is not yet addressed)
 - Reporting and historical overview
 
 ### Out of scope
@@ -89,7 +88,7 @@ The installation requires system or platform engineer who understands system top
   - (Implementation detail: every scanner already has its own internal unique identifiers. We can just add our own prefix to them)
 
 - The product supports suppressions / tolerations.
-  - User can specifically suppress an issue or basically asked it to be not reported.
+  - User can specifically suppress an issue or basically ask it to be not reported.
   - This can be done via the UI or can be done via a configuration file.
 
 ### V2
@@ -107,14 +106,14 @@ The installation requires system or platform engineer who understands system top
 - A manual scan can be triggered from the UI.
 - The product supports target discovery.
   - It lists all the scannable targets discovered to the user
-  - User can select/unselect targets from the list.
-  - The product supports scanners provisioning from UI
+  - Product gives instructions how to install these scanners manually
 - The product could expose check-results as metrics, that can be visualized in 3rd party tools (for example, Grafana) or be alerted (for example, alert-manager or Grafana). In this case we need to decide on the interface of this (Prometheus metrics schema is probably a good idea).
 
 ### V3
 
-service discover - component relationship
-
+- Automated scanners provisioning/deptovisioning:
+  - User can select/unselect targets from the *target discovery* list.
+  - The product supports scanners provisioning from UI
 - alternative scanners:
   - Container Image vulnerabilities scanners. For example, [clair](https://github.com/quay/clair).
   - Kubernetes objects validators. For example, [cluster-lint](https://github.com/digitalocean/clusterlint).

@@ -74,7 +74,7 @@ Therefore, each service should be able to run with good-enough defaults, but als
 
 - `frontend` - a web application, which interacts with end-user;
 - `backend` - expose web-api for `frontend` and does the most of business logic: shaping audit data, historical view, reporting, configuration. To simplify the first phase of development, the entire backend is created as a single service.
-- `scanners` - a set of applications (one per audit/scan type), that once in a while perform audit/scan operation and saves raw results to a common blob-storage. Each scanner job can be deployed to different locations: cloud or bare-metal; VMs, kubernetes or [ACI](https://azure.microsoft.com/en-us/services/container-instances/)/[Cloud Run](https://cloud.google.com/run/)/[Fargate](https://aws.amazon.com/fargate/); FaaS.
+- `scanners` - a set of applications (one per audit/scan type), that once in a while perform audit/scan operation and enqueue raw results to a Queue Service. Each scanner job can be deployed to different locations: cloud or bare-metal; VMs, kubernetes or [ACI](https://azure.microsoft.com/en-us/services/container-instances/)/[Cloud Run](https://cloud.google.com/run/)/[Fargate](https://aws.amazon.com/fargate/); FaaS.
 
 ![General-overview](./docs/diagrams/kubegaard-white.png)
 
@@ -205,7 +205,7 @@ All the sources, documentation, getting-started samples are stored in the single
   - `frontend`: web-application,
   - `infrastructure`: templates/scripts to provision required infrastructure in misc clouds,
   - `scanners` has a dedicated sub-folder for each scanner type.
-- `root` has project-level documents: [readme](./README.md), tech-design (this), [roadmap](./ROADMAP.md), [contributor guidelines](./CONTRIBUTING.md), and others
+- `root` has project-level documents: [readme](./README.md), [product overview](./PRODUCTOVERVIEW.md), tech-design (this), [roadmap](./ROADMAP.md), [contributor guidelines](./CONTRIBUTING.md), and others
 
 ### Ready to run at any commit in master
 
@@ -231,7 +231,7 @@ The repository has a set of continuous-integration pipelines to protect `master`
 
 Logically, pipelines can be grouped into three categories:
 
-1. _Pull Request_. They validate that code is safe to be merged: compile; run tests/analyzers/linters. Each job, service, infrastructure templates might have separate pipeline.
+1. _Pull Request_. They validate that code is safe to be merged: compile; run tests/analyzers/linters. Each scanner, service, infrastructure templates might have separate pipeline.
 2. _Commit to `master`_. These pipelines main task is to publish ready-to-use docker images. Each job, service, infrastructure templates might have separate pipeline.
 3. _Release_ - ensures getting-started samples are in working state, and creates Github release with pinned services versions.
 
