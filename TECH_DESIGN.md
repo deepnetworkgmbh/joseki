@@ -17,7 +17,7 @@
     - [Getting Started examples](#getting-started-examples)
     - [CI/CD](#cicd)
 
-*Kubegaard* should:
+*Joseki* should:
 
 - integrate multiple security/configuration related products under a common umbrella
 
@@ -58,25 +58,25 @@
 - provide extensibility points for adding new
 
   - scanners
-  - persistence layer to store historical data and *Kubegaard* configuration
+  - persistence layer to store historical data and *Joseki* configuration
   - reporting destinations
   - task-tracking integrations
 
 ## Easy to start, but customizable
 
-When a new user starts working with *Kubegaard*, the application needs to *just work*, but once it works, it needs to be fully customizable and fully adaptable.
+When a new user starts working with *Joseki*, the application needs to *just work*, but once it works, it needs to be fully customizable and fully adaptable.
 
 Therefore, each service should be able to run with good-enough defaults, but also be flexible to change these defaults by experienced user.
 
 ## Components
 
-*Kubegaard* consists of three main parts:
+*Joseki* consists of three main parts:
 
 - `frontend` - a web application, which interacts with end-user;
 - `backend` - expose web-api for `frontend` and does the most of business logic: shaping audit data, historical view, reporting, configuration. To simplify the first phase of development, the entire backend is created as a single service.
 - `scanners` - a set of applications (one per audit/scan type), that once in a while perform audit/scan operation and enqueue raw results to a Queue Service. Each scanner job can be deployed to different locations: cloud or bare-metal; VMs, kubernetes or [ACI](https://azure.microsoft.com/en-us/services/container-instances/)/[Cloud Run](https://cloud.google.com/run/)/[Fargate](https://aws.amazon.com/fargate/); FaaS.
 
-![General-overview](./docs/diagrams/kubegaard-white.png)
+![General-overview](./docs/diagrams/Joseki-white.png)
 
 ### Scanners
 
@@ -93,7 +93,7 @@ Detailed scanners technical design is located next to scanner sources: `/src/sca
 
 ### Backend
 
-**Backend** - is monolithic application, which encapsulate the most of *Kubegaard* business logic:
+**Backend** - is monolithic application, which encapsulate the most of *Joseki* business logic:
 
 - audit data normalization,
 - house-keeping the configuration,
@@ -122,7 +122,7 @@ All the services are wrapped in docker-containers and could run on any infrastru
 `Backend` application requires a **Database** to persist:
 
 - normalized scan/audit results;
-- `Kubegaard` configuration
+- `Joseki` configuration
 - reports metadata
 
 `Backend` reads audit/scan results from **Messaging Service** and uploads raw audit/scan results to **Blob Storage**.
@@ -175,7 +175,7 @@ Where:
 
 ## Technologies
 
-For initial implementation *Kubegaard* uses:
+For initial implementation *Joseki* uses:
 
 - [Vue.js](https://vuejs.org/) for **Frontend**;
 - [dotnet core](https://github.com/dotnet/core) for **Backend**;
@@ -235,4 +235,4 @@ Logically, pipelines can be grouped into three categories:
 2. _Commit to `master`_. These pipelines main task is to publish ready-to-use docker images. Each job, service, infrastructure templates might have separate pipeline.
 3. _Release_ - ensures getting-started samples are in working state, and creates Github release with pinned services versions.
 
-*Continuous Delivery* pipeline, which deploys *Kubegaard* to the real infrastructure is out of this repository scope.
+*Continuous Delivery* pipeline, which deploys *Joseki* to the real infrastructure is out of this repository scope.
