@@ -74,9 +74,9 @@ Therefore, each service should be able to run with good-enough defaults, but als
 
 - `frontend` - a web application, which interacts with end-user;
 - `backend` - expose web-api for `frontend` and does the most of business logic: shaping audit data, historical view, reporting, configuration. To simplify the first phase of development, the entire backend is created as a single service.
-- `scanners` - a set of applications (one per audit/scan type), that once in a while perform audit/scan operation and enqueue raw results to a Queue Service. Each scanner job can be deployed to different locations: cloud or bare-metal; VMs, kubernetes or [ACI](https://azure.microsoft.com/en-us/services/container-instances/)/[Cloud Run](https://cloud.google.com/run/)/[Fargate](https://aws.amazon.com/fargate/); FaaS.
+- `scanners` - a set of applications (one per audit/scan type), that once in a while perform audit/scan operation and uploads raw results to a Blob Storage. Each scanner job can be deployed to different locations: cloud or bare-metal; VMs, kubernetes or [ACI](https://azure.microsoft.com/en-us/services/container-instances/)/[Cloud Run](https://cloud.google.com/run/)/[Fargate](https://aws.amazon.com/fargate/); FaaS.
 
-![General-overview](./docs/diagrams/Joseki-white.png)
+![General-overview](./docs/diagrams/joseki-white.png)
 
 ### Scanners
 
@@ -87,7 +87,7 @@ Each scanner lifecycle is similar to the following:
 - being scheduled to a particular compute resources (VM, k8s, FaaS). Scheduling might happen according to user-defined schedule (cron) or triggered by event (message in a queue);
 - read target (k8s, cloud resources, docker-image) configuration;
 - validates target configuration;
-- writes audit results to a **Messaging Service**.
+- writes audit results to a **Blob Storage**.
 
 Detailed scanners technical design is located next to scanner sources: `/src/scanners/{scanner-type}/README.md`, where `{scanner-type}` is one of `trivy`, `polaris`, `az-sk`, `kube-bench`.
 
@@ -101,7 +101,7 @@ Detailed scanners technical design is located next to scanner sources: `/src/sca
 - reporting
 - third-party integrations
 
-It exposes API for `Frontend` application and asynchronously communicates with `Scanners` through **Messaging Queue**.
+It exposes API for `Frontend` application and asynchronously communicates with `Scanners` through **Blob Storage** and **Messaging Queue**.
 
 The application is hosted as docker-container and gets own configuration through `settings.json` file and environment variables.
 
@@ -125,9 +125,9 @@ All the services are wrapped in docker-containers and could run on any infrastru
 - `Joseki` configuration
 - reports metadata
 
-`Backend` reads audit/scan results from **Messaging Service** and uploads raw audit/scan results to **Blob Storage**.
+`Backend` reads audit/scan results from **Blob Storage**.
 
-`Scanners` uses **Messaging Service** to publish audit/scan results to it and some of them might use it as trigger source.
+`Scanners` uses **Blob Storage** to upload audit/scan results and some of them might use **Messaging Service** as trigger source.
 
 ### Inter-service communication
 
@@ -144,34 +144,53 @@ Available API endpoints are described at `https://{scanners-url:port}/swagger`.
 
 #### Backend and Scanners
 
-`Backend` and `Scanners` asynchronously interact through **Messaging Service**:
+`Backend` and `Scanners` asynchronously interact through **Blob Storage** and **Messaging Service**:
 
-- `Scanners` enqueue audit/scan results and own metadata in agreed format to the service;
-- `Backend` dequeue messages, saves raw data to **Blob Storage** and normalized data to **Database**.
+- `Scanners` uploads audit/scan results and own metadata in agreed format to the service;
+- `Backend` reads raw data from **Blob Storage** and writes normalized data to **Database**.
 
-The message consists of headers and payload, where `headers` is a set of key-value pairs and `payload` is `base64` encoded json with scan/audit result:
+Each scanner has access to the only one folder in **Blob Storage**, while the entire storage file system might be shared between several scanners. The overall **Blob Storage** file system might looks like:
 
-```json
-{
-  "headers":{
-    "auditId": "string",
-    "timestamp": "data-time",
-    "scanner-type": "string",
-    "scanner-id": "string",
-    "scanner-periodicity": "string",
-    "payload-version": "string",
-    "payload-chunks": "int",
-    "payload-current-chunk": "int"
-  },
-  "payload": "base64-json"
-}
+```plain
+.
+├── az-sk-7b71f5c/
+│  ├── az-sk-7b71f5c.meta
+│  ├── 20200121-090000-689e203/
+│  │   ├── meta
+│  │   └── audit.json
+│  └── 20200120-090000-321b236/
+│      ├── meta
+│      └── audit.json
+├── polaris-98fa7fb
+│  ├── polaris-98fa7fb.meta
+│  ├── 20200121-000000-3c2cc77/
+│  │   ├── meta
+│  │   ├── audit.json
+│  │   └── k8s-meta.json
+│  └── 20200121-060000-de80123/
+│      ├── meta
+│      ├── audit.json
+│      └── k8s-meta.json
+└── trivy-a334676
+│  ├── trivy-a334676.meta
+│  ├── 20200121-081222-c59f5ef/
+│  │   ├── meta
+│  │   └── audit.json
+│  └── 20200121-081233-a200d35/
+│      ├── meta
+│      └── audit.json
+...
 ```
 
-Where:
+Where each root level folder corresponds to a separate scanner instance and contains:
 
-- `payload-chunks` and `payload-current-chunk` helps to split huge message into parts as any **Messaging Service** might have own message-size limitations.
-- if payload is too big to be transmitted with a single message, `payload-chunks` would have number > 1
-- `payload` is encoded in base64, because scan/audit result might contain characters, that can corrupt message envelop or are not unsupported by **Messaging Service**
+- `{scanner-type}-{scanner-short-id}.meta` file - scanner instance metadata, serialized as json object. The metadata contains
+  - `scanner-type` - `as-sk`, `polaris`, `trivy`, `kube-bench`,
+  - `scanner-id` - UUID serialized to string,
+  - `scanner-periodicity` - `on-cron-{cron-expression}` or `on-message`,
+  - `heartbeat` - [unix epoch time](https://en.wikipedia.org/wiki/Unix_time) in seconds.
+- `{yyyyMMdd-HHmmss}-{hash:7}` - separate folder for each audit. Folder name consist of UTC date and time + 7 random hex characters to ensure uniqueness.
+  - audit folder may contain any number of files (depends on scanner type)
 
 ## Technologies
 
