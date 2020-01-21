@@ -1,6 +1,6 @@
-# Kubegaard
+# Joseki
 
-*Kubegaard* is a set of services to help you keeping cloud-infrastructure, kubernetes, and docker-images configuration closer to known best-practices.
+*Joseki* is a set of services to help you keeping cloud-infrastructure, kubernetes, and docker-images configuration closer to known best-practices.
 
 The project integrates multiple open-sourced tools:
 

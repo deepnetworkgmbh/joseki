@@ -3,7 +3,7 @@
     <div class="logo">
       <router-link to="/">
       <font-awesome-icon icon="shield-alt" />
-      KubeGaard</router-link>
+      Joseki</router-link>
     </div>
     <div class="links">
       <router-link to="/">Cluster Overview</router-link>

@@ -1,4 +1,4 @@
-# kubegaard
+# Joseki
 
 ## Project setup
 ```

@@ -6,17 +6,17 @@ Security is a massive and complicated topic and there are dozens of open-sourced
 - tools are disconnected and just figuring out how to use them together is a hassle
 - often, they have no reporting capabilities and no historical overview.
 
-*Kubegaard* is here to address these problems.
+*Joseki* is here to address these problems.
 
-## What is Kubegaard
+## What is Joseki
 
-Kubegaard is an open source security tool that is mainly designed to **audit the configuration of cloud systems**. It differs from other tools by combining various scanners to **target many object types**, reducing the number of tools needed to be learned, installed and maintained.
+Joseki is an open source security tool that is mainly designed to **audit the configuration of cloud systems**. It differs from other tools by combining various scanners to **target many object types**, reducing the number of tools needed to be learned, installed and maintained.
 
 Audit results are seamlessly combined in the user interface, making it easier to consume and understand. The results are **ranked based on severity** and each discovered issue is accompanied with a **recommended action** to resolve.
 
-Kubegaard also offers **a historical view** and **reporting** to monitor the security of your systems over time and inform relevant parties from the state of affairs.
+Joseki also offers **a historical view** and **reporting** to monitor the security of your systems over time and inform relevant parties from the state of affairs.
 
-### Kubegaard cornerstones
+### Joseki cornerstones
 
 - *Scans* - scheduled configuration audits
   - Scan periods can be adjusted (e.g. daily, weekly, etc.)
@@ -40,7 +40,7 @@ Kubegaard also offers **a historical view** and **reporting** to monitor the sec
 
 ## Installation, Hosting, Runtime
 
-Kubegaard is currently designed to be installed in your systems (i.e. on premise or on cloud). SaaS is currently out of scope.
+Joseki is currently designed to be installed in your systems (i.e. on premise or on cloud). SaaS is currently out of scope.
 
 The product, at a high level, consists of:
 
