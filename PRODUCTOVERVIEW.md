@@ -98,16 +98,22 @@ The installation requires system or platform engineer who understands system top
   - Cloud infrastructure auditors. For example, [cloud-sploit](https://github.com/cloudsploit), [scout-suite](https://github.com/nccgroup/ScoutSuite), [security-monkey](https://github.com/Netflix/security_monkey).
   - Augment kube-bench with [kube-hunter](https://github.com/aquasecurity/kube-hunter)
   - Kubernetes anomaly detectors. For example, [falco](https://github.com/falcosecurity/falco)
-- RBAC
+  - Scan VM configurations / images
+- Role Based Authentication (RBAC) 
+- Role Based Views
+- Support Attestation
 - creating new security checks (likely, [Open Policy Agent](https://www.openpolicyagent.org/) integration)
 - Issue tracking: integrates with Jira / Azure DevOps etc
   - Create an issue/task etc in the bug tracking system for a found issue.
   - Status of these issues can be tracked from the product.
+- Support triaging of individual issues and taking actions.
 - A manual scan can be triggered from the UI.
-- The product supports target discovery.
+- The product exposes underlying target discovery.
   - It lists all the scannable targets discovered to the user
-  - Product gives instructions how to install these scanners manually
+  - Product gives instructions how to install these scanners manually and make sure scanners have access to all discovered targets
 - The product could expose check-results as metrics, that can be visualized in 3rd party tools (for example, Grafana) or be alerted (for example, alert-manager or Grafana). In this case we need to decide on the interface of this (Prometheus metrics schema is probably a good idea).
+- Suppressions can have a time limit. i.e. suprress for a month etc
+- Publish schema for scanner / backend integration (and / or) backend / UI integration to make it easier for 3rd parties to add their scanner to our product
 
 ### V3
 
