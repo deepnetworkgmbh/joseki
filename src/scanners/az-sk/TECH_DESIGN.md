@@ -7,7 +7,7 @@ The scanner itself does not add anything new to the original az-sk tool. You can
 - invoke az-sk with provided configuration;
 - upload results to a **Blob Storage** service.
 
-**NOTE:** az-sk requires Windows OS, therefore the scanner also could run only on Windows.
+**NOTE:** az-sk in most cases is used on Windows OS, because of dependency on PowerShell. However there is [AzSK on PowerShell Core](https://azsk.azurewebsites.net/08-Miscellaneous-Features/Readme.html#try-azsk-on-powershell-core), which should unlock Linux capabilities. (**TODO:** ensure, it's possible to run it in linux container)
 
 Please, refer to generic `scanners` [README](/src/scanners/README.md) for common scanners requirements.
 

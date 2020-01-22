@@ -111,7 +111,7 @@ The installation requires system or platform engineer who understands system top
 
 ### V3
 
-- Automated scanners provisioning/deptovisioning:
+- Automated scanners provisioning/deprovisioning:
   - User can select/unselect targets from the *target discovery* list.
   - The product supports scanners provisioning from UI
 - alternative scanners:
