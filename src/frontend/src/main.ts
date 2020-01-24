@@ -1,6 +1,7 @@
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
+import "@/styles/main.scss";
 
 // include font awesome
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -15,7 +16,6 @@ library.add(faShieldAlt, faTimes, faQuestionCircle);
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 Vue.config.productionTip = false;
 
-import "@/styles/main.scss";
 
 new Vue({
   router,

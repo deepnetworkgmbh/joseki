@@ -2,22 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
-  margin:0;
-  padding:0;
-  height: 98vh;
-  line-height: normal;
-}
-
 body {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-smooth: subpixel-antialiased;
-  -webkit-font-smoothing: subpixel-antialiased;
-  background-color: #f5f5f5;
+  font-family: "Noto Sans", Helvetica, Arial, sans-serif;
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
+   -webkit-font-smoothing: subpixel-antialiased;
 }
 
 @import "colors.scss";
 @import "charts.scss";
 @import url("https://use.fontawesome.com/releases/v5.8.1/css/all.css");
+@import url("https://fonts.googleapis.com/css?family=Noto+Sans&display=swap");
+
+.segment {
+  @apply flex flex-row justify-around border rounded-lg p-2 mb-3;
+}
+
+.segment-noborder {
+  @apply flex flex-row justify-around p-2 mb-3;
+}
+
+
+.footer {
+  @apply text-center text-xs my-2;
+}

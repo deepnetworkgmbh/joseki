@@ -25,7 +25,12 @@ export default class ClusterOverview extends Vue {
         this.loaded = true;
         this.setupCharts();
       });
+      window.addEventListener("resize", this.setupCharts);
 
+  }
+
+  destroyed() {
+    window.removeEventListener("resize", this.setupCharts);
   }
 
   setupCharts(){

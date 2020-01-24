@@ -23,8 +23,10 @@
       color: $color-link;
       margin-left: 15px;
       cursor: pointer;
+      font-size:12px;
       &.router-link-exact-active {
-        color: $color-link-visited;
+        padding-bottom: 2px;
+        border-bottom: solid 2px $color-link-visited;
       }
     }
   }
