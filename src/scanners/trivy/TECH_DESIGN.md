@@ -1,5 +1,15 @@
 # Trivy Scanner
 
+- [Trivy Scanner](#trivy-scanner)
+  - [Implementation details](#implementation-details)
+  - [Configuration](#configuration)
+  - [Blob Storage service](#blob-storage-service)
+    - [Azure Blob Storage](#azure-blob-storage)
+    - [Audit result format](#audit-result-format)
+    - [Scanner metadata](#scanner-metadata)
+  - [Messaging service](#messaging-service)
+    - [Azure Queue Storage](#azure-queue-storage)
+
 The scanner wraps [Trivy by Aqua Security](https://github.com/aquasecurity/trivy) - vulnerability scanner for containers.
 
 The scanner itself does not add anything new to the underlying trivy application. You can consider it only as a thin trivy scan data shipper:
@@ -79,6 +89,7 @@ Each `heartbeat-period` seconds, the scanner should update general metadata file
   "scanner-type": "trivy",
   "scanner-id": "{UUID}",
   "scanner-periodicity": "on-message",
+  "heartbeat-periodicity": "int",
   "heartbeat": 1579619671
 }
 ```
