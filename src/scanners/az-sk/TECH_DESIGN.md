@@ -1,5 +1,13 @@
 # az-sk Scanner
 
+- [az-sk Scanner](#az-sk-scanner)
+  - [Implementation details](#implementation-details)
+  - [Configuration](#configuration)
+  - [Blob Storage service](#blob-storage-service)
+    - [Azure Blob Storage](#azure-blob-storage)
+    - [Audit result format](#audit-result-format)
+    - [Scanner metadata](#scanner-metadata)
+
 The scanner wraps [Secure DevOps Kit for Azure by Microsoft](https://azsk.azurewebsites.net/index.html) - Azure subscription security validator.
 
 The scanner itself does not add anything new to the original az-sk tool. You can consider it only as a thin az-sk audit data shipper:
@@ -64,6 +72,9 @@ After each audit iteration is completed, the scanner should update general metad
   "scanner-type": "az-sk",
   "scanner-id": "{UUID}",
   "scanner-periodicity": "on-cron-{cron-expression}",
+  "heartbeat-periodicity": "int",
   "heartbeat": 1579619671
 }
 ```
+
+Where `heartbeat-periodicity` is scanner-periodicity in seconds.

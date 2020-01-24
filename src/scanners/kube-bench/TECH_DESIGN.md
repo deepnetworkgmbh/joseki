@@ -1,5 +1,13 @@
 # kube-bench Scanner
 
+- [kube-bench Scanner](#kube-bench-scanner)
+  - [Implementation details](#implementation-details)
+  - [Configuration](#configuration)
+  - [Blob Storage service](#blob-storage-service)
+    - [Azure Blob Storage](#azure-blob-storage)
+    - [Audit result format](#audit-result-format)
+    - [Scanner metadata](#scanner-metadata)
+
 The scanner wraps [kube-bench by Aqua Security](https://github.com/aquasecurity/kube-bench), which checks whether Kubernetes is deployed securely by running the checks documented in the [CIS Kubernetes Benchmark](https://www.cisecurity.org/benchmark/kubernetes/).
 
 The scanner itself does not add anything new to the original kube-bench application. You can consider it only as a thin kube-bench audit data shipper:
@@ -61,6 +69,9 @@ After each audit iteration is completed, the scanner should update general metad
   "scanner-type": "kube-bench",
   "scanner-id": "{UUID}",
   "scanner-periodicity": "on-cron-{cron-expression}",
+  "heartbeat-periodicity": "int",
   "heartbeat": 1579620202
 }
 ```
+
+Where `heartbeat-periodicity` is scanner-periodicity in seconds.

@@ -2,10 +2,6 @@
 
 `Scanners` - short-lived applications, that perform a single infrastructure audit. They can be scheduled like a cron job, or be triggered by a message in a queue.
 
-Every single application is independent from one another. In most cases they require only read-only access to scanned target and **Blob Storage** to upload audit results. High-level communication overview described at general [tech design file](/TECH_DESIGN.md#backend-and-scanners).
-
-Every scanner is hosted as docker container.
-
 ## Supported Scanner types
 
 *Joseki* supports the following `scanners`:
@@ -16,42 +12,3 @@ Every scanner is hosted as docker container.
 - [trivy](/src/scanners/trivy/TECH_DESIGN.md) to scan docker images for known vulnerabilities.
 
 Each link leads to corresponding scanner technical design document.
-
-## Supported Blob Storage implementation
-
-Access to **Blob Storage** service in each `scanner` application is abstracted to have a possibility to use different implementations.
-
-At the moment, *Joseki* supports only [Azure Blob Storage](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blobs-overview).
-
-### Azure Blob Storage
-
-Each `scanner` application has write-only access to own directory in a single Azure Storage Account.
-
-During the `scanner` provisioning process, A new folder with name `{scanner-type}-{scanner-id-short-hash}` is created and [Shared Access Signature](https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview) token is created with write-only permission. (**TODO:** add SAS token rotation).
-
-### Scanner metadata
-
-Each scanner instance should maintain own metadata file at `/{scanner-type}-{scanner-id-short-hash}/{scanner-type}-{scanner-id-short-hash}.meta`
-
-## Supported Message Queue implementation
-
-At the moment, only `trivy` scanners are triggered based on messages from **Message Queue** service. Access to the service in the scanner is abstracted to have a possibility to use different implementations.
-
-At the moment, *Joseki* supports only [Azure Queue Storage](https://docs.microsoft.com/en-us/azure/storage/queues/storage-queues-introduction).
-
-### Azure Queue Storage
-
-...
-
-## Observability
-
-Each `scanners` application writes log-events to standard output. Logs could be serialized in two formats depending on `LOG_FORMAT` environment variable:
-
-- plain-text string
-- structured form encoded as `json` string .
-
-The initial version of `scanners` is not going to support _tracing_ or any kind of _metrics_ exposure.
-
-## Adding new scanners types, Blob Storages, Message Queues
-
-If you want to add any other **Message Queue** or **Blob Storage** implementation, add new scanner type - please create a *github issue* or vote for the existing one. Also *pull requests* are more than welcome ;) Please refer our [contribution guide](/CONTRIBUTING.md).

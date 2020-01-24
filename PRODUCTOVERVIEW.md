@@ -1,5 +1,15 @@
 # Product Overview
 
+- [Product Overview](#product-overview)
+  - [What is Joseki](#what-is-joseki)
+    - [Joseki cornerstones](#joseki-cornerstones)
+    - [Out of scope](#out-of-scope)
+  - [Installation, Hosting, Runtime](#installation-hosting-runtime)
+  - [Roadmap](#roadmap)
+    - [V1 - Initial Release](#v1---initial-release)
+    - [V2](#v2)
+    - [V3](#v3)
+
 Security is a massive and complicated topic and there are dozens of open-sourced tools on the market that can help to make a product safer. The tools often are summoned to enforce known best-practices to docker images, kubernetes, and cloud infrastructure at large. However, this approach that relies on many tools comes up with its own set of problems:
 
 - a lot of tools cover just a single aspect of security management
