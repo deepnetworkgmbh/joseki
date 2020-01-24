@@ -61,16 +61,56 @@ The installation requires system or platform engineer who understands system top
 ## Roadmap
 
 ### V1 - Initial Release
-
 - Scanner Types:
   - Container Image vulnerabilities scanner [trivy](https://github.com/aquasecurity/trivy)
   - Kubernetes objects validator [polaris](https://github.com/FairwindsOps/polaris)
   - Kubernetes cluster configuration validator [kube-bench](https://github.com/aquasecurity/kube-bench)
   - Azure infrastructure auditor [az-sk](https://github.com/azsk/DevOpsKit)
 
+- Attestation support
+    - Targets can be assigned to owners
+    - Suppress / defer 
+    - Some functionality may be UI only / mocked
+
 - Historical data:
   - The users can see the past scans (i.e. scan x done on day y)
   - The users can diff the results of two scans.
+
+- All types of checks will have a unique identifier.
+  - (Implementation detail: every scanner already has its own internal unique identifiers. We can just add our own prefix to them)
+
+(Attestation should cover suppressions and tolerations)
+~~- The product supports suppressions / tolerations.~~
+
+- ~~User can specifically suppress an issue or basically ask it to be not reported.~~
+- ~~This can be done via the UI or can be done via a configuration file.~~
+
+### V2
+
+- New scanner types:
+  - Web application scanners. For example, [ZAProxy](https://github.com/zaproxy/zaproxy)
+  - Cloud infrastructure auditors. For example, [cloud-sploit](https://github.com/cloudsploit), [scout-suite](https://github.com/nccgroup/ScoutSuite), [security-monkey](https://github.com/Netflix/security_monkey).
+  - Augment kube-bench with [kube-hunter](https://github.com/aquasecurity/kube-hunter)
+  - Kubernetes anomaly detectors. For example, [falco](https://github.com/falcosecurity/falco)
+  - Scan VM configurations / images
+- Role Based Authentication (RBAC)
+	- Security Officer
+	- Developer
+- Fully implemented attestation support
+- Role Based Views
+    - Security Officer
+    - Developer
+
+- creating new security checks (likely, [Open Policy Agent](https://www.openpolicyagent.org/) integration)
+- Support triaging of individual issues and taking actions.(this is probably covered by attestation flow)
+- A manual scan can be triggered from the UI.
+- The product exposes underlying target discovery.
+  - It lists all the scannable targets discovered to the user
+  - Product gives instructions how to install these scanners manually and make sure scanners have access to all discovered targets
+- The product could expose check-results as metrics, that can be visualized in 3rd party tools (for example, Grafana) or be alerted (for example, alert-manager or Grafana). In this case we need to decide on the interface of this (Prometheus metrics schema is probably a good idea).
+
+(Covered under attestation)
+~~- Suppressions can have a time limit. i.e. suprress for a month etc~~
 
 - Reporting:
   - The product supports on demand reports (i.e. the user explicitly requests a scan report)
@@ -84,38 +124,13 @@ The installation requires system or platform engineer who understands system top
     - diff from the last report,
     - include only subset of scanners to report on.
 
-- All types of checks will have a unique identifier.
-  - (Implementation detail: every scanner already has its own internal unique identifiers. We can just add our own prefix to them)
+### V3
 
-- The product supports suppressions / tolerations.
-  - User can specifically suppress an issue or basically ask it to be not reported.
-  - This can be done via the UI or can be done via a configuration file.
-
-### V2
-
-- New scanner types:
-  - Web application scanners. For example, [ZAProxy](https://github.com/zaproxy/zaproxy)
-  - Cloud infrastructure auditors. For example, [cloud-sploit](https://github.com/cloudsploit), [scout-suite](https://github.com/nccgroup/ScoutSuite), [security-monkey](https://github.com/Netflix/security_monkey).
-  - Augment kube-bench with [kube-hunter](https://github.com/aquasecurity/kube-hunter)
-  - Kubernetes anomaly detectors. For example, [falco](https://github.com/falcosecurity/falco)
-  - Scan VM configurations / images
-- Role Based Authentication (RBAC) 
-- Role Based Views
-- Support Attestation
-- creating new security checks (likely, [Open Policy Agent](https://www.openpolicyagent.org/) integration)
 - Issue tracking: integrates with Jira / Azure DevOps etc
   - Create an issue/task etc in the bug tracking system for a found issue.
   - Status of these issues can be tracked from the product.
-- Support triaging of individual issues and taking actions.
-- A manual scan can be triggered from the UI.
-- The product exposes underlying target discovery.
-  - It lists all the scannable targets discovered to the user
-  - Product gives instructions how to install these scanners manually and make sure scanners have access to all discovered targets
-- The product could expose check-results as metrics, that can be visualized in 3rd party tools (for example, Grafana) or be alerted (for example, alert-manager or Grafana). In this case we need to decide on the interface of this (Prometheus metrics schema is probably a good idea).
-- Suppressions can have a time limit. i.e. suprress for a month etc
-- Publish schema for scanner / backend integration (and / or) backend / UI integration to make it easier for 3rd parties to add their scanner to our product
 
-### V3
+- Publish schema for scanner / backend integration (and / or) backend / UI integration to make it easier for 3rd parties to add their scanner to our product
 
 - Automated scanners provisioning/deprovisioning:
   - User can select/unselect targets from the *target discovery* list.
