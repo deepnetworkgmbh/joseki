@@ -1,10 +1,11 @@
+@import "@/styles/colors.scss";
 
-.image-result-Failed {
-  color: red;
+.image-result-Succeeded {
+  color: $color-low-severity;
 }
 
-.image-result-Success {
-  color: green;
+.image-result-Failed {
+  color: $color-critical;
 }
 
 .target, .target-severities {

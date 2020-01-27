@@ -1,10 +1,6 @@
 @import "@/styles/colors.scss";
 
 #nav {
-  padding: 10px;
-  display: flex;
-  flex-direction: row;
-  padding-bottom: 1px;
 
   & > .logo {
     width:150px;
@@ -13,21 +9,15 @@
     font-weight: 600;
   }
 
-  & > .links {
-    flex: 1;
-    justify-content: flex-end;
-    text-align: right;
-    padding-top: 5px;
+  & > .links a {
+    color: $color-link;
+    margin-left: 15px;
+    cursor: pointer;
+    font-size:12px;
 
-    a {
-      color: $color-link;
-      margin-left: 15px;
-      cursor: pointer;
-      font-size:12px;
-      &.router-link-exact-active {
-        padding-bottom: 2px;
-        border-bottom: solid 2px $color-link-visited;
-      }
+    &.router-link-exact-active {
+      padding-bottom: 2px;
+      border-bottom: solid 2px $color-link-visited;
     }
   }
 }
