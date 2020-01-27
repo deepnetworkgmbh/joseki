@@ -17,8 +17,6 @@ The scanner itself does not add anything new to the original az-sk tool. You can
 
 **NOTE:** az-sk in most cases is used on Windows OS, because of dependency on PowerShell. However there is [AzSK on PowerShell Core](https://azsk.azurewebsites.net/08-Miscellaneous-Features/Readme.html#try-azsk-on-powershell-core), which should unlock Linux capabilities. (**TODO:** ensure, it's possible to run it in linux container)
 
-Please, refer to generic `scanners` [README](/src/scanners/README.md) for common scanners requirements.
-
 ## Implementation details
 
 The scanner adjusts to the underlying az-sk tool - it's written in PowerShell and adds only a Blob Storage abstraction on top of it. `az-sk` itself is referenced as PowerShell module.
@@ -49,7 +47,7 @@ Uploaded audit results should follow the general [technical design doc](/TECH_DE
 - `scanner-id` is `SCANNER_IDENTIFIER` environment variable;
 - `scanner-periodicity` is `SCANNER_PERIODICITY` environment variable;
 
-Each audit result folder should have three files:
+Each audit result folder should have two files:
 
 - `meta` - json object, which describes audit metadata:
   - `audit-id`

@@ -115,7 +115,7 @@ Detailed scanners technical design is located next to scanner sources: `/src/sca
 
 It exposes API for `Frontend` application and asynchronously communicates with `Scanners` through **Blob Storage** and **Messaging Queue**.
 
-The application is hosted as docker-container and gets own configuration through `settings.json` file and environment variables.
+The application is hosted as docker-container and gets own configuration through file and environment variables.
 
 Detailed technical design is described in [backend technical design](./src/backend/TECH_DESIGN.md) document.
 
@@ -145,12 +145,12 @@ All the services are wrapped in docker-containers and could run on any infrastru
 
 There are two types of communication:
 
-- `Frontend` and `Backend`;
-- `Backend` and `Scanners`.
+- between `Frontend` and `Backend`;
+- between `Backend` and `Scanners`.
 
 #### Frontend and Backend
 
-`Frontend` application depends only on `Backend` REST API. The services communicates through HTTPs. At the moment, user authentication and authorization are not supported, but it's in [product roadmap](./ROADMAP.md).
+`Frontend` application depends only on `Backend` REST API. The services communicates through HTTPs. At the moment, user authentication and authorization are not supported, but it's in [product roadmap](/PRODUCTOVERVIEW.md#roadmap).
 
 Available API endpoints are described at `https://{backend-host:port}/swagger`.
 
@@ -161,7 +161,7 @@ Available API endpoints are described at `https://{backend-host:port}/swagger`.
 - `Scanners` uploads audit/scan results and own metadata in agreed format to the service;
 - `Backend` reads raw data from **Blob Storage** and writes normalized data to **Database**.
 
-The Messaging Service is used only by `trivy` scanner and `backend` application. Please refer to [Messaging Service](/src/scanners/README.md#messaging-service) section of `trivy` and [Enqueue Image Scan](/src/backend/TECH_DESIGN.md#enqueue-image-scan) section of `backend` design docs for more details.
+The Messaging Service is used only by `trivy` scanner and `backend` application. Please refer to [Messaging Service](/src/scanners/README.md#messaging-service) section of `trivy` scanner and [Enqueue Image Scan](/src/backend/TECH_DESIGN.md#enqueue-image-scan) section of `backend` design docs for more details.
 
 Each scanner has access to the only one folder in **Blob Storage**, while the entire storage file system might be shared between several scanners. `backend` application has read-only access to the entire Blob Storage. Please, refer to [Process Audit Results](/src/backend/TECH_DESIGN.md#process-audit-results) section of `backend` technical design doc.
 
@@ -215,7 +215,9 @@ For initial implementation *Joseki* uses:
 
 - [Vue.js](https://vuejs.org/) for **Frontend**;
 - [dotnet core](https://github.com/dotnet/core) for **Backend**;
-- `scanners` programming language/framework vary depending on a tool, which a scanner wraps;
+- `scanners` programming language/framework vary depending on a tool, which a scanner wraps
+  - `trivy`, `polaris`, `kube-bench` are golang applications;
+  - `az-sk` is a powershell script
 - [Azure PostgreSQL](https://azure.microsoft.com/de-de/services/postgresql/) as **Database**;
 - [Azure Blob Storage](https://azure.microsoft.com/en-us/services/storage/blobs/) as **Blob Storage**;
 - [Azure Queue Storage](https://azure.microsoft.com/de-de/services/storage/queues/) as **Messaging Service**.
@@ -223,6 +225,8 @@ For initial implementation *Joseki* uses:
 Service-level access to cloud dependencies is abstracted, therefore changing used products later should be possible.
 
 The current choice is based on the most familiar products/framework of the dev-team at the moment of writing.
+
+![High-level view diagram with technologis stack](./docs/diagrams/joseki-v1.png)
 
 ### Supported Blob Storages
 
@@ -274,7 +278,7 @@ All the sources, documentation, getting-started samples are stored in the single
   - `frontend`: web-application,
   - `infrastructure`: templates/scripts to provision required infrastructure in misc clouds,
   - `scanners` has a dedicated sub-folder for each scanner type.
-- `root` has project-level documents: [readme](./README.md), [product overview](./PRODUCTOVERVIEW.md), tech-design (this), [roadmap](./ROADMAP.md), [contributor guidelines](./CONTRIBUTING.md), and others
+- `root` has project-level documents: [readme](./README.md), [product overview](./PRODUCTOVERVIEW.md), tech-design (this), [contributor guidelines](./CONTRIBUTING.md), and others
 
 ### Ready to run at any commit in master
 
@@ -286,13 +290,13 @@ Any commit in `master` branch should be in fully-functional state. To ensure thi
 
 ### Getting Started examples
 
-Getting Started examples is vital for the project - they should provide the easiest possible way to start using the application. Therefore, each example should:
+Getting Started examples are vital for the project - they should provide the easiest possible way to start using the application. Therefore, each example should:
 
 - be in functional state (covered with acceptance tests?);
 - has a readme explaining what exactly is deployed with it;
 - explicitly say if the sample is production ready and if not what should be hardened.
 
-If possible, each sample should has **a single script** to provision the solution.
+If possible, each sample should have **a single script** to provision the solution.
 
 ### CI/CD
 

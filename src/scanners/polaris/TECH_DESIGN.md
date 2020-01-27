@@ -15,8 +15,6 @@ The scanner itself does not add anything new to the original polaris application
 - invoke polaris with provided configuration;
 - upload results to a **Blob Storage** service.
 
-Please, refer to generic `scanners` [README](/src/scanners/README.md) for common scanners requirements.
-
 ## Implementation details
 
 The scanner adjusts to the underlying Polaris app - it's written in golang and adds only a Blob Storage abstraction on top of it. Polaris itself is referenced as golang dependency.

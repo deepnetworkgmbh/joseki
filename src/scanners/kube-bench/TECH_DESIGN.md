@@ -15,8 +15,6 @@ The scanner itself does not add anything new to the original kube-bench applicat
 - invoke kube-bench with provided configuration;
 - upload results to a **Blob Storage** service.
 
-Please, refer to generic `scanners` [README](/src/scanners/README.md) for common scanners requirements.
-
 ## Implementation details
 
 The scanner adjusts to the underlying `kube-bench` app - it's written in golang and adds only a Blob Storage abstraction on top of it. `kube-bench` itself is referenced as golang dependency.
@@ -46,7 +44,7 @@ Uploaded audit results should follow the general [technical design doc](/TECH_DE
 - `scanner-id` is `SCANNER_IDENTIFIER` environment variable;
 - `scanner-periodicity` is `SCANNER_PERIODICITY` environment variable;
 
-Each audit result folder should have three files:
+Each audit result folder should have two files:
 
 - `meta` - json object, which describes audit metadata:
   - `audit-id`

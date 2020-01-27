@@ -18,25 +18,23 @@ The scanner itself does not add anything new to the underlying trivy application
 - invoke trivy with provided configuration;
 - upload results to a **Blob Storage** service.
 
-Please, refer to generic `scanners` [README](/src/scanners/README.md) for common scanners requirements.
-
 ## Implementation details
 
 The core part of the scanner is built around a single container-image scan, which can be shipped as:
 
 - stand-alone service, which itself listens to a new scan-requests from the **Messaging Service**;
-- [FaaS](https://en.wikipedia.org/wiki/Function_as_a_service) solution, which takes care of scan-requests listening and just invokes core-scanner.
+- [FaaS](https://en.wikipedia.org/wiki/Function_as_a_service) solution, which takes care of scan-requests listening and then just invokes core-scanner.
 
 The scanner adjusts to the underlying Trivy app - it's written in golang and Trivy itself is referenced as golang dependency.
 
 The scanner consists of modules:
 
 - `configuration` - reads config;
-- `container-registry` - is able by container-image tag return container-registry credentials. The initial version takes them from configuration file, later could be replaced with securer secrets storage;
+- `container-registry` - is able by container-image tag return container-registry credentials. The initial version takes credentials from configuration file, later could be replaced with secure secrets storage;
 - `blob-uploader` - knows how to upload scan results to **Blob Storage**;
 - `core` - glues all pieces together: instantiate correct object types based on config, retrieves container-registry credentials, invokes trivy, uploads scan-results;
-- (optional) `message-listener` - in-case of stand-alone service, reads scan-requests from a queue;
-- (optional) `one-time-runner` - in case of FaaS, scans provided image.
+- (optional) `message-listener` - in-case of stand-alone service, it's a service entry point, which reads scan-requests from a queue;
+- (optional) `one-time-runner` - in case of FaaS, only scans provided image: invokes `core` module once.
 
 ## Configuration
 
@@ -66,7 +64,7 @@ Uploaded audit results should follow the general [technical design doc](/TECH_DE
 - `scanner-id` is `SCANNER_IDENTIFIER` environment variable;
 - `scanner-periodicity` is `on-message` environment variable;
 
-Each audit result folder should have three files:
+Each audit result folder should have two files:
 
 - `meta` - json object, which describes audit metadata:
   - `audit-id`
@@ -103,10 +101,9 @@ In case of FaaS runtime model, glueing the scanner with **Messaging Service** is
 In case of stand-alone application, the scanner should support horizontal scaling. To achieve that, it should be enough to read scan-requests from the queue in competing mode:
 
 - set `Visibility Timeout` at read time: once a message is requested from the Messaging Service - it should not be visible to other consumers;
-- *safely* try to scan an image;
-- if the previous action was successful, or it failed because of non-transient error - delete the message from the queue;
+- *safely* try to scan an image if succeded - delete the message from the queue;
 - if action failed because of a transient error, do an [exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff): based on message dequeue count update message visibility timeout in **Messaging service**.
-- if dequeue count is more than 3, move [a poisoned message to the quarantine queue](https://alexandrebrisebois.wordpress.com/2013/08/14/poison-queues-are-a-must/).
+- if dequeue count is more than 3 or processing failed because of non-transient error, move [a poisoned message to the quarantine queue](https://alexandrebrisebois.wordpress.com/2013/08/14/poison-queues-are-a-must/).
 
 Visibility timeout prevents multiple instances of the scanner to process the same message in the same time. Exponential backoff helps to deal with transient failures (for example, external dependency is not available just right now, but might work fine after 30 seconds). Quarantine queue avoids a poisoned message to stuck in the queue forever (later human-operator might review the queue and return messages to a normal queue if there was a problem, which was fixed afterward).
 
