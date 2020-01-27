@@ -17,15 +17,36 @@
         </svg>
       </div>
       <div class="w-2/5 flex flex-col justify-center">
-        <h4 class="text-lg">Name: {{ data.cluster.name }}</h4>
-        <h4 class="text-lg">Grade: {{ data.cluster.grade }}</h4>
-        <h4 class="text-lg">Score: {{ data.cluster.score }}%</h4>
-      </div>
+        <div class='flex flex-row text-lg'>
+          <div class="w-1/2 font-bold text-right mr-1">Name:</div>
+          <div class='w-1/2 font-thin'>{{ data.cluster.name }}</div>
+        </div>
+        <div class='flex flex-row text-lg'>
+          <div class="w-1/2 font-bold text-right mr-1">Grade:</div>
+          <div class='w-1/2 font-thin'>{{ data.cluster.grade }}</div>
+        </div>
+        <div class='flex flex-row text-lg'>
+          <div class="w-1/2 font-bold text-right mr-1">Score:</div>
+          <div class='w-1/2 font-thin'>{{ data.cluster.score }}</div>
+        </div>
+       </div>
       <div class="w-2/5 flex flex-col justify-center">
-        <h4>Kubernetes Version: {{ data.cluster.version }}</h4>
-        <h4>Nodes: {{ data.cluster.nodes }}</h4>
-        <h4>Namespaces: {{ data.cluster.namespaces }}</h4>
-        <h4>Pods: {{ data.cluster.pods }}</h4>
+       <div class='flex flex-row'>
+          <div class="w-1/2 font-bold text-right mr-1">Kubernetes Version:</div>
+          <div class='w-1/2 font-thin'>{{ data.cluster.version }}</div>
+        </div>
+        <div class='flex flex-row'>
+          <div class="w-1/2 font-bold text-right mr-1">Nodes:</div>
+          <div class='w-1/2 font-thin'>{{ data.cluster.nodes }}</div>
+        </div>
+        <div class='flex flex-row'>
+          <div class="w-1/2 font-bold text-right mr-1">Namespaces:</div>
+          <div class='w-1/2 font-thin'>{{ data.cluster.namespaces }}</div>
+        </div>
+        <div class='flex flex-row'>
+          <div class="w-1/2 font-bold text-right mr-1">Pods:</div>
+          <div class='w-1/2 font-thin'>{{ data.cluster.pods }}</div>
+        </div>
       </div>
     </div>
     <div v-show="loaded" class="segment shadow">

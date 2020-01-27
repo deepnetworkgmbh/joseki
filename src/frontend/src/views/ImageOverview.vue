@@ -46,8 +46,8 @@
                 ></label>
                 <StatusBar :counters="result.counter" />
                 <ul>
-                  <li v-for="(image,j) in result.images" :key="`sub${j}`" class="sub-item">
-                    <div style="float:right;" v-html="image.rowText" class="text-sm"></div>
+                  <li v-for="(image,j) in result.images" :key="`sub${j}`">
+                    <div style="float:right;" v-html="image.rowText" class="text-xs"></div>
                     <i :class="image.icon"></i>
                     <span v-html="image.shortImageName" class="text-sm"></span>
                     <router-link :to="image.link" class="more-info">
