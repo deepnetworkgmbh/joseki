@@ -78,13 +78,11 @@ Cloud Overview gives detailed overview of resources in a single Azure subsriptio
   - history overview of these data
 - list of latest check-results
   - check-id
+  - check description
+  - remediation
   - resource-id
   - category
   - check-results over last week
-- list of check descriptions
-  - check-id
-  - check description
-  - remediation
 - links to
   - all other subscriptions overview
   - the same subscription state, but a day/week/month ago
@@ -112,13 +110,11 @@ Kubernetes Overview gives detailed overview of resources in a single Kubernetes 
   - history overview of these data
 - list of the latest check-results; the list aggregates data from `polaris`, `kube-bench`, `trivy` scanners:
   - check-id
+  - check description
+  - remediation
   - resource-id
   - category
   - check-results over last week (trend)
-- list of check descriptions
-  - check-id
-  - check description
-  - remediation
 - links to
   - all other kubernetes clusters overview
   - the same cluster state, but a day/week/month ago
@@ -231,6 +227,12 @@ The request consists of:
 
 More details at [Issue Tracking](#issue-tracking) section.
 
+**TBD:** user should be able to see information related to the folow-up iten. We could create an endpoint for:
+
+- a single check result (then user hae to open them one by one);
+- subset of check-results (single pageto view the all);
+- save unique deeplink in the database to open a page with subset of checks? (addition on top of the previous one).
+
 ## Technologies
 
 `Backend` is `ASP.NET core 3` application, hosted in docker-container.
@@ -284,7 +286,7 @@ Audit-processors - are scanner type specific objects, that:
 
 - read scanner metadata file `{scanner-type}-{scanner-short-id}.meta` and calculate seconds since hearbeat was updated: `DateTime.UtcNow - heartbeat` and do one of the following:
   - if it is more than `heartbeat-periodicity` - log it *warning* level
-  - if it is two times more than `heartbeat-periodicity` and more than one hour - log it with *error* level
+  - if it is two times more than `heartbeat-periodicity` and more than one hour - log it with *error* level (**TODO:** reduce amount of error logs. add a tag to the container?)
   - if it is more than a week - add `stale` tag to scanner folder metadata
 - get all `{yyyyMMdd-HHmmss}-{hash:7}` containers with audit results that does not have metadata tag `processed` and schedule a Task to process each container. After processing container content, the task should add metadata tag `processed`.
 
@@ -310,7 +312,7 @@ Each scanner has a simple task: perform audit and persist the result in a known 
 
 Audit Blobs Watchman - is another background process, which takes care of processed files and tries to keep operational space in fit.
 
-It's another `ASP.NET Core` [Hosted Service](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-3.1&tabs=visual-studio), which:
+It's `ASP.NET Core` [Hosted Service](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-3.1&tabs=visual-studio), which:
 
 - once a day moves *processed* blobs to *archive*;
 - once a day moves *stale* scanner folders to *garbage-bin*;
@@ -318,13 +320,6 @@ It's another `ASP.NET Core` [Hosted Service](https://docs.microsoft.com/en-us/as
 - once a week deletes items from *garbage-bin* after expiring `garbage-retention-period`.
 
 The job tries to perform actions at defined in configuration file time: `audit-blobs-watchman.time`.
-
-To track task execution, Audit Blobs Watchman maintains records (one per task type) in `BackgroundJobs` Database Table:
-
-- once the job is started, it checks if records were updated within task-execution period (a day or a week) since `audit-blobs-watchman.time`
-- if *true* - sleeps till the next `audit-blobs-watchman.time`
-- if *false* - runs the missing tasks
-- after task is finished - updates the record with current time
 
 ### Persisting generated reports
 
@@ -368,11 +363,14 @@ Image-scan request message envelop consists of two parts: `headers` (system info
 }
 ```
 
+Enqueue process is triggered from audit-result processors: they enqueue image-scan request for each found image-tag, which was not scanned more than configured container-image scan-result cache retention time.
+At the moment, only `polaris` audit-data processor supports it.
+
 ## Reporting
 
 *Joseki* supports two reporting types:
 
-- One-time report - triggered only one from User Interface;
+- One-time report - triggered only once from User Interface;
 - Recurring report - configured from User Interface, but scheduling is done periodically and triggered from `Backend` side.
 
 Any generated report has associated metadata in **Database**: creation time, identifier, path in blob-storage, name, etc.
@@ -387,7 +385,7 @@ Report Scheduler is `ASP.NET Core` [Hosted Service](https://docs.microsoft.com/e
 
 - wakes up every hour;
 - gets scheduling configuration from the Database;
-- invokes report generator for each record, that satisfy the criteria: `LastProcessed < DateTime.UtcNow.AddHours(-ReportFrequency)`;
+- invokes report generator for each record, that satisfies the criteria: `LastProcessed < DateTime.UtcNow.AddHours(-ReportFrequency)`;
 - set `LastProcessed` to `DateTime.UtcNow`
 
 *Note:* Partial failures and horizontal-scaling are out of scope at the moment. Therefore:
