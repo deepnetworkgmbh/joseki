@@ -3,6 +3,8 @@ import { ContainerImageScan, VulnerabilityCounter } from "@/models";
 import { ImageScan } from "@/models/ImageScan";
 import { ImageScanGroup } from "@/models/ImageScanGroup";
 import { VulnerabilityGroup, TargetGroup, ImageScanDetailModel } from "@/models/VulnerabilityGroup";
+import { ScanSummary } from '../models/ScanSummary';
+import { ScanObjectType } from '@/types/Enums';
 
 export class DataService {
 
@@ -162,5 +164,24 @@ export class DataService {
     return encodeURIComponent(str).replace(/[!*]/g, function (c) {
       return "%" + c.charCodeAt(0).toString(16);
     });
+  }
+
+
+
+  public getDummyGeneralOverview(): ScanSummary[] {
+    let result: ScanSummary[] = [];
+
+    result.push(new ScanSummary(ScanObjectType.cluster, 'Cluster1-dev'));
+    result.push(new ScanSummary(ScanObjectType.cluster, 'Cluster2-dev'));
+    result.push(new ScanSummary(ScanObjectType.cluster, 'Cluster3-dev'));
+    result.push(new ScanSummary(ScanObjectType.cluster, 'Cluster1-int'));
+    result.push(new ScanSummary(ScanObjectType.cluster, 'Cluster2-int'));
+    result.push(new ScanSummary(ScanObjectType.cluster, 'Cluster3-int'));
+    result.push(new ScanSummary(ScanObjectType.subscription, 'AZSUB-1'));
+    result.push(new ScanSummary(ScanObjectType.subscription, 'AZSUB-2'));
+    result.push(new ScanSummary(ScanObjectType.subscription, 'AZSUB-3'));
+    result.push(new ScanSummary(ScanObjectType.subscription, 'AZSUB-4'));
+
+    return result;
   }
 }
