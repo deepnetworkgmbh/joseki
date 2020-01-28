@@ -3,5 +3,9 @@ module.exports = {
     extend: {}
   },
   variants: {},
-  plugins: []
+  plugins: [],
+  fontFamily: {
+    'sans': ['Noto Sans', 'Sans-serif']
+  }
+   
 }

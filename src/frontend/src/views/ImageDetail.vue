@@ -1,25 +1,30 @@
 <template>
   <div>
-    <Spinner v-if="!loaded" class="centered" />
-    <div v-show="loaded" class="segment shadow">
-      <div style="border-bottom: solid 1px #ddd;background-color: #eee;">
-        <h3 :class="`scanStatus image-result-${data.scanResult}`">{{ data.scanResult }}</h3>
-        <h3 class="scanStatus">Scan:</h3>
-        <h1 class="image-name" style="margin-left: 15px;">{{ imageid }}</h1>
+    <Spinner v-if="!loaded" />
+    <div v-show="loaded" class="flex flex-col justify-around border rounded-lg mb-3 shadow">
+      <div class="bg-gray-200 border-b border-gray-400 rounded-t-lg flex flex-row">
+        <div class="w-10/12 flex flex-row m-2 ml-4">
+          <h3 class="mr-1">Image:</h3>
+          <h1 class="image-name text-gray-700">{{ imageid }}</h1>
+        </div>
+        <div class="w-2/12 flex flex-row justify-end m-2 mr-4">
+          <h3 class="scanStatus mr-1">Scan:</h3>
+          <h3 :class="`scanStatus image-result-${data.scanResult}`">{{ data.scanResult }}</h3>
+        </div>
       </div>
 
-      <div v-if="data.scanResult === 'Failed'" class="scan-info">
+      <div v-if="data.scanResult === 'Failed'" class="p-2">
         <h3>Image vulnerabilities scan failed</h3>
         <span>{{ data.description }}</span>
       </div>
 
-      <div v-if="data.scanResult === 'NotFound'" class="scan-info">
+      <div v-if="data.scanResult === 'NotFound'" class="p-2">
         <h3>No Image vulnerabilities scan data</h3>
         <span>Image scanner might not support image OS or container registry</span>
         <span>{{ data.description }}</span>
       </div>
 
-      <div v-if="data.scanResult === 'Succeeded'" class="scan-info">
+      <div v-if="data.scanResult === 'Succeeded'" class="p-2">
         <ul v-for="(target,i) in data.targets" :key="target.target">
           <li>
             <input type="checkbox" :id="`target${i}`" checked />
@@ -27,31 +32,41 @@
             <ul v-for="(vul, g) in target.vulgroups" :key="`${vul.Severity}${i}`">
               <li>
                 <input type="checkbox" :id="`t${i}g${g}`" checked />
-                <label :for="`t${i}g${g}`" class="target-severities">
-                  {{ vul.Count }} issues with <strong :class="`severity-${vul.Severity}`">{{ vul.Severity }}</strong>
+                <label :for="`t${i}g${g}`" class="text-base">
+                  {{ vul.Count }} issues with
+                  <strong
+                    :class="`severity-${vul.Severity}`"
+                  >{{ vul.Severity }}</strong>
                   severity
                 </label>
                 <ul v-for="(cve, c) in vul.CVEs" :key="`${vul.Severity}${i}-${c}`">
                   <li>
                     <input type="checkbox" :id="`t${i}g${g}${c}`" checked />
-                    <label :for="`t${i}g${g}${c}`" class="severity">
-                      <i>{{ cve.VulnerabilityID }}</i> in <strong>{{ cve.PackageName }}</strong> 
+                    <label :for="`t${i}g${g}${c}`" class="text-sm">
+                      <i>{{ cve.VulnerabilityID }}</i> in
+                      <strong>{{ cve.PackageName }}</strong>
                       version {{ cve.InstalledVersion }}
                     </label>
                     <ul>
                       <li>
-                        <div class="cve-detail">
-                          <p v-if="cve.Title" class='cve-title'>{{ cve.Title }}</p>
+                        <div class="text-sm">
+                          <p v-if="cve.Title" class="cve-title">{{ cve.Title }}</p>
                           <p v-if="cve.FixedVersion">
-                            <strong>Remediation:</strong> Update package to {{ cve.FixedVersion }}
+                            <strong>Remediation:</strong>
+                            Update package to {{ cve.FixedVersion }}
                           </p>
-                          <p class='cve-desc'>{{ cve.Description }}</p>
+                          <p class="cve-desc">{{ cve.Description }}</p>
                           <div v-if="cve.References" style="margin-top:5px;">
                             <input type="checkbox" :id="`t${i}g${g}${c}ref`" />
-                            <label :for="`t${i}g${g}${c}ref`" class='references-title'>References</label>
+                            <label :for="`t${i}g${g}${c}ref`" class="references-title">References</label>
                             <ul>
-                              <li v-for="(ref, ri) in cve.References" :key="`ref${ri}`" class="reference">
-                                &bull;&nbsp;<a :href="ref" target="_blank">{{ ref }}</a>
+                              <li
+                                v-for="(ref, ri) in cve.References"
+                                :key="`ref${ri}`"
+                                class="text-xs"
+                              >
+                                &bull;&nbsp;
+                                <a :href="ref" target="_blank">{{ ref }}</a>
                               </li>
                             </ul>
                           </div>
