@@ -54,8 +54,11 @@ namespace webapp
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Joseki Backend", Version = "v1" });
-                var filePath = Path.Combine(System.AppContext.BaseDirectory, "webapp.xml");
-                c.IncludeXmlComments(filePath);
+                var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(System.AppContext.BaseDirectory, xmlFile);
+
+                // Set the comments path for the swagger json and ui.
+                c.IncludeXmlComments(xmlPath);
             });
         }
 
