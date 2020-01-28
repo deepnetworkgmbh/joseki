@@ -100,7 +100,7 @@ export class ChartService {
 		let data = google.visualization.arrayToDataTable(jdata);
 		let options:PieChartOptions = {
 			titlePosition: 'none',
-			width: 400,
+			//width: 400,
 			height: 250,
 			slices: {
 				0: {color: sevcolors[0]},
@@ -109,7 +109,7 @@ export class ChartService {
 				3: {color: sevcolors[3]}
 			},
 			pieHole: 0.5,
-			chartArea: {'width': '100%', 'height': '80%'},
+			chartArea: { 'width': '100%', 'height': '70%'},
 			legend: {
 				position: 'bottom',
 				alignment: 'center',

@@ -1,9 +1,7 @@
 <template>
-  <div id="app">
+  <div id="app" class="container mx-auto">
     <Navigation />
-    <div class="container">
-      <router-view />
-    </div>
+    <router-view />
     <div class="footer">
       ©2020
       <a href="http://www.deepnetwork.com" target="_blank">Deep Network GmbH</a>
@@ -11,4 +9,3 @@
   </div>
 </template>
 <script lang="ts" src="./App.ts"></script>
-<style scoped lang="scss" src="./App.scss"></style>

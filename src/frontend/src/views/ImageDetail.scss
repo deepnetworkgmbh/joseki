@@ -1,20 +1,11 @@
-.scanStatus {
-  float: right;
-  font-size: 20px;
-  margin-top: 5px;
-  margin-right: 10px;
+@import "@/styles/colors.scss";
+
+.image-result-Succeeded {
+  color: $color-low-severity;
 }
 
 .image-result-Failed {
-  color: red;
-}
-
-.image-result-Success {
-  color: green;
-}
-
-.scan-info {
-  padding: 10px;
+  color: $color-critical;
 }
 
 .target, .target-severities {
@@ -41,4 +32,10 @@
 .reference {
   font-size:12px;
   line-height: 12px;
+}
+
+.image-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: keep-all;
 }

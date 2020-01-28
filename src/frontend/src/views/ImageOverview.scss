@@ -44,8 +44,22 @@ input[type="checkbox"]:checked + label:before {
   font-weight: 900;
 }
 
-.sub-item {
-  font-size:15px;
-  line-height:20px;
-  margin-left:14px;
+
+
+.searchbox {
+  max-width: 380px;
+  height: 25px;
+  border: solid 1px #ccc;
+  border-radius: 20px;
+  padding-left: 10px;
+  color: #444;
+  float: left;
+}
+
+.search-icon {
+  float: left;
+  display: revert;
+  margin-left: -26px;
+  margin-top: 5px;
+  color: #ccc;
 }
