@@ -4,22 +4,19 @@
   - [Scenarious](#scenarious)
     - [Process Audit Results](#process-audit-results)
     - [Get Audit results](#get-audit-results)
-      - [Overall infrastructure overview](#overall-infrastructure-overview)
-      - [Cloud overview](#cloud-overview)
-      - [Cloud diff](#cloud-diff)
-      - [Kubernetes overview](#kubernetes-overview)
-      - [Kubernetes diff](#kubernetes-diff)
-      - [Container Image overview](#container-image-overview)
+      - [Overall infrastructure: latest](#overall-infrastructure-latest)
+      - [Overall infrastructure: history](#overall-infrastructure-history)
+      - [Overall infrastructure: diff](#overall-infrastructure-diff)
+      - [Azure subscription: latest](#azure-subscription-latest)
+      - [Azure subscription: history](#azure-subscription-history)
+      - [Azure subscription: diff](#azure-subscription-diff)
+      - [Kubernetes cluster: latest](#kubernetes-cluster-latest)
+      - [Kubernetes cluster: history](#kubernetes-cluster-history)
+      - [Kubernetes cluster: diff](#kubernetes-cluster-diff)
+      - [Container Image: latest](#container-image-latest)
+      - [Container Image: history](#container-image-history)
+      - [Container Image: diff](#container-image-diff)
       - [Check overview](#check-overview)
-    - [Tolerate Check Result](#tolerate-check-result)
-    - [Reporting scenarios](#reporting-scenarios)
-      - [Create Overall report](#create-overall-report)
-      - [Create Cloud infrastructure report](#create-cloud-infrastructure-report)
-      - [Create Kubernetes cluster report](#create-kubernetes-cluster-report)
-      - [List existing reports](#list-existing-reports)
-      - [Schedule report](#schedule-report)
-      - [Delete reports](#delete-reports)
-    - [Create follow-up items](#create-follow-up-items)
   - [Technologies](#technologies)
   - [Runtime](#runtime)
   - [Configuration](#configuration)
@@ -31,16 +28,11 @@
       - [Processing trivy results](#processing-trivy-results)
       - [Processing kube-bench results](#processing-kube-bench-results)
     - [Housekeeping Audit Blobs](#housekeeping-audit-blobs)
-    - [Persisting generated reports](#persisting-generated-reports)
   - [Inter-process communication](#inter-process-communication)
     - [Frontend API](#frontend-api)
       - [Swagger](#swagger)
     - [Messaging Service](#messaging-service)
       - [Enqueue image scan](#enqueue-image-scan)
-  - [Reporting](#reporting)
-    - [Report Scheduler](#report-scheduler)
-  - [Issue tracking](#issue-tracking)
-  - [Supported communication channels](#supported-communication-channels)
 
 At the very first iteration, *Joseki* is focused on Azure and Kubernetes analysis.
 
@@ -52,7 +44,7 @@ Listed scenarios cover only [V1](/PRODUCTOVERVIEW.md#v1---initial-release) prior
 
 `Backend` application is responsible for getting latest audit/scan results from **Blob Storage**, normalize these data and inserts into the **Database** optimized for querying.
 
-![Process Audit Results sequence diagram](../../docs/diagrams/be-process-audit-results.png)
+![Process Audit Results sequence diagram](/docs_files/diagrams/be-process-audit-results.png)
 
 Implementation details of the process is described in [Reading Audit Results](#reading-audit-results) section.
 
@@ -60,38 +52,77 @@ Implementation details of the process is described in [Reading Audit Results](#r
 
 `Backend` application exposes hefty endpoints to query audit result.
 
-#### Overall infrastructure overview
+*Joseki* supports three types of queries:
 
-The scenario is used by `frontend` as entry-point to the *Joseki* dashboard. The endpoint returns:
+1. The latest known state of the queried resources (shortened `latest`);
+2. Diff between two dates (`diff`);
+3. Historical data for a range of dates (`hist`).
 
-- overall infrastructure score
-- score and passed/failed checks per subscription, kubernetes
-- history overview of these data
+All these query types could be executed against four groups of objects:
 
-`score` is percentage of succeeded checks.
+1. Overall infrastructure (`Q_ov`).
+2. Azure subscription (`Q_sub`).
+3. Kubernetes cluster (`Q_k8s`).
+4. Container image (`Q_img`).
 
-#### Cloud overview
+Total, 12 different query endpoints are exposed.
 
-Cloud Overview gives detailed overview of resources in a single Azure subsription:
+#### Overall infrastructure: latest
 
-- score and count of passed/failed checks
-  - history overview of these data
+`Q_ov latest` is used by `frontend` as entry-point to the *Joseki* dashboard. The endpoint returns:
+
+- overall infrastructure score, score history, score-trend
+- amount of passed/failed/warning/nodata checks
+- the same data, but per each subscription and kubernetes clsuter
+
+Where
+
+- *score* - is percentage of succeeded checks;
+- *score history* - score value for the last 30 days (0 for days with no data);
+- *score trend* - vector that summarizes score changes over last 30 days.
+
+#### Overall infrastructure: history
+
+`Q_ov hist` lists check results for a selected periood of time. Each daily result includes:
+
+- amount of passed/failed/warning/nodata checks for the entire infrastructure
+- the score
+
+#### Overall infrastructure: diff
+
+`Q_ov diff` compares check results for two selected dates:
+
+- amount of passed/failed/warning/nodata checks
+- the score
+
+The data is displayed for the entire infrastructure and broken down by subscriptions and kubernetes clusters.
+
+#### Azure subscription: latest
+
+`Q_sub latest` gives detailed overview of resources in a single Azure subsription:
+
+- score, score history, score-trend
+- count of passed/failed/warning/nodata checks for the last 30 days
 - list of latest check-results
   - check-id
   - check description
   - remediation
   - resource-id
   - category
-  - check-results over last week
-- links to
-  - all other subscriptions overview
-  - the same subscription state, but a day/week/month ago
+  - results of the same check over last 30 days
 
-#### Cloud diff
+#### Azure subscription: history
 
-Cloud diff compares the state of the same Azure subscription in two points of time. The result includes:
+`Q_sub hist` lists check results for a selected periood of time. Each daily result includes:
 
-- score and count of passed/failed checks in `A` and `B`
+- amount of passed/failed/warning/nodata checks for a selected subscription
+- the score
+
+#### Azure subscription: diff
+
+`Q_sub hist` compares the state of the same Azure subscription in two points of time. The result includes:
+
+- score and count of passed/failed/warning/nodata checks at date `A` and `B`
 - list of checks:
   - check-id
   - resource-id
@@ -102,28 +133,32 @@ Cloud diff compares the state of the same Azure subscription in two points of ti
     - the same in both
     - present in both, but with different result
 
-#### Kubernetes overview
+#### Kubernetes cluster: latest
 
-Kubernetes Overview gives detailed overview of resources in a single Kubernetes cluster:
+`Q_k8s latest` gives detailed overview of resources in a single kubernetes cluster:
 
-- score and count of passed/failed checks
-  - history overview of these data
-- list of the latest check-results; the list aggregates data from `polaris`, `kube-bench`, `trivy` scanners:
+- score, score history, score-trend
+- count of passed/failed/warning/nodata checks for the last 30 days
+- list of latest check-results; the list aggregates data from `polaris`, `trivy` scanners:
   - check-id
   - check description
   - remediation
   - resource-id
   - category
-  - check-results over last week (trend)
-- links to
-  - all other kubernetes clusters overview
-  - the same cluster state, but a day/week/month ago
+  - results of the same check over last 30 days
 
-#### Kubernetes diff
+#### Kubernetes cluster: history
 
-Kubernetes diff compares the state of the same Kubernetes cluster in two points of time. The result includes:
+`Q_k8s hist` lists check results for a selected periood of time. Each daily result includes:
 
-- score and count of passed/failed checks in `A` and `B`
+- amount of passed/failed/warning/nodata checks for a selected kubernetes cluster
+- the score
+
+#### Kubernetes cluster: diff
+
+`Q_k8s diff` compares the state of the same Kubernetes cluster in two points of time. The result includes:
+
+- score and count of passed/failed checks at date `A` and `B`
 - list of checks:
   - check-id
   - resource-id
@@ -134,12 +169,11 @@ Kubernetes diff compares the state of the same Kubernetes cluster in two points 
     - the same in both
     - present in both, but with different result
 
-#### Container Image overview
+#### Container Image: latest
 
-Container Image Overview lists found issues and highlights, what resources use the image:
+`Q_img latest` lists found issues and highlights, what resources use the image:
 
-- score and counts of CVEs grouped by severity
-  - history overview of these data
+- counts of CVEs grouped by severity for the last 30 days
 - list of CVEs:
   - CVE id
   - severity
@@ -148,90 +182,39 @@ Container Image Overview lists found issues and highlights, what resources use t
   - links with further info
 - resources, that use the container image
 
+#### Container Image: history
+
+`Q_img hist` lists CVEs counts grouped by severity for a selected periood of time.
+
+#### Container Image: diff
+
+`Q_img diff` compares the container-image scan result in two points of time. The result includes:
+
+- counts of CVEs grouped by severity at date `A` and `B`
+- list of CVEs:
+  - CVE id
+  - severity
+  - title and description
+  - comparison result:
+    - present only in `A`
+    - present only in `B`
+    - the same in both
+- resources, that use the container image
+  - present only in `A`
+  - present only in `B`
+  - the same in both
+
 #### Check overview
 
 Check overview explains the check purpose and lists what resources were evaluated.
 
-- general Check information
+- general check information
   - check-id
   - check description
+  - category
   - remediation
-- counts resources that failed/passed the check
-  - history overview of these data
-  - links to the same page, but a day/week/month ago
-- the current list of resources, that were evaluated
-
-### Tolerate Check Result
-
-Check Result toleration allows to ignore Check Results based on
-
-- check-id
-- check category
-- resource-id regular expression
-- check result
-
-Tolerated check results are excluded from `score` counters and are grayed-out in check-result lists.
-
-Toleration has expiration-date.
-
-### Reporting scenarios
-
-Cloud and Kubernetes reports could be one of two types:
-
-- *Current State* - the state of the system at report-generation time;
-- *Diff* - compares current infrastructure state with the previous scheduling point (for daily report compares yesterday and today; for weekly - today with a week ago; and so on)
-
-#### Create Overall report
-
-As starting point, exports to PDF *Overall infrastructure overview*.
-
-#### Create Cloud infrastructure report
-
-As starting point, exports to PDF *Cloud overview* and *Cloud diff* views.
-
-#### Create Kubernetes cluster report
-
-As starting point, exports to PDF *Kubernetes overview* and *Kubernetes diff* views.
-
-#### List existing reports
-
-Returns list of generated reports with short-lived download links.
-
-#### Schedule report
-
-*Joseki* allows to schedule a report and update scheduling configuration later:
-
-- choose report type
-- schedule report daily/weekly/monthly
-- specify communication channel:
-  - email accounts
-  - webhook
-
-#### Delete reports
-
-*Joseki* allows to delete a subset of reports. The operation could be triggered from User Interface, by marking a subset of reports with checkboxes and then pressing a delete button for them.
-
-The process involves cleaning up database and deleting report files from **Blob Storage**:
-
-![Delete Reports sequence diagram](../../docs/diagrams/be-delete-reports.png)
-
-### Create follow-up items
-
-On User Interface a customer could mark a subset of checks and request a creation of follow-up task in external system: Jira, Azure Dev Ops, and others.
-
-The request consists of:
-
-- check result identifiers;
-- communication channel type: Jira, Azure Dev Ops, email, webhook, etc;
-- communication channel parameters (email addresses, jira ticket parameters, ...).
-
-More details at [Issue Tracking](#issue-tracking) section.
-
-**TBD:** user should be able to see information related to the folow-up iten. We could create an endpoint for:
-
-- a single check result (then user hae to open them one by one);
-- subset of check-results (single pageto view the all);
-- save unique deeplink in the database to open a page with subset of checks? (addition on top of the previous one).
+- counts resources that failed/passed the check for the last 30 days
+- the current list of resources, that were evaluated by this check
 
 ## Technologies
 
@@ -239,9 +222,9 @@ More details at [Issue Tracking](#issue-tracking) section.
 
 The application uses several Azure cloud services:
 
-- The single [Azure PostgreSQL](https://azure.microsoft.com/de-de/services/postgresql/) as **Database**;
-- Two [Azure Blob Storages](https://azure.microsoft.com/en-us/services/storage/blobs/) as **Blob Storage** to process audit result and store generated reports;
-- The single [Azure Queue Storage](https://azure.microsoft.com/de-de/services/storage/queues/) as **Messaging Service**.
+- [Azure PostgreSQL](https://azure.microsoft.com/de-de/services/postgresql/) as **Database**;
+- [Azure Blob Storages](https://azure.microsoft.com/en-us/services/storage/blobs/) as **Blob Storage** to process audit result;
+- [Azure Queue Storage](https://azure.microsoft.com/de-de/services/storage/queues/) as **Messaging Service**.
 
 The current choice is based on the most familiar products/framework of the dev-team at the moment of writing.
 
@@ -250,24 +233,23 @@ The current choice is based on the most familiar products/framework of the dev-t
 `Backend` application is expected to run
 
 - as linux docker container;
-- in a **single instance** mode. For example, report-generator does not support any leader-election, therefore multiple instances of the app might cause sending duplicate reports.
+- in a **single instance** mode as some parts of the service might not support competing instances.
 
 ## Configuration
 
-- `Backend` config should be located at path specified in `CONFIG_FILE_PATH` environment variable path;
+- `Backend` config is located at path specified in `CONFIG_FILE_PATH` environment variable path;
 - `LOG_FORMAT` - `plain-text` or `json`.
 
-`Backend` configuration file should define which type of **Blob Storage**, **Messaging Service**, and **Database** should be used, credentials/connection strings, and others.
+`Backend` configuration file defines which type of **Blob Storage**, **Messaging Service**, and **Database** should be used, credentials/connection strings, and others.
 
-(**TODO:** store sensitive data in secure place insted of file system)
+(**TODO:** store sensitive data in secure place instead of file system)
 
 ## Data layer
 
 `Backend` application uses two types of data storage: **Blobs** and **Database**:
 
-- one Blob Storage with audit results, which application reads and maintains only reading checkpoints;
-- another Blob Storage to store generated reports;
-- Database for normalized audit data, configuration files, reports metadata, and others.
+- Blob Storage with audit results, which application reads and maintains reading checkpoints;
+- Database for normalized audit data, configuration files, and others.
 
 ### Database Data Model
 
@@ -285,7 +267,7 @@ Audit Result reader is `ASP.NET Core` [Hosted Service](https://docs.microsoft.co
 Audit-processors - are scanner type specific objects, that:
 
 - read scanner metadata file `{scanner-type}-{scanner-short-id}.meta` and calculate seconds since hearbeat was updated: `DateTime.UtcNow - heartbeat` and do one of the following:
-  - if it is more than `heartbeat-periodicity` - log it *warning* level
+  - if it is more than `heartbeat-periodicity` - log it with *warning* level
   - if it is two times more than `heartbeat-periodicity` and more than one hour - log it with *error* level (**TODO:** reduce amount of error logs. add a tag to the container?)
   - if it is more than a week - add `stale` tag to scanner folder metadata
 - get all `{yyyyMMdd-HHmmss}-{hash:7}` containers with audit results that does not have metadata tag `processed` and schedule a Task to process each container. After processing container content, the task should add metadata tag `processed`.
@@ -312,7 +294,7 @@ Each scanner has a simple task: perform audit and persist the result in a known 
 
 Audit Blobs Watchman - is another background process, which takes care of processed files and tries to keep operational space in fit.
 
-It's `ASP.NET Core` [Hosted Service](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-3.1&tabs=visual-studio), which:
+It's an `ASP.NET Core` [Hosted Service](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-3.1&tabs=visual-studio), which:
 
 - once a day moves *processed* blobs to *archive*;
 - once a day moves *stale* scanner folders to *garbage-bin*;
@@ -320,10 +302,6 @@ It's `ASP.NET Core` [Hosted Service](https://docs.microsoft.com/en-us/aspnet/cor
 - once a week deletes items from *garbage-bin* after expiring `garbage-retention-period`.
 
 The job tries to perform actions at defined in configuration file time: `audit-blobs-watchman.time`.
-
-### Persisting generated reports
-
-When `Backend` generates a report, it persists the report in a dedicated **Blob Storage**. Claening up reports from databse and blob is possible only throught regular [Delete Reports](#delete-reports) endpoint.
 
 ## Inter-process communication
 
@@ -365,47 +343,3 @@ Image-scan request message envelop consists of two parts: `headers` (system info
 
 Enqueue process is triggered from audit-result processors: they enqueue image-scan request for each found image-tag, which was not scanned more than configured container-image scan-result cache retention time.
 At the moment, only `polaris` audit-data processor supports it.
-
-## Reporting
-
-*Joseki* supports two reporting types:
-
-- One-time report - triggered only once from User Interface;
-- Recurring report - configured from User Interface, but scheduling is done periodically and triggered from `Backend` side.
-
-Any generated report has associated metadata in **Database**: creation time, identifier, path in blob-storage, name, etc.
-
-Report file is stored in a dedicated Blob Storage without publicly accessible link. Every time when user wants to download the file, `Backend` does it for him, or generates **temporary download-only link**.
-
-Report scheduling configuration is stored in the `Backend` Database: type of report to generate, frequency, communication-channel information, last-processed date-time.
-
-### Report Scheduler
-
-Report Scheduler is `ASP.NET Core` [Hosted Service](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-3.1&tabs=visual-studio) object, which 
-
-- wakes up every hour;
-- gets scheduling configuration from the Database;
-- invokes report generator for each record, that satisfies the criteria: `LastProcessed < DateTime.UtcNow.AddHours(-ReportFrequency)`;
-- set `LastProcessed` to `DateTime.UtcNow`
-
-*Note:* Partial failures and horizontal-scaling are out of scope at the moment. Therefore:
-
-- if the process fails after report is sent, but before `LastProcessed` is updated - user might receive multiple copies of the same report;
-- it is not expected to run  multiple instances of `Backend` application.
-
-## Issue tracking
-
-*Joseki* does not track issues itself, but helps to create a follow-up items in external systems: Jira, Azure Dev Ops, Slack, MS Teams, email, webhooks. *Joseki* only invokes communication-channel specific endpoint and pass right parameters to it.
-
-## Supported communication channels
-
-*Joseki* supports sending reports to:
-
-- email
-- HTTP webhook
-- Jira
-- Azure Dev Ops
-- Slack
-- MS Teams
-
-**Communication channel specific details have to be defined**.

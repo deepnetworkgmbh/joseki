@@ -82,7 +82,7 @@ Therefore, each service should be able to run with good-enough defaults, but als
 - `backend` - expose web-api for `frontend` and does the most of business logic: shaping audit data, historical view, reporting, configuration. To simplify the first phase of development, the entire backend is created as a single service.
 - `scanners` - a set of applications (one per audit/scan type), that once in a while perform audit/scan operation and uploads raw results to a Blob Storage. Each scanner job can be deployed to different locations: cloud or bare-metal; VMs, kubernetes or [ACI](https://azure.microsoft.com/en-us/services/container-instances/)/[Cloud Run](https://cloud.google.com/run/)/[Fargate](https://aws.amazon.com/fargate/); FaaS.
 
-![General-overview](./docs/diagrams/joseki-white.png)
+![General-overview](./docs_files/diagrams/joseki-white.png)
 
 ### Scanners
 
@@ -110,6 +110,7 @@ Detailed scanners technical design is located next to scanner sources: `/src/sca
 - audit data normalization,
 - house-keeping the configuration,
 - API for Frontend,
+- attestation
 - reporting
 - third-party integrations
 
@@ -134,8 +135,9 @@ All the services are wrapped in docker-containers and could run on any infrastru
 `Backend` application requires a **Database** to persist:
 
 - normalized scan/audit results;
-- `Joseki` configuration
-- reports metadata
+- `Joseki` configuration;
+- attestation data;
+- reports metadata.
 
 `Backend` reads audit/scan results from **Blob Storage**.
 
@@ -158,7 +160,7 @@ Available API endpoints are described at `https://{backend-host:port}/swagger`.
 
 `Backend` and `Scanners` asynchronously interact through **Blob Storage** and **Messaging Service**:
 
-- `Scanners` uploads audit/scan results and own metadata in agreed format to the service;
+- `Scanners` uploads audit/scan results and own metadata in agreed format to the **Blob Storage**;
 - `Backend` reads raw data from **Blob Storage** and writes normalized data to **Database**.
 
 The Messaging Service is used only by `trivy` scanner and `backend` application. Please refer to [Messaging Service](/src/scanners/README.md#messaging-service) section of `trivy` scanner and [Enqueue Image Scan](/src/backend/TECH_DESIGN.md#enqueue-image-scan) section of `backend` design docs for more details.
@@ -226,7 +228,7 @@ Service-level access to cloud dependencies is abstracted, therefore changing use
 
 The current choice is based on the most familiar products/framework of the dev-team at the moment of writing.
 
-![High-level view diagram with technologis stack](./docs/diagrams/joseki-v1.png)
+![High-level view diagram with technologis stack](./docs_files/diagrams/joseki-v1.png)
 
 ### Supported Blob Storages
 
@@ -272,13 +274,14 @@ When project grows - the repository could be split according to service boundari
 All the sources, documentation, getting-started samples are stored in the single repository:
 
 - `.github` folder consists of pr-templates, issue-templates, github-actions pipelines.
-- `examples` is a set of getting-started scripts/templates to deploy the solution as simple as possible
+- `docs_files` has diagrams and images used in markdown documents.
+- `examples` is a set of getting-started scripts/templates to deploy the solution as simple as possible.
 - `src` folder has four subfolders:
   - `backend`: web-api, data management, reporting, etc,
   - `frontend`: web-application,
   - `infrastructure`: templates/scripts to provision required infrastructure in misc clouds,
   - `scanners` has a dedicated sub-folder for each scanner type.
-- `root` has project-level documents: [readme](./README.md), [product overview](./PRODUCTOVERVIEW.md), tech-design (this), [contributor guidelines](./CONTRIBUTING.md), and others
+- `root` has project-level documents: [readme](/README.md), [product overview](/PRODUCTOVERVIEW.md), tech-design (this), [contributor guidelines](/CONTRIBUTING.md), and others
 
 ### Ready to run at any commit in master
 
