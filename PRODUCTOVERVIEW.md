@@ -20,7 +20,7 @@ Joseki also offers **a historical view** and **reporting** to monitor the securi
 
 - *Scans* - scheduled configuration audits
   - Scan periods can be adjusted (e.g. daily, weekly, etc.)
-  - Currently, scan targets can be limited via configuration only. In the future, we're planning to allow this via the UI.
+  - Currently, scan targets can be limited via deployment-time configuration only.
 - In the V1 version, from the UI you cannot select a subset of targets to be scanned. However, via scanners configuration, you can limit what the scanners can access and will scan.
 - Audit different types of objects via different underlying scanners. These objects are:
   - azure cloud infrastructure: databases, networks, vendor-specific products.
@@ -35,7 +35,7 @@ Joseki also offers **a historical view** and **reporting** to monitor the securi
 ### Out of scope
 
 - Preventing issues being introduced to a system but rather catch issues on a given system. Therefore, it's not suitable to use as part of CI/CD pipelines and associated tasks.
-- Real-time protection - scans/audit are expected to be scheduled daily/hourly.
+- Real-time protection - scans/audit are expected to be scheduled daily/weekly.
 - Addressing any of the found issues directly. (i.e. you cannot fix any issue from the product itself, it just displays results + suggestions)
 
 ## Installation, Hosting, Runtime
@@ -54,7 +54,7 @@ Individual scanners *can be* installed separately and scaled horizontally. This 
 
 The product needs read-only access to targets to be scanned (cloud-vendor and/or kubernetes APIs). Scanners have each their own configuration. They can be enabled or disabled based on needs.
 
-The product `frontend` is a SPA that runs on the browser. The `backend` exposes a set of APIs that are designed to be consumed by the UI. Currently, the APIs are not meant to be used by other developers.
+The product `frontend` is a Single Page Application (SPA) that runs on the browser. The `backend` exposes a set of APIs that are designed to be consumed by the UI. Currently, the APIs are not meant to be used by other developers.
 
 The installation requires system or platform engineer who understands system topology and security implications of installed components. However, the end-product (web-interface) could be used by any team members: dev/ops/dev-ops teams, security experts, and management.
 
@@ -65,13 +65,38 @@ The installation requires system or platform engineer who understands system top
 - Scanner Types:
   - Container Image vulnerabilities scanner [trivy](https://github.com/aquasecurity/trivy)
   - Kubernetes objects validator [polaris](https://github.com/FairwindsOps/polaris)
-  - Kubernetes cluster configuration validator [kube-bench](https://github.com/aquasecurity/kube-bench)
   - Azure infrastructure auditor [az-sk](https://github.com/azsk/DevOpsKit)
-
+- Scans are organized by date
+  - Each date is represented by latest scan performed on that date
 - Historical data:
-  - The users can see the past scans (i.e. scan x done on day y)
+  - The users can see the past scans (i.e. scan X done on day Y)
   - The users can diff the results of two scans.
+- All types of checks will have a unique identifier.
+  - (Implementation detail: every scanner already has its own internal unique identifiers. We can just add our own prefix to them)
 
+### V2
+
+- Attestation support
+  - Targets can be assigned to owners;
+  - Suppress / defer;
+  - Triaging of individual issues and taking actions.
+- New scanner types:
+  - Kubernetes cluster configuration validator [kube-bench](https://github.com/aquasecurity/kube-bench)
+  - Web application scanners. For example, [ZAProxy](https://github.com/zaproxy/zaproxy)
+  - Cloud infrastructure auditors. For example, [cloud-sploit](https://github.com/cloudsploit), [scout-suite](https://github.com/nccgroup/ScoutSuite), [security-monkey](https://github.com/Netflix/security_monkey).
+  - Augment kube-bench with [kube-hunter](https://github.com/aquasecurity/kube-hunter)
+  - Kubernetes anomaly detectors. For example, [falco](https://github.com/falcosecurity/falco)
+  - Scan VM configurations / images
+  - Monitor available vm-updates
+- Role Based Authentication and Authorization (RBAC)
+  - Security Officer
+  - Developer
+- creating new security checks (likely, [Open Policy Agent](https://www.openpolicyagent.org/) integration)
+- A manual scan can be triggered from the UI.
+- The product exposes underlying target discovery.
+  - It lists all the scannable targets discovered to the user
+  - Product gives instructions how to install these scanners manually and make sure scanners have access to all discovered targets
+- The product could expose check-results as metrics, that can be visualized in 3rd party tools (for example, Grafana) or be alerted (for example, alert-manager or Grafana). In this case we need to decide on the interface of this (Prometheus metrics schema is probably a good idea).
 - Reporting:
   - The product supports on demand reports (i.e. the user explicitly requests a scan report)
   - System can be configured to automatically send reports / scan results to predefined e-mail addresses.
@@ -84,39 +109,12 @@ The installation requires system or platform engineer who understands system top
     - diff from the last report,
     - include only subset of scanners to report on.
 
-- All types of checks will have a unique identifier.
-  - (Implementation detail: every scanner already has its own internal unique identifiers. We can just add our own prefix to them)
+### V3
 
-- The product supports suppressions / tolerations.
-  - User can specifically suppress an issue or basically ask it to be not reported.
-  - This can be done via the UI or can be done via a configuration file.
-
-### V2
-
-- New scanner types:
-  - Web application scanners. For example, [ZAProxy](https://github.com/zaproxy/zaproxy)
-  - Cloud infrastructure auditors. For example, [cloud-sploit](https://github.com/cloudsploit), [scout-suite](https://github.com/nccgroup/ScoutSuite), [security-monkey](https://github.com/Netflix/security_monkey).
-  - Augment kube-bench with [kube-hunter](https://github.com/aquasecurity/kube-hunter)
-  - Kubernetes anomaly detectors. For example, [falco](https://github.com/falcosecurity/falco)
-  - Scan VM configurations / images
-- Role Based Authentication (RBAC) 
-- Role Based Views
-- Support Attestation
-- creating new security checks (likely, [Open Policy Agent](https://www.openpolicyagent.org/) integration)
 - Issue tracking: integrates with Jira / Azure DevOps etc
   - Create an issue/task etc in the bug tracking system for a found issue.
   - Status of these issues can be tracked from the product.
-- Support triaging of individual issues and taking actions.
-- A manual scan can be triggered from the UI.
-- The product exposes underlying target discovery.
-  - It lists all the scannable targets discovered to the user
-  - Product gives instructions how to install these scanners manually and make sure scanners have access to all discovered targets
-- The product could expose check-results as metrics, that can be visualized in 3rd party tools (for example, Grafana) or be alerted (for example, alert-manager or Grafana). In this case we need to decide on the interface of this (Prometheus metrics schema is probably a good idea).
-- Suppressions can have a time limit. i.e. suprress for a month etc
 - Publish schema for scanner / backend integration (and / or) backend / UI integration to make it easier for 3rd parties to add their scanner to our product
-
-### V3
-
 - Automated scanners provisioning/deprovisioning:
   - User can select/unselect targets from the *target discovery* list.
   - The product supports scanners provisioning from UI
