@@ -99,9 +99,20 @@
                 {{ scan.target }}
             </div>
         </div>
-        <div v-if="viewMode === 1" class="w-full flex flex-wrap">
-            <div v-for="(scan, i) in scans" :key="`scan${i}`" class='scan-detailed-item'>
-                  {{ scan.target }}
+        <div v-if="viewMode === 1" class="w-full flex flex-wrap pt-2 pl-1">
+            <div v-for="(scan, i) in scans" :key="`scan${i}`" class='scan-detailed-item flex flex-row shadow'>
+                  <div class='w-full p-2 text-lg'>
+                      <div class='text-lg'>{{ scan.target }}</div>
+                      <div class='text-sm text-gray-600'>{{scan.subobjects}} objects</div>
+                  </div>  
+                  <div class='p-2' style="width: 100px;">
+                    <div style="position:relative;font-size:18px;z-index:1;left:15px;top:15px;">
+                        {{scan.value}}%
+                    </div>
+                    <div style="position:relative;top:-30px;z-index:0;">
+                        <vc-donut :sections="scan.sections" :size="65" unit="px" :total="scan.total"></vc-donut>
+                    </div>
+                  </div>
             </div>
         </div>
     </div>

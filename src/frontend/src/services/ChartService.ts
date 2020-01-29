@@ -27,7 +27,7 @@ export class ChartService {
 				3: { color: this.groupColors[3] }
 			},
 			pieHole: 0.5,
-			chartArea: { top: 50, width: '100%', height: '90%' },
+			chartArea: { top: 50, width: '100%', height: '80%' },
 			legend: {
 				position: 'top',
 				alignment: 'center',
@@ -88,7 +88,7 @@ export class ChartService {
 
 	public static drawSeverityPieChart(summary: ImageScan, element: HTMLInputElement, height: number = 250) {
 		let jdata: any[][] = [ [ 'Severity', 'Number' ] ];
-		let sevcolors = [];
+		let sevcolors: any = [];
 		for (let i = 0; i < summary.groups.length; i++) {
 			let group = summary.groups[i];
 			jdata.push([ group.title, group.count ]);

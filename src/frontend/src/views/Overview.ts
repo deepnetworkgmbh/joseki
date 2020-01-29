@@ -15,7 +15,7 @@ export default class Overview extends Vue {
     loaded: boolean = false;
     service: DataService = new DataService();
     data: KubeOverview = new KubeOverview();
-    viewMode: ViewMode = ViewMode.list;
+    viewMode: ViewMode = ViewMode.detailed;
     scans: ScanSummary[] = [];
 
     created() {

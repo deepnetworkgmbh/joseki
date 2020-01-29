@@ -49,10 +49,14 @@ th {
     height: 80px;
     background-color: #eee;
     border:solid 1px #aaa;
-    padding:10px;
     margin-bottom: 10px;
     margin-right: 10px;
     border-radius: 5px;
+    cursor: pointer;
+
+    &:hover{
+        background-color: #efe;
+    }
 }
 
 .scan-list-item {
@@ -65,5 +69,8 @@ th {
     &:nth-of-type(odd) {
         background-color: #d8d8d8;
     }
+}
 
+.cdc-text {
+    color: transparent
 }
