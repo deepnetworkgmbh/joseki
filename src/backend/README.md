@@ -27,4 +27,4 @@ When service is running, it serves swagger interface at `http://localhost:5000/s
 
 The used models documentation could be found at `Schemas` section:
 
-![Swagger schema documentation](/docs/backend/swagger-docs.png)
+![Swagger schema documentation](/docs_files/backend/swagger-docs.png)
