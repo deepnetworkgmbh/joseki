@@ -129,6 +129,33 @@
             Pre-calculated parameters for drawing trend line.
             </summary>
         </member>
+        <member name="T:webapp.Models.ScoreHistoryItem">
+            <summary>
+            Represents the score of component at a given date.
+            </summary>
+        </member>
+        <member name="M:webapp.Models.ScoreHistoryItem.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Models.ScoreHistoryItem"/> class with default values.
+            </summary>
+        </member>
+        <member name="M:webapp.Models.ScoreHistoryItem.#ctor(System.DateTime,System.Int16)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Models.ScoreHistoryItem"/> class with provided Date and Score values.
+            </summary>
+            <param name="date">The date of the score record.</param>
+            <param name="score">The score value.</param>
+        </member>
+        <member name="P:webapp.Models.ScoreHistoryItem.RecordedAt">
+            <summary>
+            The date of the Score.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.ScoreHistoryItem.Score">
+            <summary>
+            Score value.
+            </summary>
+        </member>
         <member name="T:webapp.Models.Trend">
             <summary>
             Holds properties to draw a straight trend line.
@@ -146,7 +173,7 @@
             The offset of the trend line.
             </summary>
         </member>
-        <member name="M:webapp.Models.Trend.GetTrend(System.Int16[])">
+        <member name="M:webapp.Models.Trend.GetTrend(webapp.Models.ScoreHistoryItem[])">
             <summary>
             Calculates Trend parameters for subset of score values.
             </summary>

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,7 +24,15 @@ namespace webapp.Controllers
         public Task<ObjectResult> GetOverview()
         {
             var summary = new InfrastructureOverview();
-            var overallScoreHistory = new short[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50, 52, 70, 68, 75, 75, 75, 80, 85, 78 };
+            var overallScoreHistory = new ScoreHistoryItem[]
+            {
+                new ScoreHistoryItem(DateTime.UtcNow.AddDays(-10), 52),
+                new ScoreHistoryItem(DateTime.UtcNow.AddDays(-9), 87),
+                new ScoreHistoryItem(DateTime.UtcNow.AddDays(-8), 96),
+                new ScoreHistoryItem(DateTime.UtcNow.AddDays(-4), 79),
+                new ScoreHistoryItem(DateTime.UtcNow.AddDays(-1), 78),
+                new ScoreHistoryItem(DateTime.UtcNow, 86),
+            };
 
             summary.Overall = new InfrastructureComponentSummary
             {
