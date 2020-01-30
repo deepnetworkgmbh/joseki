@@ -1,4 +1,6 @@
-﻿namespace webapp.Models
+﻿using System;
+
+namespace webapp.Models
 {
     /// <summary>
     /// Summarizes a single infrastructure unit stats: score, trends, name.
@@ -24,12 +26,46 @@
         /// Holds Scores per last 30 days.
         /// If no data for a day - places 0.
         /// </summary>
-        public short[] ScoreHistory { get; set; }
+        public ScoreHistoryItem[] ScoreHistory { get; set; }
 
         /// <summary>
         /// Pre-calculated parameters for drawing trend line.
         /// </summary>
         public Trend ScoreTrend { get; set; }
+    }
+
+    /// <summary>
+    /// Represents the score of component at a given date.
+    /// </summary>
+    public class ScoreHistoryItem
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ScoreHistoryItem"/> class with default values.
+        /// </summary>
+        public ScoreHistoryItem()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ScoreHistoryItem"/> class with provided Date and Score values.
+        /// </summary>
+        /// <param name="date">The date of the score record.</param>
+        /// <param name="score">The score value.</param>
+        public ScoreHistoryItem(DateTime date, short score)
+        {
+            this.RecordedAt = date;
+            this.Score = score;
+        }
+
+        /// <summary>
+        /// The date of the Score.
+        /// </summary>
+        public DateTime RecordedAt { get; set; }
+
+        /// <summary>
+        /// Score value.
+        /// </summary>
+        public short Score { get; set; }
     }
 
     /// <summary>
@@ -54,7 +90,7 @@
         /// </summary>
         /// <param name="values">The score values.</param>
         /// <returns>Trend object.</returns>
-        public static Trend GetTrend(short[] values)
+        public static Trend GetTrend(ScoreHistoryItem[] values)
         {
             var trend = new Trend();
 
@@ -66,11 +102,12 @@
 
             var n = values.Length;
             float sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+            var now = DateTime.UtcNow;
 
             for (int i = 0; i < values.Length; i++)
             {
-                var x = i;
-                var y = values[i];
+                var x = 30 - (now - values[i].RecordedAt).Days;
+                var y = values[i].Score;
 
                 sumX += x;
                 sumXX += x * x;
