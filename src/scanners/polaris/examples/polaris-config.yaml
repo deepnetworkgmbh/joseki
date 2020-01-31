@@ -1,0 +1,151 @@
+checks:
+  # resources
+  cpuRequestsMissing: warning
+  cpuLimitsMissing: warning
+  memoryRequestsMissing: warning
+  memoryLimitsMissing: warning
+  # images
+  tagNotSpecified: error
+  pullPolicyNotAlways: ignore
+  imageRegistry: warning
+  # healthChecks
+  readinessProbeMissing: warning
+  livenessProbeMissing: warning
+  # networking
+  hostNetworkSet: warning
+  hostPortSet: warning
+  # security
+  hostIPCSet: error
+  hostPIDSet: error
+  notReadOnlyRootFileSystem: warning
+  privilegeEscalationAllowed: error
+  runAsRootAllowed: warning
+  runAsPrivileged: error
+  dangerousCapabilities: error
+  insecureCapabilities: warning
+
+customChecks:
+  resourceLimits:
+    containers:
+      exclude:
+        - initContainer
+    successMessage: Resource limits are within the required range
+    failureMessage: Resource limits should be within the required range
+    category: Resources
+    target: Container
+    schema:
+      '$schema': http://json-schema.org/draft-07/schema
+      type: object
+      required:
+        - resources
+      properties:
+        resources:
+          type: object
+          required:
+            - limits
+          properties:
+            limits:
+              type: object
+              required:
+                - memory
+                - cpu
+              properties:
+                memory:
+                  type: string
+                  resourceMinimum: 100M
+                  resourceMaximum: 6G
+                cpu:
+                  type: string
+                  resourceMinimum: 100m
+                  resourceMaximum: "2"
+  imageRegistry:
+    successMessage: Image comes from allowed registries
+    failureMessage: Image should not be from disallowed registry
+    category: Images
+    target: Container
+    schema:
+      '$schema': http://json-schema.org/draft-07/schema
+      type: object
+      properties:
+        image:
+          type: string
+          not:
+            pattern: ^quay.io
+
+controllersToScan:
+  - Deployments
+  - StatefulSets
+  - DaemonSets
+  - CronJobs
+  - Jobs
+  - ReplicationControllers
+exemptions:
+  - controllerNames:
+      - dns-controller
+      - datadog-datadog
+      - kube-flannel-ds
+      - kube2iam
+      - aws-iam-authenticator
+      - datadog
+      - kube2iam
+    rules:
+      - hostNetworkSet
+  - controllerNames:
+      - aws-iam-authenticator
+      - aws-cluster-autoscaler
+      - kube-state-metrics
+      - dns-controller
+      - external-dns
+      - dnsmasq
+      - autoscaler
+      - kubernetes-dashboard
+      - install-cni
+      - kube2iam
+    rules:
+      - readinessProbeMissing
+      - livenessProbeMissing
+  - controllerNames:
+      - aws-iam-authenticator
+      - nginx-ingress-controller
+      - nginx-ingress-default-backend
+      - aws-cluster-autoscaler
+      - kube-state-metrics
+      - dns-controller
+      - external-dns
+      - kubedns
+      - dnsmasq
+      - autoscaler
+      - tiller
+      - kube2iam
+    rules:
+      - runAsRootAllowed
+  - controllerNames:
+      - aws-iam-authenticator
+      - nginx-ingress-controller
+      - nginx-ingress-default-backend
+      - aws-cluster-autoscaler
+      - kube-state-metrics
+      - dns-controller
+      - external-dns
+      - kubedns
+      - dnsmasq
+      - autoscaler
+      - tiller
+      - kube2iam
+    rules:
+      - notReadOnlyRootFileSystem
+  - controllerNames:
+      - cert-manager
+      - dns-controller
+      - kubedns
+      - dnsmasq
+      - autoscaler
+    rules:
+      - cpuRequestsMissing
+      - cpuLimitsMissing
+      - memoryRequestsMissing
+      - memoryLimitsMissing
+  - controllerNames:
+      - kube2iam
+    rules:
+      - runAsPrivileged
