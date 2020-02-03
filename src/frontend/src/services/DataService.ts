@@ -3,6 +3,11 @@ import { ContainerImageScan, VulnerabilityCounter } from "@/models";
 import { ImageScan } from "@/models/ImageScan";
 import { ImageScanGroup } from "@/models/ImageScanGroup";
 import { VulnerabilityGroup, TargetGroup, ImageScanDetailModel } from "@/models/VulnerabilityGroup";
+import { ScanSummary } from '../models/ScanSummary';
+import { ScanObjectType } from '@/types/Enums';
+import { InfrastructureOverview } from '../models/InfrastructureOverview';
+
+import { ScoreService } from './ScoreService';
 
 export class DataService {
 
@@ -64,7 +69,7 @@ export class DataService {
           if(index<0){
             let vulgroup = new VulnerabilityGroup(vulnerability.Severity);
             vulgroup.Count=1;
-            vulgroup.Order = this.getOrderBySeverity(vulnerability.Severity);
+            vulgroup.Order = ScoreService.getOrderBySeverity(vulnerability.Severity);
             vulgroup.CVEs.push(vulnerability);
             target.vulgroups.push(vulgroup);
           }else{
@@ -81,17 +86,6 @@ export class DataService {
     }
 
     return result;
-  }
-
-  public getOrderBySeverity(severity: string): number {
-    switch(severity){
-      case 'CRITICAL': return 10;
-      case 'HIGH'    : return  9;
-      case 'MEDIUM'  : return  8;
-      case 'LOW'     : return  7;
-      case 'UNKNOWN' : return  0;
-    }
-    return 0;
   }
 
   public calculateImageSummaries(data: ContainerImageScan[]): ImageScan {
@@ -163,4 +157,16 @@ export class DataService {
       return "%" + c.charCodeAt(0).toString(16);
     });
   }
+
+  public async getGeneralOverviewData() {
+    console.log(`[] calling api/audits/overview`);
+
+    return axios
+      .get(this.baseUrl + "/api/audits/overview")
+      .then((response)=>response.data)
+      .catch((error)=>console.log(error))
+      .finally(()=> console.log("overview request finished."));
+  }
+
+ 
 }

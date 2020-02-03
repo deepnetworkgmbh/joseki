@@ -1,25 +1,25 @@
 import { ResultSummary } from '../models';
-import { BarChartOptions } from '../types/BarChartOptions';
-import { PieChartOptions } from '../types/PieChartOptions';
+import { BarChartOptions, PieChartOptions, AreaChartOptions } from '../types/';
 import { ImageScan } from '@/models/ImageScan';
+import { mixins } from 'vue-class-component';
+import { CountersSummary, ScoreHistoryItem } from '@/models/InfrastructureOverview';
 
 export class ChartService {
 	public static groupColors = [ '#B7B8A8', '#E33035', '#F8A462', '#41C6B9' ];
 
-	public static drawPieChart(summary: ResultSummary, element: HTMLInputElement) {
+	public static drawPieChart(summary: CountersSummary, element: HTMLInputElement, height: number = 320) {
 		var data = google.visualization.arrayToDataTable([
 			[ 'Severity', 'Number' ],
-			[ 'No Data', summary.NoDatas ],
-			[ 'Error', summary.Errors ],
-			[ 'Warning', summary.Warnings ],
-			[ 'Success', summary.Successes ]
+			[ 'No Data', Math.round(summary.noData) ],
+			[ 'Failed', Math.round(summary.failed) ],
+			[ 'Warning', Math.round(summary.warning) ],
+			[ 'Success', Math.round(summary.passed) ]
 		]);
 
 		var options: PieChartOptions = {
-			title: summary.resultName,
 			titlePosition: 'none',
-			//width:320,
-			height: 250,
+			//width:400,
+			height: height,
 			slices: {
 				0: { color: this.groupColors[0] },
 				1: { color: this.groupColors[1] },
@@ -27,7 +27,7 @@ export class ChartService {
 				3: { color: this.groupColors[3] }
 			},
 			pieHole: 0.5,
-			chartArea: { top:50, width: '100%', height: '70%' },
+			chartArea: { top: 50, width: '100%', height: '80%' },
 			legend: {
 				position: 'top',
 				alignment: 'center',
@@ -86,45 +86,94 @@ export class ChartService {
 		chart.draw(data, options);
 	}
 
-	public static drawSeverityPieChart(summary: ImageScan, element: HTMLInputElement) {
-		let jdata: any[][] = [
-			['Severity', 'Number']
-		];
-		let sevcolors = [];
-		for(let i=0;i<summary.groups.length;i++){
+	public static drawSeverityPieChart(summary: ImageScan, element: HTMLInputElement, height: number = 250) {
+		let jdata: any[][] = [ [ 'Severity', 'Number' ] ];
+		let sevcolors: any = [];
+		for (let i = 0; i < summary.groups.length; i++) {
 			let group = summary.groups[i];
-			jdata.push([group.title, group.count]);
+			jdata.push([ group.title, group.count ]);
 			sevcolors.push(this.getSeverityColor(group.title));
 		}
-	
+
 		let data = google.visualization.arrayToDataTable(jdata);
-		let options:PieChartOptions = {
+		let options: PieChartOptions = {
 			titlePosition: 'none',
 			//width: 400,
-			height: 250,
+			height: height,
 			slices: {
-				0: {color: sevcolors[0]},
-				1: {color: sevcolors[1]},
-				2: {color: sevcolors[2]},
-				3: {color: sevcolors[3]}
+				0: { color: sevcolors[0] },
+				1: { color: sevcolors[1] },
+				2: { color: sevcolors[2] },
+				3: { color: sevcolors[3] }
 			},
 			pieHole: 0.5,
-			chartArea: { 'width': '100%', 'height': '70%'},
+			chartArea: { width: '100%', height: '70%' },
 			legend: {
 				position: 'bottom',
 				alignment: 'center',
 				textStyle: {
 					fontSize: 9
 				}
-			},
+			}
 		};
-	
+
 		let chart = new google.visualization.PieChart(element);
 		chart.draw(data, options);
 	}
 
+	public static drawBarChart(data: ScoreHistoryItem[], key: HTMLInputElement | string, height:number = 100) {
+		
+		let element: any;
+		if(typeof key === 'string') {
+			element = document.getElementById(key);
+		}else {
+			element = key;
+		}
 
-	private static getSeverityColor(severity:string) {
+		var chart_data = new google.visualization.DataTable();
+		chart_data.addColumn('date', 'X');
+		chart_data.addColumn('number', 'Score');
+		
+		for(let i=0;i<data.length;i++){
+			chart_data.addRow([new Date(data[i].recordedAt), data[i].score]);
+		}
+
+		var options: BarChartOptions = {
+			//width: 300,
+			height: height,
+			hAxis: {
+				title: '',
+				gridlines: { count: 0 },
+				baselineColor: '#fff',
+				//gridlineColor: '#fff',
+			},
+			vAxis: {
+				baselineColor: '#fff',
+				//gridlineColor: '#fff',
+				//textPosition: 'none',
+				viewWindow: {
+					max: 100,
+					min: 0
+				},
+				gridlines: { count: 0 }
+			},
+			series: {
+				0: { color: '#41C6B9' }
+			},
+			backgroundColor: 'transparent',
+			legend: { position: 'none' },
+			orientation: 'horizontal',
+			chartArea: { 
+				width: '100%', 
+				height: '100%'
+			},
+		};
+		var chart = new google.visualization.BarChart(element);
+
+		chart.draw(chart_data, options);
+	}
+
+	private static getSeverityColor(severity: string) {
 		switch (severity) {
 			case 'CRITICAL':
 				return ChartService.groupColors[1];
@@ -134,6 +183,6 @@ export class ChartService {
 				return ChartService.groupColors[3];
 			case 'NODATA':
 				return ChartService.groupColors[0];
-		}	
+		}
 	}
 }

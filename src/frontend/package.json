@@ -16,6 +16,7 @@
     "tabulator-tables": "^4.5.3",
     "vue": "^2.6.10",
     "vue-class-component": "^7.0.2",
+    "vue-css-donut-chart": "^1.2.0",
     "vue-loader": "^15.8.3",
     "vue-property-decorator": "^8.3.0",
     "vue-router": "^3.1.3"

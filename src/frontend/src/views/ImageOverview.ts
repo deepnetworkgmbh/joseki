@@ -127,7 +127,7 @@ export default class ImageOverview extends Vue {
       return { text: "No Data", score: -2 };
     }
 
-    let results = [];
+    let results: any = [];
     if (severity_critical > 0) {
       results.push("<b class='severity-CRITICAL'>" + severity_critical + "</b> Critical");
       imageRowResult.score+= 1000;
