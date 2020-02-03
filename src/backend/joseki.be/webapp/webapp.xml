@@ -1,0 +1,246 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>webapp</name>
+    </assembly>
+    <members>
+        <member name="T:webapp.Controllers.AuditsController">
+            <summary>
+            .Audit data endpoints.
+            </summary>
+        </member>
+        <member name="M:webapp.Controllers.AuditsController.GetOverview">
+            <summary>
+            Returns the overall infrastructure overview for Joseki landing page.
+            </summary>
+            <returns>The overall infrastructure overview.</returns>
+        </member>
+        <member name="T:webapp.Infrastructure.HttpRequestLoggingMiddleware">
+            <summary>
+            Writes logs in common format for any incoming HTTP request.
+            </summary>
+        </member>
+        <member name="M:webapp.Infrastructure.HttpRequestLoggingMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Infrastructure.HttpRequestLoggingMiddleware"/> class.
+            </summary>
+            <param name="next">Next <see cref="T:Microsoft.AspNetCore.Http.RequestDelegate"/> to execute. </param>
+        </member>
+        <member name="M:webapp.Infrastructure.HttpRequestLoggingMiddleware.Invoke(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            Executes a middleware.
+            </summary>
+            <param name="httpContext">Current <see cref="T:Microsoft.AspNetCore.Http.HttpContext"/>.</param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous operation.</returns>
+        </member>
+        <member name="M:webapp.Infrastructure.HttpRequestLoggingMiddleware.GetElapsedMilliseconds(System.Int64,System.Int64)">
+            <summary>
+            Get elapsed milliseconds based on elapsed ticks.
+            </summary>
+            <param name="start">Ticks on a start.</param>
+            <param name="stop">Ticks in the end.</param>
+            <returns>Elapsed milliseconds.</returns>
+        </member>
+        <member name="T:webapp.Models.CountersSummary">
+            <summary>
+            Represents short summary of check-result counters.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.CountersSummary.Passed">
+            <summary>
+            Amount of Passed checks.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.CountersSummary.Failed">
+            <summary>
+            Amount of failed checks.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.CountersSummary.Warning">
+            <summary>
+            Amount of Warnings.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.CountersSummary.NoData">
+            <summary>
+            Amount of checks with no-data result: requires a manual verification or Joseki is not able to perform the check.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.CountersSummary.Total">
+            <summary>
+            Total checks amount.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.CountersSummary.Score">
+            <summary>
+            The audit score. It indicates how close the infrastructure is to known best-practices configuration.
+            NoData checks are excluded, Passed and Failed has doubled weight.
+            The final formula is Passed*2/(Failed*2 + Passed*2 + Warning).
+            </summary>
+        </member>
+        <member name="T:webapp.Models.InfrastructureCategory">
+            <summary>
+            Enumerates possible infrastructure categories.
+            </summary>
+        </member>
+        <member name="F:webapp.Models.InfrastructureCategory.Overall">
+            <summary>
+            Overall infrastructure.
+            </summary>
+        </member>
+        <member name="F:webapp.Models.InfrastructureCategory.Subscription">
+            <summary>
+            Cloud Subscription.
+            </summary>
+        </member>
+        <member name="F:webapp.Models.InfrastructureCategory.Kubernetes">
+            <summary>
+            Kubernetes cluster.
+            </summary>
+        </member>
+        <member name="T:webapp.Models.InfrastructureComponentSummary">
+            <summary>
+            Summarizes a single infrastructure unit stats: score, trends, name.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.InfrastructureComponentSummary.Name">
+            <summary>
+            The name of the component: dev-cluster, subscription-1, etc.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.InfrastructureComponentSummary.Category">
+            <summary>
+            The bucket of infrastructure component: Cloud Subscription, Kubernetes cluster, etc.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.InfrastructureComponentSummary.Current">
+            <summary>
+            Latest known check-result counters.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.InfrastructureComponentSummary.ScoreHistory">
+            <summary>
+            Holds Scores per last 30 days.
+            If no data for a day - places 0.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.InfrastructureComponentSummary.ScoreTrend">
+            <summary>
+            Pre-calculated parameters for drawing trend line.
+            </summary>
+        </member>
+        <member name="T:webapp.Models.ScoreHistoryItem">
+            <summary>
+            Represents the score of component at a given date.
+            </summary>
+        </member>
+        <member name="M:webapp.Models.ScoreHistoryItem.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Models.ScoreHistoryItem"/> class with default values.
+            </summary>
+        </member>
+        <member name="M:webapp.Models.ScoreHistoryItem.#ctor(System.DateTime,System.Int16)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Models.ScoreHistoryItem"/> class with provided Date and Score values.
+            </summary>
+            <param name="date">The date of the score record.</param>
+            <param name="score">The score value.</param>
+        </member>
+        <member name="P:webapp.Models.ScoreHistoryItem.RecordedAt">
+            <summary>
+            The date of the Score.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.ScoreHistoryItem.Score">
+            <summary>
+            Score value.
+            </summary>
+        </member>
+        <member name="T:webapp.Models.Trend">
+            <summary>
+            Holds properties to draw a straight trend line.
+            Current version is based on https://math.stackexchange.com/a/204021
+            TODO: figure out the right trend formula. (base on diffs, moving-averages?).
+            </summary>
+        </member>
+        <member name="P:webapp.Models.Trend.Slope">
+            <summary>
+            The slope of the trend line.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.Trend.Offset">
+            <summary>
+            The offset of the trend line.
+            </summary>
+        </member>
+        <member name="M:webapp.Models.Trend.GetTrend(webapp.Models.ScoreHistoryItem[])">
+            <summary>
+            Calculates Trend parameters for subset of score values.
+            </summary>
+            <param name="values">The score values.</param>
+            <returns>Trend object.</returns>
+        </member>
+        <member name="T:webapp.Models.InfrastructureOverview">
+            <summary>
+            Returns infrastructure summary: scores by category, counters, etc.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.InfrastructureOverview.Overall">
+            <summary>
+            Overall infrastructure summary.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.InfrastructureOverview.Components">
+            <summary>
+            Separate summary for each involved component.
+            </summary>
+        </member>
+        <member name="T:webapp.Program">
+            <summary>
+            The entry point.
+            </summary>
+        </member>
+        <member name="M:webapp.Program.Main(System.String[])">
+            <summary>
+            The entry point.
+            </summary>
+            <param name="args">Input arguments.</param>
+        </member>
+        <member name="M:webapp.Program.CreateHostBuilder(System.String[])">
+            <summary>
+            Creates a new instance of ASP.NET core application.
+            </summary>
+            <param name="args">Arguments.</param>
+            <returns>HostBuilder object.</returns>
+        </member>
+        <member name="T:webapp.Startup">
+            <summary>
+            Startup class.
+            </summary>
+        </member>
+        <member name="M:webapp.Startup.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Startup"/> class.
+            </summary>
+            <param name="configuration">The application configuration object.</param>
+        </member>
+        <member name="P:webapp.Startup.Configuration">
+            <summary>
+            The application configuration object.
+            </summary>
+        </member>
+        <member name="M:webapp.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            This method gets called by the runtime. Use this method to add services to the container.
+            </summary>
+            <param name="services">Services collection.</param>
+        </member>
+        <member name="M:webapp.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+            This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+            </summary>
+            <param name="app">Builder object.</param>
+            <param name="env">Environment configuration.</param>
+        </member>
+    </members>
+</doc>
