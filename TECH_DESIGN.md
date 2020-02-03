@@ -11,11 +11,17 @@
       - [Frontend and Backend](#frontend-and-backend)
       - [Backend and Scanners](#backend-and-scanners)
   - [Technologies](#technologies)
+    - [Supported Blob Storages](#supported-blob-storages)
+      - [Azure Blob Storage](#azure-blob-storage)
+    - [Supported Messaging Services](#supported-messaging-services)
+      - [Azure Queue Storage](#azure-queue-storage)
+  - [Observability](#observability)
   - [Development process](#development-process)
     - [Single repository](#single-repository)
     - [Ready to run at any commit in master](#ready-to-run-at-any-commit-in-master)
     - [Getting Started examples](#getting-started-examples)
     - [CI/CD](#cicd)
+    - [Adding new scanners types, Blob Storages, Messaging Services, Databases](#adding-new-scanners-types-blob-storages-messaging-services-databases)
 
 *Joseki* should:
 
@@ -76,7 +82,7 @@ Therefore, each service should be able to run with good-enough defaults, but als
 - `backend` - expose web-api for `frontend` and does the most of business logic: shaping audit data, historical view, reporting, configuration. To simplify the first phase of development, the entire backend is created as a single service.
 - `scanners` - a set of applications (one per audit/scan type), that once in a while perform audit/scan operation and uploads raw results to a Blob Storage. Each scanner job can be deployed to different locations: cloud or bare-metal; VMs, kubernetes or [ACI](https://azure.microsoft.com/en-us/services/container-instances/)/[Cloud Run](https://cloud.google.com/run/)/[Fargate](https://aws.amazon.com/fargate/); FaaS.
 
-![General-overview](./docs/diagrams/joseki-white.png)
+![General-overview](./docs_files/diagrams/joseki-white.png)
 
 ### Scanners
 
@@ -89,7 +95,13 @@ Each scanner lifecycle is similar to the following:
 - validates target configuration;
 - writes audit results to a **Blob Storage**.
 
-Detailed scanners technical design is located next to scanner sources: `/src/scanners/{scanner-type}/README.md`, where `{scanner-type}` is one of `trivy`, `polaris`, `az-sk`, `kube-bench`.
+Every single application is independent from one another. In most cases they require only read-only access to scanned target and **Blob Storage** to upload audit results.
+
+Also each scanner instance should maintain own metadata file at **Blob Storage** `/{scanner-type}-{scanner-id-short-hash}/{scanner-type}-{scanner-id-short-hash}.meta`
+
+Every scanner is hosted as docker container.
+
+Detailed scanners technical design is located next to scanner sources: `/src/scanners/{scanner-type}/TECH_DESIGN.md`, where `{scanner-type}` is one of `trivy`, `polaris`, `az-sk`, `kube-bench`.
 
 ### Backend
 
@@ -98,12 +110,13 @@ Detailed scanners technical design is located next to scanner sources: `/src/sca
 - audit data normalization,
 - house-keeping the configuration,
 - API for Frontend,
+- attestation
 - reporting
 - third-party integrations
 
 It exposes API for `Frontend` application and asynchronously communicates with `Scanners` through **Blob Storage** and **Messaging Queue**.
 
-The application is hosted as docker-container and gets own configuration through `settings.json` file and environment variables.
+The application is hosted as docker-container and gets own configuration through file and environment variables.
 
 Detailed technical design is described in [backend technical design](./src/backend/TECH_DESIGN.md) document.
 
@@ -122,8 +135,9 @@ All the services are wrapped in docker-containers and could run on any infrastru
 `Backend` application requires a **Database** to persist:
 
 - normalized scan/audit results;
-- `Joseki` configuration
-- reports metadata
+- `Joseki` configuration;
+- attestation data;
+- reports metadata.
 
 `Backend` reads audit/scan results from **Blob Storage**.
 
@@ -133,23 +147,27 @@ All the services are wrapped in docker-containers and could run on any infrastru
 
 There are two types of communication:
 
-- `Frontend` and `Backend`;
-- `Backend` and `Scanners`.
+- between `Frontend` and `Backend`;
+- between `Backend` and `Scanners`.
 
 #### Frontend and Backend
 
-`Frontend` application depends only on `Backend` REST API. The services communicates through HTTPs. At the moment, user authentication and authorization are not supported, but it's in [product roadmap](./ROADMAP.md).
+`Frontend` application depends only on `Backend` REST API. The services communicates through HTTPs. At the moment, user authentication and authorization are not supported, but it's in [product roadmap](/PRODUCTOVERVIEW.md#roadmap).
 
-Available API endpoints are described at `https://{scanners-url:port}/swagger`.
+Available API endpoints are described at `https://{backend-host:port}/swagger`.
 
 #### Backend and Scanners
 
 `Backend` and `Scanners` asynchronously interact through **Blob Storage** and **Messaging Service**:
 
-- `Scanners` uploads audit/scan results and own metadata in agreed format to the service;
+- `Scanners` uploads audit/scan results and own metadata in agreed format to the **Blob Storage**;
 - `Backend` reads raw data from **Blob Storage** and writes normalized data to **Database**.
 
-Each scanner has access to the only one folder in **Blob Storage**, while the entire storage file system might be shared between several scanners. The overall **Blob Storage** file system might looks like:
+The Messaging Service is used only by `trivy` scanner and `backend` application. Please refer to [Messaging Service](/src/scanners/README.md#messaging-service) section of `trivy` scanner and [Enqueue Image Scan](/src/backend/TECH_DESIGN.md#enqueue-image-scan) section of `backend` design docs for more details.
+
+Each scanner has access to the only one folder in **Blob Storage**, while the entire storage file system might be shared between several scanners. `backend` application has read-only access to the entire Blob Storage. Please, refer to [Process Audit Results](/src/backend/TECH_DESIGN.md#process-audit-results) section of `backend` technical design doc.
+
+The overall **Blob Storage** file system might looks like:
 
 ```plain
 .
@@ -188,6 +206,7 @@ Where each root level folder corresponds to a separate scanner instance and cont
   - `scanner-type` - `as-sk`, `polaris`, `trivy`, `kube-bench`,
   - `scanner-id` - UUID serialized to string,
   - `scanner-periodicity` - `on-cron-{cron-expression}` or `on-message`,
+  - `heartbeat-periodicity` - `int` seconds: how often hearbeat property is updated,
   - `heartbeat` - [unix epoch time](https://en.wikipedia.org/wiki/Unix_time) in seconds.
 - `{yyyyMMdd-HHmmss}-{hash:7}` - separate folder for each audit. Folder name consist of UTC date and time + 7 random hex characters to ensure uniqueness.
   - audit folder may contain any number of files (depends on scanner type)
@@ -198,7 +217,9 @@ For initial implementation *Joseki* uses:
 
 - [Vue.js](https://vuejs.org/) for **Frontend**;
 - [dotnet core](https://github.com/dotnet/core) for **Backend**;
-- `scanners` programming language/framework vary depending on a tool, which a scanner wraps;
+- `scanners` programming language/framework vary depending on a tool, which a scanner wraps
+  - `trivy`, `polaris`, `kube-bench` are golang applications;
+  - `az-sk` is a powershell script
 - [Azure PostgreSQL](https://azure.microsoft.com/de-de/services/postgresql/) as **Database**;
 - [Azure Blob Storage](https://azure.microsoft.com/en-us/services/storage/blobs/) as **Blob Storage**;
 - [Azure Queue Storage](https://azure.microsoft.com/de-de/services/storage/queues/) as **Messaging Service**.
@@ -206,6 +227,41 @@ For initial implementation *Joseki* uses:
 Service-level access to cloud dependencies is abstracted, therefore changing used products later should be possible.
 
 The current choice is based on the most familiar products/framework of the dev-team at the moment of writing.
+
+![High-level view diagram with technologis stack](./docs_files/diagrams/joseki-v1.png)
+
+### Supported Blob Storages
+
+Access to **Blob Storage** service in each application is abstracted to have a possibility to use different implementations.
+
+At the moment, *Joseki* supports only [Azure Blob Storage](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blobs-overview).
+
+#### Azure Blob Storage
+
+During the `scanner` provisioning process, A new folder with name `{scanner-type}-{scanner-id-short-hash}` is created and [Shared Access Signature](https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview) token is created with write-only permission. (**TODO:** add SAS token rotation).
+
+### Supported Messaging Services
+
+At the moment, only `trivy` scanners are triggered based on messages from **Message Queue** service. Access to the service in the scanner is abstracted to have a possibility to use different implementations.
+
+At the moment, *Joseki* supports only [Azure Queue Storage](https://docs.microsoft.com/en-us/azure/storage/queues/storage-queues-introduction).
+
+#### Azure Queue Storage
+
+Access to the Queue Storage is restricted with [shared access signatures (SAS)](https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview).
+
+`backend` has `add` permission on `image-scan-requests` queue.
+
+`trivy` scanner has `process` persmission on `image-scan-requests` queue and `add` permission on `image-scan-requests-quarantine`.
+
+## Observability
+
+Each application writes log-events to standard output. Logs could be serialized in two formats depending on `LOG_FORMAT` environment variable:
+
+- plain-text string
+- structured form encoded as `json` string .
+
+The initial *Joseki* version is not going to support _tracing_ or any kind of _metrics_ exposure.
 
 ## Development process
 
@@ -218,13 +274,14 @@ When project grows - the repository could be split according to service boundari
 All the sources, documentation, getting-started samples are stored in the single repository:
 
 - `.github` folder consists of pr-templates, issue-templates, github-actions pipelines.
-- `examples` is a set of getting-started scripts/templates to deploy the solution as simple as possible
+- `docs_files` has diagrams and images used in markdown documents.
+- `examples` is a set of getting-started scripts/templates to deploy the solution as simple as possible.
 - `src` folder has four subfolders:
   - `backend`: web-api, data management, reporting, etc,
   - `frontend`: web-application,
   - `infrastructure`: templates/scripts to provision required infrastructure in misc clouds,
   - `scanners` has a dedicated sub-folder for each scanner type.
-- `root` has project-level documents: [readme](./README.md), [product overview](./PRODUCTOVERVIEW.md), tech-design (this), [roadmap](./ROADMAP.md), [contributor guidelines](./CONTRIBUTING.md), and others
+- `root` has project-level documents: [readme](/README.md), [product overview](/PRODUCTOVERVIEW.md), tech-design (this), [contributor guidelines](/CONTRIBUTING.md), and others
 
 ### Ready to run at any commit in master
 
@@ -236,13 +293,13 @@ Any commit in `master` branch should be in fully-functional state. To ensure thi
 
 ### Getting Started examples
 
-Getting Started examples is vital for the project - they should provide the easiest possible way to start using the application. Therefore, each example should:
+Getting Started examples are vital for the project - they should provide the easiest possible way to start using the application. Therefore, each example should:
 
 - be in functional state (covered with acceptance tests?);
 - has a readme explaining what exactly is deployed with it;
 - explicitly say if the sample is production ready and if not what should be hardened.
 
-If possible, each sample should has **a single script** to provision the solution.
+If possible, each sample should have **a single script** to provision the solution.
 
 ### CI/CD
 
@@ -255,3 +312,7 @@ Logically, pipelines can be grouped into three categories:
 3. _Release_ - ensures getting-started samples are in working state, and creates Github release with pinned services versions.
 
 *Continuous Delivery* pipeline, which deploys *Joseki* to the real infrastructure is out of this repository scope.
+
+### Adding new scanners types, Blob Storages, Messaging Services, Databases
+
+If you want to add any other **Message Queue** or **Blob Storage** implementation, add new scanner type - please create a *github issue* or vote for the existing one. Also *pull requests* are more than welcome ;) Please refer our [contribution guide](/CONTRIBUTING.md)

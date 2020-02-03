@@ -1,5 +1,13 @@
 # az-sk Scanner
 
+- [az-sk Scanner](#az-sk-scanner)
+  - [Implementation details](#implementation-details)
+  - [Configuration](#configuration)
+  - [Blob Storage service](#blob-storage-service)
+    - [Azure Blob Storage](#azure-blob-storage)
+    - [Audit result format](#audit-result-format)
+    - [Scanner metadata](#scanner-metadata)
+
 The scanner wraps [Secure DevOps Kit for Azure by Microsoft](https://azsk.azurewebsites.net/index.html) - Azure subscription security validator.
 
 The scanner itself does not add anything new to the original az-sk tool. You can consider it only as a thin az-sk audit data shipper:
@@ -8,8 +16,6 @@ The scanner itself does not add anything new to the original az-sk tool. You can
 - upload results to a **Blob Storage** service.
 
 **NOTE:** az-sk in most cases is used on Windows OS, because of dependency on PowerShell. However there is [AzSK on PowerShell Core](https://azsk.azurewebsites.net/08-Miscellaneous-Features/Readme.html#try-azsk-on-powershell-core), which should unlock Linux capabilities. (**TODO:** ensure, it's possible to run it in linux container)
-
-Please, refer to generic `scanners` [README](/src/scanners/README.md) for common scanners requirements.
 
 ## Implementation details
 
@@ -41,7 +47,7 @@ Uploaded audit results should follow the general [technical design doc](/TECH_DE
 - `scanner-id` is `SCANNER_IDENTIFIER` environment variable;
 - `scanner-periodicity` is `SCANNER_PERIODICITY` environment variable;
 
-Each audit result folder should have three files:
+Each audit result folder should have two files:
 
 - `meta` - json object, which describes audit metadata:
   - `audit-id`
@@ -64,6 +70,9 @@ After each audit iteration is completed, the scanner should update general metad
   "scanner-type": "az-sk",
   "scanner-id": "{UUID}",
   "scanner-periodicity": "on-cron-{cron-expression}",
+  "heartbeat-periodicity": "int",
   "heartbeat": 1579619671
 }
 ```
+
+Where `heartbeat-periodicity` is scanner-periodicity in seconds.
