@@ -1,5 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import Overview from "@/views/Overview.vue";
 import ClusterOverview from "@/views/ClusterOverview.vue";
 import ImageOverview from "@/views/ImageOverview.vue";
 import ImageDetail from "@/views/ImageDetail.vue";
@@ -9,7 +10,12 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
-    redirect: "cluster-overview"
+    redirect: "overview"
+  },
+  {
+    path: "/overview",
+    name: "GeneralOverview",
+    component: Overview
   },
   {
     path: "/cluster-overview",
