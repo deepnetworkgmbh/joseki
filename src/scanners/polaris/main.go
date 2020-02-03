@@ -3,10 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/deepnetworkgmbh/joseki/src/scanners/polaris/pkg/azureblob"
-	"github.com/deepnetworkgmbh/joseki/src/scanners/polaris/pkg/scanner"
 	"log"
 	"os"
+
+	"github.com/deepnetworkgmbh/joseki/src/scanners/polaris/pkg/azureblob"
+	"github.com/deepnetworkgmbh/joseki/src/scanners/polaris/pkg/scanner"
 )
 
 const (
@@ -20,14 +21,17 @@ func main() {
 		"./examples/scanner-config.yaml",
 		"Location of Polaris scanner configuration file")
 
+	flag.Parse()
+
 	if *version {
 		fmt.Printf("Polaris version %s\n", Version)
 		os.Exit(0)
 	}
 
+	log.Printf("Parsing config from %v", *configPath)
 	config, err := scanner.ParseConfig(*configPath)
 	if err != nil {
-		log.Fatalf("Failed to parse configuration at %s %v", configPath, err)
+		log.Fatalf("Failed to parse configuration at %s %v", *configPath, err)
 		os.Exit(1)
 	}
 
