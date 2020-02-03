@@ -17,11 +17,11 @@
             </div>
             <div class="flex flex-row big-text xl:text-3xl lg:text-2xl">
             <div class="w-9/12 font-thin text-right mr-1 text-gray-600">Clusters:</div>
-            <div class="w-3/12 font-hairline text-left">4</div>
+            <div class="w-3/12 font-hairline text-left">{{ getClusters()  }}</div>
             </div>
             <div class="flex flex-row big-text xl:text-3xl lg:text-2xl">
             <div class="w-9/12 font-thin text-right mr-1 text-gray-600">Subscriptions:</div>
-            <div class="w-3/12 font-hairline text-left">2</div>
+            <div class="w-3/12 font-hairline text-left">{{ getSubscriptions() }}</div>
             </div>
         </div>
       </div>
@@ -29,7 +29,7 @@
         <div ref="chart2" class="w-auto"></div>
       </div>
       <div class="w-1/4 border-l border-gray-300">
-        <div ref="chart3" class="w-auto p-2 ml-1"></div>
+        <div ref="chart3" class="w-auto border-b border-gray-500 p-2 ml-1 mb-3"></div>
         <div class="m-3 mt-0">
             <table class="border border-gray-200 w-full text-xs p-4">
                 <thead>
@@ -81,7 +81,7 @@
           </div>
       </div>
     </div>
-    <div v-if="loaded" class="segment shadow">
+    <!-- <div v-if="loaded" class="segment shadow">
         <div class="flex flex-row w-full">
             <div class="w-1/2">            
                 <div v-if='viewMode === 0'>List View</div>
@@ -92,25 +92,26 @@
                 <button :class="getViewModeClass(1)" @click="setViewMode(1)"><i class="fas fa-th"></i></button>
             </div>
         </div>        
-    </div>
-    <div v-if="loaded" class="segment shadow -mt-3">
+    </div> -->
+    <div v-if="loaded" class="segment shadow">
         <div v-if="viewMode === 0" class="w-full">
             <div v-for="(scan, i) in scans" :key="`scan${i}`" class="w-full scan-list-item">
                 {{ scan.target }}
             </div>
         </div>
         <div v-if="viewMode === 1" class="w-full flex flex-wrap pt-2 pl-1">
-            <div v-for="(scan, i) in scans" :key="`scan${i}`" class='scan-detailed-item flex flex-row shadow'>
-                  <div class='w-full p-2 text-lg'>
-                      <div class='text-lg'>{{ scan.target }}</div>
-                      <div class='text-sm text-gray-600'>{{scan.subobjects}} objects</div>
+            <div v-for="(c, i) in data.components" :key="`scan${i}`" class='scan-detailed-item flex flex-row shadow'>
+                  <div class='w-full p-2 text-lg pt-0 flex flex-col'>
+                      <div class='text-sm'>{{ c.name }}</div>
+                      <div class='text-xs text-gray-600'>{{c.category}}</div>
+                      <div style="height:50px;width:130px;" :id='`bar${i}`'></div>
                   </div>  
                   <div class='p-2' style="width: 100px;">
-                    <div style="position:relative;font-size:18px;z-index:1;left:15px;top:15px;">
-                        {{scan.value}}%
+                    <div style="position:relative;font-size:18px;z-index:1;left:19px;top:23px;">
+                        {{c.current.score}}% 
                     </div>
-                    <div style="position:relative;top:-30px;z-index:0;">
-                        <vc-donut :sections="scan.sections" :size="65" unit="px" :total="scan.total"></vc-donut>
+                    <div style="position:relative;top:-25px;z-index:0;">
+                        <vc-donut :sections="c.sections" :size="70" unit="px" :total="c.current.total" :thickness="25"></vc-donut>
                     </div>
                   </div>
             </div>

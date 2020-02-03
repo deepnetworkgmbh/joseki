@@ -2,21 +2,21 @@ import { ResultSummary } from '../models';
 import { BarChartOptions, PieChartOptions, AreaChartOptions } from '../types/';
 import { ImageScan } from '@/models/ImageScan';
 import { mixins } from 'vue-class-component';
+import { CountersSummary, ScoreHistoryItem } from '@/models/InfrastructureOverview';
 
 export class ChartService {
 	public static groupColors = [ '#B7B8A8', '#E33035', '#F8A462', '#41C6B9' ];
 
-	public static drawPieChart(summary: ResultSummary, element: HTMLInputElement, height: number = 320) {
+	public static drawPieChart(summary: CountersSummary, element: HTMLInputElement, height: number = 320) {
 		var data = google.visualization.arrayToDataTable([
 			[ 'Severity', 'Number' ],
-			[ 'No Data', Math.round(summary.NoDatas) ],
-			[ 'Error', Math.round(summary.Errors) ],
-			[ 'Warning', Math.round(summary.Warnings) ],
-			[ 'Success', Math.round(summary.Successes) ]
+			[ 'No Data', Math.round(summary.noData) ],
+			[ 'Failed', Math.round(summary.failed) ],
+			[ 'Warning', Math.round(summary.warning) ],
+			[ 'Success', Math.round(summary.passed) ]
 		]);
 
 		var options: PieChartOptions = {
-			title: summary.resultName,
 			titlePosition: 'none',
 			//width:400,
 			height: height,
@@ -121,22 +121,26 @@ export class ChartService {
 		chart.draw(data, options);
 	}
 
-	public static drawAreaChart(summary: ResultSummary, element: HTMLInputElement) {
-		var data = new google.visualization.DataTable();
-		data.addColumn('number', 'X');
-		data.addColumn('number', 'Score');
+	public static drawBarChart(data: ScoreHistoryItem[], key: HTMLInputElement | string, height:number = 100) {
+		
+		let element: any;
+		if(typeof key === 'string') {
+			element = document.getElementById(key);
+		}else {
+			element = key;
+		}
 
-		data.addRows([			
-			[42, 63], [43, 66], [44, 67], [45, 69], [46, 69], [47, 70],
-			[48, 72], [49, 68], [50, 66], [51, 65], [52, 67], [53, 70],
-			[54, 71], [55, 72], [56, 73], [57, 75], [58, 70], [59, 68],
-			[60, 64], [61, 60], [62, 65], [63, 67], [64, 68], [65, 69],
-			[66, 70], [67, 72], [68, 75], [69, 80]
-		]);
+		var chart_data = new google.visualization.DataTable();
+		chart_data.addColumn('date', 'X');
+		chart_data.addColumn('number', 'Score');
+		
+		for(let i=0;i<data.length;i++){
+			chart_data.addRow([new Date(data[i].recordedAt), data[i].score]);
+		}
 
-		var options: AreaChartOptions = {
+		var options: BarChartOptions = {
 			//width: 300,
-			height: 100,
+			height: height,
 			hAxis: {
 				title: '',
 				gridlines: { count: 0 },
@@ -156,16 +160,17 @@ export class ChartService {
 			series: {
 				0: { color: '#41C6B9' }
 			},
-			backgroundColor: 'white',
+			backgroundColor: 'transparent',
 			legend: { position: 'none' },
+			orientation: 'horizontal',
 			chartArea: { 
 				width: '100%', 
 				height: '100%'
 			},
 		};
+		var chart = new google.visualization.BarChart(element);
 
-		var chart = new google.visualization.AreaChart(element);
-		chart.draw(data, options);
+		chart.draw(chart_data, options);
 	}
 
 	private static getSeverityColor(severity: string) {
