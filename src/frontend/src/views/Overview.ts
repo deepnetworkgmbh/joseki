@@ -24,12 +24,14 @@ export default class Overview extends Vue {
         this.service.getGeneralOverviewData()
             .then(response => {
                 this.data = response;
-                console.log(`[] data is`, this.data);
-                this.loaded = true;
-                this.setupCharts();
+                if(this.data.components && this.data.overall) {
+                    console.log(`[] data is`, this.data);
+                    this.loaded = true;
+                    this.setupCharts();    
+                }
             });
         window.addEventListener("resize", this.setupCharts);
- 
+
     }
 
     destroyed() {
@@ -37,21 +39,21 @@ export default class Overview extends Vue {
     }
 
     setupCharts() {
-        for(let i=0;i<this.data.components.length;i++) {
+        for (let i = 0; i < this.data.components.length; i++) {
             // ugly fix, getter does not work
-            this.data.components[i].sections = InfrastructureComponentSummary.getSections(this.data.components[i].current);   
+            this.data.components[i].sections = InfrastructureComponentSummary.getSections(this.data.components[i].current);
         }
         google.load("visualization", "1", { packages: ["corechart"] });
         google.charts.load('current', { 'packages': ['corechart'] });
         google.charts.setOnLoadCallback(this.drawCharts);
     }
 
- 
+
     drawCharts() {
         ChartService.drawPieChart(this.data.overall.current, (this.$refs.chart2 as HTMLInputElement), 300)
         ChartService.drawBarChart(this.data.overall.scoreHistory, (this.$refs.chart3 as HTMLInputElement))
-        for(let i=0;i<this.data.components.length;i++) {
-            ChartService.drawBarChart(this.data.components[i].scoreHistory, 'bar'+i, 48);
+        for (let i = 0; i < this.data.components.length; i++) {
+            ChartService.drawBarChart(this.data.components[i].scoreHistory, 'bar' + i, 48);
         }
     }
 
@@ -70,29 +72,44 @@ export default class Overview extends Vue {
         const score = this.data.overall.current.score;
         this.grade = ScoreService.getGrade(score);
 
-        if(score>0 && score <=25) {
-            result = "fa fa-poo-storm"            
+        if (score > 0 && score <= 25) {
+            result = "fa fa-poo-storm";
         }
-        if(score>25 && score <=50) {
-            result = "fa fa-cloud-rain"            
+        if (score > 25 && score <= 50) {
+            result = "fa fa-cloud-rain"
         }
-        if(score>50 && score <=75) {
-            result = "fa fa-cloud-sun"            
+        if (score > 50 && score <= 75) {
+            result = "fa fa-cloud-sun"
         }
-        if(score>75) {
-            result = "fa fa-sun"            
+        if (score > 75) {
+            result = "fa fa-sun";
         }
-
         return result;
     }
 
-    getClusters() { return this.data.components.filter(x=> x.category === 'Kubernetes').length; }
-    getSubscriptions() { return this.data.components.filter(x=> x.category === 'Subscription').length; }
+    getArrowHtml(i:number) {
+        const scans = this.data.overall.scoreHistory;
+        if(i>scans.length) return;
+        if(scans[i].score > scans[i+1].score) {
+            return '<i class="fas fa-arrow-up" style="color:green;"></i>'
+        } else if (scans[i].score < scans[i+1].score){
+            return '<i class="fas fa-arrow-down" style="color:red;"></i>'
+        }
+        return '-'
+    }
 
+    getScanRowClass(i:number): string {
+        return i%2 === 0 ? 'bg-gray-100':'bg-gray-200';
+    }
+
+    get shortHistory() {
+     return this.data.overall.scoreHistory.reverse().slice(0, 5);
+    }
+
+    getClusters() { return this.data.components.filter(x => x.category === 'Kubernetes').length; }
+    getSubscriptions() { return this.data.components.filter(x => x.category === 'Subscription').length; }
 
     setViewMode(vm: ViewMode) {
         this.viewMode = vm;
     }
-
-
 }

@@ -38,9 +38,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                <tr v-for="(scan,i) in shortHistory" :key='`scan${i}`' 
-                    :class='getScanRowClass(i)'
-                >
+                <tr v-for="(scan,i) in shortHistory" :key='`scan${i}`'>
                     <td>{{ scan.recordedAt | formatDate }}</td>
                     <td class="w-1">{{scan.score}}%</td>
                     <td class="w-1" v-html="getArrowHtml(i)"></td>

@@ -3,6 +3,7 @@ import { BarChartOptions, PieChartOptions, AreaChartOptions } from '../types/';
 import { ImageScan } from '@/models/ImageScan';
 import { mixins } from 'vue-class-component';
 import { CountersSummary, ScoreHistoryItem } from '@/models/InfrastructureOverview';
+import { ScoreService } from './ScoreService';
 
 export class ChartService {
 	public static groupColors = ['#B7B8A8', '#E33035', '#F8A462', '#41C6B9'];
@@ -170,22 +171,16 @@ export class ChartService {
 		};
 		var chart = new google.visualization.BarChart(element);
 
-		chart.draw(chart_data, options);
-	}
-		};
-
-		var chart = new google.visualization.BarChart(element);
-
 		function selectHandler() {
 			var selectedItem = chart.getSelection()[0];
 			if (selectedItem && selectedItem.row) {
-				var topping = chart_data.getValue(selectedItem.row, 0);
-				alert('The user selected ' + topping);
+				var selectedDate = chart_data.getValue(selectedItem.row, 0);
+				console.log('The user selected ' + selectedDate);
 			}
 		}
 		google.visualization.events.addListener(chart, 'select', selectHandler);
+		
 		chart.draw(chart_data, options);
-
 	}
 
 	private static getSeverityColor(severity: string) {
