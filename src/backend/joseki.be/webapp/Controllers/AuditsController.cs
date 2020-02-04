@@ -29,7 +29,12 @@ namespace webapp.Controllers
                 new ScoreHistoryItem(DateTime.UtcNow.AddDays(-10), 52),
                 new ScoreHistoryItem(DateTime.UtcNow.AddDays(-9), 87),
                 new ScoreHistoryItem(DateTime.UtcNow.AddDays(-8), 96),
-                new ScoreHistoryItem(DateTime.UtcNow.AddDays(-4), 79),
+                new ScoreHistoryItem(DateTime.UtcNow.AddDays(-7), 79),
+                new ScoreHistoryItem(DateTime.UtcNow.AddDays(-6), 69),
+                new ScoreHistoryItem(DateTime.UtcNow.AddDays(-5), 79),
+                new ScoreHistoryItem(DateTime.UtcNow.AddDays(-4), 59),
+                new ScoreHistoryItem(DateTime.UtcNow.AddDays(-3), 39),
+                new ScoreHistoryItem(DateTime.UtcNow.AddDays(-2), 59),
                 new ScoreHistoryItem(DateTime.UtcNow.AddDays(-1), 78),
                 new ScoreHistoryItem(DateTime.UtcNow, 86),
             };

@@ -3,17 +3,18 @@ import { BarChartOptions, PieChartOptions, AreaChartOptions } from '../types/';
 import { ImageScan } from '@/models/ImageScan';
 import { mixins } from 'vue-class-component';
 import { CountersSummary, ScoreHistoryItem } from '@/models/InfrastructureOverview';
+import { ScoreService } from './ScoreService';
 
 export class ChartService {
-	public static groupColors = [ '#B7B8A8', '#E33035', '#F8A462', '#41C6B9' ];
+	public static groupColors = ['#B7B8A8', '#E33035', '#F8A462', '#41C6B9'];
 
 	public static drawPieChart(summary: CountersSummary, element: HTMLInputElement, height: number = 320) {
 		var data = google.visualization.arrayToDataTable([
-			[ 'Severity', 'Number' ],
-			[ 'No Data', Math.round(summary.noData) ],
-			[ 'Failed', Math.round(summary.failed) ],
-			[ 'Warning', Math.round(summary.warning) ],
-			[ 'Success', Math.round(summary.passed) ]
+			['Severity', 'Number'],
+			['No Data', Math.round(summary.noData)],
+			['Failed', Math.round(summary.failed)],
+			['Warning', Math.round(summary.warning)],
+			['Success', Math.round(summary.passed)]
 		]);
 
 		var options: PieChartOptions = {
@@ -43,11 +44,11 @@ export class ChartService {
 
 	public static drawStackedChart(summary: ResultSummary[], element: HTMLInputElement) {
 		if (summary.length === 0) return;
-		let rawdata: any[][] = [ [ 'Severity', 'No Data', 'Error', 'Warning', 'Success' ] ];
+		let rawdata: any[][] = [['Severity', 'No Data', 'Error', 'Warning', 'Success']];
 
 		for (let i = 0; i < summary.length; i++) {
 			const group = summary[i];
-			rawdata.push([ group.resultName, group.NoDatas, group.Errors, group.Warnings, group.Successes ]);
+			rawdata.push([group.resultName, group.NoDatas, group.Errors, group.Warnings, group.Successes]);
 		}
 
 		// Set chart options
@@ -87,7 +88,7 @@ export class ChartService {
 	}
 
 	public static drawSeverityPieChart(summary: ImageScan, element: HTMLInputElement, height: number = 250) {
-		let jdata: any[][] = [ [ 'Severity', 'Number' ] ];
+		let jdata: any[][] = [['Severity', 'Number']];
 		let sevcolors: any = [];
 		for (let i = 0; i < summary.groups.length; i++) {
 			let group = summary.groups[i];
@@ -121,20 +122,20 @@ export class ChartService {
 		chart.draw(data, options);
 	}
 
-	public static drawBarChart(data: ScoreHistoryItem[], key: HTMLInputElement | string, height:number = 100) {
-		
+	public static drawBarChart(data: ScoreHistoryItem[], key: HTMLInputElement | string, height: number = 100) {
+
 		let element: any;
-		if(typeof key === 'string') {
+		if (typeof key === 'string') {
 			element = document.getElementById(key);
-		}else {
+		} else {
 			element = key;
 		}
 
 		var chart_data = new google.visualization.DataTable();
 		chart_data.addColumn('date', 'X');
 		chart_data.addColumn('number', 'Score');
-		
-		for(let i=0;i<data.length;i++){
+
+		for (let i = 0; i < data.length; i++) {
 			chart_data.addRow([new Date(data[i].recordedAt), data[i].score]);
 		}
 
@@ -170,6 +171,15 @@ export class ChartService {
 		};
 		var chart = new google.visualization.BarChart(element);
 
+		function selectHandler() {
+			var selectedItem = chart.getSelection()[0];
+			if (selectedItem && selectedItem.row) {
+				var selectedDate = chart_data.getValue(selectedItem.row, 0);
+				console.log('The user selected ' + selectedDate);
+			}
+		}
+		google.visualization.events.addListener(chart, 'select', selectHandler);
+		
 		chart.draw(chart_data, options);
 	}
 

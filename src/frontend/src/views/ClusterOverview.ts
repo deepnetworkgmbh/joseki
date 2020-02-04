@@ -42,7 +42,7 @@ export default class ClusterOverview extends Vue {
   drawCharts(){
     ChartService.drawStackedChart(this.data.checkGroupSummary, (this.$refs.chart1 as HTMLInputElement))
     ChartService.drawStackedChart(this.data.namespaceSummary, (this.$refs.chart3 as HTMLInputElement))
-    ChartService.drawPieChart(this.data.checkResultsSummary, (this.$refs.chart2 as HTMLInputElement))
+    //ChartService.drawPieChart(this.data.checkResultsSummary, (this.$refs.chart2 as HTMLInputElement))
     this.drawDataTable();
   }  
 
