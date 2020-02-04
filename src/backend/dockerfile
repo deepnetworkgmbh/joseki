@@ -17,7 +17,7 @@ COPY --from=publish /app/publish .
 ENV ASPNETCORE_URLS="http://*:8080"
 EXPOSE 8080
 
-ENV USER=joseki-be
+ENV USER=josekibe
 ENV UID=10001
 ENV GID=10001
 RUN addgroup "$USER" --gid "$GID" \
