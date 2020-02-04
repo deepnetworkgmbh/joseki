@@ -28,6 +28,8 @@ namespace webapp
             this.Configuration = configuration;
         }
 
+        private readonly string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
         /// <summary>
         /// The application configuration object.
         /// </summary>
@@ -39,6 +41,13 @@ namespace webapp
         /// <param name="services">Services collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
+            // TODO: add explicit CORS origins
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    this.myAllowSpecificOrigins,
+                    builder => { builder.WithOrigins("*"); });
+            });
             services.AddControllers()
                 .AddJsonOptions(options =>
                 {
@@ -84,6 +93,8 @@ namespace webapp
             });
 
             app.UseMiddleware<HttpRequestLoggingMiddleware>();
+
+            app.UseCors(this.myAllowSpecificOrigins);
 
             app.UseHttpsRedirection();
             app.UseRouting();
