@@ -1,0 +1,133 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: joseki
+data:
+  config.yaml: |-
+    # Configuration values can be set as key-value properties
+    parallelization: 10
+    buffer: 1000
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: joseki-be
+  namespace: joseki
+  labels:
+    app: joseki-backend
+
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: joseki-be
+  labels:
+    app: joseki-backend
+rules:
+
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: joseki-be
+  labels:
+    app: joseki-backend
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: joseki-be
+subjects:
+  - kind: ServiceAccount
+    name: joseki-be
+    namespace: joseki
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: joseki-be
+  namespace: joseki
+  labels:
+    app: joseki-backend
+  annotations:
+spec:
+  ports:
+  - name: joseki-be
+    port: 80
+    protocol: TCP
+    targetPort: main-http
+  selector:
+    app: joseki-backend
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: joseki-be
+  namespace: joseki
+  labels:
+    app: joseki-backend 
+    version: 0.1.0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: joseki-backend
+  template:
+    metadata:
+      labels:
+        app: joseki-backend
+    spec:
+      containers:
+      - name: joseki-be
+        image: 'deepnetwork/joseki-backend:0.1.0'
+        imagePullPolicy: 'Always'
+        name: joseki-be
+        ports:
+        - name: main-http
+          containerPort: 8080
+        resources:
+          requests:
+            memory: "200M"
+            cpu: "500m"
+          limits:
+            memory: "500M"
+            cpu: "1000m"
+        readinessProbe:
+          httpGet:
+            path: /health/readiness
+            port: 8080
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 5
+        livenessProbe:
+          httpGet:
+            path: /health/liveness
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 3
+        volumeMounts:
+          - name: backend-config-volume
+            mountPath: /config.yaml
+        securityContext:
+          runAsUser: 10001
+          runAsGroup: 10001
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          readOnlyRootFilesystem: false
+      serviceAccountName: joseki-be
+      securityContext:
+        fsGroup: 10001
+      volumes:
+        - name: backend-config-volume
+          configMap:
+            name: backend-config
+            defaultMode: 0777
