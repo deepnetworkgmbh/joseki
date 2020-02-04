@@ -6,12 +6,14 @@ import (
 	"log"
 	"os"
 
+	"github.com/deepnetworkgmbh/joseki/src/scanners/polaris/pkg/config"
+
 	"github.com/deepnetworkgmbh/joseki/src/scanners/polaris/pkg/azureblob"
 	"github.com/deepnetworkgmbh/joseki/src/scanners/polaris/pkg/scanner"
 )
 
 const (
-	Version = "0.1.0"
+	Version = "0.1.2"
 )
 
 func main() {
@@ -24,12 +26,12 @@ func main() {
 	flag.Parse()
 
 	if *version {
-		fmt.Printf("Polaris version %s\n", Version)
+		fmt.Printf("Polaris scanner version %s\n", Version)
 		os.Exit(0)
 	}
 
 	log.Printf("Parsing config from %v", *configPath)
-	config, err := scanner.ParseConfig(*configPath)
+	config, err := config.Parse(*configPath)
 	if err != nil {
 		log.Fatalf("Failed to parse configuration at %s %v", *configPath, err)
 		os.Exit(1)
@@ -38,7 +40,7 @@ func main() {
 	audit(config)
 }
 
-func audit(config scanner.Config) {
+func audit(config config.Config) {
 	audit := scanner.Audit(config.Polaris.ConfigPath)
 
 	client := azureblob.CreateBlobClient(config)

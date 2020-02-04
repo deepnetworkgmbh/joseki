@@ -1,20 +1,21 @@
-package scanner
+package config
 
 import (
 	"bytes"
 	"fmt"
 	"io"
 	"io/ioutil"
-	"k8s.io/apimachinery/pkg/util/yaml"
 	"log"
 	"time"
+
+	"k8s.io/apimachinery/pkg/util/yaml"
 )
 
 type Config struct {
 	Scanner         Scanner         `json:"scanner"`
 	Polaris         Polaris         `json:"polaris"`
 	BlobStorageType BlobStorageType `json:"blobStorageType"`
-	AzureBlobConfig AzureBlobConfig `json:"azureBlobConfig,omitempty"`
+	AzureBlob       AzureBlob       `json:"azureBlob,omitempty"`
 	LogFormat       LogFormat       `json:"logFormat"`
 }
 
@@ -34,16 +35,16 @@ type LogFormat string
 
 const (
 	Plain LogFormat = "plain-text"
-	Json = "json"
+	Json            = "json"
 )
 
 type BlobStorageType string
 
-const(
+const (
 	Azure BlobStorageType = "azure-blob-storage"
 )
 
-type AzureBlobConfig struct {
+type AzureBlob struct {
 	StorageBaseUrl string `json:"storageBaseUrl"`
 	SasToken       string `json:"sasToken"`
 }
@@ -56,12 +57,12 @@ type Metadata struct {
 	Heartbeat            int64  `json:"heartbeat"`
 }
 
-func ParseConfig(path string) (Config, error){
+func Parse(path string) (Config, error) {
 	conf := Config{}
 
 	rawBytes, err := ioutil.ReadFile(path)
 	if err != nil {
-		log.Fatalf("Error fetching Kubernetes resources %v", err)
+		log.Fatalf("Error reading config file %v", err)
 		return conf, err
 	}
 
@@ -77,7 +78,7 @@ func ParseConfig(path string) (Config, error){
 	}
 }
 
-func (config *Config) GetScannerMetadata() Metadata{
+func (config *Config) GetScannerMetadata() Metadata {
 	unixNow := time.Now().UTC().Unix()
 	return Metadata{
 		Type:                 "polaris",

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Azure/azure-storage-blob-go/azblob"
+	"github.com/deepnetworkgmbh/joseki/src/scanners/polaris/pkg/config"
 	"github.com/deepnetworkgmbh/joseki/src/scanners/polaris/pkg/scanner"
 	"log"
 	"net/url"
@@ -12,16 +13,16 @@ import (
 )
 
 type Client struct {
-	config scanner.Config
-	BaseUrl string
+	config   config.Config
+	BaseUrl  string
 	SasToken string
 }
 
-func CreateBlobClient(config scanner.Config) *Client {
+func CreateBlobClient(config config.Config) *Client {
 	blobclient := Client{
 		config:config,
-		BaseUrl:config.AzureBlobConfig.StorageBaseUrl,
-		SasToken:config.AzureBlobConfig.SasToken,
+		BaseUrl:config.AzureBlob.StorageBaseUrl,
+		SasToken:config.AzureBlob.SasToken,
 	}
 
 	return &blobclient
