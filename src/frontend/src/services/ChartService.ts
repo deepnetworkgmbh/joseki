@@ -5,15 +5,15 @@ import { mixins } from 'vue-class-component';
 import { CountersSummary, ScoreHistoryItem } from '@/models/InfrastructureOverview';
 
 export class ChartService {
-	public static groupColors = [ '#B7B8A8', '#E33035', '#F8A462', '#41C6B9' ];
+	public static groupColors = ['#B7B8A8', '#E33035', '#F8A462', '#41C6B9'];
 
 	public static drawPieChart(summary: CountersSummary, element: HTMLInputElement, height: number = 320) {
 		var data = google.visualization.arrayToDataTable([
-			[ 'Severity', 'Number' ],
-			[ 'No Data', Math.round(summary.noData) ],
-			[ 'Failed', Math.round(summary.failed) ],
-			[ 'Warning', Math.round(summary.warning) ],
-			[ 'Success', Math.round(summary.passed) ]
+			['Severity', 'Number'],
+			['No Data', Math.round(summary.noData)],
+			['Failed', Math.round(summary.failed)],
+			['Warning', Math.round(summary.warning)],
+			['Success', Math.round(summary.passed)]
 		]);
 
 		var options: PieChartOptions = {
@@ -43,11 +43,11 @@ export class ChartService {
 
 	public static drawStackedChart(summary: ResultSummary[], element: HTMLInputElement) {
 		if (summary.length === 0) return;
-		let rawdata: any[][] = [ [ 'Severity', 'No Data', 'Error', 'Warning', 'Success' ] ];
+		let rawdata: any[][] = [['Severity', 'No Data', 'Error', 'Warning', 'Success']];
 
 		for (let i = 0; i < summary.length; i++) {
 			const group = summary[i];
-			rawdata.push([ group.resultName, group.NoDatas, group.Errors, group.Warnings, group.Successes ]);
+			rawdata.push([group.resultName, group.NoDatas, group.Errors, group.Warnings, group.Successes]);
 		}
 
 		// Set chart options
@@ -87,11 +87,11 @@ export class ChartService {
 	}
 
 	public static drawSeverityPieChart(summary: ImageScan, element: HTMLInputElement, height: number = 250) {
-		let jdata: any[][] = [ [ 'Severity', 'Number' ] ];
+		let jdata: any[][] = [['Severity', 'Number']];
 		let sevcolors: any = [];
 		for (let i = 0; i < summary.groups.length; i++) {
 			let group = summary.groups[i];
-			jdata.push([ group.title, group.count ]);
+			jdata.push([group.title, group.count]);
 			sevcolors.push(this.getSeverityColor(group.title));
 		}
 
@@ -121,20 +121,20 @@ export class ChartService {
 		chart.draw(data, options);
 	}
 
-	public static drawBarChart(data: ScoreHistoryItem[], key: HTMLInputElement | string, height:number = 100) {
-		
+	public static drawBarChart(data: ScoreHistoryItem[], key: HTMLInputElement | string, height: number = 100) {
+
 		let element: any;
-		if(typeof key === 'string') {
+		if (typeof key === 'string') {
 			element = document.getElementById(key);
-		}else {
+		} else {
 			element = key;
 		}
 
 		var chart_data = new google.visualization.DataTable();
 		chart_data.addColumn('date', 'X');
 		chart_data.addColumn('number', 'Score');
-		
-		for(let i=0;i<data.length;i++){
+
+		for (let i = 0; i < data.length; i++) {
 			chart_data.addRow([new Date(data[i].recordedAt), data[i].score]);
 		}
 
@@ -158,19 +158,34 @@ export class ChartService {
 				gridlines: { count: 0 }
 			},
 			series: {
-				0: { color: '#41C6B9' }
+				0: { color: '#41C6B9' },
+				1: {
+					color: 'FFA500',
+					visibleInLegend: false,	// don't show this in the legend
+				}
 			},
 			backgroundColor: 'transparent',
 			legend: { position: 'none' },
 			orientation: 'horizontal',
-			chartArea: { 
-				width: '100%', 
+			chartArea: {
+				width: '100%',
 				height: '100%'
 			},
+
 		};
+
 		var chart = new google.visualization.BarChart(element);
 
+		function selectHandler() {
+			var selectedItem = chart.getSelection()[0];
+			if (selectedItem && selectedItem.row) {
+				var topping = chart_data.getValue(selectedItem.row, 0);
+				alert('The user selected ' + topping);
+			}
+		}
+		google.visualization.events.addListener(chart, 'select', selectHandler);
 		chart.draw(chart_data, options);
+
 	}
 
 	private static getSeverityColor(severity: string) {

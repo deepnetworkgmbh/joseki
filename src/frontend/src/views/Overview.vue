@@ -34,41 +34,18 @@
             <table class="border border-gray-200 w-full text-xs p-4">
                 <thead>
                     <tr class='bg-gray-500 text-white'>
-                        <th>Latest Scans</th>
-                        <th colspan='2'>Success</th>
+                        <th colspan='3'>Last Scans</th>
                     </tr>
                 </thead>
-                <tbody>
-                <tr>
-                    <td>28.01.2020 00:16:12</td>
-                    <td class="w-1">76%</td>
-                    <td class="w-1"><i class="fas fa-arrow-up" style="color:green;"></i></td>
+                <tbody>                    
+                <tr v-for="(scan,i) in shortHistory" :key='`scan${i}`' 
+                    :class='getScanRowClass(i)'
+                >
+                    <td>{{ scan.recordedAt | formatDate }}</td>
+                    <td class="w-1">{{scan.score}}%</td>
+                    <td class="w-1" v-html="getArrowHtml(i)"></td>
                 </tr>
-                <tr class="bg-gray-200">
-                    <td>27.01.2020 00:16:11</td>
-                    <td>74%</td>
-                    <td><i class="fas fa-arrow-up" style="color:green;"></i></td>
-                </tr>
-                <tr>
-                    <td>26.01.2020 00:16:14</td>
-                    <td>72%</td>
-                    <td><i class="fas fa-arrow-down" style="color:red;"></i></td>
-                </tr>
-                <tr class="bg-gray-200">
-                    <td>25.01.2020 00:16:12</td>
-                    <td>76%</td>
-                    <td><i class="fas fa-arrow-down" style="color:red;"></i></td>
-                </tr>
-                <tr>
-                    <td>24.01.2020 00:16:11</td>
-                    <td>78%</td>
-                    <td><i class="fas fa-arrow-up" style="color:green;"></i></td>
-                </tr>
-                <tr class="bg-gray-200">
-                    <td>23.01.2020 00:17:11</td>
-                    <td>71%</td>
-                    <td><i class="fas fa-arrow-up" style="color:green;"></i></td>
-                </tr>
+
                 </tbody>
                 <tfoot>
                 <tr>

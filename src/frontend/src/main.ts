@@ -20,6 +20,14 @@ import Donut from 'vue-css-donut-chart';
 import 'vue-css-donut-chart/dist/vcdonut.css';
 Vue.use(Donut);
 
+import moment from 'moment';
+
+Vue.filter('formatDate', function(value) {
+  if (value) {
+    return moment(String(value)).format('YYYY/MM/DD hh:mm')
+  }
+});
+
 new Vue({
   router,
   render: h => h(App)
