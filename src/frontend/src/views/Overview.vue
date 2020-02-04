@@ -37,7 +37,7 @@
                         <th colspan='3'>Last Scans</th>
                     </tr>
                 </thead>
-                <tbody>                    
+                <tbody>
                 <tr v-for="(scan,i) in shortHistory" :key='`scan${i}`' 
                     :class='getScanRowClass(i)'
                 >

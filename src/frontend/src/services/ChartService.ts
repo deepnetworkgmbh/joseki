@@ -91,7 +91,7 @@ export class ChartService {
 		let sevcolors: any = [];
 		for (let i = 0; i < summary.groups.length; i++) {
 			let group = summary.groups[i];
-			jdata.push([group.title, group.count]);
+			jdata.push([ group.title, group.count ]);
 			sevcolors.push(this.getSeverityColor(group.title));
 		}
 
@@ -158,20 +158,20 @@ export class ChartService {
 				gridlines: { count: 0 }
 			},
 			series: {
-				0: { color: '#41C6B9' },
-				1: {
-					color: 'FFA500',
-					visibleInLegend: false,	// don't show this in the legend
-				}
+				0: { color: '#41C6B9' }
 			},
 			backgroundColor: 'transparent',
 			legend: { position: 'none' },
 			orientation: 'horizontal',
-			chartArea: {
-				width: '100%',
+			chartArea: { 
+				width: '100%', 
 				height: '100%'
 			},
+		};
+		var chart = new google.visualization.BarChart(element);
 
+		chart.draw(chart_data, options);
+	}
 		};
 
 		var chart = new google.visualization.BarChart(element);

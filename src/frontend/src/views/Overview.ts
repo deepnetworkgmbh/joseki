@@ -19,7 +19,6 @@ export default class Overview extends Vue {
     data: InfrastructureOverview = new InfrastructureOverview();
     viewMode: ViewMode = ViewMode.detailed;
     grade: string = '?';
-    Q1chart?: google.visualization.BarChart;
 
     created() {
         this.service.getGeneralOverviewData()
@@ -30,6 +29,7 @@ export default class Overview extends Vue {
                 this.setupCharts();
             });
         window.addEventListener("resize", this.setupCharts);
+ 
     }
 
     destroyed() {
@@ -65,21 +65,6 @@ export default class Overview extends Vue {
         return result;
     }
 
-    getArrowHtml(i:number) {
-        const scans = this.data.overall.scoreHistory;
-        if(i>scans.length) return;
-        if(scans[i].score > scans[i+1].score) {
-            return '<i class="fas fa-arrow-up" style="color:green;"></i>'
-        } else if (scans[i].score < scans[i+1].score){
-            return '<i class="fas fa-arrow-down" style="color:red;"></i>'
-        }
-        return '-'
-    }
-
-    getScanRowClass(i:number): string {
-        return i%2 === 0 ? 'bg-gray-100':'bg-gray-200';
-    }
-
     getScoreIconClass(): string {
         let result = '';
         const score = this.data.overall.current.score;
@@ -101,13 +86,10 @@ export default class Overview extends Vue {
         return result;
     }
 
-    get shortHistory() {
-        return this.data.overall.scoreHistory.reverse().slice(0, 5);
-    }
-
     getClusters() { return this.data.components.filter(x=> x.category === 'Kubernetes').length; }
     getSubscriptions() { return this.data.components.filter(x=> x.category === 'Subscription').length; }
-    getLast5Scans() { return this.data.overall.scoreHistory.slice(1).slice(-6); }
+
+
     setViewMode(vm: ViewMode) {
         this.viewMode = vm;
     }
