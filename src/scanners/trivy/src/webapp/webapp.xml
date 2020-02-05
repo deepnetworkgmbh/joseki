@@ -4,6 +4,23 @@
         <name>webapp</name>
     </assembly>
     <members>
+        <member name="T:webapp.BackgroundWorkers.AzBlobHeartbeat">
+            <summary>
+            Updates associated with current scanner metadata in Azure blob Storage each N seconds.
+            </summary>
+        </member>
+        <member name="M:webapp.BackgroundWorkers.AzBlobHeartbeat.#ctor(webapp.Configuration.ConfigurationParser)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.BackgroundWorkers.AzBlobHeartbeat"/> class.
+            </summary>
+            <param name="configuration">The scanner configuration.</param>
+        </member>
+        <member name="M:webapp.BackgroundWorkers.AzBlobHeartbeat.StartAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:webapp.BackgroundWorkers.AzBlobHeartbeat.StopAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
         <member name="T:webapp.BackgroundWorkers.TrivyDbUpdater">
             <summary>
             Updates Trivy database every hour.
@@ -20,6 +37,56 @@
         </member>
         <member name="M:webapp.BackgroundWorkers.TrivyDbUpdater.StopAsync(System.Threading.CancellationToken)">
             <inheritdoc />
+        </member>
+        <member name="T:webapp.Configuration.AzBlobExporterConfiguration">
+            <summary>
+            Represents Azure Blob Exporter configuration.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzBlobExporterConfiguration.BasePath">
+            <summary>
+            Base Azure Blob Storage URL.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzBlobExporterConfiguration.Sas">
+            <summary>
+            Sas token.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzBlobExporterConfiguration.HeartbeatPeriodicity">
+            <summary>
+            How often the application should update scanner metadata file.
+            </summary>
+        </member>
+        <member name="T:webapp.Configuration.AzQueueConfiguration">
+            <summary>
+            Represents Azure Storage Queue configuration.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzQueueConfiguration.BasePath">
+            <summary>
+            Base Azure Storage Queue URL.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzQueueConfiguration.MainQueue">
+            <summary>
+            Image Scan Request queue name.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzQueueConfiguration.MainQueueSas">
+            <summary>
+            Sas token to process image-scan requests.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzQueueConfiguration.QuarantineQueue">
+            <summary>
+            Image Scan Request quarantine queue name.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzQueueConfiguration.QuarantineQueueSas">
+            <summary>
+            Sas token to insert messages to quarantine queue.
+            </summary>
         </member>
         <member name="T:webapp.Configuration.ConfigurationParser">
             <summary>
@@ -44,6 +111,12 @@
             Parses Scanner Config on the first request and cache the result in memory.
             </summary>
             <returns>Image Scanner configuration object.</returns>
+        </member>
+        <member name="M:webapp.Configuration.ConfigurationParser.GetTrivyAzConfig">
+            <summary>
+            Creates Scanner configuration specific for Trivy scanner with Azure Blob exporter.
+            </summary>
+            <returns>A new instance of <see cref="T:core.core.TrivyAzblobScannerConfiguration"/>.</returns>
         </member>
         <member name="T:webapp.Configuration.FileExporterConfiguration">
             <summary>
@@ -70,6 +143,11 @@
             The Scan Result exporter configuration.
             </summary>
         </member>
+        <member name="P:webapp.Configuration.ImageScannerConfiguration.Queue">
+            <summary>
+            The Scan Request queue configuration.
+            </summary>
+        </member>
         <member name="T:webapp.Configuration.IScannerConfiguration">
             <summary>
             The base interface for all types of scanners configuration.
@@ -80,9 +158,29 @@
             The base interface for all types of exporters configuration.
             </summary>
         </member>
+        <member name="T:webapp.Configuration.IQueueConfiguration">
+            <summary>
+            The base interface for all types of queue configuration.
+            </summary>
+        </member>
         <member name="T:webapp.Configuration.TrivyConfiguration">
             <summary>
             Trivy scanner configuration.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.TrivyConfiguration.Id">
+            <summary>
+            Scanner identifier.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.TrivyConfiguration.Version">
+            <summary>
+            Scanner version.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.TrivyConfiguration.TrivyVersion">
+            <summary>
+            Trivy binary version.
             </summary>
         </member>
         <member name="P:webapp.Configuration.TrivyConfiguration.BinaryPath">

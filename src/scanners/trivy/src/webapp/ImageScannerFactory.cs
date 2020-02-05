@@ -1,6 +1,8 @@
 ﻿using System;
 
+using core.core;
 using core.exporters;
+using core.exporters.azure;
 using core.scanners;
 
 using webapp.Configuration;
@@ -49,7 +51,8 @@ namespace webapp
             return scannerConfiguration.Exporter switch
             {
                 FileExporterConfiguration fileExporterConfiguration => new FileExporter(fileExporterConfiguration.Path),
-                _ => throw new NotImplementedException("At the moment only file exporter is supported")
+                AzBlobExporterConfiguration _ => new AzureBlobExporter(this.configuration.GetTrivyAzConfig()),
+                _ => throw new NotImplementedException("At the moment only file and Azure blob exporters are supported")
             };
         }
     }

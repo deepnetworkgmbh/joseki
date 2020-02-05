@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using core.core;
 using core.exporters;
@@ -25,7 +26,7 @@ namespace core
             try
             {
                 var details = await this.scanner.Scan(image);
-                await this.exporter.UploadAsync(details);
+                await this.exporter.UploadAsync(details, CancellationToken.None);
                 return details;
             }
             catch (Exception ex)
