@@ -68,6 +68,7 @@ namespace webapp
                 return new ImageScanner(scanner, exporter);
             });
             services.AddHostedService<TrivyDbUpdater>();
+            services.AddHostedService<AzBlobHeartbeat>();
 
             services.AddSwaggerGen(c =>
             {

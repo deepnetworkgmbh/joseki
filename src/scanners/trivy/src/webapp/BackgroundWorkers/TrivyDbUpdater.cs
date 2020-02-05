@@ -38,6 +38,8 @@ namespace webapp.BackgroundWorkers
             // Only if scanner is Trivy, the object has to register db-updater.
             if (this.trivyScanner != null)
             {
+                Logger.Information("Starting Trivy database updater");
+
                 try
                 {
                     await this.trivyScanner.UpdateDb();
@@ -51,6 +53,8 @@ namespace webapp.BackgroundWorkers
                     Logger.Fatal(ex, "Failed to initialize trivy database");
                     throw;
                 }
+
+                Logger.Information("Trivy database updater was started");
             }
             else
             {
@@ -64,7 +68,11 @@ namespace webapp.BackgroundWorkers
         {
             if (this.trivyUpdater != null)
             {
+                Logger.Information("Stopping Trivy database updater");
+
                 await this.trivyUpdater.DisposeAsync();
+
+                Logger.Information("Trivy database updater was stopped");
             }
         }
 

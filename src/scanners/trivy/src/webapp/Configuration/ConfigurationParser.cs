@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 
+using core.core;
+
 using Microsoft.Extensions.Configuration;
 
 using Serilog;
@@ -28,6 +30,8 @@ namespace webapp.Configuration
                 .WithTypeResolver(new DynamicTypeResolver())
                 .WithTagMapping("!trivy-scanner", typeof(TrivyConfiguration))
                 .WithTagMapping("!file-exporter", typeof(FileExporterConfiguration))
+                .WithTagMapping("!az-blob", typeof(AzBlobExporterConfiguration))
+                .WithTagMapping("!az-storage-queue", typeof(AzQueueConfiguration))
                 .Build();
         }
 
@@ -72,6 +76,25 @@ namespace webapp.Configuration
         public ImageScannerConfiguration Get()
         {
             return this.imageScannerConfig.Value;
+        }
+
+        /// <summary>
+        /// Creates Scanner configuration specific for Trivy scanner with Azure Blob exporter.
+        /// </summary>
+        /// <returns>A new instance of <see cref="TrivyAzblobScannerConfiguration"/>.</returns>
+        public TrivyAzblobScannerConfiguration GetTrivyAzConfig()
+        {
+            var trivyCfg = (TrivyConfiguration)this.imageScannerConfig.Value.Scanner;
+            var azBlobCfg = (AzBlobExporterConfiguration)this.imageScannerConfig.Value.Exporter;
+            return new TrivyAzblobScannerConfiguration
+            {
+                Id = trivyCfg.Id,
+                Version = trivyCfg.Version,
+                TrivyVersion = trivyCfg.TrivyVersion,
+                AzureBlobBaseUrl = azBlobCfg.BasePath,
+                AzureBlobSasToken = azBlobCfg.Sas,
+                HeartbeatPeriodicity = azBlobCfg.HeartbeatPeriodicity,
+            };
         }
 
         // Parse the application configuration file.

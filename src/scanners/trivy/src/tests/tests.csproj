@@ -26,4 +26,13 @@
     <ProjectReference Include="..\webapp\webapp.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="config-sample.az.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="config-sample.file.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

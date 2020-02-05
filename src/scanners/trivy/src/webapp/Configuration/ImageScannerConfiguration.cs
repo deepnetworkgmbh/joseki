@@ -14,6 +14,11 @@
         /// The Scan Result exporter configuration.
         /// </summary>
         public IExporterConfiguration Exporter { get; set; }
+
+        /// <summary>
+        /// The Scan Request queue configuration.
+        /// </summary>
+        public IQueueConfiguration Queue { get; set; }
     }
 
     /// <summary>
@@ -27,6 +32,13 @@
     /// The base interface for all types of exporters configuration.
     /// </summary>
     public interface IExporterConfiguration
+    {
+    }
+
+    /// <summary>
+    /// The base interface for all types of queue configuration.
+    /// </summary>
+    public interface IQueueConfiguration
     {
     }
 }
