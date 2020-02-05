@@ -1,0 +1,17 @@
+﻿scanner:
+  !trivy-scanner
+  binaryPath: /usr/local/bin/trivy
+  cachePath: /app/image-scanner-cache/.trivy
+  registries:
+    - name: deepnetwork
+      address: https://registry.hub.docker.com
+      username:
+      password:
+    - name: acr.azurecr.io
+      address: acr.azurecr.io
+      username: acr
+      password: ...
+
+exporter:
+  !file-exporter
+  path: /app/image-scanner-cache/scan-results
