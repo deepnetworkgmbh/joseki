@@ -4,9 +4,9 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: joseki-fe
+  namespace: joseki
   labels:
-    app: frontend
-    module: joseki
+    app: joseki-frontend
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -14,8 +14,7 @@ kind: ClusterRole
 metadata:
   name: joseki-fe
   labels:
-    app: frontend
-    module: joseki
+    app: joseki-frontend
 rules:
 
 ---
@@ -24,8 +23,7 @@ kind: ClusterRoleBinding
 metadata:
   name: joseki-fe
   labels:
-    app: frontend
-    module: joseki
+    app: joseki-frontend
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -40,9 +38,9 @@ apiVersion: v1
 kind: Service
 metadata:
   name: joseki-fe
+  namespace: joseki
   labels:
-    app: frontend
-    module: joseki
+    app: joseki-frontend
   annotations:
 spec:
   ports:
@@ -51,8 +49,7 @@ spec:
     protocol: TCP
     targetPort: main-http
   selector:
-    app: frontend
-    module: joseki
+    app: joseki-frontend
   type: ClusterIP
 
 ---
@@ -60,24 +57,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: joseki-fe
+  namespace: joseki
   labels:
-    app: frontend
-    module: joseki
+    app: joseki-frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: frontend
-      module: joseki
+      app: joseki-frontend
   template:
     metadata:
       labels:
-        app: frontend
-        module: joseki
+        app: joseki-frontend
     spec:
       containers:
       - name: joseki-fe
-        image: 'deepnetwork/joseki-fe:0.1.0'
+        image: 'deepnetwork/joseki-frontend:0.1.1'
         imagePullPolicy: 'Always'
         name: joseki-fe
         ports:
