@@ -23,7 +23,7 @@ The scanner adjusts to the underlying Polaris app - it's written in golang and a
 
 - Polaris config should be located at path specified in `POLARIS_CONFIG_PATH` environment variable path;
 - exact Blob Storage service implementation is constructed based on `BLOB_STORAGE_SERVICE_TYPE` environment variable;
-- if is running out of the target cluster, `KUBECONFIG_PATH` environment variable should point to kubeconfig file;
+- if is running out of the target cluster, `KUBECONFIG` environment variable should point to kubeconfig file;
 - `SCANNER_IDENTIFIER` and `SCANNER_PERIODICITY` is deployment-time scanner identifier and periodicity;
 - `LOG_FORMAT` - `plain-text` or `json`.
 
@@ -70,7 +70,7 @@ After each audit iteration is completed, the scanner should update general metad
 {
   "scanner-type": "polaris",
   "scanner-id": "{UUID}",
-  "scanner-periodicity": "on-cron-{cron-expression}",
+  "scanner-periodicity": "{cron-expression}",
   "heartbeat-periodicity": "int",
   "heartbeat": 1579619671
 }
