@@ -332,11 +332,11 @@ Image-scan request message envelop consists of two parts: `headers` (system info
 ```json
 {
   "headers": {
-    "creation-time": "int",
-    "payload-version": "string"
+    "creationTime": "int",
+    "payloadVersion": "string"
   },
   "payload":{
-    "image-tag": "string"
+    "imageFullName": "string"
   }
 }
 ```

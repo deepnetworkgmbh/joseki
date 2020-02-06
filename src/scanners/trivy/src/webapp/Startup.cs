@@ -60,6 +60,7 @@ namespace webapp
             services.AddSingleton<ImageScannerFactory>();
             services.AddTransient(provider => provider.GetService<ImageScannerFactory>().GetScanner());
             services.AddTransient(provider => provider.GetService<ImageScannerFactory>().GetExporter());
+            services.AddTransient(provider => provider.GetService<ImageScannerFactory>().GetQueue());
             services.AddSingleton(provider =>
             {
                 var config = provider.GetService<ConfigurationParser>().Get();
@@ -69,6 +70,7 @@ namespace webapp
             });
             services.AddHostedService<TrivyDbUpdater>();
             services.AddHostedService<AzBlobHeartbeat>();
+            services.AddHostedService<ImageScanRequestListener>();
 
             services.AddSwaggerGen(c =>
             {
