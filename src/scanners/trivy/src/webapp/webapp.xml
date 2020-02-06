@@ -21,6 +21,24 @@
         <member name="M:webapp.BackgroundWorkers.AzBlobHeartbeat.StopAsync(System.Threading.CancellationToken)">
             <inheritdoc />
         </member>
+        <member name="T:webapp.BackgroundWorkers.ImageScanRequestListener">
+            <summary>
+            Background task to dequeue new Image Scan Request messages.
+            </summary>
+        </member>
+        <member name="M:webapp.BackgroundWorkers.ImageScanRequestListener.#ctor(webapp.Queues.IQueueListener,core.ImageScanner)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.BackgroundWorkers.ImageScanRequestListener"/> class.
+            </summary>
+            <param name="queueListener">Queue listener implementation.</param>
+            <param name="scanner">Image Scanner instance.</param>
+        </member>
+        <member name="M:webapp.BackgroundWorkers.ImageScanRequestListener.StartAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:webapp.BackgroundWorkers.ImageScanRequestListener.StopAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
         <member name="T:webapp.BackgroundWorkers.TrivyDbUpdater">
             <summary>
             Updates Trivy database every hour.
@@ -238,6 +256,12 @@
             </summary>
             <returns>At the moment, only file is supported, so returns File Exporter object.</returns>
         </member>
+        <member name="M:webapp.ImageScannerFactory.GetQueue">
+            <summary>
+            Gets Messaging Service implementation.
+            </summary>
+            <returns>At the moment only Azure Storage Queue is supported.</returns>
+        </member>
         <member name="T:webapp.Infrastructure.HttpRequestLoggingMiddleware">
             <summary>
             Writes logs in common format for any incoming HTTP request.
@@ -289,6 +313,46 @@
             Indicates if service requires a restart.
             </summary>
         </member>
+        <member name="T:webapp.Models.ImageScanRequestMessage">
+            <summary>
+            The image scan request details.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.ImageScanRequestMessage.Headers">
+            <summary>
+            Message headers: when the message was created, what is the version of payload, etc.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.ImageScanRequestMessage.Payload">
+            <summary>
+            Image Scan Request details: image tag, etc.
+            </summary>
+        </member>
+        <member name="T:webapp.Models.MessageHeaders">
+            <summary>
+            Message headers: when the message was created, what is the version of payload, etc.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.MessageHeaders.CreationTime">
+            <summary>
+            Unix epoch time, when the scan was requested.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.MessageHeaders.PayloadVersion">
+            <summary>
+            The version of message payload.
+            </summary>
+        </member>
+        <member name="T:webapp.Models.ImageScanRequestPayload">
+            <summary>
+            The Image Scan Request message payload.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.ImageScanRequestPayload.ImageFullName">
+            <summary>
+            The complete image name including registry, and tag.
+            </summary>
+        </member>
         <member name="T:webapp.Program">
             <summary>
             The application main object.
@@ -306,6 +370,37 @@
             </summary>
             <param name="args">Arguments.</param>
             <returns>HostBuilder object.</returns>
+        </member>
+        <member name="T:webapp.Queues.AzureStorageQueue">
+            <summary>
+            Azure Storage Queue implementation of Messaging Service.
+            </summary>
+        </member>
+        <member name="M:webapp.Queues.AzureStorageQueue.#ctor(webapp.Configuration.AzQueueConfiguration)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Queues.AzureStorageQueue"/> class.
+            </summary>
+            <param name="cfg">The Azure Storage Queue configuration.</param>
+        </member>
+        <member name="M:webapp.Queues.AzureStorageQueue.Listen(System.Func{webapp.Models.ImageScanRequestMessage,System.Threading.Tasks.Task},System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:webapp.Queues.AzureStorageQueue.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="T:webapp.Queues.IQueueListener">
+            <summary>
+            An abstraction to dequeue Image Scan Request messages.
+            </summary>
+        </member>
+        <member name="M:webapp.Queues.IQueueListener.Listen(System.Func{webapp.Models.ImageScanRequestMessage,System.Threading.Tasks.Task},System.Threading.CancellationToken)">
+            <summary>
+            Encapsulates reliable Image Scan Request queue listening:
+            Get messages from queue, adjust visibility timeouts, delete or move to quarantine queue at the end.
+            </summary>
+            <param name="handler">Handler for a single Image Scan Request message.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+            <returns>Task object.</returns>
         </member>
         <member name="T:webapp.Startup">
             <summary>

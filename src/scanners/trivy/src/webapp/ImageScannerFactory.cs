@@ -1,11 +1,11 @@
 ﻿using System;
 
-using core.core;
 using core.exporters;
 using core.exporters.azure;
 using core.scanners;
 
 using webapp.Configuration;
+using webapp.Queues;
 
 namespace webapp
 {
@@ -53,6 +53,21 @@ namespace webapp
                 FileExporterConfiguration fileExporterConfiguration => new FileExporter(fileExporterConfiguration.Path),
                 AzBlobExporterConfiguration _ => new AzureBlobExporter(this.configuration.GetTrivyAzConfig()),
                 _ => throw new NotImplementedException("At the moment only file and Azure blob exporters are supported")
+            };
+        }
+
+        /// <summary>
+        /// Gets Messaging Service implementation.
+        /// </summary>
+        /// <returns>At the moment only Azure Storage Queue is supported.</returns>
+        public IQueueListener GetQueue()
+        {
+            var scannerConfiguration = this.configuration.Get();
+
+            return scannerConfiguration.Queue switch
+            {
+                AzQueueConfiguration azQueue => new AzureStorageQueue(azQueue),
+                _ => throw new NotImplementedException("At the moment, only Azure Storage Queue is supported")
             };
         }
     }
