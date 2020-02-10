@@ -32,7 +32,7 @@ export default class ImageOverview extends Vue {
       this.loaded = true;
       console.log(this.data);
       this.setupPage();
-    });    
+    });
   }
 
   setupPage() {
@@ -42,7 +42,7 @@ export default class ImageOverview extends Vue {
   }
 
   setupChart() {
-    google.load("visualization", "1", { packages: ["corechart"] });
+    //google.load("visualization", "1", { packages: ["corechart"] });
     google.charts.load("current", { packages: ["corechart"] });
     google.charts.setOnLoadCallback(this.drawCharts);
   }
@@ -96,12 +96,12 @@ export default class ImageOverview extends Vue {
     return image.counters[severityIndex].count;
   }
 
-  parseSeverities(image: ContainerImageScan) : { text: string, score: number} {
+  parseSeverities(image: ContainerImageScan): { text: string, score: number } {
     let imageRowResult = {
       text: '',
       score: 0
     }
-    
+
     let counters = {
       CRITICAL: 0,
       MEDIUM: 0,
@@ -130,18 +130,18 @@ export default class ImageOverview extends Vue {
     let results: any = [];
     if (severity_critical > 0) {
       results.push("<b class='severity-CRITICAL'>" + severity_critical + "</b> Critical");
-      imageRowResult.score+= 1000;
+      imageRowResult.score += 1000;
     }
     if (severity_high > 0) {
       results.push("<b class='severity-HIGH'>" + severity_high + "</b> High");
-      imageRowResult.score+= 100;
+      imageRowResult.score += 100;
     }
     if (severity_medium > 0) {
       results.push("<b class='severity-MEDIUM'>" + severity_medium + "</b> Medium");
-      imageRowResult.score+= 10;
+      imageRowResult.score += 10;
     }
     if (severity_low > 0) {
-      imageRowResult.score+= 1;
+      imageRowResult.score += 1;
       results.push("<b class='severity-LOW'>" + severity_low + "</b> Low");
     }
     imageRowResult.text = results.join(", ");
@@ -153,7 +153,7 @@ export default class ImageOverview extends Vue {
     return chunks[chunks.length - 1];
   }
 
-  paintFilterName(text:string){    
+  paintFilterName(text: string) {
     if (this.filter && this.filter.length > 1) {
       return text.replace(this.filter, '<span class="highlight">' + this.filter + '</span>');
     }
@@ -195,11 +195,11 @@ export default class ImageOverview extends Vue {
       let resultGroup = this.results[i];
       resultGroup.counter = new NamespaceCounters();
 
-      if(this.filter && this.filter.length>1) { 
-        if(
-          resultGroup.title.indexOf(this.filter)===-1
-        ){ continue }
-        else{resultGroup.title = this.paintFilterName(resultGroup.title); }
+      if (this.filter && this.filter.length > 1) {
+        if (
+          resultGroup.title.indexOf(this.filter) === -1
+        ) { continue }
+        else { resultGroup.title = this.paintFilterName(resultGroup.title); }
       }
 
       for (let j = 0; j < resultGroup.images.length; j++) {
@@ -240,12 +240,12 @@ export default class ImageOverview extends Vue {
         r.images[j].link = "/image-detail/" + encodeURIComponent(r.images[j].image);
       }
 
-      if(this.filter && this.filter.length>1) { 
-        r.images = r.images.filter(x=> x.shortImageName.includes(this.filter));
+      if (this.filter && this.filter.length > 1) {
+        r.images = r.images.filter(x => x.shortImageName.includes(this.filter));
       }
 
     }
 
-    
+
   }
 }

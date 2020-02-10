@@ -92,7 +92,7 @@ export class ChartService {
 		let sevcolors: any = [];
 		for (let i = 0; i < summary.groups.length; i++) {
 			let group = summary.groups[i];
-			jdata.push([ group.title, group.count ]);
+			jdata.push([group.title, group.count]);
 			sevcolors.push(this.getSeverityColor(group.title));
 		}
 
@@ -122,21 +122,26 @@ export class ChartService {
 		chart.draw(data, options);
 	}
 
-	public static drawBarChart(data: ScoreHistoryItem[], key: HTMLInputElement | string, height: number = 100) {
+	public static drawBarChart(data: ScoreHistoryItem[], key: string, selected: Date, cb: Function, height: number = 100) {
 
-		let element: any;
-		if (typeof key === 'string') {
-			element = document.getElementById(key);
-		} else {
-			element = key;
-		}
+		let element = document.getElementById(key) as any;
 
 		var chart_data = new google.visualization.DataTable();
 		chart_data.addColumn('date', 'X');
 		chart_data.addColumn('number', 'Score');
+		chart_data.addColumn({ type: 'string', role: 'style' });
+
+		//console.log(`[] data`, data);
+		//console.log(`[] selected`, selected);
+
+		let selectedDate = new Date(selected);
 
 		for (let i = 0; i < data.length; i++) {
-			chart_data.addRow([new Date(data[i].recordedAt), data[i].score]);
+			const rowdate = new Date(data[i].recordedAt);
+			const diff: any = selectedDate.getTime() - rowdate.getTime();
+			let color = (diff === 0) ? '#4AF0C0' : '#31B6A9';
+			//console.log(`[] ${selectedDate} vs ${rowdate} (${diff})`);
+			chart_data.addRow([rowdate, data[i].score, color]);
 		}
 
 		var options: BarChartOptions = {
@@ -164,8 +169,8 @@ export class ChartService {
 			backgroundColor: 'transparent',
 			legend: { position: 'none' },
 			orientation: 'horizontal',
-			chartArea: { 
-				width: '100%', 
+			chartArea: {
+				width: '100%',
 				height: '100%'
 			},
 		};
@@ -175,11 +180,12 @@ export class ChartService {
 			var selectedItem = chart.getSelection()[0];
 			if (selectedItem && selectedItem.row) {
 				var selectedDate = chart_data.getValue(selectedItem.row, 0);
-				console.log('The user selected ' + selectedDate);
+				cb(selectedDate);
+				//console.log('The user selected ' + selectedDate);
 			}
 		}
+
 		google.visualization.events.addListener(chart, 'select', selectHandler);
-		
 		chart.draw(chart_data, options);
 	}
 

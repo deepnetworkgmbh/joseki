@@ -13,9 +13,10 @@ const routes = [
     redirect: "overview"
   },
   {
-    path: "/overview",
+    path: "/overview/:date?",
     name: "GeneralOverview",
-    component: Overview
+    component: Overview,
+    props: true
   },
   {
     path: "/cluster-overview",
@@ -35,9 +36,8 @@ const routes = [
   }
 ];
 
-const router = new VueRouter({
+const router: VueRouter = new VueRouter({
   mode: "history",
-  //base: process.env.BASE_URL,
   routes
 });
 
