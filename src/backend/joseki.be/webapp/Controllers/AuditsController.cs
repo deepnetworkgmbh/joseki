@@ -26,17 +26,18 @@ namespace webapp.Controllers
             var summary = new InfrastructureOverview();
             var overallScoreHistory = new ScoreHistoryItem[]
             {
-                new ScoreHistoryItem(DateTime.UtcNow.AddDays(-10), 52),
-                new ScoreHistoryItem(DateTime.UtcNow.AddDays(-9), 87),
-                new ScoreHistoryItem(DateTime.UtcNow.AddDays(-8), 96),
-                new ScoreHistoryItem(DateTime.UtcNow.AddDays(-7), 79),
-                new ScoreHistoryItem(DateTime.UtcNow.AddDays(-6), 69),
-                new ScoreHistoryItem(DateTime.UtcNow.AddDays(-5), 79),
-                new ScoreHistoryItem(DateTime.UtcNow.AddDays(-4), 59),
-                new ScoreHistoryItem(DateTime.UtcNow.AddDays(-3), 39),
-                new ScoreHistoryItem(DateTime.UtcNow.AddDays(-2), 59),
-                new ScoreHistoryItem(DateTime.UtcNow.AddDays(-1), 78),
-                new ScoreHistoryItem(DateTime.UtcNow, 86),
+                new ScoreHistoryItem(new DateTime(2020, 02, 1, 12, 0, 1), 87),
+                new ScoreHistoryItem(new DateTime(2020, 02, 2, 12, 0, 1), 76),
+                new ScoreHistoryItem(new DateTime(2020, 02, 3, 12, 0, 1), 79),
+                new ScoreHistoryItem(new DateTime(2020, 02, 4, 12, 0, 1), 69),
+                new ScoreHistoryItem(new DateTime(2020, 02, 5, 12, 0, 1), 79),
+                new ScoreHistoryItem(new DateTime(2020, 02, 6, 12, 0, 1), 59),
+                new ScoreHistoryItem(new DateTime(2020, 02, 7, 12, 0, 1), 39),
+                new ScoreHistoryItem(new DateTime(2020, 02, 8, 12, 0, 1), 59),
+                new ScoreHistoryItem(new DateTime(2020, 02, 9, 12, 0, 1), 78),
+                new ScoreHistoryItem(new DateTime(2020, 02, 10, 12, 0, 1), 86),
+                new ScoreHistoryItem(new DateTime(2020, 02, 11, 12, 0, 1), 81),
+                new ScoreHistoryItem(new DateTime(2020, 02, 12, 12, 0, 1), 88),
             };
 
             summary.Overall = new InfrastructureComponentSummary

@@ -1,4 +1,4 @@
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import { ChartService } from "@/services/ChartService"
 import Spinner from "@/components/spinner/Spinner.vue";
 import StatusBar from "@/components/statusbar/StatusBar.vue";
@@ -8,11 +8,15 @@ import { ViewMode } from '@/types/Enums';
 import { ScanSummary } from '@/models/ScanSummary';
 import { InfrastructureOverview, InfrastructureComponentSummary } from '@/models/InfrastructureOverview';
 import { ScoreService } from '@/services/ScoreService';
+import router from '@/router';
 
 @Component({
     components: { Spinner, StatusBar }
 })
 export default class Overview extends Vue {
+
+    @Prop({ default: null })
+    date!: string;
 
     loaded: boolean = false;
     service: DataService = new DataService();
@@ -24,15 +28,16 @@ export default class Overview extends Vue {
         this.service.getGeneralOverviewData()
             .then(response => {
                 this.data = response;
-                if(this.data.components && this.data.overall) {
-                    console.log(`[] data is`, this.data);
+                this.data.overall.scoreHistory = this.data.overall.scoreHistory.reverse();
+                if (this.data.components && this.data.overall) {
+                    //console.log(`[] data is`, this.data);
                     this.loaded = true;
-                    this.setupCharts();    
+                    this.setupCharts();
                 }
             });
         window.addEventListener("resize", this.setupCharts);
-
     }
+
 
     destroyed() {
         window.removeEventListener("resize", this.setupCharts);
@@ -43,18 +48,31 @@ export default class Overview extends Vue {
             // ugly fix, getter does not work
             this.data.components[i].sections = InfrastructureComponentSummary.getSections(this.data.components[i].current);
         }
-        google.load("visualization", "1", { packages: ["corechart"] });
         google.charts.load('current', { 'packages': ['corechart'] });
         google.charts.setOnLoadCallback(this.drawCharts);
     }
 
 
     drawCharts() {
-        ChartService.drawPieChart(this.data.overall.current, (this.$refs.chart2 as HTMLInputElement), 300)
-        ChartService.drawBarChart(this.data.overall.scoreHistory, (this.$refs.chart3 as HTMLInputElement))
-        for (let i = 0; i < this.data.components.length; i++) {
-            ChartService.drawBarChart(this.data.components[i].scoreHistory, 'bar' + i, 48);
+        const d = this.data;
+        let _date;
+        if (this.date === null) {
+            _date = this.data.overall.scoreHistory[this.data.overall.scoreHistory.length - 1].recordedAt;
+            console.log(`[] date default : ${_date}`);
+        } else {
+            _date = new Date(decodeURIComponent(this.date));
+            console.log(`[] date selected : ${_date}`);
         }
+        ChartService.drawPieChart(d.overall.current, (this.$refs.chart2 as HTMLInputElement), 300)
+        ChartService.drawBarChart(d.overall.scoreHistory, "overall_bar", _date, this.dayClicked)
+        for (let i = 0; i < d.components.length; i++) {
+            ChartService.drawBarChart(d.components[i].scoreHistory, 'bar' + i, _date, this.dayClicked, 48);
+        }
+    }
+
+    dayClicked(date: Date) {
+        //console.log(`[] clicked ${date.toISOString()}`)
+        router.replace('/overview/' + encodeURIComponent(date.toISOString()));
     }
 
     getViewModeClass(index: number) {
@@ -87,23 +105,23 @@ export default class Overview extends Vue {
         return result;
     }
 
-    getArrowHtml(i:number) {
+    getArrowHtml(i: number) {
         const scans = this.data.overall.scoreHistory;
-        if(i>scans.length) return;
-        if(scans[i].score > scans[i+1].score) {
+        if (i > scans.length) return;
+        if (scans[i].score > scans[i + 1].score) {
             return '<i class="fas fa-arrow-up" style="color:green;"></i>'
-        } else if (scans[i].score < scans[i+1].score){
+        } else if (scans[i].score < scans[i + 1].score) {
             return '<i class="fas fa-arrow-down" style="color:red;"></i>'
         }
         return '-'
     }
 
-    getScanRowClass(i:number): string {
-        return i%2 === 0 ? 'bg-gray-100':'bg-gray-200';
+    getScanRowClass(i: number): string {
+        return i % 2 === 0 ? 'bg-gray-100' : 'bg-gray-200';
     }
 
     get shortHistory() {
-     return this.data.overall.scoreHistory.reverse().slice(0, 5);
+        return this.data.overall.scoreHistory.reverse().slice(0, 5);
     }
 
     getClusters() { return this.data.components.filter(x => x.category === 'Kubernetes').length; }
@@ -111,5 +129,10 @@ export default class Overview extends Vue {
 
     setViewMode(vm: ViewMode) {
         this.viewMode = vm;
+    }
+
+    @Watch('date', { immediate: true })
+    private onApplianceStatesLoaded(newValue: Date) {
+        this.setupCharts();
     }
 }

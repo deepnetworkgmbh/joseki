@@ -12,11 +12,11 @@ import { ScoreService } from './ScoreService';
 export class DataService {
 
   private get baseUrl() {
-    if(process.env.NODE_ENV === 'production'){
+    if (process.env.NODE_ENV === 'production') {
       // prefix the api url because devServer is not being used in production
       // as devServer was wiring the api calls using vue.config.js
       // the cors must be adjusted on the Production server
-      return process.env.VUE_APP_API_URL;     
+      return process.env.VUE_APP_API_URL;
     }
     return ''
   }
@@ -26,9 +26,9 @@ export class DataService {
 
     return axios
       .get(this.baseUrl + "/api/kube/overview/")
-      .then((response)=>response.data)
-      .catch((error)=>console.log(error))
-      .finally(()=> console.log("overview request finished."));
+      .then((response) => response.data)
+      .catch((error) => console.log(error))
+      .finally(() => console.log("overview request finished."));
   }
 
   public async getContainerImagesData() {
@@ -37,11 +37,11 @@ export class DataService {
       .get(this.baseUrl + "/api/container-images/")
       .then((response) => response.data.images)
       .catch((error) => console.log(error))
-      .finally(()=> console.log("container images request finished."));
+      .finally(() => console.log("container images request finished."));
   }
 
   public async getImageScanResultData(imageUrl: string) {
-    const url = this.baseUrl + "/api/container-image/" + 
+    const url = this.baseUrl + "/api/container-image/" +
       this.fixedEncodeURIComponent(imageUrl);
     console.log(`[] calling ${url}`);
     return axios
@@ -53,36 +53,36 @@ export class DataService {
 
   public regroupDataBySeverities(data: any): ImageScanDetailModel {
 
-    let result = new ImageScanDetailModel();    
+    let result = new ImageScanDetailModel();
     result.description = data.description
     result.scanResult = data.scanResult
     result.image = data.image
-    
-    try{
+
+    try {
 
       for (let i = 0; i < data.targets.length; i++) {
         let target = new TargetGroup(data.targets[i].Target);
-        
+
         for (let j = 0; j < data.targets[i].Vulnerabilities.length; j++) {
           let vulnerability = data.targets[i].Vulnerabilities[j];
           let index = target.vulgroups.findIndex((v) => v.Severity === vulnerability.Severity);
-          if(index<0){
+          if (index < 0) {
             let vulgroup = new VulnerabilityGroup(vulnerability.Severity);
-            vulgroup.Count=1;
+            vulgroup.Count = 1;
             vulgroup.Order = ScoreService.getOrderBySeverity(vulnerability.Severity);
             vulgroup.CVEs.push(vulnerability);
             target.vulgroups.push(vulgroup);
-          }else{
+          } else {
             target.vulgroups[index].CVEs.push(vulnerability);
-            target.vulgroups[index].Count+=1;
+            target.vulgroups[index].Count += 1;
           }
         }
         target.vulgroups.sort((a, b) => a.Order > b.Order ? -1 : a.Order < b.Order ? 1 : 0);
         result.targets.push(target);
       }
 
-    }catch(e){
-        console.log(`error parsing image scan detail data ${e}`)
+    } catch (e) {
+      console.log(`error parsing image scan detail data ${e}`)
     }
 
     return result;
@@ -159,14 +159,14 @@ export class DataService {
   }
 
   public async getGeneralOverviewData() {
-    console.log(`[] calling api/audits/overview`);
+    //console.log(`[] calling api/audits/overview`);
 
     return axios
       .get(this.baseUrl + "/api/audits/overview")
-      .then((response)=>response.data)
-      .catch((error)=>console.log(error))
-      .finally(()=> console.log("overview request finished."));
+      .then((response) => response.data)
+      .catch((error) => console.log(error))
+      .finally(() => console.log("overview request finished."));
   }
 
- 
+
 }
