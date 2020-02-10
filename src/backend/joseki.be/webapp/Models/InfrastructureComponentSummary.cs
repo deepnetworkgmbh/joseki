@@ -51,7 +51,7 @@ namespace webapp.Models
         /// </summary>
         /// <param name="date">The date of the score record.</param>
         /// <param name="score">The score value.</param>
-        public ScoreHistoryItem(DateTime date, short score)
+        public ScoreHistoryItem(DateTime date, int score)
         {
             this.RecordedAt = date;
             this.Score = score;
@@ -65,7 +65,7 @@ namespace webapp.Models
         /// <summary>
         /// Score value.
         /// </summary>
-        public short Score { get; set; }
+        public int Score { get; set; }
     }
 
     /// <summary>

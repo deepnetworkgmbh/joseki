@@ -131,16 +131,12 @@ export class ChartService {
 		chart_data.addColumn('number', 'Score');
 		chart_data.addColumn({ type: 'string', role: 'style' });
 
-		//console.log(`[] data`, data);
-		//console.log(`[] selected`, selected);
-
 		let selectedDate = new Date(selected);
 
 		for (let i = 0; i < data.length; i++) {
 			const rowdate = new Date(data[i].recordedAt);
 			const diff: any = selectedDate.getTime() - rowdate.getTime();
 			let color = (diff === 0) ? '#4AF0C0' : '#31B6A9';
-			//console.log(`[] ${selectedDate} vs ${rowdate} (${diff})`);
 			chart_data.addRow([rowdate, data[i].score, color]);
 		}
 
@@ -178,10 +174,13 @@ export class ChartService {
 
 		function selectHandler() {
 			var selectedItem = chart.getSelection()[0];
-			if (selectedItem && selectedItem.row) {
-				var selectedDate = chart_data.getValue(selectedItem.row, 0);
+
+			console.log('[] selectedItem ', selectedItem);
+
+			if (selectedItem) {
+				let row = selectedItem.row as number;
+				var selectedDate = chart_data.getValue(row, 0);
 				cb(selectedDate);
-				//console.log('The user selected ' + selectedDate);
 			}
 		}
 
