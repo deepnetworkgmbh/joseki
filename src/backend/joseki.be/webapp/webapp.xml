@@ -9,11 +9,41 @@
             .Audit data endpoints.
             </summary>
         </member>
-        <member name="M:webapp.Controllers.AuditsController.GetOverview">
+        <member name="M:webapp.Controllers.AuditsController.GetOverview(System.Nullable{System.DateTime})">
             <summary>
             Returns the overall infrastructure overview for Joseki landing page.
             </summary>
             <returns>The overall infrastructure overview.</returns>
+        </member>
+        <member name="T:webapp.Controllers.Data">
+            <summary>
+            data wrapper before connecting to real results.
+            </summary>
+        </member>
+        <member name="F:webapp.Controllers.Data.Dates">
+            <summary>
+            list of consistent dates for ui tests.
+            </summary>
+        </member>
+        <member name="F:webapp.Controllers.Data.Counters">
+            <summary>
+            list of counter summaries.
+            </summary>
+        </member>
+        <member name="F:webapp.Controllers.Data.OverallScoreHistory">
+            <summary>
+            score history, combination of dates and counters.
+            </summary>
+        </member>
+        <member name="F:webapp.Controllers.Data.Overall">
+            <summary>
+            overall dummy data using counters and dates.
+            </summary>
+        </member>
+        <member name="F:webapp.Controllers.Data.Components">
+            <summary>
+            list of components (clusters and subscriptions).
+            </summary>
         </member>
         <member name="T:webapp.Infrastructure.HttpRequestLoggingMiddleware">
             <summary>
@@ -139,7 +169,7 @@
             Initializes a new instance of the <see cref="T:webapp.Models.ScoreHistoryItem"/> class with default values.
             </summary>
         </member>
-        <member name="M:webapp.Models.ScoreHistoryItem.#ctor(System.DateTime,System.Int16)">
+        <member name="M:webapp.Models.ScoreHistoryItem.#ctor(System.DateTime,System.Int32)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Models.ScoreHistoryItem"/> class with provided Date and Score values.
             </summary>

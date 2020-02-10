@@ -161,6 +161,8 @@ export class DataService {
   public async getGeneralOverviewData() {
     //console.log(`[] calling api/audits/overview`);
 
+    //?date=" + decodeURIComponent(d.toISOString())
+
     return axios
       .get(this.baseUrl + "/api/audits/overview")
       .then((response) => response.data)

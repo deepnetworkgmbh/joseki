@@ -25,6 +25,11 @@ export default class Overview extends Vue {
     grade: string = '?';
 
     created() {
+        //this.loadData();
+        window.addEventListener("resize", this.setupCharts);
+    }
+
+    loadData() {
         this.service.getGeneralOverviewData()
             .then(response => {
                 this.data = response;
@@ -35,7 +40,6 @@ export default class Overview extends Vue {
                     this.setupCharts();
                 }
             });
-        window.addEventListener("resize", this.setupCharts);
     }
 
 
@@ -54,15 +58,16 @@ export default class Overview extends Vue {
 
 
     drawCharts() {
-        const d = this.data;
         let _date;
         if (this.date === null) {
-            _date = this.data.overall.scoreHistory[this.data.overall.scoreHistory.length - 1].recordedAt;
-            console.log(`[] date default : ${_date}`);
+            _date = this.data.overall.scoreHistory[0].recordedAt;
         } else {
             _date = new Date(decodeURIComponent(this.date));
-            console.log(`[] date selected : ${_date}`);
         }
+        console.log(`[] date selected : ${_date}`);
+
+
+        const d = this.data;
         ChartService.drawPieChart(d.overall.current, (this.$refs.chart2 as HTMLInputElement), 300)
         ChartService.drawBarChart(d.overall.scoreHistory, "overall_bar", _date, this.dayClicked)
         for (let i = 0; i < d.components.length; i++) {
@@ -121,7 +126,7 @@ export default class Overview extends Vue {
     }
 
     get shortHistory() {
-        return this.data.overall.scoreHistory.reverse().slice(0, 5);
+        return this.data.overall.scoreHistory.slice(0, 5);
     }
 
     getClusters() { return this.data.components.filter(x => x.category === 'Kubernetes').length; }
@@ -133,6 +138,6 @@ export default class Overview extends Vue {
 
     @Watch('date', { immediate: true })
     private onApplianceStatesLoaded(newValue: Date) {
-        this.setupCharts();
+        this.loadData();
     }
 }

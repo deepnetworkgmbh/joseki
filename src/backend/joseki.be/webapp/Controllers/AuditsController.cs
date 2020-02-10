@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
@@ -14,77 +15,29 @@ namespace webapp.Controllers
     [Route("api/audits")]
     public class AuditsController : Controller
     {
-        /// <summary>
-        /// Returns the overall infrastructure overview for Joseki landing page.
-        /// </summary>
-        /// <returns>The overall infrastructure overview.</returns>
+    /// <summary>
+    /// Returns the overall infrastructure overview for Joseki landing page.
+    /// </summary>
+    /// <returns>The overall infrastructure overview.</returns>
         [HttpGet]
         [Route("overview", Name = "get-overview")]
         [ProducesResponseType(200, Type = typeof(InfrastructureOverview))]
-        public Task<ObjectResult> GetOverview()
+        public Task<ObjectResult> GetOverview(DateTime? date = null)
         {
+            // a simple mechanism to lookup the overall data from Data date dictionary
             var summary = new InfrastructureOverview();
-            var overallScoreHistory = new ScoreHistoryItem[]
+            var indexDate = Data.Overall.Keys.First();
+            if (date != null)
             {
-                new ScoreHistoryItem(new DateTime(2020, 02, 1, 12, 0, 1), 87),
-                new ScoreHistoryItem(new DateTime(2020, 02, 2, 12, 0, 1), 76),
-                new ScoreHistoryItem(new DateTime(2020, 02, 3, 12, 0, 1), 79),
-                new ScoreHistoryItem(new DateTime(2020, 02, 4, 12, 0, 1), 69),
-                new ScoreHistoryItem(new DateTime(2020, 02, 5, 12, 0, 1), 79),
-                new ScoreHistoryItem(new DateTime(2020, 02, 6, 12, 0, 1), 59),
-                new ScoreHistoryItem(new DateTime(2020, 02, 7, 12, 0, 1), 39),
-                new ScoreHistoryItem(new DateTime(2020, 02, 8, 12, 0, 1), 59),
-                new ScoreHistoryItem(new DateTime(2020, 02, 9, 12, 0, 1), 78),
-                new ScoreHistoryItem(new DateTime(2020, 02, 10, 12, 0, 1), 86),
-                new ScoreHistoryItem(new DateTime(2020, 02, 11, 12, 0, 1), 81),
-                new ScoreHistoryItem(new DateTime(2020, 02, 12, 12, 0, 1), 88),
-            };
+                var findDay = Data.Overall.FirstOrDefault(x => x.Key == date);
+                if (findDay.Value != null)
+                {
+                    indexDate = findDay.Key;
+                }
+            }
 
-            summary.Overall = new InfrastructureComponentSummary
-            {
-                Name = "Overall",
-                Category = InfrastructureCategory.Overall,
-                Current = new CountersSummary
-                {
-                    Failed = 10,
-                    NoData = 20,
-                    Passed = 90,
-                    Warning = 30,
-                },
-                ScoreHistory = overallScoreHistory,
-                ScoreTrend = Trend.GetTrend(overallScoreHistory),
-            };
-            summary.Components = new[]
-            {
-                new InfrastructureComponentSummary
-                {
-                    Name = "common-cluster",
-                    Category = InfrastructureCategory.Kubernetes,
-                    Current = new CountersSummary
-                    {
-                        Failed = 10,
-                        NoData = 20,
-                        Passed = 90,
-                        Warning = 30,
-                    },
-                    ScoreHistory = overallScoreHistory,
-                    ScoreTrend = Trend.GetTrend(overallScoreHistory),
-                },
-                new InfrastructureComponentSummary
-                {
-                    Name = "Subscription 1",
-                    Category = InfrastructureCategory.Subscription,
-                    Current = new CountersSummary
-                    {
-                        Failed = 10,
-                        NoData = 20,
-                        Passed = 90,
-                        Warning = 30,
-                    },
-                    ScoreHistory = overallScoreHistory,
-                    ScoreTrend = Trend.GetTrend(overallScoreHistory),
-                },
-            };
+            summary.Overall = Data.Overall[indexDate];
+            summary.Components = Data.Components;
 
             return Task.FromResult(this.StatusCode(200, summary));
         }
