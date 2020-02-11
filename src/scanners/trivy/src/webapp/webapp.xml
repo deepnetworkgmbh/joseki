@@ -1,0 +1,435 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>webapp</name>
+    </assembly>
+    <members>
+        <member name="T:webapp.BackgroundWorkers.AzBlobHeartbeat">
+            <summary>
+            Updates associated with current scanner metadata in Azure blob Storage each N seconds.
+            </summary>
+        </member>
+        <member name="M:webapp.BackgroundWorkers.AzBlobHeartbeat.#ctor(webapp.Configuration.ConfigurationParser)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.BackgroundWorkers.AzBlobHeartbeat"/> class.
+            </summary>
+            <param name="configuration">The scanner configuration.</param>
+        </member>
+        <member name="M:webapp.BackgroundWorkers.AzBlobHeartbeat.StartAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:webapp.BackgroundWorkers.AzBlobHeartbeat.StopAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:webapp.BackgroundWorkers.ImageScanRequestListener">
+            <summary>
+            Background task to dequeue new Image Scan Request messages.
+            </summary>
+        </member>
+        <member name="M:webapp.BackgroundWorkers.ImageScanRequestListener.#ctor(webapp.Queues.IQueueListener,core.ImageScanner)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.BackgroundWorkers.ImageScanRequestListener"/> class.
+            </summary>
+            <param name="queueListener">Queue listener implementation.</param>
+            <param name="scanner">Image Scanner instance.</param>
+        </member>
+        <member name="M:webapp.BackgroundWorkers.ImageScanRequestListener.StartAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:webapp.BackgroundWorkers.ImageScanRequestListener.StopAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:webapp.BackgroundWorkers.TrivyDbUpdater">
+            <summary>
+            Updates Trivy database every hour.
+            </summary>
+        </member>
+        <member name="M:webapp.BackgroundWorkers.TrivyDbUpdater.#ctor(core.scanners.IScanner)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.BackgroundWorkers.TrivyDbUpdater"/> class.
+            </summary>
+            <param name="scanner">Scanner instance.</param>
+        </member>
+        <member name="M:webapp.BackgroundWorkers.TrivyDbUpdater.StartAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:webapp.BackgroundWorkers.TrivyDbUpdater.StopAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:webapp.Configuration.AzBlobExporterConfiguration">
+            <summary>
+            Represents Azure Blob Exporter configuration.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzBlobExporterConfiguration.BasePath">
+            <summary>
+            Base Azure Blob Storage URL.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzBlobExporterConfiguration.Sas">
+            <summary>
+            Sas token.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzBlobExporterConfiguration.HeartbeatPeriodicity">
+            <summary>
+            How often the application should update scanner metadata file.
+            </summary>
+        </member>
+        <member name="T:webapp.Configuration.AzQueueConfiguration">
+            <summary>
+            Represents Azure Storage Queue configuration.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzQueueConfiguration.BasePath">
+            <summary>
+            Base Azure Storage Queue URL.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzQueueConfiguration.MainQueue">
+            <summary>
+            Image Scan Request queue name.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzQueueConfiguration.MainQueueSas">
+            <summary>
+            Sas token to process image-scan requests.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzQueueConfiguration.QuarantineQueue">
+            <summary>
+            Image Scan Request quarantine queue name.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzQueueConfiguration.QuarantineQueueSas">
+            <summary>
+            Sas token to insert messages to quarantine queue.
+            </summary>
+        </member>
+        <member name="T:webapp.Configuration.ConfigurationParser">
+            <summary>
+            Parse YAML based application configuration.
+            </summary>
+        </member>
+        <member name="M:webapp.Configuration.ConfigurationParser.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Configuration.ConfigurationParser"/> class.
+            </summary>
+            <param name="configuration">The application configuration object.</param>
+        </member>
+        <member name="M:webapp.Configuration.ConfigurationParser.Parse(System.String)">
+            <summary>
+            Parse the string into dotnet object.
+            </summary>
+            <param name="input">String representation of YAML file.</param>
+            <returns>The application configuration object.</returns>
+        </member>
+        <member name="M:webapp.Configuration.ConfigurationParser.Get">
+            <summary>
+            Parses Scanner Config on the first request and cache the result in memory.
+            </summary>
+            <returns>Image Scanner configuration object.</returns>
+        </member>
+        <member name="M:webapp.Configuration.ConfigurationParser.GetTrivyAzConfig">
+            <summary>
+            Creates Scanner configuration specific for Trivy scanner with Azure Blob exporter.
+            </summary>
+            <returns>A new instance of <see cref="T:core.core.TrivyAzblobScannerConfiguration"/>.</returns>
+        </member>
+        <member name="T:webapp.Configuration.FileExporterConfiguration">
+            <summary>
+            Represents File Exporter configuration.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.FileExporterConfiguration.Path">
+            <summary>
+            Path to the folder with Scan Results.
+            </summary>
+        </member>
+        <member name="T:webapp.Configuration.ImageScannerConfiguration">
+            <summary>
+            The application configuration.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.ImageScannerConfiguration.Scanner">
+            <summary>
+            The scanner configuration.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.ImageScannerConfiguration.Exporter">
+            <summary>
+            The Scan Result exporter configuration.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.ImageScannerConfiguration.Queue">
+            <summary>
+            The Scan Request queue configuration.
+            </summary>
+        </member>
+        <member name="T:webapp.Configuration.IScannerConfiguration">
+            <summary>
+            The base interface for all types of scanners configuration.
+            </summary>
+        </member>
+        <member name="T:webapp.Configuration.IExporterConfiguration">
+            <summary>
+            The base interface for all types of exporters configuration.
+            </summary>
+        </member>
+        <member name="T:webapp.Configuration.IQueueConfiguration">
+            <summary>
+            The base interface for all types of queue configuration.
+            </summary>
+        </member>
+        <member name="T:webapp.Configuration.TrivyConfiguration">
+            <summary>
+            Trivy scanner configuration.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.TrivyConfiguration.Id">
+            <summary>
+            Scanner identifier.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.TrivyConfiguration.Version">
+            <summary>
+            Scanner version.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.TrivyConfiguration.TrivyVersion">
+            <summary>
+            Trivy binary version.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.TrivyConfiguration.BinaryPath">
+            <summary>
+            The address of trivy binary.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.TrivyConfiguration.CachePath">
+            <summary>
+            Trivy cache location.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.TrivyConfiguration.Registries">
+            <summary>
+            Array of Container Registry credentials.
+            </summary>
+        </member>
+        <member name="T:webapp.Controllers.ScanController">
+            <summary>
+            Triggers new image scans.
+            </summary>
+        </member>
+        <member name="M:webapp.Controllers.ScanController.#ctor(core.ImageScanner)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Controllers.ScanController"/> class.
+            </summary>
+        </member>
+        <member name="M:webapp.Controllers.ScanController.ScanImages(System.String)">
+            <summary>
+            Scan the image specified in a request body.
+            </summary>
+            <param name="imageTag">The image tag to scan.</param>
+            <returns>Acknowledgement.</returns>
+        </member>
+        <member name="T:webapp.ImageScannerFactory">
+            <summary>
+            Helps instantiating correct Scanner, Exporter and Importer implementations based on the application configuration.
+            </summary>
+        </member>
+        <member name="M:webapp.ImageScannerFactory.#ctor(webapp.Configuration.ConfigurationParser)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.ImageScannerFactory"/> class.
+            </summary>
+            <param name="configuration">the application configuration.</param>
+        </member>
+        <member name="M:webapp.ImageScannerFactory.GetScanner">
+            <summary>
+            Gets scanner implementation.
+            </summary>
+            <returns>At the moment, only trivy is supported, so returns Trivy scanner object.</returns>
+        </member>
+        <member name="M:webapp.ImageScannerFactory.GetExporter">
+            <summary>
+            Gets exporter implementation.
+            </summary>
+            <returns>At the moment, only file is supported, so returns File Exporter object.</returns>
+        </member>
+        <member name="M:webapp.ImageScannerFactory.GetQueue">
+            <summary>
+            Gets Messaging Service implementation.
+            </summary>
+            <returns>At the moment only Azure Storage Queue is supported.</returns>
+        </member>
+        <member name="T:webapp.Infrastructure.HttpRequestLoggingMiddleware">
+            <summary>
+            Writes logs in common format for any incoming HTTP request.
+            </summary>
+        </member>
+        <member name="M:webapp.Infrastructure.HttpRequestLoggingMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Infrastructure.HttpRequestLoggingMiddleware"/> class.
+            </summary>
+            <param name="next">Next <see cref="T:Microsoft.AspNetCore.Http.RequestDelegate"/> to execute. </param>
+        </member>
+        <member name="M:webapp.Infrastructure.HttpRequestLoggingMiddleware.Invoke(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            Executes a middleware.
+            </summary>
+            <param name="httpContext">Current <see cref="T:Microsoft.AspNetCore.Http.HttpContext"/>.</param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous operation.</returns>
+        </member>
+        <member name="M:webapp.Infrastructure.HttpRequestLoggingMiddleware.GetElapsedMilliseconds(System.Int64,System.Int64)">
+            <summary>
+            Get elapsed milliseconds based on elapsed ticks.
+            </summary>
+            <param name="start">Ticks on a start.</param>
+            <param name="stop">Ticks in the end.</param>
+            <returns>Elapsed milliseconds.</returns>
+        </member>
+        <member name="T:webapp.Infrastructure.StateManager">
+            <summary>
+            Keeps the state of Image Scanner service.
+            </summary>
+        </member>
+        <member name="M:webapp.Infrastructure.StateManager.SetReady">
+            <summary>
+            switches the service into ready-to-receive-traffic state.
+            </summary>
+        </member>
+        <member name="M:webapp.Infrastructure.StateManager.SetLive">
+            <summary>
+            Switches the service into Live state.
+            </summary>
+        </member>
+        <member name="P:webapp.Infrastructure.StateManager.Ready">
+            <summary>
+            Indicates if service is ready to receive external traffic.
+            </summary>
+        </member>
+        <member name="P:webapp.Infrastructure.StateManager.Live">
+            <summary>
+            Indicates if service requires a restart.
+            </summary>
+        </member>
+        <member name="T:webapp.Models.ImageScanRequestMessage">
+            <summary>
+            The image scan request details.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.ImageScanRequestMessage.Headers">
+            <summary>
+            Message headers: when the message was created, what is the version of payload, etc.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.ImageScanRequestMessage.Payload">
+            <summary>
+            Image Scan Request details: image tag, etc.
+            </summary>
+        </member>
+        <member name="T:webapp.Models.MessageHeaders">
+            <summary>
+            Message headers: when the message was created, what is the version of payload, etc.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.MessageHeaders.CreationTime">
+            <summary>
+            Unix epoch time, when the scan was requested.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.MessageHeaders.PayloadVersion">
+            <summary>
+            The version of message payload.
+            </summary>
+        </member>
+        <member name="T:webapp.Models.ImageScanRequestPayload">
+            <summary>
+            The Image Scan Request message payload.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.ImageScanRequestPayload.ImageFullName">
+            <summary>
+            The complete image name including registry, and tag.
+            </summary>
+        </member>
+        <member name="T:webapp.Program">
+            <summary>
+            The application main object.
+            </summary>
+        </member>
+        <member name="M:webapp.Program.Main(System.String[])">
+            <summary>
+            The application entry point.
+            </summary>
+            <param name="args">Arguments.</param>
+        </member>
+        <member name="M:webapp.Program.CreateHostBuilder(System.String[])">
+            <summary>
+            Creates a new instance of ASP.NET core application.
+            </summary>
+            <param name="args">Arguments.</param>
+            <returns>HostBuilder object.</returns>
+        </member>
+        <member name="T:webapp.Queues.AzureStorageQueue">
+            <summary>
+            Azure Storage Queue implementation of Messaging Service.
+            </summary>
+        </member>
+        <member name="M:webapp.Queues.AzureStorageQueue.#ctor(webapp.Configuration.AzQueueConfiguration)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Queues.AzureStorageQueue"/> class.
+            </summary>
+            <param name="cfg">The Azure Storage Queue configuration.</param>
+        </member>
+        <member name="M:webapp.Queues.AzureStorageQueue.Listen(System.Func{webapp.Models.ImageScanRequestMessage,System.Threading.Tasks.Task},System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:webapp.Queues.AzureStorageQueue.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="T:webapp.Queues.IQueueListener">
+            <summary>
+            An abstraction to dequeue Image Scan Request messages.
+            </summary>
+        </member>
+        <member name="M:webapp.Queues.IQueueListener.Listen(System.Func{webapp.Models.ImageScanRequestMessage,System.Threading.Tasks.Task},System.Threading.CancellationToken)">
+            <summary>
+            Encapsulates reliable Image Scan Request queue listening:
+            Get messages from queue, adjust visibility timeouts, delete or move to quarantine queue at the end.
+            </summary>
+            <param name="handler">Handler for a single Image Scan Request message.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+            <returns>Task object.</returns>
+        </member>
+        <member name="T:webapp.Startup">
+            <summary>
+            Startup class.
+            </summary>
+        </member>
+        <member name="M:webapp.Startup.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Startup"/> class.
+            </summary>
+            <param name="configuration">The application configuration object.</param>
+        </member>
+        <member name="P:webapp.Startup.Configuration">
+            <summary>
+            The application configuration object.
+            </summary>
+        </member>
+        <member name="M:webapp.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            This method gets called by the runtime. Use this method to add services to the container.
+            </summary>
+            <param name="services">Services collection.</param>
+        </member>
+        <member name="M:webapp.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+            This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+            </summary>
+            <param name="app">Builder object.</param>
+            <param name="env">Environment configuration.</param>
+        </member>
+    </members>
+</doc>
