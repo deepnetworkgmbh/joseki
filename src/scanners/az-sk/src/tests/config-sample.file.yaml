@@ -1,0 +1,14 @@
+﻿scanner:
+  !azsk-scanner
+  id: 0dfa8355-b20d-4701-af37-6cc021df3244
+  version: 0.1.0
+  periodicity: 0 2 * * *
+  azSkVersion: 4.5.1
+  auditScriptPath: /src/scanners/az-sk/ps/azsk.ps1
+  tenantId: TENANT_ID
+  servicePrincipalId: SP_ID
+  servicePrincipalPassword: PASSWORD
+
+exporter:
+  !file-exporter
+  path: /.azsk-scanner/exporter-output
