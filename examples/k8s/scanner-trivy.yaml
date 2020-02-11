@@ -1,0 +1,182 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: scanner-trivy
+  namespace: joseki
+  labels:
+    app: scanner-trivy
+    module: scanners
+  
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: scanner-trivy
+  labels:
+    app: scanner-trivy
+    module: scanners
+rules:
+  
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: scanner-trivy
+  labels:
+    app: scanner-trivy
+    module: scanners
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: scanner-trivy
+subjects:
+  - kind: ServiceAccount
+    name: scanner-trivy
+    namespace: joseki
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scanner-trivy-cfg
+  namespace: joseki
+  labels:
+    app: scanner-trivy
+    module: scanners
+    version: 0.1.0
+data:
+  scanner-trivy-config.yaml:  |-
+    scanner:
+      !trivy-scanner
+      id: 831c5288-5b95-4a28-a664-87d02e50770e
+      version: 0.1.0
+      trivyVersion: 0.4.3
+      binaryPath: /usr/local/bin/trivy
+      cachePath: /app/.cache/.trivy
+      registries:
+        - name: deepnetwork
+          address: https://registry.hub.docker.com
+          username:
+          password:
+        - name: acr.azurecr.io
+          address: acr.azurecr.io
+          username: acr
+          password: ...
+    
+    exporter:
+      !az-blob
+      basePath: https://STORAGE_ACCOUNT.blob.core.windows.net/trivy-831c5288
+      sas: token
+      heartbeatPeriodicity: 600
+    
+    queue:
+      !az-storage-queue
+      basePath: https://STORAGE_ACCOUNT.queue.core.windows.net
+      mainQueue: image-scan-requests
+      mainQueueSas: token
+      quarantineQueue: image-scan-requests-quarantine
+      quarantineQueueSas: token
+
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: scanner-trivy-storage
+  namespace: joseki
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 32Gi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scanner-trivy
+  namespace: joseki
+  labels:
+    app: scanner-trivy
+    module: scanners
+    version: 0.1.0
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  selector:
+    matchLabels:
+      app: scanner-trivy
+      module: scanners
+  template:
+    metadata:
+      labels:
+        app: scanner-trivy
+        module: scanners
+        version: 0.1.0
+    spec:
+      containers:
+      - name: scanner-trivy
+        image: deepnetwork/joseki-scanner-trivy:0.1.0
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "200M"
+            cpu: "500m"
+          limits:
+            memory: "500M"
+            cpu: "1000m"
+        readinessProbe:
+          httpGet:
+            path: /health/readiness
+            port: 8080
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 5
+        livenessProbe:
+          httpGet:
+            path: /health/liveness
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 3
+        ports:
+          - containerPort: 8080
+            name: main-http
+        securityContext:
+          runAsUser: 10001
+          runAsGroup: 10001
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          readOnlyRootFilesystem: false
+        volumeMounts:
+          - name: scanner-cfg-volume
+            mountPath: /app/scanner-trivy-config.yaml
+            subPath: scanner-trivy-config.yaml
+          - name: storage-volume
+            mountPath: "/app/.cache"
+        env:
+          - name: IMAGE_SCANNER_CONFIG_FILE_PATH
+            value: "/app/scanner-trivy-config.yaml"
+      securityContext:
+        fsGroup: 10001
+      volumes:
+        - name: scanner-cfg-volume
+          configMap:
+            name: scanner-trivy-cfg
+            defaultMode: 0777
+            items:
+              - key: scanner-trivy-config.yaml
+                path: scanner-trivy-config.yaml
+        - name: storage-volume
+          persistentVolumeClaim:
+            claimName: scanner-trivy-storage
