@@ -38,11 +38,15 @@
         <member name="F:webapp.Controllers.Data.Overall">
             <summary>
             overall dummy data using counters and dates.
+            this list is long because it's mocking data change over time.
+            in a real time scenario, only data on related date should be returned.
             </summary>
         </member>
         <member name="F:webapp.Controllers.Data.Components">
             <summary>
             list of components (clusters and subscriptions).
+            this list is long because it's mocking data change over time.
+            in a real time scenario, only data on related date should be returned.
             </summary>
         </member>
         <member name="T:webapp.Infrastructure.HttpRequestLoggingMiddleware">
@@ -133,6 +137,11 @@
             Summarizes a single infrastructure unit stats: score, trends, name.
             </summary>
         </member>
+        <member name="P:webapp.Models.InfrastructureComponentSummary.Id">
+            <summary>
+            The unique Id of a component.
+            </summary>
+        </member>
         <member name="P:webapp.Models.InfrastructureComponentSummary.Name">
             <summary>
             The name of the component: dev-cluster, subscription-1, etc.
@@ -157,6 +166,12 @@
         <member name="P:webapp.Models.InfrastructureComponentSummary.ScoreTrend">
             <summary>
             Pre-calculated parameters for drawing trend line.
+            </summary>
+        </member>
+        <member name="M:webapp.Models.InfrastructureComponentSummary.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Models.InfrastructureComponentSummary"/> class.
+            create random id on constructor.
             </summary>
         </member>
         <member name="T:webapp.Models.ScoreHistoryItem">

@@ -23,17 +23,20 @@ export default class Overview extends Vue {
     data: InfrastructureOverview = new InfrastructureOverview();
     viewMode: ViewMode = ViewMode.detailed;
     grade: string = '?';
+    score: number = 0;
 
     created() {
-        //this.loadData();
         window.addEventListener("resize", this.setupCharts);
     }
 
     loadData() {
-        this.service.getGeneralOverviewData()
+        let dateString = (this.date === null) ? '' : this.date;
+        this.service.getGeneralOverviewData(dateString)
             .then(response => {
                 this.data = response;
                 this.data.overall.scoreHistory = this.data.overall.scoreHistory.reverse();
+                this.score = this.data.overall.current.passed;
+                this.grade = ScoreService.getGrade(this.score);
                 if (this.data.components && this.data.overall) {
                     //console.log(`[] data is`, this.data);
                     this.loaded = true;
@@ -61,17 +64,15 @@ export default class Overview extends Vue {
         let _date;
         if (this.date === null) {
             _date = this.data.overall.scoreHistory[0].recordedAt;
+            this.date = _date;
         } else {
             _date = new Date(decodeURIComponent(this.date));
         }
-        console.log(`[] date selected : ${_date}`);
 
-
-        const d = this.data;
-        ChartService.drawPieChart(d.overall.current, (this.$refs.chart2 as HTMLInputElement), 300)
-        ChartService.drawBarChart(d.overall.scoreHistory, "overall_bar", _date, this.dayClicked)
-        for (let i = 0; i < d.components.length; i++) {
-            ChartService.drawBarChart(d.components[i].scoreHistory, 'bar' + i, _date, this.dayClicked, 48);
+        ChartService.drawPieChart(this.data.overall.current, "overall_pie", 300)
+        ChartService.drawBarChart(this.data.overall.scoreHistory, "overall_bar", _date, this.dayClicked)
+        for (let i = 0; i < this.data.components.length; i++) {
+            ChartService.drawBarChart(this.data.components[i].scoreHistory, 'bar' + i, _date, this.dayClicked, 48);
         }
     }
 

@@ -68,6 +68,8 @@ namespace webapp.Controllers
 
         /// <summary>
         /// overall dummy data using counters and dates.
+        /// this list is long because it's mocking data change over time.
+        /// in a real time scenario, only data on related date should be returned.
         /// </summary>
         public static Dictionary<DateTime, InfrastructureComponentSummary> Overall
             = new Dictionary<DateTime, InfrastructureComponentSummary>()
@@ -196,36 +198,406 @@ namespace webapp.Controllers
 
         /// <summary>
         /// list of components (clusters and subscriptions).
+        /// this list is long because it's mocking data change over time.
+        /// in a real time scenario, only data on related date should be returned.
         /// </summary>
-        public static InfrastructureComponentSummary[] Components = new[]
+        public static Dictionary<DateTime, List<InfrastructureComponentSummary>> Components = new Dictionary<DateTime, List<InfrastructureComponentSummary>>
             {
-                new InfrastructureComponentSummary
                 {
-                    Name = "common-cluster",
-                    Category = InfrastructureCategory.Kubernetes,
-                    Current = new CountersSummary
+                    Dates[0], new List<InfrastructureComponentSummary>
                     {
-                        Failed = 10,
-                        NoData = 20,
-                        Passed = 90,
-                        Warning = 30,
-                    },
-                    ScoreHistory = Data.OverallScoreHistory,
-                    ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        new InfrastructureComponentSummary
+                        {
+                            Name = "common-cluster",
+                            Category = InfrastructureCategory.Kubernetes,
+                            Current = new CountersSummary
+                            {
+                                Failed = 10,
+                                NoData = 20,
+                                Passed = 90,
+                                Warning = 30,
+                            },
+                            ScoreHistory = Data.OverallScoreHistory,
+                            ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        },
+                        new InfrastructureComponentSummary
+                        {
+                            Name = "Subscription 1",
+                            Category = InfrastructureCategory.Subscription,
+                            Current = new CountersSummary
+                            {
+                                Failed = 10,
+                                NoData = 14,
+                                Passed = 96,
+                                Warning = 30,
+                            },
+                            ScoreHistory = Data.OverallScoreHistory,
+                            ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        },
+                    }
                 },
-                new InfrastructureComponentSummary
                 {
-                    Name = "Subscription 1",
-                    Category = InfrastructureCategory.Subscription,
-                    Current = new CountersSummary
+                    Dates[1], new List<InfrastructureComponentSummary>
                     {
-                        Failed = 10,
-                        NoData = 20,
-                        Passed = 90,
-                        Warning = 30,
-                    },
-                    ScoreHistory = Data.OverallScoreHistory,
-                    ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        new InfrastructureComponentSummary
+                        {
+                            Name = "common-cluster",
+                            Category = InfrastructureCategory.Kubernetes,
+                            Current = new CountersSummary
+                            {
+                                Failed = 15,
+                                NoData = 23,
+                                Passed = 80,
+                                Warning = 30,
+                            },
+                            ScoreHistory = Data.OverallScoreHistory,
+                            ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        },
+                        new InfrastructureComponentSummary
+                        {
+                            Name = "Subscription 1",
+                            Category = InfrastructureCategory.Subscription,
+                            Current = new CountersSummary
+                            {
+                                Failed = 10,
+                                NoData = 20,
+                                Passed = 90,
+                                Warning = 30,
+                            },
+                            ScoreHistory = Data.OverallScoreHistory,
+                            ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        },
+                    }
+                },
+                {
+                    Dates[2], new List<InfrastructureComponentSummary>
+                    {
+                        new InfrastructureComponentSummary
+                        {
+                            Name = "common-cluster",
+                            Category = InfrastructureCategory.Kubernetes,
+                            Current = new CountersSummary
+                            {
+                                Failed = 15,
+                                NoData = 23,
+                                Passed = 70,
+                                Warning = 30,
+                            },
+                            ScoreHistory = Data.OverallScoreHistory,
+                            ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        },
+                        new InfrastructureComponentSummary
+                        {
+                            Name = "Subscription 1",
+                            Category = InfrastructureCategory.Subscription,
+                            Current = new CountersSummary
+                            {
+                                Failed = 10,
+                                NoData = 20,
+                                Passed = 85,
+                                Warning = 30,
+                            },
+                            ScoreHistory = Data.OverallScoreHistory,
+                            ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        },
+                    }
+                },
+                {
+                    Dates[3], new List<InfrastructureComponentSummary>
+                    {
+                        new InfrastructureComponentSummary
+                        {
+                            Name = "common-cluster",
+                            Category = InfrastructureCategory.Kubernetes,
+                            Current = new CountersSummary
+                            {
+                                Failed = 15,
+                                NoData = 23,
+                                Passed = 70,
+                                Warning = 30,
+                            },
+                            ScoreHistory = Data.OverallScoreHistory,
+                            ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        },
+                        new InfrastructureComponentSummary
+                        {
+                            Name = "Subscription 1",
+                            Category = InfrastructureCategory.Subscription,
+                            Current = new CountersSummary
+                            {
+                                Failed = 10,
+                                NoData = 20,
+                                Passed = 60,
+                                Warning = 30,
+                            },
+                            ScoreHistory = Data.OverallScoreHistory,
+                            ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        },
+                    }
+                },
+                {
+                    Dates[4], new List<InfrastructureComponentSummary>
+                    {
+                        new InfrastructureComponentSummary
+                        {
+                            Name = "common-cluster",
+                            Category = InfrastructureCategory.Kubernetes,
+                            Current = new CountersSummary
+                            {
+                                Failed = 15,
+                                NoData = 23,
+                                Passed = 60,
+                                Warning = 30,
+                            },
+                            ScoreHistory = Data.OverallScoreHistory,
+                            ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        },
+                        new InfrastructureComponentSummary
+                        {
+                            Name = "Subscription 1",
+                            Category = InfrastructureCategory.Subscription,
+                            Current = new CountersSummary
+                            {
+                                Failed = 10,
+                                NoData = 20,
+                                Passed = 50,
+                                Warning = 30,
+                            },
+                            ScoreHistory = Data.OverallScoreHistory,
+                            ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        },
+                    }
+                },
+                {
+                    Dates[5], new List<InfrastructureComponentSummary>
+                    {
+                        new InfrastructureComponentSummary
+                        {
+                            Name = "common-cluster",
+                            Category = InfrastructureCategory.Kubernetes,
+                            Current = new CountersSummary
+                            {
+                                Failed = 15,
+                                NoData = 23,
+                                Passed = 40,
+                                Warning = 30,
+                            },
+                            ScoreHistory = Data.OverallScoreHistory,
+                            ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        },
+                        new InfrastructureComponentSummary
+                        {
+                            Name = "Subscription 1",
+                            Category = InfrastructureCategory.Subscription,
+                            Current = new CountersSummary
+                            {
+                                Failed = 10,
+                                NoData = 20,
+                                Passed = 66,
+                                Warning = 30,
+                            },
+                            ScoreHistory = Data.OverallScoreHistory,
+                            ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        },
+                    }
+                },
+                {
+                    Dates[6], new List<InfrastructureComponentSummary>
+                    {
+                        new InfrastructureComponentSummary
+                        {
+                            Name = "common-cluster",
+                            Category = InfrastructureCategory.Kubernetes,
+                            Current = new CountersSummary
+                            {
+                                Failed = 15,
+                                NoData = 23,
+                                Passed = 30,
+                                Warning = 30,
+                            },
+                            ScoreHistory = Data.OverallScoreHistory,
+                            ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        },
+                        new InfrastructureComponentSummary
+                        {
+                            Name = "Subscription 1",
+                            Category = InfrastructureCategory.Subscription,
+                            Current = new CountersSummary
+                            {
+                                Failed = 10,
+                                NoData = 20,
+                                Passed = 20,
+                                Warning = 30,
+                            },
+                            ScoreHistory = Data.OverallScoreHistory,
+                            ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        },
+                    }
+                },
+                {
+                    Dates[7], new List<InfrastructureComponentSummary>
+                    {
+                        new InfrastructureComponentSummary
+                        {
+                            Name = "common-cluster",
+                            Category = InfrastructureCategory.Kubernetes,
+                            Current = new CountersSummary
+                            {
+                                Failed = 15,
+                                NoData = 23,
+                                Passed = 44,
+                                Warning = 30,
+                            },
+                            ScoreHistory = Data.OverallScoreHistory,
+                            ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        },
+                        new InfrastructureComponentSummary
+                        {
+                            Name = "Subscription 1",
+                            Category = InfrastructureCategory.Subscription,
+                            Current = new CountersSummary
+                            {
+                                Failed = 10,
+                                NoData = 20,
+                                Passed = 55,
+                                Warning = 30,
+                            },
+                            ScoreHistory = Data.OverallScoreHistory,
+                            ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        },
+                    }
+                },
+                {
+                    Dates[8], new List<InfrastructureComponentSummary>
+                    {
+                        new InfrastructureComponentSummary
+                        {
+                            Name = "common-cluster",
+                            Category = InfrastructureCategory.Kubernetes,
+                            Current = new CountersSummary
+                            {
+                                Failed = 15,
+                                NoData = 13,
+                                Passed = 44,
+                                Warning = 10,
+                            },
+                            ScoreHistory = Data.OverallScoreHistory,
+                            ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        },
+                        new InfrastructureComponentSummary
+                        {
+                            Name = "Subscription 1",
+                            Category = InfrastructureCategory.Subscription,
+                            Current = new CountersSummary
+                            {
+                                Failed = 10,
+                                NoData = 10,
+                                Passed = 55,
+                                Warning = 10,
+                            },
+                            ScoreHistory = Data.OverallScoreHistory,
+                            ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        },
+                    }
+                },
+                {
+                    Dates[9], new List<InfrastructureComponentSummary>
+                    {
+                        new InfrastructureComponentSummary
+                        {
+                            Name = "common-cluster",
+                            Category = InfrastructureCategory.Kubernetes,
+                            Current = new CountersSummary
+                            {
+                                Failed = 5,
+                                NoData = 3,
+                                Passed = 44,
+                                Warning = 10,
+                            },
+                            ScoreHistory = Data.OverallScoreHistory,
+                            ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        },
+                        new InfrastructureComponentSummary
+                        {
+                            Name = "Subscription 1",
+                            Category = InfrastructureCategory.Subscription,
+                            Current = new CountersSummary
+                            {
+                                Failed = 5,
+                                NoData = 10,
+                                Passed = 35,
+                                Warning = 10,
+                            },
+                            ScoreHistory = Data.OverallScoreHistory,
+                            ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        },
+                    }
+                },
+                {
+                    Dates[10], new List<InfrastructureComponentSummary>
+                    {
+                        new InfrastructureComponentSummary
+                        {
+                            Name = "common-cluster",
+                            Category = InfrastructureCategory.Kubernetes,
+                            Current = new CountersSummary
+                            {
+                                Failed = 5,
+                                NoData = 3,
+                                Passed = 34,
+                                Warning = 10,
+                            },
+                            ScoreHistory = Data.OverallScoreHistory,
+                            ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        },
+                        new InfrastructureComponentSummary
+                        {
+                            Name = "Subscription 1",
+                            Category = InfrastructureCategory.Subscription,
+                            Current = new CountersSummary
+                            {
+                                Failed = 5,
+                                NoData = 10,
+                                Passed = 15,
+                                Warning = 10,
+                            },
+                            ScoreHistory = Data.OverallScoreHistory,
+                            ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        },
+                    }
+                },
+                {
+                    Dates[11], new List<InfrastructureComponentSummary>
+                    {
+                        new InfrastructureComponentSummary
+                        {
+                            Name = "common-cluster",
+                            Category = InfrastructureCategory.Kubernetes,
+                            Current = new CountersSummary
+                            {
+                                Failed = 5,
+                                NoData = 3,
+                                Passed = 24,
+                                Warning = 10,
+                            },
+                            ScoreHistory = Data.OverallScoreHistory,
+                            ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        },
+                        new InfrastructureComponentSummary
+                        {
+                            Name = "Subscription 1",
+                            Category = InfrastructureCategory.Subscription,
+                            Current = new CountersSummary
+                            {
+                                Failed = 5,
+                                NoData = 10,
+                                Passed = 5,
+                                Warning = 10,
+                            },
+                            ScoreHistory = Data.OverallScoreHistory,
+                            ScoreTrend = Trend.GetTrend(Data.OverallScoreHistory),
+                        },
+                    }
                 },
             };
     }

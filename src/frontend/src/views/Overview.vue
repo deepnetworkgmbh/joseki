@@ -10,29 +10,30 @@
           <i :class="getScoreIconClass()"></i>
         </div>
         <div class="status-text">
-          <div class="flex flex-row big-text xl:text-3xl lg:text-2xl">
-            <div class="w-9/12 font-thin text-right mr-1 text-gray-600">Score:</div>
-            <div class="w-3/12 font-hairline text-left">72%</div>
+          <div class='p-1 m-auto rounded-sm text-lg text-center -mt-8 mb-2 pb-4'>{{ date | formatDate }}</div>
+
+          <div class="flex flex-row big-text xl:text-2xl lg:text-xl">
+            <div class="w-7/12 font-thin text-right mr-1 text-gray-600">Score:</div>
+            <div class="w-5/12 font-hairline text-left">{{ score }}%</div>
           </div>
-          <div class="flex flex-row big-text xl:text-3xl lg:text-2xl">
-            <div class="w-9/12 font-thin text-right mr-1 text-gray-600">Grade:</div>
-            <div class="w-3/12 font-hairline text-left">B+</div>
+          <div class="flex flex-row big-text xl:text-2xl lg:text-xl">
+            <div class="w-7/12 font-thin text-right mr-1 text-gray-600">Grade:</div>
+            <div class="w-5/12 font-hairline text-left">{{ grade }}</div>
           </div>
-          <div class="flex flex-row big-text xl:text-3xl lg:text-2xl">
-            <div class="w-9/12 font-thin text-right mr-1 text-gray-600">Clusters:</div>
-            <div class="w-3/12 font-hairline text-left">{{ getClusters() }}</div>
+          <div class="flex flex-row big-text xl:text-2xl lg:text-xl">
+            <div class="w-7/12 font-thin text-right mr-1 text-gray-600">Clusters:</div>
+            <div class="w-5/12 font-hairline text-left">{{ getClusters() }}</div>
           </div>
-          <div class="flex flex-row big-text xl:text-3xl lg:text-2xl">
-            <div class="w-9/12 font-thin text-right mr-1 text-gray-600">Subscriptions:</div>
-            <div class="w-3/12 font-hairline text-left">{{ getSubscriptions() }}</div>
+          <div class="flex flex-row big-text xl:text-2xl lg:text-xl">
+            <div class="w-7/12 font-thin text-right mr-1 text-gray-600">Subscriptions:</div>
+            <div class="w-5/12 font-hairline text-left">{{ getSubscriptions() }}</div>
           </div>
         </div>
       </div>
       <div class="w-2/4">
-        <div ref="chart2" class="w-auto"></div>
+        <div id="overall_pie" class="w-auto"></div>
       </div>
       <div class="w-1/4 border-l border-gray-300">
-        <span class='text-xs'>{{ date }}</span>
         <div id="overall_bar" class="w-auto border-b border-gray-500 p-2 ml-1 mb-3"></div>
         <div class="m-3 mt-0">
           <table class="border border-gray-200 w-full text-xs p-4">
@@ -91,9 +92,7 @@
             <div style="height:50px;width:130px;" :id="`bar${i}`"></div>
           </div>
           <div class="p-2" style="width: 100px;">
-            <div
-              style="position:relative;font-size:18px;z-index:1;left:19px;top:23px;"
-            >{{c.current.score}}%</div>
+            <div style="position:relative;font-size:18px;z-index:1;left:19px;top:23px;">{{c.current.score}}%</div>
             <div style="position:relative;top:-25px;z-index:0;">
               <vc-donut
                 :sections="c.sections"

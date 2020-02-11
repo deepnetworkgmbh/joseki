@@ -158,13 +158,15 @@ export class DataService {
     });
   }
 
-  public async getGeneralOverviewData() {
-    //console.log(`[] calling api/audits/overview`);
+  public async getGeneralOverviewData(dateString: string = '') {
+    console.log(`[] calling api/audits/overview (${dateString})`);
 
     //?date=" + decodeURIComponent(d.toISOString())
 
+    let suffix = (dateString === '') ? '' : '?date=' + encodeURIComponent(dateString);
+
     return axios
-      .get(this.baseUrl + "/api/audits/overview")
+      .get(this.baseUrl + "/api/audits/overview" + suffix)
       .then((response) => response.data)
       .catch((error) => console.log(error))
       .finally(() => console.log("overview request finished."));
