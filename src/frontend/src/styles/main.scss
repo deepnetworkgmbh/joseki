@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 body {
-  font-family: "Noto Sans", Helvetica, Arial, sans-serif;
-   -webkit-font-smoothing: antialiased;
-   -moz-osx-font-smoothing: grayscale;
-   -webkit-font-smoothing: subpixel-antialiased;
+	font-family: "Noto Sans", Helvetica, Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: subpixel-antialiased;
 }
 
 @import "colors.scss";
@@ -15,26 +15,37 @@ body {
 @import url("https://fonts.googleapis.com/css?family=Noto+Sans&display=swap");
 
 .segment {
-  @apply flex flex-row justify-around border rounded-lg p-2 mb-3;
+	@apply flex flex-row justify-around border rounded-lg p-2 mb-3;
 }
 
 .segment-noborder {
-  @apply flex flex-row justify-around p-2 mb-3;
+	@apply flex flex-row justify-around p-2 mb-3;
 }
 
 .footer {
-  @apply text-center text-xs my-2;
+	@apply text-center text-xs my-2;
 }
 
 .big-text {
-  @apply text-xl antialiased;
+	@apply text-xl antialiased;
 }
 
 .btn {
-  @apply text-center bg-gray-300 text-gray-500 p-1 border border-gray-600 rounded text-xs ml-1;
-  min-width: 30px;
+	@apply text-center bg-gray-300 text-black p-1 border border-gray-600 rounded text-xs ml-1;
+	min-width: 30px;
 
-  &-selected {
-    @apply text-center bg-green-300 text-white p-1 border border-gray-600 rounded text-xs ml-1;
-  }
+	&-selected {
+		@apply text-center bg-green-300 text-white p-1 border border-gray-600 rounded text-xs ml-1;
+	}
+}
+
+button:disabled,
+button[disabled] {
+	background-color: #cccccc;
+	color: #888;
+}
+
+input[type="checkbox"].chk {
+	visibility: visible;
+	cursor: pointer;
 }
