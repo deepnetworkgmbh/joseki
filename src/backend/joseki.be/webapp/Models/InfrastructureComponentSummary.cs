@@ -8,6 +8,11 @@ namespace webapp.Models
     public class InfrastructureComponentSummary
     {
         /// <summary>
+        /// The unique Id of a component.
+        /// </summary>
+        public string Id { get; }
+
+        /// <summary>
         /// The name of the component: dev-cluster, subscription-1, etc.
         /// </summary>
         public string Name { get; set; }
@@ -32,6 +37,15 @@ namespace webapp.Models
         /// Pre-calculated parameters for drawing trend line.
         /// </summary>
         public Trend ScoreTrend { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InfrastructureComponentSummary"/> class.
+        /// create random id on constructor.
+        /// </summary>
+        public InfrastructureComponentSummary()
+        {
+            this.Id = Guid.NewGuid().ToString();
+        }
     }
 
     /// <summary>
