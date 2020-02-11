@@ -25,6 +25,7 @@ namespace webapp.Controllers
         public Task<ObjectResult> GetOverview(DateTime? date = null)
         {
             // a simple mechanism to lookup the overall data from Data date dictionary
+            // it should use the data layer instead.
             var summary = new InfrastructureOverview();
             var indexDate = Data.Overall.Keys.First();
             if (date != null)
@@ -37,7 +38,7 @@ namespace webapp.Controllers
             }
 
             summary.Overall = Data.Overall[indexDate];
-            summary.Components = Data.Components;
+            summary.Components = Data.Components[indexDate].ToArray();
 
             return Task.FromResult(this.StatusCode(200, summary));
         }

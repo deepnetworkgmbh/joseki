@@ -8,7 +8,10 @@ import { ScoreService } from './ScoreService';
 export class ChartService {
 	public static groupColors = ['#B7B8A8', '#E33035', '#F8A462', '#41C6B9'];
 
-	public static drawPieChart(summary: CountersSummary, element: HTMLInputElement, height: number = 320) {
+	public static drawPieChart(summary: CountersSummary, key: string, height: number = 320) {
+
+		let element = document.getElementById(key) as any;
+
 		var data = google.visualization.arrayToDataTable([
 			['Severity', 'Number'],
 			['No Data', Math.round(summary.noData)],
