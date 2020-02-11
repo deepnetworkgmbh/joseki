@@ -6,4 +6,16 @@ import Navigation from "@/components/navigation/Navigation.vue";
     Navigation
   }
 })
-export default class App extends Vue {}
+export default class App extends Vue {
+
+  sideWindowOpen: boolean = true;
+
+  toggleSideWindow(isOpen: boolean) {
+    this.sideWindowOpen = isOpen;
+  }
+
+  getWrapperClass() {
+    const bareClass = 'container mx-auto '
+    return bareClass + (this.sideWindowOpen ? 'wrapper-shring' : 'wrapper');
+  }
+}

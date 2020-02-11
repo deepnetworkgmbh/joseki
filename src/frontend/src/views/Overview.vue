@@ -10,8 +10,9 @@
           <i :class="getScoreIconClass()"></i>
         </div>
         <div class="status-text">
-          <div class='p-1 m-auto rounded-sm text-lg text-center -mt-8 mb-2 pb-4'>{{ date | formatDate }}</div>
-
+          <div class="p-1 m-auto rounded-sm text-lg text-center -mt-8 mb-2 pb-4">
+            {{ date | formatDate }}
+          </div>
           <div class="flex flex-row big-text xl:text-2xl lg:text-xl">
             <div class="w-7/12 font-thin text-right mr-1 text-gray-600">Score:</div>
             <div class="w-5/12 font-hairline text-left">{{ score }}%</div>
@@ -31,9 +32,9 @@
         </div>
       </div>
       <div class="w-2/4">
-        <div id="overall_pie" class="w-auto"></div>
+        <div id="overall_pie" class="w-auto" style="z-index:0;"></div>
       </div>
-      <div class="w-1/4 border-l border-gray-300">
+      <div class="w-1/4 border-l border-gray-300" style="z-index:10;">
         <div id="overall_bar" class="w-auto border-b border-gray-500 p-2 ml-1 mb-3"></div>
         <div class="m-3 mt-0">
           <table class="border border-gray-200 w-full text-xs p-4">
@@ -52,7 +53,7 @@
             <tfoot>
               <tr>
                 <td colspan="3" class="bg-gray-500 text-center">
-                  <a class="text-blue-200 font-bold">See All</a>
+                  <button class="btn" @click="panelOpen=!panelOpen">See All</button>
                 </td>
               </tr>
             </tfoot>
@@ -92,7 +93,9 @@
             <div style="height:50px;width:130px;" :id="`bar${i}`"></div>
           </div>
           <div class="p-2" style="width: 100px;">
-            <div style="position:relative;font-size:18px;z-index:1;left:19px;top:23px;">{{c.current.score}}%</div>
+            <div
+              style="position:relative;font-size:18px;z-index:1;left:19px;top:23px;"
+            >{{c.current.score}}%</div>
             <div style="position:relative;top:-25px;z-index:0;">
               <vc-donut
                 :sections="c.sections"
@@ -102,6 +105,31 @@
                 :thickness="25"
               ></vc-donut>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div :class="getPanelClass()" style="z-index:90;">
+      <div v-if="panelOpen" class="p-2">
+        <button class="btn m-1" @click="panelOpen=false" style="float:right;border:none;">X</button>
+        <h1 class="-mt-1">Select Scans to Compare</h1>
+        <h1 class="mt-1 font-bold">for Overall</h1>
+        <div class="scan-list">
+          <table style="width:100%">
+            <tr v-for="(scan,i) in data.overall.scoreHistory" :key="`scan${i}1`">
+              <td class="w-1">
+               <input type="checkbox" class='chk' :id="`scan${i}1`" :value="`scan${i}`" v-model="checkedScans" 
+               :disabled="checkDisabled(i, `scan${i}`)">
+              </td>
+              <td class='text-sm'>{{ scan.recordedAt | formatDate }}</td>
+              <td class="w-1" v-html="getArrowHtml(i)"></td>
+              <td class="w-1 text-sm">{{scan.score}}%</td>
+            </tr>
+          </table>
+        </div>
+        <div class='panel-button-container'>
+          <div class='text-right m-2'>
+            <button class="btn" @click="panelOpen=false" :disabled='canCompare()'>Compare</button>
           </div>
         </div>
       </div>
