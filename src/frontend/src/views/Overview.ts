@@ -24,6 +24,8 @@ export default class Overview extends Vue {
     viewMode: ViewMode = ViewMode.detailed;
     grade: string = '?';
     score: number = 0;
+    panelOpen: boolean = false;
+    checkedScans: any[] = [];
 
     created() {
         window.addEventListener("resize", this.setupCharts);
@@ -113,7 +115,7 @@ export default class Overview extends Vue {
 
     getArrowHtml(i: number) {
         const scans = this.data.overall.scoreHistory;
-        if (i > scans.length) return;
+        if (i >= (scans.length - 1)) return '-';
         if (scans[i].score > scans[i + 1].score) {
             return '<i class="fas fa-arrow-up" style="color:green;"></i>'
         } else if (scans[i].score < scans[i + 1].score) {
@@ -137,8 +139,30 @@ export default class Overview extends Vue {
         this.viewMode = vm;
     }
 
+    getPanelClass() {
+        this.$emit(this.panelOpen ? 'sideWindowOpened' : 'sideWindowClosed');
+        return this.panelOpen ? 'right-menu-open' : 'right-menu';
+    }
+
+    canCompare(): boolean {
+        return this.checkedScans.length !== 2;
+    }
+
+    checkDisabled(i: number, val: string) {
+        return this.checkedScans.length > 1 && this.checkedScans.indexOf(val) === -1
+    }
+
     @Watch('date', { immediate: true })
-    private onApplianceStatesLoaded(newValue: Date) {
+    private onDateChanged(newValue: Date) {
         this.loadData();
     }
+
+    @Watch('panelOpen', { immediate: true })
+    private onPanelToggled(newValue: boolean) {
+        if (newValue === false) {
+            this.checkedScans = [];
+        }
+        setTimeout(() => this.setupCharts(), 500);
+    }
+
 }

@@ -78,3 +78,46 @@ th {
 svg > g > g {
 	cursor: pointer;
 }
+.scan-list {
+	position: absolute;
+	top: 60px;
+	bottom: 60px;
+	left: 0;
+	width: 296px;
+	border-top: solid 1px #ccc;
+	padding-top: 10px;
+	overflow-y: auto;
+}
+
+.panel-button-container {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 55px;
+	background-color: #ddd;
+	border-top: solid 1px #ccc;
+}
+
+.right-menu {
+	background-color: #eee;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 300px;
+	right: -300px;
+	transition: right 0.4s;
+	border-left: solid 0px #444;
+}
+
+.right-menu-open {
+	background-color: #eee;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 300px;
+	right: 0px;
+	transition: right 0.5s;
+	border-left: solid 2px #444;
+	opacity: .95;
+}
