@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 using CommandLine;
@@ -9,12 +8,14 @@ using core;
 using core.Configuration;
 
 using Serilog;
+using Serilog.Core;
+using Serilog.Events;
 
 namespace cli
 {
     class Program
     {
-        private static readonly ILogger Logger = Log.ForContext<Program>();
+        private static LoggingLevelSwitch loggingLevelSwitch;
 
         public class Options
         {
@@ -23,12 +24,17 @@ namespace cli
 
             [Option('s', "subscriptions", Required = true, Min = 1, HelpText = "Azure Subscription identifiers to be audited")]
             public IEnumerable<string> Subscriptions { get; set; }
+
+            [Option('v', "verbose", Default = false, HelpText = "Verbose log level.")]
+            public bool Verbose { get; set; }
         }
 
         static void Main(string[] args)
         {
+            loggingLevelSwitch = new LoggingLevelSwitch();
+
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Information()
+                .MinimumLevel.ControlledBy(loggingLevelSwitch)
                 .WriteTo.Console(outputTemplate:
                     "[{Timestamp:HH:mm:ss} {Level}] {Message:lj}{NewLine}{Exception}")
                 .CreateLogger();
@@ -40,6 +46,11 @@ namespace cli
 
         private static async Task RunScanWith(Options opts)
         {
+            if (opts.Verbose)
+            {
+                loggingLevelSwitch.MinimumLevel = LogEventLevel.Verbose;
+            }
+
             var config = new ConfigurationParser(opts.ConfigPath);
             var factory = new ScannerFactory(config);
 
@@ -52,12 +63,16 @@ namespace cli
                 {
                     var subscriptionScanner = new SubscriptionScanner(factory.GetScanner(), factory.GetExporter());
                     var result = await subscriptionScanner.Scan(subscription);
-                    Logger.Information("Subscription {Subscription} was scanned with result: {ScanResult}", subscription, result.ScanResult);
+                    Log
+                        .ForContext<Program>()
+                        .Information("Subscription {Subscription} was scanned with result: {ScanResult}", subscription, result.ScanResult);
 
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex, "A subscription {Subscription} scanning failed", subscription);
+                    Log
+                        .ForContext<Program>()
+                        .Error(ex, "A subscription {Subscription} scanning failed", subscription);
                 }
             }
         }
@@ -66,7 +81,9 @@ namespace cli
         {
             foreach (var error in errs)
             {
-                Logger.Error("Failed to parse arguments: {Error}", error.Tag);
+                Log
+                    .ForContext<Program>()
+                    .Error("Failed to parse arguments: {Error}", error.Tag);
             }
         }
     }

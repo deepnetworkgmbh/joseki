@@ -48,12 +48,15 @@ namespace core.scanners
 
             var customOutputFolder = Path.Combine(ScanResultsFolder, CreateRandomFileName($"{subscription}_", 6));
             Directory.CreateDirectory(customOutputFolder);
+            Logger.Information("Output directory is {OutputDirectory}", customOutputFolder);
 
             // commands that will be executed by powershell
             var arguments =
-                $"{this.scannerCfg.AuditScriptPath} -SubscriptionId {subscription} -TenantId {this.scannerCfg.TenantId} " +
+                $"-File {this.scannerCfg.AuditScriptPath} " +
+                $"-SubscriptionId {subscription} -TenantId {this.scannerCfg.TenantId} " +
                 $"-ServicePrincipalId {this.scannerCfg.ServicePrincipalId} -ServicePrincipalPassword {this.scannerCfg.ServicePrincipalPassword} " +
-                $"-OutputFolder {customOutputFolder}";
+                $"-OutputFolder {customOutputFolder} -NonInteractive";
+            Logger.Debug("Powershell arguments: {StandardError}", arguments);
 
             try
             {
@@ -64,6 +67,13 @@ namespace core.scanners
                 };
 
                 var processResults = await ProcessEx.RunAsync(processStartInfo);
+
+                if (processResults.StandardError != null && processResults.StandardError.Length > 0)
+                {
+                    Logger.Warning("Errors: {StandardError}", string.Join(Environment.NewLine, processResults.StandardError));
+                }
+
+                Logger.Debug("Stdout: {StandardOutput}", string.Join(Environment.NewLine, processResults.StandardOutput));
 
                 Logger
                     .Information(
