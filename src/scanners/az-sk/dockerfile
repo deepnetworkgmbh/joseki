@@ -1,0 +1,60 @@
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1.101-alpine3.10 AS build
+WORKDIR /app/src
+COPY /src .
+RUN dotnet build joseki.azsk-scanner.sln -c Release
+
+
+FROM build AS testrunner
+WORKDIR /app/src/tests
+ENTRYPOINT ["dotnet","test","--logger:trx;LogFileName=test_results.xml","--no-build","-c","Release","-r","/app/testresults"]
+
+
+FROM build AS publish-cli
+WORKDIR /app/src
+RUN dotnet publish cli/cli.csproj -c Release -o /app/publish --no-restore --no-build
+
+
+FROM mcr.microsoft.com/dotnet/core/runtime:3.1.1-alpine3.10 AS cliapp
+
+# install the requirements for powershell
+RUN apk add --no-cache \
+    ca-certificates \
+    less \
+    ncurses-terminfo-base \
+    krb5-libs \
+    libgcc \
+    libintl \
+    libssl1.1 \
+    libstdc++ \
+    tzdata \
+    userspace-rcu \
+    zlib \
+    icu-libs \
+    curl
+
+RUN apk -X https://dl-cdn.alpinelinux.org/alpine/edge/main add --no-cache lttng-ust
+
+# Download the powershell '.tar.gz' archive
+RUN curl -L https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-rc.2/powershell-7.0.0-rc.2-linux-alpine-x64.tar.gz -o /tmp/powershell.tar.gz
+
+# Create the target folder where powershell will be placed
+RUN mkdir -p /opt/microsoft/powershell/7-rc
+
+# Expand powershell to the target folder
+RUN tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7-rc
+
+# Set execute permissions
+RUN chmod +x /opt/microsoft/powershell/7-rc/pwsh
+
+# Create the symbolic link that points to pwsh
+RUN ln -s /opt/microsoft/powershell/7-rc/pwsh /usr/bin/powershell
+
+# Install az-sk module
+RUN powershell -Command Install-Module AzSK -RequiredVersion 4.5.1 -Force
+
+WORKDIR /app
+COPY --from=publish-cli /app/publish .
+
+COPY ps/azsk.ps1 /app/azsk.ps1
+
+ENTRYPOINT ["dotnet","cli.dll"]
