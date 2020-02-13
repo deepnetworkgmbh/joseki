@@ -20,11 +20,11 @@ namespace webapp.Models
         /// <summary>
         /// Components of first summary.
         /// </summary>
-        public InfrastructureComponentSummary[] Components1 { get; set; }
+        public InfrastructureComponentSummaryWithHistory[] Components1 { get; set; }
 
         /// <summary>
         /// Components of second summary.
         /// </summary>
-        public InfrastructureComponentSummary[] Components2 { get; set; }
+        public InfrastructureComponentSummaryWithHistory[] Components2 { get; set; }
     }
 }

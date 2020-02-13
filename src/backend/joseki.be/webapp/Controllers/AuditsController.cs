@@ -16,8 +16,8 @@ namespace webapp.Controllers
     [Route("api/audits")]
     public class AuditsController : Controller
     {
-        private static List<InfrastructureComponentSummary> overallSummary = Data.GetComponentSummary();
-        private static List<InfrastructureComponentSummary> componentSummaries = Data.GetComponentSummaries();
+        private static List<InfrastructureComponentSummaryWithHistory> overallSummary = Data.GetComponentSummary();
+        private static List<InfrastructureComponentSummaryWithHistory> componentSummaries = Data.GetComponentSummaries();
 
         /// <summary>
         /// Returns the overall infrastructure overview for Joseki landing page.
@@ -42,7 +42,7 @@ namespace webapp.Controllers
         /// </summary>
         /// <returns>The overall infrastructure overview diff.</returns>
         [HttpGet]
-        [Route("overviewdiff", Name = "get-overview-diff")]
+        [Route("overview/diff", Name = "get-overview-diff")]
         [ProducesResponseType(200, Type = typeof(InfrastructureOverviewDiff))]
         public Task<ObjectResult> GetOverviewDiff(DateTime? date1 = null, DateTime? date2 = null)
         {
@@ -52,8 +52,8 @@ namespace webapp.Controllers
             {
                 try
                 {
-                    diff.Overall1 = overallSummary.FirstOrDefault(summary => summary.Date == date1);
-                    diff.Overall2 = overallSummary.FirstOrDefault(summary => summary.Date == date2);
+                    diff.Overall1 = overallSummary.FirstOrDefault(summary => summary.Date == date1) as InfrastructureComponentSummary;
+                    diff.Overall2 = overallSummary.FirstOrDefault(summary => summary.Date == date2) as InfrastructureComponentSummary;
                     diff.Components1 = componentSummaries.Where(summary => summary.Date == date1).ToArray();
                     diff.Components2 = componentSummaries.Where(summary => summary.Date == date2).ToArray();
                 }

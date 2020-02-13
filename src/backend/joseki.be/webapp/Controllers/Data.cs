@@ -118,7 +118,7 @@ namespace webapp.Controllers
         /// <summary>
         /// Returns summary for the selected component.
         /// </summary>
-        public static List<InfrastructureComponentSummary> GetComponentSummary(InfrastructureComponent component = null)
+        public static List<InfrastructureComponentSummaryWithHistory> GetComponentSummary(InfrastructureComponent component = null)
             {
                 // if no component provided, it's overall
                 if (component == null)
@@ -126,10 +126,10 @@ namespace webapp.Controllers
                     component = overallComponent;
                 }
 
-                var result = new List<InfrastructureComponentSummary>();
+                var result = new List<InfrastructureComponentSummaryWithHistory>();
                 for (int i = 0; i < Dates.Length; i++)
                 {
-                    var summary = new InfrastructureComponentSummary()
+                    var summary = new InfrastructureComponentSummaryWithHistory()
                     {
                         Date = Dates[i],
                         Component = component,
@@ -146,9 +146,9 @@ namespace webapp.Controllers
         /// <summary>
         /// Returns summary for all components except overall.
         /// </summary>
-        public static List<InfrastructureComponentSummary> GetComponentSummaries()
+        public static List<InfrastructureComponentSummaryWithHistory> GetComponentSummaries()
         {
-            var result = new List<InfrastructureComponentSummary>();
+            var result = new List<InfrastructureComponentSummaryWithHistory>();
 
             // list component summaries except overall
             foreach (InfrastructureComponent component in Components)
