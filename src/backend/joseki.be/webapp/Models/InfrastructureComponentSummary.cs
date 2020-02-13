@@ -8,19 +8,19 @@ namespace webapp.Models
     public class InfrastructureComponentSummary
     {
         /// <summary>
-        /// The unique Id of a component.
+        /// The unique Id of a component summary.
         /// </summary>
         public string Id { get; }
 
         /// <summary>
-        /// The name of the component: dev-cluster, subscription-1, etc.
+        /// The generation date of the Summary.
         /// </summary>
-        public string Name { get; set; }
+        public DateTime Date { get; set; }
 
         /// <summary>
-        /// The bucket of infrastructure component: Cloud Subscription, Kubernetes cluster, etc.
+        /// The component of the current summary.
         /// </summary>
-        public InfrastructureCategory Category { get; set; }
+        public InfrastructureComponent Component { get; set; }
 
         /// <summary>
         /// Latest known check-result counters.
@@ -40,7 +40,7 @@ namespace webapp.Models
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InfrastructureComponentSummary"/> class.
-        /// create random id on constructor.
+        /// Creates random id on constructor.
         /// </summary>
         public InfrastructureComponentSummary()
         {
