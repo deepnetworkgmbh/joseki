@@ -59,6 +59,20 @@ export class InfrastructureComponent {
 }
 
 
+export class InfrastructureOverviewDiff {
+    /// First overall infrastructure summary.
+    overall1: InfrastructureComponentSummary = new InfrastructureComponentSummary();
+
+    /// Second overall infrastructure summary.
+    overall2: InfrastructureComponentSummary = new InfrastructureComponentSummary();
+
+    ///Components of first summary.
+    components1: InfrastructureComponentSummary[] = [];
+
+    ///Components of second summary.
+    components2: InfrastructureComponentSummary[] = [];
+}
+
 /// Represents the score of component at a given date.
 export class ScoreHistoryItem {
     constructor(public recordedAt: Date, public score: number) { }
