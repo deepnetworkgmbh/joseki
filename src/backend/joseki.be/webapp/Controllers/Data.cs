@@ -44,7 +44,7 @@ namespace webapp.Controllers
         /// <summary>
         /// list of counter summaries.
         /// </summary>
-        public static Dictionary<string, CountersSummary[]> Counters =
+        public static Dictionary<string, CountersSummary[]> GetCounters =
             new Dictionary<string, CountersSummary[]>
         {
                 {
@@ -103,13 +103,13 @@ namespace webapp.Controllers
         /// <summary>
         /// score history, combination of dates and scores.
         /// </summary>
-        public static ScoreHistoryItem[] ScoreHistory(InfrastructureComponent component)
+        public static ScoreHistoryItem[] GetScoreHistory(InfrastructureComponent component)
         {
             var result = new List<ScoreHistoryItem>();
 
             for (int i = 0; i < Dates.Length; i++)
             {
-                result.Add(new ScoreHistoryItem(Dates[i], Counters[component.Id][i].Score));
+                result.Add(new ScoreHistoryItem(Dates[i], GetCounters[component.Id][i].Score));
             }
 
             return result.ToArray();
@@ -133,9 +133,9 @@ namespace webapp.Controllers
                     {
                         Date = Dates[i],
                         Component = component,
-                        Current = Counters[component.Id][i],
-                        ScoreHistory = ScoreHistory(component),
-                        ScoreTrend = Trend.GetTrend(ScoreHistory(component)),
+                        Current = GetCounters[component.Id][i],
+                        ScoreHistory = GetScoreHistory(component),
+                        ScoreTrend = Trend.GetTrend(GetScoreHistory(component)),
                     };
                     result.Add(summary);
                 }
