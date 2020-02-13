@@ -8,11 +8,12 @@ export class InfrastructureOverview {
 }
 
 export class InfrastructureComponentSummary {
-    /// The name of the component: dev-cluster, subscription-1, etc.
-    name: string = ''
 
-    /// The bucket of infrastructure component: Cloud Subscription, Kubernetes cluster, etc.
-    category: string = ''
+    /// the id of the summary
+    id: string = ''
+
+    // the component of the summary
+    component: InfrastructureComponent = new InfrastructureComponent()
 
     /// Latest known check-result counters.
     current: CountersSummary = new CountersSummary()
@@ -44,6 +45,32 @@ export class InfrastructureComponentSummary {
         //console.log(`[] ${name}`, result);
         return result;
     }
+}
+
+export class InfrastructureComponent {
+    /// the id of the 
+    id: string = ''
+
+    /// The name of the component: dev-cluster, subscription-1, etc.
+    name: string = ''
+
+    /// The bucket of infrastructure component: Cloud Subscription, Kubernetes cluster, etc.
+    category: string = ''
+}
+
+
+export class InfrastructureOverviewDiff {
+    /// First overall infrastructure summary.
+    overall1: InfrastructureComponentSummary = new InfrastructureComponentSummary();
+
+    /// Second overall infrastructure summary.
+    overall2: InfrastructureComponentSummary = new InfrastructureComponentSummary();
+
+    ///Components of first summary.
+    components1: InfrastructureComponentSummary[] = [];
+
+    ///Components of second summary.
+    components2: InfrastructureComponentSummary[] = [];
 }
 
 /// Represents the score of component at a given date.
