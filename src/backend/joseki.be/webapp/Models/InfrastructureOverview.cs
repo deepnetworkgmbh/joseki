@@ -8,11 +8,11 @@
         /// <summary>
         /// Overall infrastructure summary.
         /// </summary>
-        public InfrastructureComponentSummary Overall { get; set; }
+        public InfrastructureComponentSummaryWithHistory Overall { get; set; }
 
         /// <summary>
         /// Separate summary for each involved component.
         /// </summary>
-        public InfrastructureComponentSummary[] Components { get; set; }
+        public InfrastructureComponentSummaryWithHistory[] Components { get; set; }
     }
 }

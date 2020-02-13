@@ -15,6 +15,12 @@
             </summary>
             <returns>The overall infrastructure overview.</returns>
         </member>
+        <member name="M:webapp.Controllers.AuditsController.GetOverviewDiff(System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+            <summary>
+            Returns the overall infrastructure overview diff.
+            </summary>
+            <returns>The overall infrastructure overview diff.</returns>
+        </member>
         <member name="T:webapp.Controllers.Data">
             <summary>
             data wrapper before connecting to real results.
@@ -22,31 +28,40 @@
         </member>
         <member name="F:webapp.Controllers.Data.Dates">
             <summary>
-            list of consistent dates for ui tests.
-            </summary>
-        </member>
-        <member name="F:webapp.Controllers.Data.Counters">
-            <summary>
-            list of counter summaries.
-            </summary>
-        </member>
-        <member name="F:webapp.Controllers.Data.OverallScoreHistory">
-            <summary>
-            score history, combination of dates and counters.
-            </summary>
-        </member>
-        <member name="F:webapp.Controllers.Data.Overall">
-            <summary>
-            overall dummy data using counters and dates.
-            this list is long because it's mocking data change over time.
-            in a real time scenario, only data on related date should be returned.
+            list of dates for ui tests.
+            date behaves like a key while comparing scans.
+            thus an overall scan and a component scan
+            must all have the same initial scan date associated.
             </summary>
         </member>
         <member name="F:webapp.Controllers.Data.Components">
             <summary>
-            list of components (clusters and subscriptions).
-            this list is long because it's mocking data change over time.
-            in a real time scenario, only data on related date should be returned.
+            list of inftastructure components.
+            </summary>
+        </member>
+        <member name="F:webapp.Controllers.Data.GetCounters">
+            <summary>
+            list of counter summaries.
+            </summary>
+        </member>
+        <member name="M:webapp.Controllers.Data.GetScoreHistory(webapp.Models.InfrastructureComponent)">
+            <summary>
+            score history, combination of dates and scores.
+            </summary>
+        </member>
+        <member name="M:webapp.Controllers.Data.GetComponentSummary(webapp.Models.InfrastructureComponent)">
+            <summary>
+            Returns summary for the selected component.
+            </summary>
+        </member>
+        <member name="M:webapp.Controllers.Data.GetComponentSummaries">
+            <summary>
+            Returns summary for all components except overall.
+            </summary>
+        </member>
+        <member name="F:webapp.Controllers.Data.overallComponent">
+            <summary>
+            static placeholder for overall component.
             </summary>
         </member>
         <member name="T:webapp.Infrastructure.HttpRequestLoggingMiddleware">
@@ -74,6 +89,26 @@
             <param name="start">Ticks on a start.</param>
             <param name="stop">Ticks in the end.</param>
             <returns>Elapsed milliseconds.</returns>
+        </member>
+        <member name="T:webapp.Models.ScanResult">
+            <summary>
+            Scan result enum.
+            </summary>
+        </member>
+        <member name="F:webapp.Models.ScanResult.NotFound">
+            <summary>
+            Enum value when a scan was not found
+            </summary>
+        </member>
+        <member name="F:webapp.Models.ScanResult.Failed">
+            <summary>
+            Enum value when a scan failed
+            </summary>
+        </member>
+        <member name="F:webapp.Models.ScanResult.Succeeded">
+            <summary>
+            Enum value when a scan succeeded
+            </summary>
         </member>
         <member name="T:webapp.Models.CountersSummary">
             <summary>
@@ -132,24 +167,45 @@
             Kubernetes cluster.
             </summary>
         </member>
+        <member name="T:webapp.Models.InfrastructureComponent">
+            <summary>
+            The class for Infrastructure Component object.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.InfrastructureComponent.Id">
+            <summary>
+            The unique Id of a component.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.InfrastructureComponent.Name">
+            <summary>
+            The name of the component: dev-cluster, subscription-1, etc.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.InfrastructureComponent.Category">
+            <summary>
+            The bucket of infrastructure component: Cloud Subscription, Kubernetes cluster, etc.
+            </summary>
+        </member>
+        <member name="M:webapp.Models.InfrastructureComponent.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Models.InfrastructureComponent"/> class.
+            Creates random id on constructor.
+            </summary>
+        </member>
         <member name="T:webapp.Models.InfrastructureComponentSummary">
             <summary>
             Summarizes a single infrastructure unit stats: score, trends, name.
             </summary>
         </member>
-        <member name="P:webapp.Models.InfrastructureComponentSummary.Id">
+        <member name="P:webapp.Models.InfrastructureComponentSummary.Date">
             <summary>
-            The unique Id of a component.
+            The generation date of the Summary.
             </summary>
         </member>
-        <member name="P:webapp.Models.InfrastructureComponentSummary.Name">
+        <member name="P:webapp.Models.InfrastructureComponentSummary.Component">
             <summary>
-            The name of the component: dev-cluster, subscription-1, etc.
-            </summary>
-        </member>
-        <member name="P:webapp.Models.InfrastructureComponentSummary.Category">
-            <summary>
-            The bucket of infrastructure component: Cloud Subscription, Kubernetes cluster, etc.
+            The component of the current summary.
             </summary>
         </member>
         <member name="P:webapp.Models.InfrastructureComponentSummary.Current">
@@ -157,21 +213,60 @@
             Latest known check-result counters.
             </summary>
         </member>
-        <member name="P:webapp.Models.InfrastructureComponentSummary.ScoreHistory">
+        <member name="T:webapp.Models.InfrastructureComponentSummaryWithHistory">
+            <summary>
+            Summarizes a single infrastructure unit stats: score, trends, name.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.InfrastructureComponentSummaryWithHistory.ScoreHistory">
             <summary>
             Holds Scores per last 30 days.
             If no data for a day - places 0.
             </summary>
         </member>
-        <member name="P:webapp.Models.InfrastructureComponentSummary.ScoreTrend">
+        <member name="P:webapp.Models.InfrastructureComponentSummaryWithHistory.ScoreTrend">
             <summary>
             Pre-calculated parameters for drawing trend line.
             </summary>
         </member>
-        <member name="M:webapp.Models.InfrastructureComponentSummary.#ctor">
+        <member name="T:webapp.Models.InfrastructureOverview">
             <summary>
-            Initializes a new instance of the <see cref="T:webapp.Models.InfrastructureComponentSummary"/> class.
-            create random id on constructor.
+            Returns infrastructure summary: scores by category, counters, etc.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.InfrastructureOverview.Overall">
+            <summary>
+            Overall infrastructure summary.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.InfrastructureOverview.Components">
+            <summary>
+            Separate summary for each involved component.
+            </summary>
+        </member>
+        <member name="T:webapp.Models.InfrastructureOverviewDiff">
+            <summary>
+            Returns infrastructure summary: scores by category, counters, etc.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.InfrastructureOverviewDiff.Overall1">
+            <summary>
+            First overall infrastructure summary.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.InfrastructureOverviewDiff.Overall2">
+            <summary>
+            Second overall infrastructure summary.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.InfrastructureOverviewDiff.Components1">
+            <summary>
+            Components of first summary.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.InfrastructureOverviewDiff.Components2">
+            <summary>
+            Components of second summary.
             </summary>
         </member>
         <member name="T:webapp.Models.ScoreHistoryItem">
@@ -224,21 +319,6 @@
             </summary>
             <param name="values">The score values.</param>
             <returns>Trend object.</returns>
-        </member>
-        <member name="T:webapp.Models.InfrastructureOverview">
-            <summary>
-            Returns infrastructure summary: scores by category, counters, etc.
-            </summary>
-        </member>
-        <member name="P:webapp.Models.InfrastructureOverview.Overall">
-            <summary>
-            Overall infrastructure summary.
-            </summary>
-        </member>
-        <member name="P:webapp.Models.InfrastructureOverview.Components">
-            <summary>
-            Separate summary for each involved component.
-            </summary>
         </member>
         <member name="T:webapp.Program">
             <summary>

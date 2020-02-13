@@ -4,6 +4,7 @@ import Overview from "@/views/Overview.vue";
 import ClusterOverview from "@/views/ClusterOverview.vue";
 import ImageOverview from "@/views/ImageOverview.vue";
 import ImageDetail from "@/views/ImageDetail.vue";
+import OverviewDiff from '@/views/OverviewDiff.vue';
 
 Vue.use(VueRouter);
 
@@ -16,6 +17,12 @@ const routes = [
     path: "/overview/:date?",
     name: "GeneralOverview",
     component: Overview,
+    props: true
+  },
+  {
+    path: "/overview-diff/:date/:date2",
+    name: "OverviewDiff",
+    component: OverviewDiff,
     props: true
   },
   {

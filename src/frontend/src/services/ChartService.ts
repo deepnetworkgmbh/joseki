@@ -31,7 +31,7 @@ export class ChartService {
 				3: { color: this.groupColors[3] }
 			},
 			pieHole: 0.5,
-			chartArea: { top: 50, width: '100%', height: '80%' },
+			chartArea: { top: 50, width: '100%', height: '70%' },
 			legend: {
 				position: 'top',
 				alignment: 'center',
@@ -125,7 +125,13 @@ export class ChartService {
 		chart.draw(data, options);
 	}
 
-	public static drawBarChart(data: ScoreHistoryItem[], key: string, selected: Date, cb: Function, height: number = 100) {
+	public static drawBarChart(
+		data: ScoreHistoryItem[],
+		key: string,
+		selected: Date,
+		cb: Function,
+		height: number = 100,
+		selected2: string = '') {
 
 		let element = document.getElementById(key) as any;
 
@@ -135,11 +141,13 @@ export class ChartService {
 		chart_data.addColumn({ type: 'string', role: 'style' });
 
 		let selectedDate = new Date(selected);
+		let selected2Date = (selected2 == '') ? new Date() : new Date(selected2);
 
 		for (let i = 0; i < data.length; i++) {
 			const rowdate = new Date(data[i].recordedAt);
 			const diff: any = selectedDate.getTime() - rowdate.getTime();
-			let color = (diff === 0) ? '#4AF0C0' : '#31B6A9';
+			const diff2: any = (selected2 == '') ? 1 : (selected2Date.getTime() - rowdate.getTime());
+			let color = (diff === 0 || diff2 === 0) ? '#4AF0C0' : '#31B6A9';
 			chart_data.addRow([rowdate, data[i].score, color]);
 		}
 
