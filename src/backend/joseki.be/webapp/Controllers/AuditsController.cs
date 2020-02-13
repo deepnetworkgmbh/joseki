@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,32 +16,54 @@ namespace webapp.Controllers
     [Route("api/audits")]
     public class AuditsController : Controller
     {
-    /// <summary>
-    /// Returns the overall infrastructure overview for Joseki landing page.
-    /// </summary>
-    /// <returns>The overall infrastructure overview.</returns>
+        private static List<InfrastructureComponentSummary> overallSummary = Data.GetComponentSummary();
+        private static List<InfrastructureComponentSummary> componentSummaries = Data.GetComponentSummaries();
+
+        /// <summary>
+        /// Returns the overall infrastructure overview for Joseki landing page.
+        /// </summary>
+        /// <returns>The overall infrastructure overview.</returns>
         [HttpGet]
         [Route("overview", Name = "get-overview")]
         [ProducesResponseType(200, Type = typeof(InfrastructureOverview))]
         public Task<ObjectResult> GetOverview(DateTime? date = null)
         {
-            // a simple mechanism to lookup the overall data from Data date dictionary
-            // it should use the data layer instead.
             var summary = new InfrastructureOverview();
-            var indexDate = Data.Overall.Keys.First();
-            if (date != null)
+            var indexDate = (date == null) ? Data.Dates.First() : date;
+
+            summary.Overall = overallSummary.FirstOrDefault(summary => summary.Date == indexDate);
+            summary.Components = componentSummaries.Where(summary => summary.Date == indexDate).ToArray();
+
+            return Task.FromResult(this.StatusCode(200, summary));
+        }
+
+        /// <summary>
+        /// Returns the overall infrastructure overview diff.
+        /// </summary>
+        /// <returns>The overall infrastructure overview diff.</returns>
+        [HttpGet]
+        [Route("overviewdiff", Name = "get-overview-diff")]
+        [ProducesResponseType(200, Type = typeof(InfrastructureOverviewDiff))]
+        public Task<ObjectResult> GetOverviewDiff(DateTime? date1 = null, DateTime? date2 = null)
+        {
+            var diff = new InfrastructureOverviewDiff();
+
+            if (date1 != null && date2 != null)
             {
-                var findDay = Data.Overall.FirstOrDefault(x => x.Key == date);
-                if (findDay.Value != null)
+                try
                 {
-                    indexDate = findDay.Key;
+                    diff.Overall1 = overallSummary.FirstOrDefault(summary => summary.Date == date1);
+                    diff.Overall2 = overallSummary.FirstOrDefault(summary => summary.Date == date2);
+                    diff.Components1 = componentSummaries.Where(summary => summary.Date == date1).ToArray();
+                    diff.Components2 = componentSummaries.Where(summary => summary.Date == date2).ToArray();
+                }
+                catch (Exception e)
+                {
+                    Console.Write(e);
                 }
             }
 
-            summary.Overall = Data.Overall[indexDate];
-            summary.Components = Data.Components[indexDate].ToArray();
-
-            return Task.FromResult(this.StatusCode(200, summary));
+            return Task.FromResult(this.StatusCode(200, diff));
         }
     }
 }
