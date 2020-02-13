@@ -1,0 +1,14 @@
+.scan-detailed-diff-item {
+	width: 320px;
+	height: 90px;
+	background-color: #eee;
+	border: solid 1px #aaa;
+	margin-bottom: 10px;
+	margin-right: 10px;
+	border-radius: 5px;
+	cursor: pointer;
+
+	&:hover {
+		background-color: #efe;
+	}
+}

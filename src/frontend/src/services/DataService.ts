@@ -160,9 +160,6 @@ export class DataService {
 
   public async getGeneralOverviewData(dateString: string = '') {
     console.log(`[] calling api/audits/overview (${dateString})`);
-
-    //?date=" + decodeURIComponent(d.toISOString())
-
     let suffix = (dateString === '') ? '' : '?date=' + encodeURIComponent(dateString);
 
     return axios
@@ -170,6 +167,16 @@ export class DataService {
       .then((response) => response.data)
       .catch((error) => console.log(error))
       .finally(() => console.log("overview request finished."));
+  }
+
+  public async getGeneralOverviewDiffData(date1: string, date2: string) {
+    console.log(`[] calling api/audits/overviewdiff/`);
+    let suffix = '?date1=' + encodeURIComponent(date1) + '&date2=' + encodeURIComponent(date2);
+    return axios
+      .get(this.baseUrl + "/api/audits/overviewdiff" + suffix)
+      .then((response) => response.data)
+      .catch((error) => console.log(error))
+      .finally(() => console.log("overview diff request finished."));
   }
 
 

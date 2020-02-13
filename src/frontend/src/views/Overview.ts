@@ -3,9 +3,7 @@ import { ChartService } from "@/services/ChartService"
 import Spinner from "@/components/spinner/Spinner.vue";
 import StatusBar from "@/components/statusbar/StatusBar.vue";
 import { DataService } from '@/services/DataService';
-import { KubeOverview } from '@/models';
 import { ViewMode } from '@/types/Enums';
-import { ScanSummary } from '@/models/ScanSummary';
 import { InfrastructureOverview, InfrastructureComponentSummary } from '@/models/InfrastructureOverview';
 import { ScoreService } from '@/services/ScoreService';
 import router from '@/router';
@@ -40,7 +38,7 @@ export default class Overview extends Vue {
                 this.score = this.data.overall.current.passed;
                 this.grade = ScoreService.getGrade(this.score);
                 if (this.data.components && this.data.overall) {
-                    //console.log(`[] data is`, this.data);
+                    console.log(`[] data is`, this.data);
                     this.loaded = true;
                     this.setupCharts();
                 }
@@ -63,14 +61,9 @@ export default class Overview extends Vue {
 
 
     drawCharts() {
-        let _date;
-        if (this.date === null) {
-            _date = this.data.overall.scoreHistory[0].recordedAt;
-            this.date = _date;
-        } else {
-            _date = new Date(decodeURIComponent(this.date));
-        }
-
+        let _date = this.date ?
+            new Date(decodeURIComponent(this.date))
+            : this.data.overall.scoreHistory[0].recordedAt;
         ChartService.drawPieChart(this.data.overall.current, "overall_pie", 300)
         ChartService.drawBarChart(this.data.overall.scoreHistory, "overall_bar", _date, this.dayClicked)
         for (let i = 0; i < this.data.components.length; i++) {
@@ -132,8 +125,8 @@ export default class Overview extends Vue {
         return this.data.overall.scoreHistory.slice(0, 5);
     }
 
-    getClusters() { return this.data.components.filter(x => x.category === 'Kubernetes').length; }
-    getSubscriptions() { return this.data.components.filter(x => x.category === 'Subscription').length; }
+    getClusters() { return this.data.components.filter(x => x.component.category === 'Kubernetes').length; }
+    getSubscriptions() { return this.data.components.filter(x => x.component.category === 'Subscription').length; }
 
     setViewMode(vm: ViewMode) {
         this.viewMode = vm;
@@ -150,6 +143,12 @@ export default class Overview extends Vue {
 
     checkDisabled(i: number, val: string) {
         return this.checkedScans.length > 1 && this.checkedScans.indexOf(val) === -1
+    }
+
+    CompareScans() {
+        console.log(`[] comparing ${this.checkedScans}`);
+        const params = encodeURIComponent(this.checkedScans[1]) + '/' + encodeURIComponent(this.checkedScans[0]);
+        router.replace('/overview-diff/' + params);
     }
 
     @Watch('date', { immediate: true })

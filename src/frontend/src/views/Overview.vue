@@ -82,20 +82,14 @@
         >{{ scan.target }}</div>
       </div>
       <div v-if="viewMode === 1" class="w-full flex flex-wrap pt-2 pl-1">
-        <div
-          v-for="(c, i) in data.components"
-          :key="`scan${i}`"
-          class="scan-detailed-item flex flex-row shadow"
-        >
+        <div v-for="(c, i) in data.components" :key="`scan${i}`" class="scan-detailed-item flex flex-row shadow">
           <div class="w-full p-2 text-lg pt-0 flex flex-col">
-            <div class="text-sm">{{ c.name }}</div>
-            <div class="text-xs text-gray-600">{{c.category}}</div>
+            <div class="text-sm">{{ c.component.name }}</div>
+            <div class="text-xs text-gray-600">{{c.component.category}}</div>
             <div style="height:50px;width:130px;" :id="`bar${i}`"></div>
           </div>
           <div class="p-2" style="width: 100px;">
-            <div
-              style="position:relative;font-size:18px;z-index:1;left:19px;top:23px;"
-            >{{c.current.score}}%</div>
+            <div style="position:relative;font-size:18px;z-index:1;left:19px;top:23px;">{{c.current.score}}%</div>
             <div style="position:relative;top:-25px;z-index:0;">
               <vc-donut
                 :sections="c.sections"
@@ -118,10 +112,11 @@
           <table style="width:100%">
             <tr v-for="(scan,i) in data.overall.scoreHistory" :key="`scan${i}1`">
               <td class="w-1">
-               <input type="checkbox" class='chk' :id="`scan${i}1`" :value="`scan${i}`" v-model="checkedScans" 
-               :disabled="checkDisabled(i, `scan${i}`)">
+               <input type="checkbox" class='chk' :id="`scan${i}1`" :value="`${scan.recordedAt}`" v-model="checkedScans" 
+               :disabled="checkDisabled(i, `${scan.recordedAt}`)">
               </td>
               <td class='text-sm'>{{ scan.recordedAt | formatDate }}</td>
+              <td class='text-sm'>{{ scan.id }}</td>
               <td class="w-1" v-html="getArrowHtml(i)"></td>
               <td class="w-1 text-sm">{{scan.score}}%</td>
             </tr>
@@ -129,7 +124,7 @@
         </div>
         <div class='panel-button-container'>
           <div class='text-right m-2'>
-            <button class="btn" @click="panelOpen=false" :disabled='canCompare()'>Compare</button>
+            <button class="btn" @click="CompareScans()" :disabled='canCompare()'>Compare</button>
           </div>
         </div>
       </div>
