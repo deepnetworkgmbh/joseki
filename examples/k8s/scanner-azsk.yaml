@@ -1,0 +1,103 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scanner-azsk-cfg
+  namespace: joseki
+  labels:
+    app: scanner-azsk
+    module: scanners
+    version: 0.1.0
+data:
+  scanner-azsk-config.yaml:  |
+    scanner:
+      !azsk-scanner
+      id: 0dfa8355-b20d-4701-af37-6cc021df3244
+      version: 0.1.0
+      periodicity: 0 2 * * *
+      azSkVersion: 4.5.1
+      auditScriptPath: /app/azsk.ps1
+      tenantId: TENANT_ID
+      servicePrincipalId: SP_ID
+      servicePrincipalPassword: SP_PASSWORD
+
+    exporter:
+      !az-blob
+      basePath: https://STORAGE_ACCOUNT.blob.core.windows.net/CONTAINER_NAME
+      sas: TOKEN
+      heartbeatPeriodicity: 600
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: scanner-azsk
+  namespace: joseki
+  labels:
+    app: scanner-azsk
+    module: scanners
+
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: scanner-azsk
+  labels:
+    app: scanner-azsk
+    module: scanners
+
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: scanner-azsk
+  labels:
+    app: scanner-azsk
+    module: scanners
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: scanner-azsk
+subjects:
+  - kind: ServiceAccount
+    name: scanner-azsk
+    namespace: joseki
+
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: scanner-azsk
+  namespace: joseki
+  labels:
+    app: scanner-azsk
+    module: scanners
+    version: 0.1.0
+spec:
+  schedule: "0 2 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: scanner-azsk
+            image: deepnetwork/joseki-scanner-azsk:0.1.0
+            imagePullPolicy: Always
+            args:
+            - --config
+            - /app/config.az.yaml
+            - --subscriptions
+            - s1
+            - s2
+            - s3
+            volumeMounts:
+            - name: config
+              mountPath: /app/config.az.yaml
+              subPath: scanner-azsk-config.yaml
+              readOnly: true
+          volumes:
+            - name: config
+              configMap:
+                name: scanner-azsk-cfg
+          restartPolicy: Never
+          serviceAccountName: scanner-azsk
