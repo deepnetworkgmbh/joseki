@@ -44,7 +44,7 @@ namespace webapp.Controllers
         [HttpGet]
         [Route("overview/diff", Name = "get-overview-diff")]
         [ProducesResponseType(200, Type = typeof(InfrastructureOverviewDiff))]
-        public Task<ObjectResult> GetOverviewDiff(DateTime? date1 = null, DateTime? date2 = null)
+        public Task<ObjectResult> GetOverviewDiff(DateTime date1, DateTime date2)
         {
             var diff = new InfrastructureOverviewDiff();
 
