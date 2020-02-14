@@ -22,11 +22,15 @@
   - [Configuration](#configuration)
   - [Data layer](#data-layer)
     - [Database Data Model](#database-data-model)
+      - [Check table](#check-table)
+      - [CheckResult table](#checkresult-table)
+      - [Audit table](#audit-table)
+      - [Metadata tables](#metadata-tables)
+      - [Image scan result tables](#image-scan-result-tables)
     - [Reading audit results](#reading-audit-results)
       - [Processing az-sk results](#processing-az-sk-results)
       - [Processing polaris results](#processing-polaris-results)
       - [Processing trivy results](#processing-trivy-results)
-      - [Processing kube-bench results](#processing-kube-bench-results)
     - [Housekeeping Audit Blobs](#housekeeping-audit-blobs)
   - [Inter-process communication](#inter-process-communication)
     - [Frontend API](#frontend-api)
@@ -253,7 +257,93 @@ The current choice is based on the most familiar products/framework of the dev-t
 
 ### Database Data Model
 
-TBD
+The database tables are logically grouped into three categories:
+
+1. Audit Results
+2. Image Scans
+3. Azure and Kubernetes metadata
+
+Draft database model could be represented as at the picture below:
+
+![Database model](/docs_files/backend/joseki-data-model.png)
+
+#### Check table
+
+The table is a dictionary-like structure which gives detailed explanation of any check type.
+
+- `Id` - uniquely identifies any check type in the system. Each scanner has own set of checks, that are unique within scanner itself, however these ids can overlab between scanners. To guarantee uniqueness, each scanner internal identifier is prepended with scanner type, for example, `polaris.hostIPCSet` or `azsk.Azure_Subscription_AuthZ_Justify_Admins_Owners`.
+- `Category` - groups related check types, for example `k8s.security`, `azure.storage`.
+- `Description` - human-friendly explanation of the check: what it verifies and why it is important.
+- `Remediation` - steps to _fix_ the issue.
+
+The table is populated based on raw audit results: if audit result has a `Check.Id`, which is not listed in this table - `backend` adds a new record to this table.
+
+At the moment, solving conflicts, when audit result has different version of check description/severity/category is out of scope.
+
+#### CheckResult table
+
+Each table record represents a single result of evaluating a _Check_ against a particular _Component_ at a single point of time. The unique identifier is composed of three columns:
+
+- `CheckId` - unique identifier of a record from _Check_ table.
+- `ComponentId` - fully-qualified infrastructure _Component_ identifier:
+  - for azure components: `subscription/{id}/resource_group/{rg_name}/{object_type}/{object_name}`;
+  - for k8s resources: `k8s/{cluster_id}/namespace/{ns_name}/{object_type}/{object_name}/pod/{pod_name}/container/{container_name}/{image_tag}`, where all sections after `{object_name}` are optional, as there might be separate checks on object-type, pod, container, or image.
+- `AuditId` - unique identifier of a single record from _Audit_ table. In other words, it represents a _time component_ of the key.
+
+`Result` column can be one of three states:
+
+- `Failed` - _Component_ does not pass the _Check_;
+- `Succeeded` - _Component_ pass the _Check_;
+- `NoData` - The check is not possible to complete due a reason: requires manual intervention, or check is still in progress (like image-scan).
+
+#### Audit table
+
+The table lists all performed audits. It consists of:
+
+- `Id` - unique audit identifier.
+- `Date` - point of time, when audit was performed.
+- `ScannerId` - unique scanner identifier in form `{scanner_type}_{scanner_id}`.
+
+The table is used to find:
+
+- the latest audit result at a particular day of a particular scanner;
+- all audit result for all scanners at a particular day.
+
+#### Metadata tables
+
+Each record in `Metadata` tables belongs to several components:
+
+- single k8s-metadata record has json, which describes **the entire cluster** state at audit time;
+- single azure-metadata record has json, which describes **the entire subscription** state at audit time.
+
+#### Image scan result tables
+
+Container image scans stay aside from the rest of the checks. The goal of image scan is verify if known CVEs (Common Vulnerabilities and Exposures) present in used by image packages. Therefore, the Scan Result consists of an array of CVEs. The array might be empty, if no vulnerabilities was found.
+
+`ImageScanResult` represents a single vulnerabilities scan at a point of time:
+
+- `Id` unique identifier;
+- `Date` - UTC point of time when scan was performed;
+- `ImageTag` - full image tag, which includes registry, image name and version, for example `mcr.microsoft.com/dotnet/core/sdk:3.1.101-alpine3.10`.
+
+`CVE` describes a single vulnerability:
+
+- `Id` - is [CVE identifier](https://cve.mitre.org/cve/identifiers/index.html), which looks like `CVE-2005-2541` or `TEMP-0290435-0B57B5`.
+- `Title` and `Description` - a short and detailed CVE description.
+- `Severity` - highlights how dangerous the CVE is.
+- `PackageName` - the name of the package, where CVE was found, for example `tar` or `sysvinit-utils`.
+- `Remediation` - In most cases, suggests to update the sources to the version of the package, that addresses the issue.
+- `References` - links to external source with more details about the CVE.
+
+The content of `CVE` table is populated based on raw scan-results produced by `trivy-scanner`.
+
+The CVE database is constantly updated and reviewed: re-scored severities, updated descriptions and references, etc. Thus, the latest raw-results are considered as more precise and content of `CVE` table is updated based on it.
+
+`ImageScanToCVE` maps exact image scans to list of CVEs in this scan. The same image-tag scan on different days might result in different results, because of new CVEs were discovered. The table has three columns:
+
+- `ScanId` - references to a record in `ImageScanResult` table.
+- `CveId` - references to a record in `CVE` table.
+- `UsedPackageVersion` - states which exact version of vulnerable package `ScanId` discovered.
 
 ### Reading audit results
 
@@ -281,10 +371,6 @@ TBD
 TBD
 
 #### Processing trivy results
-
-TBD
-
-#### Processing kube-bench results
 
 TBD
 
