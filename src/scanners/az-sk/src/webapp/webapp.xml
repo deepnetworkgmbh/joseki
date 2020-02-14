@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>webapp</name>
+    </assembly>
+    <members>
+        <member name="T:webapp.Controllers.ScanController">
+            <summary>
+            Triggers new az-sk scans.
+            </summary>
+        </member>
+        <member name="M:webapp.Controllers.ScanController.#ctor(core.SubscriptionScanner)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Controllers.ScanController"/> class.
+            </summary>
+        </member>
+        <member name="M:webapp.Controllers.ScanController.ScanSubscription(System.String)">
+            <summary>
+            Scan the subscription with az-sk.
+            </summary>
+            <param name="subscription">The subscription to scan.</param>
+            <returns>The scan result.</returns>
+        </member>
+        <member name="T:webapp.Infrastructure.HttpRequestLoggingMiddleware">
+            <summary>
+            Writes logs in common format for any incoming HTTP request.
+            </summary>
+        </member>
+        <member name="M:webapp.Infrastructure.HttpRequestLoggingMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Infrastructure.HttpRequestLoggingMiddleware"/> class.
+            </summary>
+            <param name="next">Next <see cref="T:Microsoft.AspNetCore.Http.RequestDelegate"/> to execute. </param>
+        </member>
+        <member name="M:webapp.Infrastructure.HttpRequestLoggingMiddleware.Invoke(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            Executes a middleware.
+            </summary>
+            <param name="httpContext">Current <see cref="T:Microsoft.AspNetCore.Http.HttpContext"/>.</param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous operation.</returns>
+        </member>
+        <member name="M:webapp.Infrastructure.HttpRequestLoggingMiddleware.GetElapsedMilliseconds(System.Int64,System.Int64)">
+            <summary>
+            Get elapsed milliseconds based on elapsed ticks.
+            </summary>
+            <param name="start">Ticks on a start.</param>
+            <param name="stop">Ticks in the end.</param>
+            <returns>Elapsed milliseconds.</returns>
+        </member>
+        <member name="T:webapp.Infrastructure.StateManager">
+            <summary>
+            Keeps the state of Scanner service.
+            </summary>
+        </member>
+        <member name="M:webapp.Infrastructure.StateManager.SetReady">
+            <summary>
+            switches the service into ready-to-receive-traffic state.
+            </summary>
+        </member>
+        <member name="M:webapp.Infrastructure.StateManager.SetLive">
+            <summary>
+            Switches the service into Live state.
+            </summary>
+        </member>
+        <member name="P:webapp.Infrastructure.StateManager.Ready">
+            <summary>
+            Indicates if service is ready to receive external traffic.
+            </summary>
+        </member>
+        <member name="P:webapp.Infrastructure.StateManager.Live">
+            <summary>
+            Indicates if service requires a restart.
+            </summary>
+        </member>
+        <member name="T:webapp.Program">
+            <summary>
+            The application main object.
+            </summary>
+        </member>
+        <member name="M:webapp.Program.Main(System.String[])">
+            <summary>
+            The application entry point.
+            </summary>
+            <param name="args">Arguments.</param>
+        </member>
+        <member name="M:webapp.Program.CreateHostBuilder(System.String[])">
+            <summary>
+            Creates a new instance of ASP.NET core application.
+            </summary>
+            <param name="args">Arguments.</param>
+            <returns>HostBuilder object.</returns>
+        </member>
+        <member name="T:webapp.Startup">
+            <summary>
+            Startup class.
+            </summary>
+        </member>
+        <member name="M:webapp.Startup.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Startup"/> class.
+            </summary>
+            <param name="configuration">The application configuration object.</param>
+        </member>
+        <member name="P:webapp.Startup.Configuration">
+            <summary>
+            The application configuration object.
+            </summary>
+        </member>
+        <member name="M:webapp.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            This method gets called by the runtime. Use this method to add services to the container.
+            </summary>
+            <param name="services">Services collection.</param>
+        </member>
+        <member name="M:webapp.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+            This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+            </summary>
+            <param name="app">Builder object.</param>
+            <param name="env">Environment configuration.</param>
+        </member>
+    </members>
+</doc>
