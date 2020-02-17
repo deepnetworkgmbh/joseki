@@ -15,7 +15,7 @@ namespace webapp.Controllers
         /// thus an overall scan and a component scan
         /// must all have the same initial scan date associated.
         /// </summary>
-        public static DateTime[] Dates =
+        public static DateTime[] Dates { get; } =
         {
             new DateTime(2020, 02, 1, 12, 0, 0),
             new DateTime(2020, 02, 2, 12, 0, 0),
@@ -32,9 +32,9 @@ namespace webapp.Controllers
         };
 
         /// <summary>
-        /// list of inftastructure components.
+        /// list of infrastructure components.
         /// </summary>
-        public static InfrastructureComponent[] Components =
+        public static InfrastructureComponent[] Components { get; } =
         {
             new InfrastructureComponent() { Name = "Overall", Category = InfrastructureCategory.Overall },
             new InfrastructureComponent() { Name = "Subscription1", Category = InfrastructureCategory.Subscription },
@@ -44,11 +44,11 @@ namespace webapp.Controllers
         /// <summary>
         /// list of counter summaries.
         /// </summary>
-        public static Dictionary<string, CountersSummary[]> GetCounters =
+        public static Dictionary<string, CountersSummary[]> Counters { get; } =
             new Dictionary<string, CountersSummary[]>
         {
                 {
-                    Components[0].Id, new CountersSummary[]
+                    Components[0].Id, new[]
                     {
                         new CountersSummary() { NoData = 11, Failed = 22, Warning = 30, Passed = 68 },
                         new CountersSummary() { NoData = 10, Failed = 20, Warning = 30, Passed = 58 },
@@ -65,7 +65,7 @@ namespace webapp.Controllers
                     }
                 },
                 {
-                    Components[1].Id, new CountersSummary[]
+                    Components[1].Id, new[]
                     {
                         new CountersSummary() { NoData = 0, Failed = 12, Warning = 0, Passed = 33 },
                         new CountersSummary() { NoData = 1, Failed = 10, Warning = 0, Passed = 44 },
@@ -82,7 +82,7 @@ namespace webapp.Controllers
                     }
                 },
                 {
-                    Components[2].Id, new CountersSummary[]
+                    Components[2].Id, new[]
                     {
                         new CountersSummary() { NoData = 0, Failed = 15, Warning = 5, Passed = 10 },
                         new CountersSummary() { NoData = 0, Failed = 15, Warning = 3, Passed = 11 },
@@ -109,7 +109,7 @@ namespace webapp.Controllers
 
             for (int i = 0; i < Dates.Length; i++)
             {
-                result.Add(new ScoreHistoryItem(Dates[i], GetCounters[component.Id][i].Score));
+                result.Add(new ScoreHistoryItem(Dates[i], Counters[component.Id][i].Score));
             }
 
             return result.ToArray();
@@ -123,7 +123,7 @@ namespace webapp.Controllers
                 // if no component provided, it's overall
                 if (component == null)
                 {
-                    component = overallComponent;
+                    component = OverallComponent;
                 }
 
                 var result = new List<InfrastructureComponentSummaryWithHistory>();
@@ -133,7 +133,7 @@ namespace webapp.Controllers
                     {
                         Date = Dates[i],
                         Component = component,
-                        Current = GetCounters[component.Id][i],
+                        Current = Counters[component.Id][i],
                         ScoreHistory = GetScoreHistory(component),
                         ScoreTrend = Trend.GetTrend(GetScoreHistory(component)),
                     };
@@ -168,6 +168,6 @@ namespace webapp.Controllers
         /// <summary>
         /// static placeholder for overall component.
         /// </summary>
-        private static InfrastructureComponent overallComponent = Components[0];
+        private static readonly InfrastructureComponent OverallComponent = Components[0];
     }
 }

@@ -32,7 +32,7 @@
             data wrapper before connecting to real results.
             </summary>
         </member>
-        <member name="F:webapp.Controllers.Data.Dates">
+        <member name="P:webapp.Controllers.Data.Dates">
             <summary>
             list of dates for ui tests.
             date behaves like a key while comparing scans.
@@ -40,12 +40,12 @@
             must all have the same initial scan date associated.
             </summary>
         </member>
-        <member name="F:webapp.Controllers.Data.Components">
+        <member name="P:webapp.Controllers.Data.Components">
             <summary>
-            list of inftastructure components.
+            list of infrastructure components.
             </summary>
         </member>
-        <member name="F:webapp.Controllers.Data.GetCounters">
+        <member name="P:webapp.Controllers.Data.Counters">
             <summary>
             list of counter summaries.
             </summary>
@@ -65,7 +65,7 @@
             Returns summary for all components except overall.
             </summary>
         </member>
-        <member name="F:webapp.Controllers.Data.overallComponent">
+        <member name="F:webapp.Controllers.Data.OverallComponent">
             <summary>
             static placeholder for overall component.
             </summary>
