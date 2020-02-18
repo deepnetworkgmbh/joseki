@@ -4,15 +4,15 @@ using System.Runtime.Serialization;
 namespace webapp.Models
 {
     /// <summary>
-    /// Scan result enum.
+    /// Severity of the check.
     /// </summary>
-    public enum ScanResult
+    public enum CheckSeverity
     {
         /// <summary>
         /// Enum value when a scan was not found
         /// </summary>
-        [EnumMember(Value = "NOT_FOUND")]
-        NotFound = 0,
+        [EnumMember(Value = "NO_DATA")]
+        NoData = 0,
 
         /// <summary>
         /// Enum value when a scan failed
@@ -21,9 +21,15 @@ namespace webapp.Models
         Failed = 1,
 
         /// <summary>
+        /// Enum value when a scan has warning
+        /// </summary>
+        [EnumMember(Value = "WARNING")]
+        Warning = 2,
+
+        /// <summary>
         /// Enum value when a scan succeeded
         /// </summary>
-        [EnumMember(Value = "SUCCEEDED")]
-        Succeeded = 2,
+        [EnumMember(Value = "SUCCESS")]
+        Success = 255,
     }
 }

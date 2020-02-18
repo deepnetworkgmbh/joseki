@@ -4,10 +4,9 @@
     <div v-if="loaded" class="segment shadow" style="min-height:300px">
       <div
         class="w-1/4 border-r border-gray-300 flex flex-col justify-center content-center"
-        style="overflow:hidden;"
-      >
+        style="overflow:hidden;">
         <div class="status-icon">
-          <i :class="getScoreIconClass()"></i>
+          <i :class="getScoreIconClass(data.overall.current.score)"></i>
         </div>
         <div class="status-text">
           <div class="p-1 m-auto rounded-sm text-lg text-center -mt-8 mb-2 pb-4">
@@ -15,11 +14,11 @@
           </div>
           <div class="flex flex-row big-text xl:text-2xl lg:text-xl">
             <div class="w-7/12 font-thin text-right mr-1 text-gray-600">Score:</div>
-            <div class="w-5/12 font-hairline text-left">{{ score }}%</div>
+            <div class="w-5/12 font-hairline text-left">{{ data.overall.current.score }}%</div>
           </div>
           <div class="flex flex-row big-text xl:text-2xl lg:text-xl">
             <div class="w-7/12 font-thin text-right mr-1 text-gray-600">Grade:</div>
-            <div class="w-5/12 font-hairline text-left">{{ grade }}</div>
+            <div class="w-5/12 font-hairline text-left">{{ getGrade(data.overall.current.score) }}</div>
           </div>
           <div class="flex flex-row big-text xl:text-2xl lg:text-xl">
             <div class="w-7/12 font-thin text-right mr-1 text-gray-600">Clusters:</div>
@@ -53,7 +52,7 @@
             <tfoot>
               <tr>
                 <td colspan="3" class="bg-gray-500 text-center">
-                  <button class="btn" @click="panelOpen=!panelOpen">See All</button>
+                  <button class="btn" @click="goComponentHistory()">See All</button>
                 </td>
               </tr>
             </tfoot>
@@ -61,31 +60,15 @@
         </div>
       </div>
     </div>
-    <!-- <div v-if="loaded" class="segment shadow">
-        <div class="flex flex-row w-full">
-            <div class="w-1/2">            
-                <div v-if='viewMode === 0'>List View</div>
-                <div v-if='viewMode === 1'>Detailed View</div>
-            </div>
-            <div class="w-1/2 text-right">            
-                <button :class="getViewModeClass(0)" @click="setViewMode(0)"><i class="fa fa-list"></i></button>
-                <button :class="getViewModeClass(1)" @click="setViewMode(1)"><i class="fas fa-th"></i></button>
-            </div>
-        </div>        
-    </div>-->
     <div v-if="loaded" class="segment shadow">
-      <div v-if="viewMode === 0" class="w-full">
-        <div
-          v-for="(scan, i) in scans"
-          :key="`scan${i}`"
-          class="w-full scan-list-item"
-        >{{ scan.target }}</div>
-      </div>
-      <div v-if="viewMode === 1" class="w-full flex flex-wrap pt-2 pl-1">
+      <div class="w-full flex flex-wrap pt-2 pl-1">
         <div v-for="(c, i) in data.components" :key="`scan${i}`" class="scan-detailed-item flex flex-row shadow">
           <div class="w-full p-2 text-lg pt-0 flex flex-col">
+            <div class='component-history-button'>
+              <button @click="goComponentHistory(c.component)">History</button>
+            </div>            
             <div class="text-sm">{{ c.component.name }}</div>
-            <div class="text-xs text-gray-600">{{c.component.category}}</div>
+            <div class="text-xs text-gray-600 -mt-1">{{c.component.category}}</div>
             <div style="height:50px;width:130px;" :id="`bar${i}`"></div>
           </div>
           <div class="p-2" style="width: 100px;">
