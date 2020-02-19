@@ -10,6 +10,12 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
+using webapp.Audits.Processors;
+using webapp.Audits.Processors.azsk;
+using webapp.BackgroundJobs;
+using webapp.BlobStorage;
+using webapp.Configuration;
+using webapp.Database;
 using webapp.Infrastructure;
 
 namespace webapp
@@ -78,6 +84,7 @@ namespace webapp
             });
 
             services.AddTransient<IBlobStorageProcessor, AzureBlobStorageProcessor>();
+            services.AddTransient<IJosekiDatabase, PsqlJosekiDatabase>();
 
             services.AddTransient<AzskAuditProcessor>();
             services.AddTransient<PolarisAuditProcessor>();

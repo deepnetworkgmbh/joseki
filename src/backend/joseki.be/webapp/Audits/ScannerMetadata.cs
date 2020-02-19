@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System.Runtime.Serialization;
+
+using Newtonsoft.Json;
 
 namespace webapp.Audits
 {
@@ -48,21 +50,25 @@ namespace webapp.Audits
         /// <summary>
         /// Unknown scanner type.
         /// </summary>
+        [EnumMember(Value = "none")]
         None,
 
         /// <summary>
         /// Represents polaris scanner.
         /// </summary>
+        [EnumMember(Value = "polaris")]
         Polaris,
 
         /// <summary>
         /// Represents trivy scanner.
         /// </summary>
+        [EnumMember(Value = "trivy")]
         Trivy,
 
         /// <summary>
         /// Represents azsk scanner.
         /// </summary>
+        [EnumMember(Value = "azsk")]
         Azsk,
     }
 }
