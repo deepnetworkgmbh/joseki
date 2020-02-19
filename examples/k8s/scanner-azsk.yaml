@@ -25,7 +25,7 @@ data:
       !az-blob
       basePath: https://STORAGE_ACCOUNT.blob.core.windows.net/CONTAINER_NAME
       sas: TOKEN
-      heartbeatPeriodicity: 600
+      heartbeatPeriodicity: 86400
 
 ---
 apiVersion: v1
