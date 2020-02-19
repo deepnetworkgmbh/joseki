@@ -1,0 +1,30 @@
+.subscription-history-header {
+	background-color: #eee;
+	height: 66px;
+	margin: -5px;
+	padding: 10px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	border-bottom: solid 1px #bbb;
+	margin-bottom: 2px;
+}
+
+.subscription-history-list {
+	min-height: 0;
+	max-height: 60vh;
+	overflow-y: auto;
+	margin-bottom: 10px;
+}
+
+.subscription-history-buttons {
+	margin: -5px;
+	padding: 5px;
+	background-color: #eee;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+	text-align: right;
+}
+
+thead {
+	border-bottom: solid 1px #bbb;
+}

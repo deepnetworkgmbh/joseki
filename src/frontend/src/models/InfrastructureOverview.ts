@@ -9,8 +9,8 @@ export class InfrastructureOverview {
 
 export class InfrastructureComponentSummary {
 
-    /// the id of the summary
-    id: string = ''
+    // date of the summary
+    date: string = '';
 
     // the component of the summary
     component: InfrastructureComponent = new InfrastructureComponent()
@@ -26,7 +26,6 @@ export class InfrastructureComponentSummary {
     scoreTrend: Trend = new Trend()
 
     sections: any[] = [];
-
 
     public static getSections(c: CountersSummary): any[] {
         let result: any[] = [];

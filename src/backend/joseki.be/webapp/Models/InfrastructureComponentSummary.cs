@@ -21,6 +21,11 @@ namespace webapp.Models
         /// Latest known check-result counters.
         /// </summary>
         public CountersSummary Current { get; set; }
+
+        /// <summary>
+        /// List of every check in component.
+        /// </summary>
+        public Check[] Checks { get; set; }
     }
 
     /// <summary>

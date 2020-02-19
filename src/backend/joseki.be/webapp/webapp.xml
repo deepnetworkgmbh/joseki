@@ -15,11 +15,17 @@
             </summary>
             <returns>The overall infrastructure overview.</returns>
         </member>
-        <member name="M:webapp.Controllers.AuditsController.GetOverviewDiff(System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+        <member name="M:webapp.Controllers.AuditsController.GetOverviewDiff(System.DateTime,System.DateTime)">
             <summary>
             Returns the overall infrastructure overview diff.
             </summary>
             <returns>The overall infrastructure overview diff.</returns>
+        </member>
+        <member name="M:webapp.Controllers.AuditsController.GetComponentHistory(System.String)">
+            <summary>
+            Returns the component scan history.
+            </summary>
+            <returns>the component scan history.</returns>
         </member>
         <member name="T:webapp.Controllers.Data">
             <summary>
@@ -90,22 +96,96 @@
             <param name="stop">Ticks in the end.</param>
             <returns>Elapsed milliseconds.</returns>
         </member>
-        <member name="T:webapp.Models.ScanResult">
+        <member name="T:webapp.Models.Check">
             <summary>
-            Scan result enum.
+            Check against a component.
             </summary>
         </member>
-        <member name="F:webapp.Models.ScanResult.NotFound">
+        <member name="P:webapp.Models.Check.Id">
+            <summary>
+            unique id of the check.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.Check.Date">
+            <summary>
+            the date of the check.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.Check.Collection">
+            <summary>
+            Name of the collection.
+            kubernetes: namespace.
+            azks: resource-group.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.Check.Category">
+            <summary>
+            category of the check
+            kubernetes: polaris/trivy category.
+            azks: feature name.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.Check.Object">
+            <summary>
+            The object to be checked.
+            k8s: object (deployment, pod, service etc).
+            azks: resource (keyvault etc).
+            </summary>
+        </member>
+        <member name="P:webapp.Models.Check.Control">
+            <summary>
+            The control name of the check.
+            k8s: polaris `check` name.
+            azks: azks `control` name.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.Check.Severity">
+            <summary>
+            severity of the check.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.Check.Description">
+            <summary>
+            description of the check.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.Check.Remediation">
+            <summary>
+            the suggested remediation (if any).
+            </summary>
+        </member>
+        <member name="P:webapp.Models.Check.References">
+            <summary>
+            array of references about the check.
+            </summary>
+        </member>
+        <member name="M:webapp.Models.Check.#ctor(webapp.Models.InfrastructureComponent)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Models.Check"/> class.
+            create unique id on constructor.
+            </summary>
+        </member>
+        <member name="T:webapp.Models.CheckSeverity">
+            <summary>
+            Severity of the check.
+            </summary>
+        </member>
+        <member name="F:webapp.Models.CheckSeverity.NoData">
             <summary>
             Enum value when a scan was not found
             </summary>
         </member>
-        <member name="F:webapp.Models.ScanResult.Failed">
+        <member name="F:webapp.Models.CheckSeverity.Failed">
             <summary>
             Enum value when a scan failed
             </summary>
         </member>
-        <member name="F:webapp.Models.ScanResult.Succeeded">
+        <member name="F:webapp.Models.CheckSeverity.Warning">
+            <summary>
+            Enum value when a scan has warning
+            </summary>
+        </member>
+        <member name="F:webapp.Models.CheckSeverity.Success">
             <summary>
             Enum value when a scan succeeded
             </summary>
@@ -213,6 +293,11 @@
             Latest known check-result counters.
             </summary>
         </member>
+        <member name="P:webapp.Models.InfrastructureComponentSummary.Checks">
+            <summary>
+            List of every check in component.
+            </summary>
+        </member>
         <member name="T:webapp.Models.InfrastructureComponentSummaryWithHistory">
             <summary>
             Summarizes a single infrastructure unit stats: score, trends, name.
@@ -267,6 +352,26 @@
         <member name="P:webapp.Models.InfrastructureOverviewDiff.Components2">
             <summary>
             Components of second summary.
+            </summary>
+        </member>
+        <member name="T:webapp.Models.ScanResult">
+            <summary>
+            Scan result enum.
+            </summary>
+        </member>
+        <member name="F:webapp.Models.ScanResult.NotFound">
+            <summary>
+            Enum value when a scan was not found
+            </summary>
+        </member>
+        <member name="F:webapp.Models.ScanResult.Failed">
+            <summary>
+            Enum value when a scan faile d
+            </summary>
+        </member>
+        <member name="F:webapp.Models.ScanResult.Succeeded">
+            <summary>
+            Enum value when a scan succeeded
             </summary>
         </member>
         <member name="T:webapp.Models.ScoreHistoryItem">
