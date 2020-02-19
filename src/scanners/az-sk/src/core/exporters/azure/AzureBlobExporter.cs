@@ -69,6 +69,8 @@ namespace core.exporters.azure
                         if (scannerMeta?.Heartbeat < now)
                         {
                             scannerMeta.Heartbeat = now;
+                            scannerMeta.Periodicity = this.scannerCfg.Periodicity;
+                            scannerMeta.HeartbeatPeriodicity = this.blobCfg.HeartbeatPeriodicity;
                         }
                     }
                 }
