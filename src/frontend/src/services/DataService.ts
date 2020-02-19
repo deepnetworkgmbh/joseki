@@ -179,5 +179,14 @@ export class DataService {
       .finally(() => console.log("overview diff request finished."));
   }
 
+  public async getComponentHistoryData(id: string) {
+    let suffix = '?id=' + encodeURIComponent(id);
+    console.log(`[] calling api/audits/component/history` + suffix);
+    return axios
+      .get(this.baseUrl + "/api/audits/component/history" + suffix)
+      .then((response) => response.data)
+      .catch((error) => console.log(error))
+      .finally(() => console.log("component history request finished."));
+  }
 
 }

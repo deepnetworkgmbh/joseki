@@ -3,10 +3,7 @@ import { ChartService } from "@/services/ChartService"
 import Spinner from "@/components/spinner/Spinner.vue";
 import StatusBar from "@/components/statusbar/StatusBar.vue";
 import { DataService } from '@/services/DataService';
-import { KubeOverview } from '@/models';
-import { ViewMode } from '@/types/Enums';
-import { ScanSummary } from '@/models/ScanSummary';
-import { InfrastructureOverview, InfrastructureComponentSummary, InfrastructureOverviewDiff } from '@/models/InfrastructureOverview';
+import { InfrastructureComponentSummary, InfrastructureOverviewDiff } from '@/models/InfrastructureOverview';
 import { ScoreService } from '@/services/ScoreService';
 import router from '@/router';
 

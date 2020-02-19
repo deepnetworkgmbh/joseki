@@ -54,7 +54,7 @@ th {
 	border-radius: 5px;
 	cursor: pointer;
 
-	&:hover {
+	&:hover button:not(:hover) {
 		background-color: #efe;
 	}
 }
@@ -120,4 +120,22 @@ svg > g > g {
 	transition: right 0.5s;
 	border-left: solid 2px #444;
 	opacity: .95;
+}
+
+.component-history-button {
+	position: absolute;
+	margin-top: -5px;
+	margin-left: 115px;
+
+	& > button {
+		font-size: 10px;
+		background-color: #eee;
+		border: solid 1px #666;
+		padding: 0 4px 0 4px;
+		border-radius: 3px;
+	}
+
+	& > button:hover {
+		background-color: #efe;
+	}
 }

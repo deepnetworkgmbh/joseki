@@ -1,0 +1,87 @@
+import { Component, Vue, Prop, Watch } from "vue-property-decorator";
+import { ChartService } from "@/services/ChartService"
+import Spinner from "@/components/spinner/Spinner.vue";
+import { DataService } from '@/services/DataService';
+import { InfrastructureComponentSummary, InfrastructureComponent } from '@/models/InfrastructureOverview';
+import { ScoreService } from '@/services/ScoreService';
+import router from '@/router';
+
+@Component({
+    components: { Spinner }
+})
+export default class ComponentHistory extends Vue {
+
+    @Prop({ default: '' })
+    id!: string;
+
+    component?: InfrastructureComponent;
+    loaded: boolean = false;
+    service: DataService = new DataService();
+    data: InfrastructureComponentSummary[] = [];
+    checkedScans: any[] = [];
+
+    mounted() {
+        this.loadData();
+        ///window.addEventListener("resize", this.setupCharts);
+    }
+
+    loadData() {
+        console.log(`[] calling history for component ${this.id}`)
+        this.service.getComponentHistoryData(this.id)
+            .then(response => {
+                this.data = response.reverse();
+                this.component = response[0].component;
+                this.loaded = true;
+            });
+    }
+
+
+    destroyed() {
+        //window.removeEventListener("resize", this.setupCharts);
+    }
+
+    dayClicked(date: Date) {
+        router.push('/overview/' + encodeURIComponent(date.toISOString()));
+    }
+
+    getArrowHtml(i: number) {
+        if (i >= (this.data.length - 1)) return '-';
+        if (this.data[i].current.score > this.data[i + 1].current.score) {
+            return '<i class="fas fa-arrow-up" style="color:green;"></i>'
+        } else if (this.data[i].current.score < this.data[i + 1].current.score) {
+            return '<i class="fas fa-arrow-down" style="color:red;"></i>'
+        }
+        return '-'
+    }
+
+    getScanRowClass(i: number): string {
+        return i % 2 === 0 ? 'bg-gray-100' : 'bg-gray-200';
+    }
+
+    canCompare(): boolean {
+        return this.checkedScans.length !== 2;
+    }
+
+    checkDisabled(i: number, val: string) {
+        return this.checkedScans.length > 1 && this.checkedScans.indexOf(val) === -1
+    }
+
+    CompareScans() {
+        if (this.component && this.component.category === 'Overall') {
+            console.log(`[] comparing ${this.checkedScans}`);
+            const params = encodeURIComponent(this.checkedScans[1]) + '/' + encodeURIComponent(this.checkedScans[0]);
+            router.push('/overview-diff/' + params);
+        } else {
+            if (this.component) {
+                alert('scan diff for ' + this.component.category + ' not implemented yet')
+            }
+        }
+    }
+
+    GoBack() {
+        router.push('/overview/');
+    }
+    getScoreIconClass(score: number) { return ScoreService.getScoreIconClass(score); }
+    getGrade(score: number) { return ScoreService.getGrade(score); }
+
+}

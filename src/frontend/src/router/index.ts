@@ -5,6 +5,7 @@ import ClusterOverview from "@/views/ClusterOverview.vue";
 import ImageOverview from "@/views/ImageOverview.vue";
 import ImageDetail from "@/views/ImageDetail.vue";
 import OverviewDiff from '@/views/OverviewDiff.vue';
+import ComponentHistory from '@/views/ComponentHistory.vue';
 
 Vue.use(VueRouter);
 
@@ -17,6 +18,12 @@ const routes = [
     path: "/overview/:date?",
     name: "GeneralOverview",
     component: Overview,
+    props: true
+  },
+  {
+    path: "/component-history/:id?",
+    name: "ComponentHistory",
+    component: ComponentHistory,
     props: true
   },
   {

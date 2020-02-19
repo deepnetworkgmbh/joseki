@@ -65,5 +65,20 @@ namespace webapp.Controllers
 
             return Task.FromResult(this.StatusCode(200, diff));
         }
+
+        /// <summary>
+        /// Returns the component scan history.
+        /// </summary>
+        /// <returns>the component scan history.</returns>
+        [HttpGet]
+        [Route("component/history", Name = "get-component-history")]
+        [ProducesResponseType(200, Type = typeof(InfrastructureComponentSummaryWithHistory[]))]
+        public Task<ObjectResult> GetComponentHistory(string id)
+        {
+            var list = string.IsNullOrEmpty(id) ? overallSummary.ToArray()
+                                                : componentSummaries.Where(x => x.Component.Id == id).ToArray();
+
+            return Task.FromResult(this.StatusCode(200, list));
+        }
     }
 }
