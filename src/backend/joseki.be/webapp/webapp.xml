@@ -4,6 +4,407 @@
         <name>webapp</name>
     </assembly>
     <members>
+        <member name="T:webapp.Audits.Processors.AuditProcessorFactory">
+            <summary>
+            The factory knows how to instantiate proper Audit Processor object.
+            </summary>
+        </member>
+        <member name="M:webapp.Audits.Processors.AuditProcessorFactory.#ctor(System.IServiceProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Audits.Processors.AuditProcessorFactory"/> class.
+            </summary>
+            <param name="services">DI container.</param>
+        </member>
+        <member name="M:webapp.Audits.Processors.AuditProcessorFactory.GetProcessor(webapp.Audits.ScannerMetadata)">
+            <summary>
+            Based on scanner-metadata finds a proper Audit Processor object.
+            </summary>
+            <param name="metadata">Scanner metadata object.</param>
+            <returns>Audit Processor instance.</returns>
+        </member>
+        <member name="T:webapp.Audits.Processors.azsk.AzskAuditProcessor">
+            <summary>
+            Az-sk audit processor.
+            </summary>
+        </member>
+        <member name="M:webapp.Audits.Processors.azsk.AzskAuditProcessor.#ctor(webapp.BlobStorage.IBlobStorageProcessor,webapp.Database.IJosekiDatabase)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Audits.Processors.azsk.AzskAuditProcessor"/> class.
+            </summary>
+            <param name="blobStorage">Blob Storage implementation.</param>
+            <param name="db">Joseki database implementation.</param>
+        </member>
+        <member name="M:webapp.Audits.Processors.azsk.AzskAuditProcessor.Process(webapp.BlobStorage.ScannerContainer,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:webapp.Audits.Processors.IAuditProcessor">
+            <summary>
+            A base interface for scanner-specific audit processors.
+            </summary>
+        </member>
+        <member name="M:webapp.Audits.Processors.IAuditProcessor.Process(webapp.BlobStorage.ScannerContainer,System.Threading.CancellationToken)">
+            <summary>
+            Gets audit data from Blob Storage, normalize it, saves results to the Database.
+            </summary>
+            <param name="container">The container with audit results to process.</param>
+            <param name="token">A signal to stop processing.</param>
+            <returns>A task object, which indicates the end of the processing.</returns>
+        </member>
+        <member name="T:webapp.Audits.Processors.PolarisAuditProcessor">
+            <summary>
+            Polaris audit processor.
+            </summary>
+        </member>
+        <member name="M:webapp.Audits.Processors.PolarisAuditProcessor.Process(webapp.BlobStorage.ScannerContainer,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:webapp.Audits.Processors.TrivyAuditProcessor">
+            <summary>
+            Trivy audit processor.
+            </summary>
+        </member>
+        <member name="M:webapp.Audits.Processors.TrivyAuditProcessor.Process(webapp.BlobStorage.ScannerContainer,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:webapp.Audits.ScannerMetadata">
+            <summary>
+            Scanner metadata: identifier, type, heartbeat parameters.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.ScannerMetadata.Type">
+            <summary>
+            The scanner type.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.ScannerMetadata.Id">
+            <summary>
+            Unique scanner identifier.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.ScannerMetadata.Periodicity">
+            <summary>
+            How often scanner is running. Could be one of two options:
+            - "on-message";
+            - "{cron expression}".
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.ScannerMetadata.HeartbeatPeriodicity">
+            <summary>
+            How often scanner metadata is updated. Used to catch issues with scanner components or to clean-up stale/abandoned containers.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.ScannerMetadata.Heartbeat">
+            <summary>
+            Unix epoch seconds value of the last heartbeat.
+            </summary>
+        </member>
+        <member name="T:webapp.Audits.ScannerType">
+            <summary>
+            Available scanner types.
+            </summary>
+        </member>
+        <member name="F:webapp.Audits.ScannerType.None">
+            <summary>
+            Unknown scanner type.
+            </summary>
+        </member>
+        <member name="F:webapp.Audits.ScannerType.Polaris">
+            <summary>
+            Represents polaris scanner.
+            </summary>
+        </member>
+        <member name="F:webapp.Audits.ScannerType.Trivy">
+            <summary>
+            Represents trivy scanner.
+            </summary>
+        </member>
+        <member name="F:webapp.Audits.ScannerType.Azsk">
+            <summary>
+            Represents azsk scanner.
+            </summary>
+        </member>
+        <member name="T:webapp.BackgroundJobs.ScannerContainersWatchman">
+            <summary>
+            ScannerContainers watchman is responsible for following actual state of root-level containers in Blob Storage
+            and maintaining up-to-date work items in Scheduler Assistant.
+            </summary>
+        </member>
+        <member name="M:webapp.BackgroundJobs.ScannerContainersWatchman.#ctor(webapp.BlobStorage.IBlobStorageProcessor,webapp.BackgroundJobs.SchedulerAssistant,webapp.Configuration.ConfigurationParser)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.BackgroundJobs.ScannerContainersWatchman"/> class.
+            </summary>
+            <param name="blobStorage">The Blob Storage.</param>
+            <param name="scheduler">The scheduler assistant.</param>
+            <param name="config">Joseki Backend configuration.</param>
+        </member>
+        <member name="M:webapp.BackgroundJobs.ScannerContainersWatchman.Watch(System.Threading.CancellationToken)">
+            <summary>
+            Every Watchmen.ScannerContainersPeriodicity seconds lists containers from Blob storage and updates scheduler-assistant.
+            </summary>
+            <returns>A task object.</returns>
+        </member>
+        <member name="T:webapp.BackgroundJobs.ScannerResultsReaderJob">
+            <summary>
+            The object is responsible for getting new audit-results from Blob Storage.
+            To accomplish the task it glues together ScannerContainers Watchman, Scheduler Assistant, and Audit Processors Factory.
+            </summary>
+        </member>
+        <member name="M:webapp.BackgroundJobs.ScannerResultsReaderJob.#ctor(System.IServiceProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.BackgroundJobs.ScannerResultsReaderJob"/> class.
+            </summary>
+            <param name="services">DI container.</param>
+        </member>
+        <member name="M:webapp.BackgroundJobs.ScannerResultsReaderJob.ExecuteAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:webapp.BackgroundJobs.SchedulerAssistant">
+            <summary>
+            Maintains a list of containers, that should be periodically processed.
+            Knows when to run a single container processor.
+            </summary>
+        </member>
+        <member name="M:webapp.BackgroundJobs.SchedulerAssistant.#ctor(webapp.Audits.Processors.AuditProcessorFactory)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.BackgroundJobs.SchedulerAssistant"/> class.
+            </summary>
+            <param name="processorFactory">Audit Processor factory.</param>
+        </member>
+        <member name="M:webapp.BackgroundJobs.SchedulerAssistant.Run(System.Threading.CancellationToken)">
+            <summary>
+            The method runs handler function for all containers according to their heartbeat periods.
+            </summary>
+            <param name="cancellation">Indicates when to stop running.</param>
+            <returns>A Task object, which completes when CancellationToken is canceled.</returns>
+        </member>
+        <member name="M:webapp.BackgroundJobs.SchedulerAssistant.UpdateWorkingItems(webapp.BlobStorage.ScannerContainer[])">
+            <summary>
+            Compares list of actual containers and working set.
+            </summary>
+        </member>
+        <member name="T:webapp.BackgroundJobs.SchedulerAssistant.SchedulableItem">
+            <summary>
+            Helps to keep track of scanner-containers processing time.
+            </summary>
+        </member>
+        <member name="P:webapp.BackgroundJobs.SchedulerAssistant.SchedulableItem.Container">
+            <summary>
+            The container, which should be periodically processed.
+            </summary>
+        </member>
+        <member name="P:webapp.BackgroundJobs.SchedulerAssistant.SchedulableItem.LastProcessed">
+            <summary>
+            Last time when the container was processed.
+            </summary>
+        </member>
+        <member name="P:webapp.BackgroundJobs.SchedulerAssistant.SchedulableItem.Periodicity">
+            <summary>
+            How often the container should be processed.
+            </summary>
+        </member>
+        <member name="P:webapp.BackgroundJobs.SchedulerAssistant.SchedulableItem.Generation">
+            <summary>
+            Indicates a generation to which the item belongs. The property used to get rid of stale items.
+            </summary>
+        </member>
+        <member name="P:webapp.BackgroundJobs.SchedulerAssistant.SchedulableItem.NextProcessingTime">
+            <summary>
+            Returns the point of time, when the container should be processed.
+            </summary>
+        </member>
+        <member name="T:webapp.BlobStorage.AuditBlob">
+            <summary>
+            Describes a single audit folder within a scanner container.
+            </summary>
+        </member>
+        <member name="P:webapp.BlobStorage.AuditBlob.Name">
+            <summary>
+            Unique audit blob metadata file name (including path within a container).
+            </summary>
+        </member>
+        <member name="P:webapp.BlobStorage.AuditBlob.ParentContainer">
+            <summary>
+            Parent scanner container.
+            </summary>
+        </member>
+        <member name="T:webapp.BlobStorage.AzureBlobStorageProcessor">
+            <summary>
+            Azure Blob Storage implementation of Blob Storage Processor.
+            </summary>
+        </member>
+        <member name="M:webapp.BlobStorage.AzureBlobStorageProcessor.#ctor(webapp.Configuration.ConfigurationParser)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.BlobStorage.AzureBlobStorageProcessor"/> class.
+            </summary>
+            <param name="config">The application configuration object.</param>
+        </member>
+        <member name="M:webapp.BlobStorage.AzureBlobStorageProcessor.ListAllContainers">
+            <inheritdoc />
+        </member>
+        <member name="M:webapp.BlobStorage.AzureBlobStorageProcessor.DownloadFile(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:webapp.BlobStorage.AzureBlobStorageProcessor.GetUnprocessedAudits(webapp.BlobStorage.ScannerContainer)">
+            <inheritdoc />
+        </member>
+        <member name="M:webapp.BlobStorage.AzureBlobStorageProcessor.MarkAsProcessed(webapp.BlobStorage.AuditBlob)">
+            <inheritdoc />
+        </member>
+        <member name="T:webapp.BlobStorage.IBlobStorageMaintainer">
+            <summary>
+            Takes care of managing Archive and Garbage Bin in the Blob Storage service.
+            </summary>
+        </member>
+        <member name="M:webapp.BlobStorage.IBlobStorageMaintainer.MoveToArchive(webapp.BlobStorage.AuditBlob)">
+            <summary>
+            Moves audit blob from scanner container to Archive container.
+            </summary>
+            <param name="blob">Audit blob object.</param>
+            <returns>A task object.</returns>
+        </member>
+        <member name="M:webapp.BlobStorage.IBlobStorageMaintainer.DeleteStale(webapp.BlobStorage.AuditBlob)">
+            <summary>
+            Moves blob from Archive to Garbage Bin.
+            </summary>
+            <param name="blob">Audit blob object.</param>
+            <returns>A task object.</returns>
+        </member>
+        <member name="M:webapp.BlobStorage.IBlobStorageMaintainer.DeleteStale(webapp.BlobStorage.ScannerContainer)">
+            <summary>
+            Moves the entire scanner container to Garbage Bin.
+            </summary>
+            <param name="container">Scanner container object.</param>
+            <returns>A task object.</returns>
+        </member>
+        <member name="M:webapp.BlobStorage.IBlobStorageMaintainer.CleanupGarbageBin">
+            <summary>
+            Deletes all expired blobs from Garbage Bin.
+            </summary>
+            <returns>A task object.</returns>
+        </member>
+        <member name="T:webapp.BlobStorage.IBlobStorageProcessor">
+            <summary>
+            General abstraction in front of Blob Storage service.
+            </summary>
+        </member>
+        <member name="M:webapp.BlobStorage.IBlobStorageProcessor.ListAllContainers">
+            <summary>
+            Get all root-level containers. Each single container represents a separate scanner service.
+            </summary>
+            <returns>Array of container objects.</returns>
+        </member>
+        <member name="M:webapp.BlobStorage.IBlobStorageProcessor.DownloadFile(System.String)">
+            <summary>
+            Asynchronously downloads a file from server.
+            </summary>
+            <param name="relativePath">The relative path to file, starting with scanner container name.</param>
+            <returns>A blob-content stream.</returns>
+        </member>
+        <member name="M:webapp.BlobStorage.IBlobStorageProcessor.GetUnprocessedAudits(webapp.BlobStorage.ScannerContainer)">
+            <summary>
+            Returns only unprocessed audit blobs.
+            </summary>
+            <param name="container">The scanner container name.</param>
+            <returns>Array of blobs with unprocessed audit results.</returns>
+        </member>
+        <member name="M:webapp.BlobStorage.IBlobStorageProcessor.MarkAsProcessed(webapp.BlobStorage.AuditBlob)">
+            <summary>
+            Marks the blob as processed.
+            </summary>
+            <param name="auditBlob">Audit blob to mark.</param>
+            <returns>A task object.</returns>
+        </member>
+        <member name="T:webapp.BlobStorage.ScannerContainer">
+            <summary>
+            Describes a single root-level container object of Blob Storage.
+            </summary>
+        </member>
+        <member name="M:webapp.BlobStorage.ScannerContainer.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.BlobStorage.ScannerContainer"/> class.
+            </summary>
+            <param name="name">Scanner container name.</param>
+        </member>
+        <member name="P:webapp.BlobStorage.ScannerContainer.Name">
+            <summary>
+            Unique per Blob Storage container name.
+            </summary>
+        </member>
+        <member name="P:webapp.BlobStorage.ScannerContainer.Metadata">
+            <summary>
+            Scanner metadata.
+            </summary>
+        </member>
+        <member name="P:webapp.BlobStorage.ScannerContainer.MetadataFilePath">
+            <summary>
+            Relative path to metadata file.
+            </summary>
+        </member>
+        <member name="T:webapp.Configuration.ConfigurationParser">
+            <summary>
+            Parse YAML based application configuration.
+            </summary>
+        </member>
+        <member name="M:webapp.Configuration.ConfigurationParser.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Configuration.ConfigurationParser"/> class.
+            </summary>
+            <param name="configFilePath">The application configuration file path.</param>
+        </member>
+        <member name="M:webapp.Configuration.ConfigurationParser.Parse(System.String)">
+            <summary>
+            Parse the string into dotnet object.
+            </summary>
+            <param name="input">String representation of YAML file.</param>
+            <returns>The application configuration object.</returns>
+        </member>
+        <member name="M:webapp.Configuration.ConfigurationParser.Get">
+            <summary>
+            Parses Joseki Config on the first request and cache the result in memory.
+            </summary>
+            <returns>Joseki backend service configuration object.</returns>
+        </member>
+        <member name="T:webapp.Configuration.JosekiConfiguration">
+            <summary>
+            Joseki Backend service configuration.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.JosekiConfiguration.AzureBlob">
+            <summary>
+            Azure Blob related configuration.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.JosekiConfiguration.Watchmen">
+            <summary>
+            Aggregated Watchmen configs.
+            </summary>
+        </member>
+        <member name="T:webapp.Configuration.AzureBlobConfig">
+            <summary>
+            Azure Blob related configuration.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzureBlobConfig.BasePath">
+            <summary>
+            Base Azure Blob Storage URL.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzureBlobConfig.Sas">
+            <summary>
+            Sas token.
+            </summary>
+        </member>
+        <member name="T:webapp.Configuration.Watchmen">
+            <summary>
+            Watchmen related configurations.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.Watchmen.ScannerContainersPeriodicity">
+            <summary>
+            How often ScannerContainersWatchman is listing root-level containers.
+            The measurement is in seconds.
+            </summary>
+        </member>
         <member name="T:webapp.Controllers.AuditsController">
             <summary>
             .Audit data endpoints.
@@ -69,6 +470,9 @@
             <summary>
             static placeholder for overall component.
             </summary>
+        </member>
+        <member name="M:webapp.Database.PsqlJosekiDatabase.SaveAuditResult(webapp.Database.Models.Audit)">
+            <inheritdoc />
         </member>
         <member name="T:webapp.Infrastructure.HttpRequestLoggingMiddleware">
             <summary>
