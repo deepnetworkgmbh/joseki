@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using webapp.Models;
 
 namespace webapp.Controllers
@@ -9,6 +10,65 @@ namespace webapp.Controllers
     /// </summary>
     public static class Data
     {
+        /// <summary>
+        /// kubernetes check categories.
+        /// </summary>
+        public static string[] K8sCategories =
+        {
+            "Security",
+            "Networking",
+            "Resources",
+            "Images",
+            "Health Checks",
+        };
+
+        /// <summary>
+        /// kubernetes check collections.
+        /// </summary>
+        public static Collection[] K8sCollections =
+        {
+            new Collection("namespace", "default"),
+            new Collection("namespace", "app0"),
+        };
+
+        /// <summary>
+        /// kubernetes check controls.
+        /// </summary>
+        public static CheckControl[] K8sControls =
+        {
+            new CheckControl("hostPIDSet", "Host PID is not configured."),
+            new CheckControl("hostNetworkSet", "Host network is not configured."),
+        };
+
+        /// <summary>
+        /// azure check categories.
+        /// </summary>
+        public static string[] AzCategories =
+        {
+            "VM",
+            "SQL",
+            "EventHub",
+            "VirtualNetwork",
+        };
+
+        /// <summary>
+        /// azure check collections.
+        /// </summary>
+        public static Collection[] AzCollections =
+        {
+            new Collection("resource group", "common-rg"),
+            new Collection("resource group", "test-rg"),
+        };
+
+        /// <summary>
+        /// kubernetes check controls.
+        /// </summary>
+        public static CheckControl[] AzControls =
+        {
+            new CheckControl("firewallSet", "firewall is not enabled."),
+            new CheckControl("invalidTemp", "temp directory not defined."),
+        };
+
         /// <summary>
         /// list of dates for ui tests.
         /// date behaves like a key while comparing scans.
@@ -30,6 +90,56 @@ namespace webapp.Controllers
             new DateTime(2020, 02, 11, 12, 0, 0),
             new DateTime(2020, 02, 12, 12, 0, 0),
         };
+
+        /// <summary>
+        /// mock list of Checks.
+        /// </summary>
+        public static List<Check> ComponentChecks()
+        {
+            var list = new List<Check>();
+
+            foreach (var date in Dates)
+            {
+                foreach (var component in Components)
+                {
+                    switch (component.Category)
+                    {
+                        case InfrastructureCategory.Overall:
+                            continue;
+
+                        case InfrastructureCategory.Kubernetes:
+                            foreach (var category in K8sCategories)
+                            {
+                                foreach (var collection in K8sCollections)
+                                {
+                                    foreach (var control in K8sControls)
+                                    {
+                                        list.Add(new Check(component, date, collection, category, control, RandomSeverity()));
+                                    }
+                                }
+                            }
+
+                            break;
+
+                        case InfrastructureCategory.Subscription:
+                            foreach (var category in AzCategories)
+                            {
+                                foreach (var collection in AzCollections)
+                                {
+                                    foreach (var control in AzControls)
+                                    {
+                                        list.Add(new Check(component, date, collection, category, control, RandomSeverity()));
+                                    }
+                                }
+                            }
+
+                            break;
+                    }
+                }
+            }
+
+            return list;
+        }
 
         /// <summary>
         /// list of inftastructure components.
@@ -136,6 +246,7 @@ namespace webapp.Controllers
                         Current = GetCounters[component.Id][i],
                         ScoreHistory = GetScoreHistory(component),
                         ScoreTrend = Trend.GetTrend(GetScoreHistory(component)),
+                        Checks = ComponentChecks().Where(check => check.Object.Id == component.Id && check.Date == Dates[i]).ToArray(),
                     };
                     result.Add(summary);
                 }
@@ -166,8 +277,20 @@ namespace webapp.Controllers
         }
 
         /// <summary>
+        /// return a random severity.
+        /// </summary>
+        /// <returns>CheckSeverity.</returns>
+        public static CheckSeverity RandomSeverity()
+        {
+            var v = Enum.GetValues(typeof(CheckSeverity));
+            return (CheckSeverity)v.GetValue(new Random().Next(v.Length));
+        }
+
+        /// <summary>
         /// static placeholder for overall component.
         /// </summary>
         private static InfrastructureComponent overallComponent = Components[0];
+        private static InfrastructureComponent az = Components[1];
+        private static InfrastructureComponent k8s = Components[2];
     }
 }
