@@ -124,8 +124,8 @@ svg > g > g {
 
 .component-history-button {
 	position: absolute;
-	margin-top: -5px;
-	margin-left: 115px;
+	margin-top: 75px;
+	margin-left: 140px;
 
 	& > button {
 		font-size: 10px;
@@ -133,6 +133,7 @@ svg > g > g {
 		border: solid 1px #666;
 		padding: 0 4px 0 4px;
 		border-radius: 3px;
+		margin-left: 3px;
 	}
 
 	& > button:hover {

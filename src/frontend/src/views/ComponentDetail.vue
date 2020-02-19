@@ -62,18 +62,16 @@
     </div>
     <div v-if="loaded" class="segment shadow">
       <div class="w-full flex flex-wrap pt-2 pl-1">
-        <div v-for="(c, i) in data.components" :key="`scan${i}`" 
-             class="scan-detailed-item flex flex-row shadow">
+        <div v-for="(c, i) in data.components" :key="`scan${i}`" class="scan-detailed-item flex flex-row shadow">
           <div class="w-full p-2 text-lg pt-0 flex flex-col">
             <div class='component-history-button'>
               <button @click="goComponentHistory(c.component)">History</button>
-              <button @click="goComponentDetail(c.component)">Detail</button>
             </div>            
             <div class="text-sm">{{ c.component.name }}</div>
             <div class="text-xs text-gray-600 -mt-1">{{c.component.category}}</div>
             <div style="height:50px;width:130px;" :id="`bar${i}`"></div>
           </div>
-          <div class="p-2" style="width: 100px;" @click="goComponentDetail(c.component)">
+          <div class="p-2" style="width: 100px;">
             <div style="position:relative;font-size:18px;z-index:1;left:19px;top:23px;">{{c.current.score}}%</div>
             <div style="position:relative;top:-25px;z-index:0;">
               <vc-donut

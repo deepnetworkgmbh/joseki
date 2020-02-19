@@ -3,7 +3,6 @@ import { ChartService } from "@/services/ChartService"
 import Spinner from "@/components/spinner/Spinner.vue";
 import StatusBar from "@/components/statusbar/StatusBar.vue";
 import { DataService } from '@/services/DataService';
-import { ViewMode } from '@/types/Enums';
 import { InfrastructureOverview, InfrastructureComponentSummary, InfrastructureComponent } from '@/models/InfrastructureOverview';
 import { ScoreService } from '@/services/ScoreService';
 import router from '@/router';
@@ -11,14 +10,17 @@ import router from '@/router';
 @Component({
     components: { Spinner, StatusBar }
 })
-export default class Overview extends Vue {
+export default class ComponentDetail extends Vue {
+
+    @Prop()
+    id!: string;
 
     @Prop({ default: null })
     date!: string;
 
     loaded: boolean = false;
     service: DataService = new DataService();
-    data: InfrastructureOverview = new InfrastructureOverview();
+    data: InfrastructureComponentSummary = new InfrastructureComponentSummary();
     panelOpen: boolean = false;
     checkedScans: any[] = [];
 
@@ -29,15 +31,13 @@ export default class Overview extends Vue {
 
     loadData() {
         let dateString = (this.date === null) ? '' : this.date;
-        this.service.getGeneralOverviewData(dateString)
+        this.service.getComponentDetailData(this.id, dateString)
             .then(response => {
                 this.data = response;
-                this.data.overall.scoreHistory = this.data.overall.scoreHistory.reverse();
-                if (this.data.components && this.data.overall) {
-                    console.log(`[] data is`, this.data);
-                    this.loaded = true;
-                    this.setupCharts();
-                }
+                this.data.scoreHistory = this.data.scoreHistory.reverse();
+                console.log(`[] data is`, this.data);
+                this.loaded = true;
+                this.setupCharts();
             });
     }
 
@@ -47,10 +47,6 @@ export default class Overview extends Vue {
     }
 
     setupCharts() {
-        for (let i = 0; i < this.data.components.length; i++) {
-            // ugly fix, getter does not work
-            this.data.components[i].sections = InfrastructureComponentSummary.getSections(this.data.components[i].current);
-        }
         google.charts.load('current', { 'packages': ['corechart'] });
         google.charts.setOnLoadCallback(this.drawCharts);
     }
@@ -59,13 +55,9 @@ export default class Overview extends Vue {
     drawCharts() {
         let _date = this.date ?
             new Date(decodeURIComponent(this.date))
-            : this.data.overall.scoreHistory[0].recordedAt;
-
-        ChartService.drawPieChart(this.data.overall.current, "overall_pie", 300)
-        ChartService.drawBarChart(this.data.overall.scoreHistory, "overall_bar", _date, this.dayClicked)
-        for (let i = 0; i < this.data.components.length; i++) {
-            ChartService.drawBarChart(this.data.components[i].scoreHistory, 'bar' + i, _date, this.dayClicked, 48);
-        }
+            : this.data.scoreHistory[0].recordedAt;
+        ChartService.drawPieChart(this.data.current, "overall_pie", 300)
+        ChartService.drawBarChart(this.data.scoreHistory, "overall_bar", _date, this.dayClicked)
     }
 
     dayClicked(date: Date) {
@@ -81,16 +73,9 @@ export default class Overview extends Vue {
         }
     }
 
-    goComponentDetail(component: InfrastructureComponent, date: string) {
-        console.log(`going component detail: ${component.id}`);
-        if (component) {
-            router.push('/component-detail/' + component.id + '/' + date);
-        }
-    }
-
 
     getArrowHtml(i: number) {
-        const scans = this.data.overall.scoreHistory;
+        const scans = this.data.scoreHistory;
         if (i >= (scans.length - 1)) return '-';
         if (scans[i].score > scans[i + 1].score) {
             return '<i class="fas fa-arrow-up" style="color:green;"></i>'
@@ -105,12 +90,8 @@ export default class Overview extends Vue {
     }
 
     get shortHistory() {
-        return this.data.overall.scoreHistory.slice(0, 5);
+        return this.data.scoreHistory.slice(0, 5);
     }
-
-    getClusters() { return this.data.components.filter(x => x.component.category === 'Kubernetes').length; }
-    getSubscriptions() { return this.data.components.filter(x => x.component.category === 'Subscription').length; }
-
 
     onHistoryClicked() {
         router.push('/overview-history/');
@@ -135,17 +116,9 @@ export default class Overview extends Vue {
         router.push('/overview-diff/' + params);
     }
 
-    @Watch('date', { immediate: true })
+    @Watch('id', { immediate: true })
     private onDateChanged(newValue: Date) {
         this.loadData();
-    }
-
-    @Watch('panelOpen', { immediate: true })
-    private onPanelToggled(newValue: boolean) {
-        if (newValue === false) {
-            this.checkedScans = [];
-        }
-        setTimeout(() => this.setupCharts(), 500);
     }
 
     getScoreIconClass(score: number) { return ScoreService.getScoreIconClass(score); }
