@@ -22,6 +22,53 @@
             <param name="metadata">Scanner metadata object.</param>
             <returns>Audit Processor instance.</returns>
         </member>
+        <member name="T:webapp.Audits.Processors.azsk.AuditMetadata">
+            <summary>
+            The object is deserialized from Blob Storage container.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.azsk.AuditMetadata.AuditId">
+            <summary>
+            Unique audit identifier.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.azsk.AuditMetadata.ScannerVersion">
+            <summary>
+            Az-sk scanner version.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.azsk.AuditMetadata.Periodicity">
+            <summary>
+            az-sk scanner periodicity.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.azsk.AuditMetadata.Timestamp">
+            <summary>
+            The last time, when az-sk scanner performed azure subscriptions audit.
+            The value is in unix-epoch seconds.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.azsk.AuditMetadata.AuditResult">
+            <summary>
+            Indicates if audit was successful or not.
+            Could be one of values: "succeeded", "failed".
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.azsk.AuditMetadata.FailureDescription">
+            <summary>
+            Described audit failure reason.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.azsk.AuditMetadata.AzSkVersion">
+            <summary>
+            The version of az-sk tool used to perform the audit.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.azsk.AuditMetadata.AzSkAuditPaths">
+            <summary>
+            Path to all audit related files in Blob Storage.
+            </summary>
+        </member>
         <member name="T:webapp.Audits.Processors.azsk.AzskAuditProcessor">
             <summary>
             Az-sk audit processor.
@@ -469,6 +516,243 @@
         <member name="F:webapp.Controllers.Data.OverallComponent">
             <summary>
             static placeholder for overall component.
+            </summary>
+        </member>
+        <member name="T:webapp.Database.IJosekiDatabase">
+            <summary>
+            An abstraction layer on top of Joseki database.
+            </summary>
+        </member>
+        <member name="M:webapp.Database.IJosekiDatabase.SaveAuditResult(webapp.Database.Models.Audit)">
+            <summary>
+            Saves all the audit related data to the database:
+            - Audit itself,
+            - associated Check-Results,
+            - not existing before this point Checks,
+            - Azure or Kube metadata.
+            </summary>
+            <param name="audit">The entire audit object, including checks, check-results, and metadata.</param>
+            <returns>A task object.</returns>
+        </member>
+        <member name="T:webapp.Database.Models.Audit">
+            <summary>
+            The entity represents a single Audit object.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.Audit.Id">
+            <summary>
+            Unique audit identifier.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.Audit.Date">
+            <summary>
+            date when audit was performed.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.Audit.ScannerId">
+            <summary>
+            Which scanner did the audit.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.Audit.CheckResults">
+            <summary>
+            List of all check-results, that belongs to the audit.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.Audit.MetadataKube">
+            <summary>
+            Reference to associated Kubernetes metadata.
+            The property is null, if audit belongs to azure.
+            Only one of MetadataAzure and MetadataKube is not null.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.Audit.MetadataAzure">
+            <summary>
+            Reference to associated Azure metadata.
+            The property is null, if audit belongs to kubernetes.
+            Only one of MetadataAzure and MetadataKube is not null.
+            </summary>
+        </member>
+        <member name="T:webapp.Database.Models.Check">
+            <summary>
+            Describes in details a single check type.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.Check.Id">
+            <summary>
+            The check identifier in form "{scanner-type}.{scanner-check-id}".
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.Check.Category">
+            <summary>
+            It groups related check types, for example "k8s.security", "azure.storage".
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.Check.Severity">
+            <summary>
+            The severity answers the question: how dangerous the failure of this check could be.
+            It helps to prioritize check results.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.Check.Description">
+            <summary>
+            Detailed check description: what exactly it verifies and why it's important.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.Check.Remediation">
+            <summary>
+            The suggestion how to fix the issue.
+            </summary>
+        </member>
+        <member name="T:webapp.Database.Models.CheckSeverity">
+            <summary>
+            Check severities.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.Models.CheckSeverity.Unknown">
+            <summary>
+            The level is unknown.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.Models.CheckSeverity.Critical">
+            <summary>
+            Top-level issues, that often should be addressed as soon as possible.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.Models.CheckSeverity.High">
+            <summary>
+            Important issue, which should be carefully reviewed.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.Models.CheckSeverity.Medium">
+            <summary>
+            Medium-level problem, which could cause moderate damage or loss.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.Models.CheckSeverity.Low">
+            <summary>
+            The lowest severity in the rank. Represents only a slight damage.
+            </summary>
+        </member>
+        <member name="T:webapp.Database.Models.CheckResult">
+            <summary>
+            A single check result object.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.CheckResult.Id">
+            <summary>
+            Unique record identifier.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.CheckResult.CheckId">
+            <summary>
+            The reference to Check entity.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.CheckResult.ComponentId">
+            <summary>
+            Unique component identifier in format:
+            - for azure components: `subscription/{id}/resource_group/{rg_name}/{object_type}/{object_name}`;
+            - for k8s resources: `k8s/{cluster_id}/namespace/{ns_name}/{object_type}/{object_name}/pod/{pod_name}/container/{container_name}/{image_tag}`,
+            where all sections after `{object_name}` are optional, as there might be separate checks on object-type, pod, container, or image.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.CheckResult.AuditId">
+            <summary>
+            The reference to Audit entity.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.CheckResult.Value">
+            <summary>
+            The check result itself.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.CheckResult.Message">
+            <summary>
+            Free-format associated message.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.CheckResult.Check">
+            <summary>
+            Check object.
+            </summary>
+        </member>
+        <member name="T:webapp.Database.Models.CheckValue">
+            <summary>
+            Represents the check result value.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.Models.CheckValue.NoData">
+            <summary>
+            There is no result due one of the reasons:
+            - check is still in progress,
+            - the check requires a manual step,
+            - the check result should be verified by end-user.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.Models.CheckValue.Failed">
+            <summary>
+            The Component failed to satisfy Check requirements.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.Models.CheckValue.Succeeded">
+            <summary>
+            The Component satisfied Check requirements.
+            </summary>
+        </member>
+        <member name="T:webapp.Database.Models.MetadataAzure">
+            <summary>
+            Json-serialized azure metadata, actual at a particular audit time.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.MetadataAzure.Id">
+            <summary>
+            The record identifier.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.MetadataAzure.AuditId">
+            <summary>
+            Reference to the audit record.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.MetadataAzure.Date">
+            <summary>
+            Date and time, when metadata was collected.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.MetadataAzure.JSON">
+            <summary>
+            Json-encoded representation of azure-metadata.
+            </summary>
+        </member>
+        <member name="T:webapp.Database.Models.MetadataKube">
+            <summary>
+            Json-serialized kubernetes metadata, actual at a particular audit time.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.MetadataKube.Id">
+            <summary>
+            The record identifier.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.MetadataKube.AuditId">
+            <summary>
+            Reference to the audit record.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.MetadataKube.Date">
+            <summary>
+            Date and time, when metadata was collected.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.MetadataKube.JSON">
+            <summary>
+            Json-encoded representation of kube-metadata.
+            </summary>
+        </member>
+        <member name="T:webapp.Database.PsqlJosekiDatabase">
+            <summary>
+            P-sql implementation of Database.
             </summary>
         </member>
         <member name="M:webapp.Database.PsqlJosekiDatabase.SaveAuditResult(webapp.Database.Models.Audit)">
