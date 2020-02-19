@@ -69,6 +69,24 @@ namespace webapp
                 // Set the comments path for the swagger json and ui.
                 c.IncludeXmlComments(xmlPath);
             });
+
+            services.AddSingleton(provider =>
+            {
+                const string envVarName = "JOSEKI_CONFIG_FILE_PATH";
+                var configFilePath = this.Configuration[envVarName];
+                return new ConfigurationParser(configFilePath);
+            });
+
+            services.AddTransient<IBlobStorageProcessor, AzureBlobStorageProcessor>();
+
+            services.AddTransient<AzskAuditProcessor>();
+            services.AddTransient<PolarisAuditProcessor>();
+            services.AddTransient<TrivyAuditProcessor>();
+            services.AddTransient<AuditProcessorFactory>();
+
+            services.AddScoped<ScannerContainersWatchman>();
+            services.AddSingleton<SchedulerAssistant>();
+            services.AddHostedService<ScannerResultsReaderJob>();
         }
 
         /// <summary>
