@@ -67,34 +67,42 @@ namespace webapp.Audits.Processors.azsk
             if (auditMetadata.AuditResult != "succeeded")
             {
                 Logger.Warning(
-                    "Audit {AuditId} result is {AuditResult} due: {FailureReason}",
-                    auditMetadata.AuditId,
+                    "Audit {AuditPath} result is {AuditResult} due: {FailureReason}",
+                    path,
                     auditMetadata.AuditResult,
                     auditMetadata.FailureDescription);
             }
             else
             {
-                var tasks = auditMetadata
-                    .AzSkAuditPaths
-                    .Where(i => i.EndsWith(".json"))
-                    .Select(i => this.blobStorage.DownloadFile($"{auditBlob.ParentContainer.Name}/{i}"))
-                    .Select(this.ToJArray)
-                    .ToArray();
+                try
+                {
+                    var tasks = auditMetadata
+                        .AzSkAuditPaths
+                        .Where(i => i.EndsWith(".json"))
+                        .Select(i => this.blobStorage.DownloadFile($"{auditBlob.ParentContainer.Name}/{i}"))
+                        .Select(this.ToJArray)
+                        .ToArray();
 
-                await Task.WhenAll(tasks);
+                    await Task.WhenAll(tasks);
 
-                var audit = this.NormalizeRawData(tasks.Select(i => i.Result).ToArray(), auditBlob, auditMetadata);
+                    var audit = this.NormalizeRawData(tasks.Select(i => i.Result).ToArray(), auditBlob, auditMetadata);
 
-                Logger.Information(
-                    "Successfully processed audit {AuditId} of {AuditDate} with {CheckResultCount} check results, where succeeded {Succeeded}; failed {Failed}; no-data {NoData}",
-                    audit.Id,
-                    audit.Date,
-                    audit.CheckResults.Count,
-                    audit.CheckResults.Count(i => i.Value == CheckValue.Succeeded),
-                    audit.CheckResults.Count(i => i.Value == CheckValue.Failed),
-                    audit.CheckResults.Count(i => i.Value == CheckValue.NoData));
+                    // TODO: Counter functions could be converted into single iterator
+                    Logger.Information(
+                        "Successfully processed audit {AuditId} of {AuditDate} with {CheckResultCount} check results, where succeeded {Succeeded}; failed {Failed}; no-data {NoData}",
+                        audit.Id,
+                        audit.Date,
+                        audit.CheckResults.Count,
+                        audit.CheckResults.Count(i => i.Value == CheckValue.Succeeded),
+                        audit.CheckResults.Count(i => i.Value == CheckValue.Failed),
+                        audit.CheckResults.Count(i => i.Value == CheckValue.NoData));
 
-                await this.db.SaveAuditResult(audit);
+                    await this.db.SaveAuditResult(audit);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Failed to process audit {AuditPath}", path);
+                }
             }
 
             await this.blobStorage.MarkAsProcessed(auditBlob);
@@ -150,10 +158,13 @@ namespace webapp.Audits.Processors.azsk
 
         private (string scope, string id, string name) GetSubscriptionMeta(JArray[] rawData)
         {
+            // Based on the assumption, that a single audit belongs to the only one subscription,
+            // the iterators below looks for the very first not null scope/id/name
             foreach (var jArray in rawData)
             {
                 foreach (var jToken in jArray)
                 {
+                    // Note, first arguments checks for non-null subscription object
                     var subscription = jToken["SubscriptionContext"];
                     if (subscription?["Scope"] != null &&
                         subscription["SubscriptionId"] != null &&
@@ -172,30 +183,41 @@ namespace webapp.Audits.Processors.azsk
 
         private (JArray resources, List<CheckResult> checks) ParseResourcesAndChecks(JArray[] rawData, AuditMetadata auditMeta)
         {
+            // TODO: replace with external Check-cache object
+            var checks = new Dictionary<string, Check>();
+            var checksResults = new List<CheckResult>();
             var resources = new Dictionary<string, JToken>();
-            var checks = new List<CheckResult>();
+
             foreach (var jArray in rawData)
             {
                 foreach (var item in jArray)
                 {
+                    // failure in processing one check-result should not impact the rest
                     try
                     {
                         var controlItem = item["ControlItem"];
-                        var check = new Check
+                        var checkId = $"azsk.{controlItem["ControlID"].Value<string>()}";
+
+                        if (!checks.TryGetValue(checkId, out var check))
                         {
-                            Id = $"azsk.{controlItem["ControlID"].Value<string>()}",
-                            Severity = this.ToSeverity(controlItem["ControlSeverity"].Value<string>()),
-                            Category = item["FeatureName"].Value<string>(),
-                            Description = $"{controlItem["Description"].Value<string>()}{Environment.NewLine}{controlItem["Rationale"].Value<string>()}",
-                            Remediation = controlItem["Recommendation"].Value<string>(),
-                        };
+                            check = new Check
+                            {
+                                Id = checkId,
+                                Severity = this.ToSeverity(controlItem["ControlSeverity"].Value<string>()),
+                                Category = item["FeatureName"].Value<string>(),
+                                Description = $"{controlItem["Description"].Value<string>()}{Environment.NewLine}{controlItem["Rationale"].Value<string>()}",
+                                Remediation = controlItem["Recommendation"].Value<string>(),
+                            };
+
+                            checks.Add(checkId, check);
+                        }
 
                         var checkResult = this.ToCheckResult(item);
                         checkResult.AuditId = auditMeta.AuditId;
                         checkResult.CheckId = check.Id;
                         checkResult.Check = check;
 
-                        checks.Add(checkResult);
+                        checksResults.Add(checkResult);
                         if (item["ResourceContext"] != null)
                         {
                             resources.TryAdd(checkResult.ComponentId, item["ResourceContext"]);
@@ -209,7 +231,7 @@ namespace webapp.Audits.Processors.azsk
             }
 
             var resourcesArray = new JArray(resources.Select(i => i.Value));
-            return (resourcesArray, checks);
+            return (resourcesArray, checksResults);
         }
 
         private CheckResult ToCheckResult(JToken rawResult)
@@ -235,11 +257,15 @@ namespace webapp.Audits.Processors.azsk
             }
             else
             {
+                // So far there were no case with more than 1 result, but array data type supposes that it's possible.
+                // If this appears later, the code below should be reviewed based on real data sample.
                 if (controlResults.Count > 1)
                 {
                     Logger.Warning("There are {Count} results for {ResourceId}", controlResults.Count, result.ComponentId);
                 }
 
+                // TODO: Consider adding parsing ControlResults[].Messages array into result.Message property
+                // Likely, this should be done with unique logic per check type, because some Messages might consist of huge json objects (>100LoC)
                 result.Value = this.ToCheckResultValue(controlResults.First["ActualVerificationResult"].Value<string>());
             }
 
@@ -252,7 +278,7 @@ namespace webapp.Audits.Processors.azsk
             {
                 "Passed" => CheckValue.Succeeded,
                 "Failed" => CheckValue.Failed,
-                _ => CheckValue.NoData
+                _ => CheckValue.NoData // At the moment, consider Verify and Manual as NoData result.
             };
         }
 
