@@ -78,11 +78,12 @@
             <StatusBar :counters="ResultsByCollection[collection].counters" />
             <ul v-for="(obj, g) in Object.keys(ResultsByCollection[collection].objects)" :key="`obj${i}-${g}`">
               <li>
-                <input type="checkbox" :id="`obj${i}-${g}`" checked />
+                <input type="checkbox" :id="`obj${i}-${g}`" />
                 <label :for="`obj${i}-${g}`" class="text-base">
                    <strong>{{ ResultsByCollection[collection].objects[obj].type }} : </strong>
                    {{ ResultsByCollection[collection].objects[obj].name }}
                 </label>
+                <StatusBar :mini='false' :counters="ResultsByCollection[collection].objects[obj].counters" style="margin-right:-10px;" />
                 <ul v-for="(control, c) in ResultsByCollection[collection].objects[obj].controls" 
                    :key="`control${i}-${g}-${c}`">
                   <li>

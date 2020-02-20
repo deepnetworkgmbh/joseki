@@ -169,21 +169,6 @@ export default class ComponentDetail extends Vue {
 
     get ResultsByCollection() {
 
-        // collection1
-        //  - object1
-        //    - control 1
-        //    - control 2
-        //  - object2
-        //    - control 1
-        //    - control 2
-        // collection2
-        //  - object1
-        //    - control 1
-        //    - control 2
-        //  - object2
-        //    - control 1
-        //    - control 2
-
         var results = {};
 
         // walk over all checks and group them by collections.
@@ -200,29 +185,35 @@ export default class ComponentDetail extends Vue {
                 };
             }
 
-            switch (row.result.toString()) {
-                case 'Failed':
-                    results[row.collection.name].counters.failed += 1;
-                    break;
-                case 'NoData':
-                    results[row.collection.name].counters.noData += 1;
-                    break;
-                case 'Warning':
-                    results[row.collection.name].counters.warning += 1;
-                    break;
-                case 'Success':
-                    results[row.collection.name].counters.passed += 1;
-                    break;
-            }
-            results[row.collection.name].counters.total += 1;
-
             if (results[row.collection.name].objects[row.resource.id] === undefined) {
                 results[row.collection.name].objects[row.resource.id] = {
                     type: row.resource.type,
                     name: row.resource.name,
-                    controls: []
+                    controls: [],
+                    counters: new CountersSummary()
                 }
             }
+
+            switch (row.result.toString()) {
+                case 'Failed':
+                    results[row.collection.name].counters.failed += 1;
+                    results[row.collection.name].objects[row.resource.id].counters.failed += 1;
+                    break;
+                case 'NoData':
+                    results[row.collection.name].counters.noData += 1;
+                    results[row.collection.name].objects[row.resource.id].counters.noData += 1;
+                    break;
+                case 'Warning':
+                    results[row.collection.name].counters.warning += 1;
+                    results[row.collection.name].objects[row.resource.id].counters.warning += 1;
+                    break;
+                case 'Success':
+                    results[row.collection.name].counters.passed += 1;
+                    results[row.collection.name].objects[row.resource.id].counters.passed += 1;
+                    break;
+            }
+            results[row.collection.name].counters.total += 1;
+            results[row.collection.name].objects[row.resource.id].counters.total += 1;
 
             results[row.collection.name].objects[row.resource.id].controls.push({
                 id: row.control.id,
@@ -258,9 +249,9 @@ export default class ComponentDetail extends Vue {
 
     getSeverityScore(severity: CheckSeverity) {
         switch (severity.toString()) {
-            case 'NoData': return 100;
+            case 'NoData': return 10;
             case 'Failed':
-            case 'Warning': return 10;
+            case 'Warning': return 100;
             case 'Success': return 1;
         }
     }

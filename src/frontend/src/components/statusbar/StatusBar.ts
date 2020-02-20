@@ -6,6 +6,9 @@ export default class StatusBar extends Vue {
   @Prop()
   counters!: CountersSummary;
 
+  @Prop({ default: false })
+  mini!: boolean
+
   private sum: number = 0;
   private failingSum: number = 0;
   private noDataSum: number = 0;
@@ -24,5 +27,9 @@ export default class StatusBar extends Vue {
   passingWidth() {
     const passingPx = 200 - this.failingSum - this.noDataSum;
     return passingPx + 'px';
+  }
+
+  get height() {
+    return this.mini ? '8px' : '12px';
   }
 }

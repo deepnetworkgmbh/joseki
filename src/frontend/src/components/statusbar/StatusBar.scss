@@ -1,51 +1,48 @@
 @import "@/styles/colors.scss";
 
-
 .status-bar {
-  padding-top: 7px;
-  float: right;
+	padding-top: 7px;
+	float: right;
 }
 
 .status-bar .status {
-  float: right;
-  animation: fadeIn 2s;
+	float: right;
+	animation: fadeIn 2s;
 }
 
 .status {
-  width: 200px;
+	width: 200px;
 }
 
 .status div {
-  height: 12px;
-  border-radius: 9px;
+	border-radius: 9px;
 }
 
-
-.status .nodata {
-  background-color: $color-no-data;
-  float: left;
+.nodata {
+	background-color: $color-no-data;
+	float: left;
 }
 
-.status .passing {
-  background-color:$color-low-severity;
-  float: left;
+.passing {
+	background-color: $color-low-severity;
+	float: left;
 }
 
-.status .warning {
-  background-color: $color-high-severity;
-  float: left;
+.warning {
+	background-color: $color-high-severity;
+	float: left;
 }
 
-.status .failing {
-  background-color: $color-critical;
-  width: 100%;
+.failing {
+	background-color: $color-critical;
+	width: 100%;
 }
 
 @keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
 }
