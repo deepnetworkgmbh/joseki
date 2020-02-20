@@ -6,9 +6,9 @@ using webapp.BlobStorage;
 namespace webapp.Audits.Processors
 {
     /// <summary>
-    /// Polaris audit processor.
+    /// Does nothing.
     /// </summary>
-    public class PolarisAuditProcessor : IAuditProcessor
+    public class AuditProcessorStub : IAuditProcessor
     {
         /// <inheritdoc />
         public Task Process(ScannerContainer container, CancellationToken token)

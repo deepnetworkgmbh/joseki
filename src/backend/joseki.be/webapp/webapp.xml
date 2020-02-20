@@ -22,6 +22,14 @@
             <param name="metadata">Scanner metadata object.</param>
             <returns>Audit Processor instance.</returns>
         </member>
+        <member name="T:webapp.Audits.Processors.AuditProcessorStub">
+            <summary>
+            Does nothing.
+            </summary>
+        </member>
+        <member name="M:webapp.Audits.Processors.AuditProcessorStub.Process(webapp.BlobStorage.ScannerContainer,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
         <member name="T:webapp.Audits.Processors.azsk.AuditMetadata">
             <summary>
             The object is deserialized from Blob Storage container.
@@ -97,12 +105,71 @@
             <param name="token">A signal to stop processing.</param>
             <returns>A task object, which indicates the end of the processing.</returns>
         </member>
-        <member name="T:webapp.Audits.Processors.PolarisAuditProcessor">
+        <member name="T:webapp.Audits.Processors.polaris.AuditMetadata">
+            <summary>
+            The object is deserialized from Blob Storage container.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.polaris.AuditMetadata.AuditId">
+            <summary>
+            Unique audit identifier.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.polaris.AuditMetadata.ClusterId">
+            <summary>
+            Unique k8s cluster identifier.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.polaris.AuditMetadata.ScannerVersion">
+            <summary>
+            polaris scanner version.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.polaris.AuditMetadata.Timestamp">
+            <summary>
+            The last time, when polaris scanner performed kubernetes cluster audit.
+            The value is in unix-epoch seconds.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.polaris.AuditMetadata.AuditResult">
+            <summary>
+            Indicates if audit was successful or not.
+            Could be one of values: "succeeded", "failed".
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.polaris.AuditMetadata.FailureDescription">
+            <summary>
+            Described audit failure reason.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.polaris.AuditMetadata.PolarisVersion">
+            <summary>
+            The version of polaris tool used to perform the audit.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.polaris.AuditMetadata.PolarisAuditPaths">
+            <summary>
+            Path to polaris audit file in Blob Storage.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.polaris.AuditMetadata.KubeMetadataPaths">
+            <summary>
+            Path to kubernetes metadata file in Blob Storage.
+            </summary>
+        </member>
+        <member name="T:webapp.Audits.Processors.polaris.PolarisAuditProcessor">
             <summary>
             Polaris audit processor.
             </summary>
         </member>
-        <member name="M:webapp.Audits.Processors.PolarisAuditProcessor.Process(webapp.BlobStorage.ScannerContainer,System.Threading.CancellationToken)">
+        <member name="M:webapp.Audits.Processors.polaris.PolarisAuditProcessor.#ctor(webapp.BlobStorage.IBlobStorageProcessor,webapp.Database.IJosekiDatabase)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Audits.Processors.polaris.PolarisAuditProcessor"/> class.
+            </summary>
+            <param name="blobStorage">Blob Storage implementation.</param>
+            <param name="db">Joseki database implementation.</param>
+        </member>
+        <member name="M:webapp.Audits.Processors.polaris.PolarisAuditProcessor.Process(webapp.BlobStorage.ScannerContainer,System.Threading.CancellationToken)">
             <inheritdoc />
         </member>
         <member name="T:webapp.Audits.Processors.TrivyAuditProcessor">
