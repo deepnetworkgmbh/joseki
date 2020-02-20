@@ -172,12 +172,66 @@
         <member name="M:webapp.Audits.Processors.polaris.PolarisAuditProcessor.Process(webapp.BlobStorage.ScannerContainer,System.Threading.CancellationToken)">
             <inheritdoc />
         </member>
-        <member name="T:webapp.Audits.Processors.TrivyAuditProcessor">
+        <member name="T:webapp.Audits.Processors.trivy.AuditMetadata">
+            <summary>
+            The object is deserialized from Blob Storage container.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.trivy.AuditMetadata.AuditId">
+            <summary>
+            Unique audit identifier.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.trivy.AuditMetadata.ImageTag">
+            <summary>
+            Full image tag.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.trivy.AuditMetadata.ScannerVersion">
+            <summary>
+            trivy scanner version.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.trivy.AuditMetadata.Timestamp">
+            <summary>
+            The time, when trivy scanner performed image scan.
+            The value is in unix-epoch seconds.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.trivy.AuditMetadata.AuditResult">
+            <summary>
+            Indicates if scan was successful or not.
+            Could be one of values: "succeeded", "upload-failed", "audit-failed".
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.trivy.AuditMetadata.FailureDescription">
+            <summary>
+            Described audit failure reason.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.trivy.AuditMetadata.TrivyVersion">
+            <summary>
+            The version of trivy tool used to perform the scan.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.Processors.trivy.AuditMetadata.TrivyAuditPath">
+            <summary>
+            Path to trivy audit file in Blob Storage.
+            </summary>
+        </member>
+        <member name="T:webapp.Audits.Processors.trivy.TrivyAuditProcessor">
             <summary>
             Trivy audit processor.
             </summary>
         </member>
-        <member name="M:webapp.Audits.Processors.TrivyAuditProcessor.Process(webapp.BlobStorage.ScannerContainer,System.Threading.CancellationToken)">
+        <member name="M:webapp.Audits.Processors.trivy.TrivyAuditProcessor.#ctor(webapp.BlobStorage.IBlobStorageProcessor,webapp.Database.IJosekiDatabase)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Audits.Processors.trivy.TrivyAuditProcessor"/> class.
+            </summary>
+            <param name="blobStorage">Blob Storage implementation.</param>
+            <param name="db">Joseki database implementation.</param>
+        </member>
+        <member name="M:webapp.Audits.Processors.trivy.TrivyAuditProcessor.Process(webapp.BlobStorage.ScannerContainer,System.Threading.CancellationToken)">
             <inheritdoc />
         </member>
         <member name="T:webapp.Audits.ScannerMetadata">
@@ -601,6 +655,15 @@
             <param name="audit">The entire audit object, including checks, check-results, and metadata.</param>
             <returns>A task object.</returns>
         </member>
+        <member name="M:webapp.Database.IJosekiDatabase.SaveImageScanResult(webapp.Database.Models.ImageScanResult)">
+            <summary>
+            Saves all the image-scan related data to the database:
+            - image scan itself;
+            - associated CVEs.
+            </summary>
+            <param name="imageScanResult">The entire Image Scan Result object.</param>
+            <returns>A task object.</returns>
+        </member>
         <member name="T:webapp.Database.Models.Audit">
             <summary>
             The entity represents a single Audit object.
@@ -767,6 +830,139 @@
             The Component satisfied Check requirements.
             </summary>
         </member>
+        <member name="T:webapp.Database.Models.CVE">
+            <summary>
+            The object describes a single CVE (Common Vulnerabilities and Exposures).
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.CVE.Id">
+            <summary>
+            The <see href="https://cve.mitre.org/cve/identifiers/index.html">CVE identifier</see>,
+            which looks like `CVE-2005-2541` or `TEMP-0290435-0B57B5`.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.CVE.Title">
+            <summary>
+            Short CVE description.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.CVE.PackageName">
+            <summary>
+            The name of the package, where CVE was found, for example "tar" or "sysvinit-utils".
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.CVE.Description">
+            <summary>
+            Detailed CVE description.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.CVE.Severity">
+            <summary>
+            Highlights how dangerous the CVE is.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.CVE.Remediation">
+            <summary>
+            In most cases, suggests to update the sources to the version of the package, that addresses the issue.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.CVE.References">
+            <summary>
+            Links to external source with more details about the CVE.
+            </summary>
+        </member>
+        <member name="T:webapp.Database.Models.CveSeverity">
+            <summary>
+            CVE severities.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.Models.CveSeverity.Unknown">
+            <summary>
+            The level is unknown.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.Models.CveSeverity.Critical">
+            <summary>
+            Top-level issues, that often should be addressed as soon as possible.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.Models.CveSeverity.High">
+            <summary>
+            Important issue, which should be carefully reviewed.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.Models.CveSeverity.Medium">
+            <summary>
+            Medium-level problem, which could cause moderate damage or loss.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.Models.CveSeverity.Low">
+            <summary>
+            The lowest severity in the rank. Represents only a slight damage.
+            </summary>
+        </member>
+        <member name="T:webapp.Database.Models.ImageScanResult">
+            <summary>
+            The goal of image scan is verify if known CVEs (Common Vulnerabilities and Exposures) present in used by image packages.
+            Therefore, the Scan Result consists of an array of CVEs. The array might be empty, if no vulnerabilities was found.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.ImageScanResult.Id">
+            <summary>
+            Unique identifier.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.ImageScanResult.ImageTag">
+            <summary>
+            Full image tag, which includes registry, image name and version.
+            For example `mcr.microsoft.com/dotnet/core/sdk:3.1.101-alpine3.10`.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.ImageScanResult.Date">
+            <summary>
+            UTC point of time when scan was performed.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.ImageScanResult.FoundCVEs">
+            <summary>
+            List of discovered vulnerabilities.
+            </summary>
+        </member>
+        <member name="T:webapp.Database.Models.ImageScanToCve">
+            <summary>
+            Maps exact image scans to list of CVEs in this scan.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.ImageScanToCve.ScanId">
+            <summary>
+            Image Scan Result identifier.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.ImageScanToCve.CveId">
+            <summary>
+            CVE identifier.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.ImageScanToCve.Target">
+            <summary>
+            Where the CVE was discovered: container image name or application dependencies file.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.ImageScanToCve.UsedPackageVersion">
+            <summary>
+            States which exact version of vulnerable package `ScanId` discovered.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.ImageScanToCve.CVE">
+            <summary>
+            Reference to associated CVE object.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.ImageScanToCve.ImageScan">
+            <summary>
+            Reference to Image Scan Result object.
+            </summary>
+        </member>
         <member name="T:webapp.Database.Models.MetadataAzure">
             <summary>
             Json-serialized azure metadata, actual at a particular audit time.
@@ -823,6 +1019,9 @@
             </summary>
         </member>
         <member name="M:webapp.Database.PsqlJosekiDatabase.SaveAuditResult(webapp.Database.Models.Audit)">
+            <inheritdoc />
+        </member>
+        <member name="M:webapp.Database.PsqlJosekiDatabase.SaveImageScanResult(webapp.Database.Models.ImageScanResult)">
             <inheritdoc />
         </member>
         <member name="T:webapp.Infrastructure.HttpRequestLoggingMiddleware">

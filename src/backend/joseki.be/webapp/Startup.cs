@@ -13,6 +13,7 @@ using Microsoft.OpenApi.Models;
 using webapp.Audits.Processors;
 using webapp.Audits.Processors.azsk;
 using webapp.Audits.Processors.polaris;
+using webapp.Audits.Processors.trivy;
 using webapp.BackgroundJobs;
 using webapp.BlobStorage;
 using webapp.Configuration;

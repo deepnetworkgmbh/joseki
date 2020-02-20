@@ -18,5 +18,11 @@ namespace webapp.Database
         {
             return Task.CompletedTask;
         }
+
+        /// <inheritdoc />
+        public Task SaveImageScanResult(ImageScanResult imageScanResult)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

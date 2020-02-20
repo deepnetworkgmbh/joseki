@@ -146,9 +146,9 @@ namespace webapp.Audits.Processors.polaris
             var stream = await this.blobStorage.DownloadFile(path);
 
             using var sr = new StreamReader(stream);
-            var metadataString = sr.ReadToEnd();
+            var fileContent = sr.ReadToEnd();
 
-            return JObject.Parse(metadataString);
+            return JObject.Parse(fileContent);
         }
 
         private List<CheckResult> ParseChecksResults(JObject auditJson, AuditMetadata auditMetadata, ScannerMetadata scannerMetadata)
