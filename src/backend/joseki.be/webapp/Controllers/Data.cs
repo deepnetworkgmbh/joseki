@@ -11,24 +11,39 @@ namespace webapp.Controllers
     public static class Data
     {
         /// <summary>
-        /// kubernetes check categories.
+        /// kubernetes check collections and resources.
         /// </summary>
-        public static string[] K8sCategories =
+        public static Dictionary<Collection, Resource[]> K8sCollections
+            = new Dictionary<Collection, Resource[]>
         {
-            "Security",
-            "Networking",
-            "Resources",
-            "Images",
-            "Health Checks",
-        };
-
-        /// <summary>
-        /// kubernetes check collections.
-        /// </summary>
-        public static Collection[] K8sCollections =
-        {
-            new Collection("namespace", "default"),
-            new Collection("namespace", "app0"),
+            {
+                new Collection("namespace", "default"), new Resource[]
+                {
+                    new Resource("pod", "default-app-pod"),
+                    new Resource("pod2", "app-pod2"),
+                    new Resource("deployment", "deployment-1"),
+                    new Resource("service", "backend"),
+                    new Resource("service", "frontend"),
+                    new Resource("endpoint", "frontend"),
+                    new Resource("volume", "volume1"),
+                }
+            },
+            {
+                new Collection("namespace", "test"), new Resource[]
+                {
+                    new Resource("pod", "test-app-pod"),
+                    new Resource("deployment", "deployment-1"),
+                    new Resource("pod", "test-app-pod2"),
+                    new Resource("deployment", "deployment-2"),
+                }
+            },
+            {
+                new Collection("namespace", "app1"), new Resource[]
+                {
+                    new Resource("pod", "test-app-pod"),
+                    new Resource("deployment", "deployment-1"),
+                }
+            },
         };
 
         /// <summary>
@@ -36,28 +51,44 @@ namespace webapp.Controllers
         /// </summary>
         public static CheckControl[] K8sControls =
         {
-            new CheckControl("hostPIDSet", "Host PID is not configured."),
-            new CheckControl("hostNetworkSet", "Host network is not configured."),
+            new CheckControl("Networking", "hostport", "Host Post is not defined."),
+            new CheckControl("Networking", "nixrootweak", "Host network not configured."),
+            new CheckControl("Security", "runasroot", "Should not be allowed to run as root."),
+            new CheckControl("Security", "hostPIDSet", "Host PID is not configured."),
+            new CheckControl("Security", "hostNetworkSet", "Host network is not configured."),
+            new CheckControl("Security", "nixrootweak", "Root user has weak password."),
+            new CheckControl("Security", "privesc", "Priviledge escalation should not be allowed."),
+            new CheckControl("Resources", "cpuReqSet", "CPU requests must be set."),
+            new CheckControl("Resources", "cpuLimitSet", "CPU limits must be set."),
+            new CheckControl("Health Checks", "liveness", "Liveness probe should be configured."),
+            new CheckControl("Health Checks", "readiness", "Readiness probe should be configured."),
+            new CheckControl("Images", "imgcorrupt", "Container image corrupt."),
+            new CheckControl("Images", "imgtoobig", "Container image too big."),
         };
 
         /// <summary>
-        /// azure check categories.
+        /// azure check collections and resources.
         /// </summary>
-        public static string[] AzCategories =
+        public static Dictionary<Collection, Resource[]> AzCollections
+            = new Dictionary<Collection, Resource[]>
         {
-            "VM",
-            "SQL",
-            "EventHub",
-            "VirtualNetwork",
-        };
-
-        /// <summary>
-        /// azure check collections.
-        /// </summary>
-        public static Collection[] AzCollections =
-        {
-            new Collection("resource group", "common-rg"),
-            new Collection("resource group", "test-rg"),
+            {
+                new Collection("resource group", "common-rg"), new Resource[]
+                {
+                    new Resource("VM", "vm1"),
+                    new Resource("VM", "dev-ubuntu-18.04"),
+                    new Resource("SQL", "pg12-eu"),
+                    new Resource("virtual network", "vr1"),
+                    new Resource("Event Hub", "eh-dev"),
+                }
+            },
+            {
+                new Collection("resource group", "test-rg"), new Resource[]
+                {
+                    new Resource("VM", "win-10-ui-test"),
+                    new Resource("Storage", "test-storage"),
+                }
+            },
         };
 
         /// <summary>
@@ -65,8 +96,19 @@ namespace webapp.Controllers
         /// </summary>
         public static CheckControl[] AzControls =
         {
-            new CheckControl("firewallSet", "firewall is not enabled."),
-            new CheckControl("invalidTemp", "temp directory not defined."),
+            new CheckControl("Networking", "firewallSet", "firewall is not enabled."),
+            new CheckControl("Networking", "certfault", "invalid certificate."),
+            new CheckControl("Networking", "badnic", "NIC misconfigured."),
+            new CheckControl("Storage", "invalidTemp", "temp directory not defined."),
+            new CheckControl("Storage", "lowfreespace", "running out of disk space."),
+            new CheckControl("Storage", "backupnotdefined", "A backup for this storage is not defined."),
+            new CheckControl("VM", "cpulimit", "Invalid CPU limit."),
+            new CheckControl("VM", "ramlimit", "Invalid RAM limit."),
+            new CheckControl("VM", "virtfailed", "Virtualization failed."),
+            new CheckControl("SQL", "sqluser", "Sql user password is not secure."),
+            new CheckControl("SQL", "sqlpaging", "Paging file not configured."),
+            new CheckControl("Event Hub", "ehports", "Event hub ports not configured."),
+            new CheckControl("Event Hub", "ehshare", "Event hub share keys not defined."),
         };
 
         /// <summary>
@@ -108,13 +150,13 @@ namespace webapp.Controllers
                             continue;
 
                         case InfrastructureCategory.Kubernetes:
-                            foreach (var category in K8sCategories)
+                            foreach (var collection in K8sCollections)
                             {
-                                foreach (var collection in K8sCollections)
+                                foreach (var resource in collection.Value)
                                 {
                                     foreach (var control in K8sControls)
                                     {
-                                        list.Add(new Check(component, date, collection, category, control, RandomSeverity()));
+                                        list.Add(new Check(component, date, collection.Key, resource, control.Category, control, RandomSeverity()));
                                     }
                                 }
                             }
@@ -122,13 +164,13 @@ namespace webapp.Controllers
                             break;
 
                         case InfrastructureCategory.Subscription:
-                            foreach (var category in AzCategories)
+                            foreach (var collection in AzCollections)
                             {
-                                foreach (var collection in AzCollections)
+                                foreach (var resource in collection.Value)
                                 {
-                                    foreach (var control in AzControls)
+                                    foreach (var control in AzControls.Where(x => x.Category == resource.Type))
                                     {
-                                        list.Add(new Check(component, date, collection, category, control, RandomSeverity()));
+                                        list.Add(new Check(component, date, collection.Key, resource, control.Category, control, RandomSeverity()));
                                     }
                                 }
                             }
@@ -246,7 +288,7 @@ namespace webapp.Controllers
                         Current = GetCounters[component.Id][i],
                         ScoreHistory = GetScoreHistory(component),
                         ScoreTrend = Trend.GetTrend(GetScoreHistory(component)),
-                        Checks = ComponentChecks().Where(check => check.Object.Id == component.Id && check.Date == Dates[i]).ToArray(),
+                        Checks = ComponentChecks().Where(check => check.Component.Id == component.Id && check.Date == Dates[i]).ToArray(),
                     };
                     result.Add(summary);
                 }

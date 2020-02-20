@@ -21,3 +21,5 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1649:File name should match first type name", Justification = "umut", Scope = "type", Target = "~T:webapp.Models.CheckControl")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:Fields should be private", Justification = "umut", Scope = "member", Target = "~F:webapp.Controllers.Data.K8sControls")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:Fields should be private", Justification = "umut", Scope = "member", Target = "~F:webapp.Controllers.Data.AzControls")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:Fields should be private", Justification = "umut", Scope = "member", Target = "~F:webapp.Controllers.Data.K8sResources")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:Fields should be private", Justification = "umut", Scope = "member", Target = "~F:webapp.Controllers.Data.AzResources")]

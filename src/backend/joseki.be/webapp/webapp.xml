@@ -27,19 +27,20 @@
             </summary>
             <returns>the component scan history.</returns>
         </member>
+        <member name="M:webapp.Controllers.AuditsController.GetComponentDetail(System.String,System.Nullable{System.DateTime})">
+            <summary>
+            Returns the component summary detail.
+            </summary>
+            <returns>the component summary detail.</returns>
+        </member>
         <member name="T:webapp.Controllers.Data">
             <summary>
             data wrapper before connecting to real results.
             </summary>
         </member>
-        <member name="F:webapp.Controllers.Data.K8sCategories">
-            <summary>
-            kubernetes check categories.
-            </summary>
-        </member>
         <member name="F:webapp.Controllers.Data.K8sCollections">
             <summary>
-            kubernetes check collections.
+            kubernetes check collections and resources.
             </summary>
         </member>
         <member name="F:webapp.Controllers.Data.K8sControls">
@@ -47,14 +48,9 @@
             kubernetes check controls.
             </summary>
         </member>
-        <member name="F:webapp.Controllers.Data.AzCategories">
-            <summary>
-            azure check categories.
-            </summary>
-        </member>
         <member name="F:webapp.Controllers.Data.AzCollections">
             <summary>
-            azure check collections.
+            azure check collections and resources.
             </summary>
         </member>
         <member name="F:webapp.Controllers.Data.AzControls">
@@ -166,9 +162,15 @@
             azks: feature name.
             </summary>
         </member>
-        <member name="P:webapp.Models.Check.Object">
+        <member name="P:webapp.Models.Check.Component">
             <summary>
-            The object to be checked.
+            The parent infrastructure component.
+            k8s cluster or az subscription.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.Check.Resource">
+            <summary>
+            the resource of check made against.
             k8s: object (deployment, pod, service etc).
             azks: resource (keyvault etc).
             </summary>
@@ -185,7 +187,7 @@
             Result of the check.
             </summary>
         </member>
-        <member name="M:webapp.Models.Check.#ctor(webapp.Models.InfrastructureComponent,System.DateTime,webapp.Models.Collection,System.String,webapp.Models.CheckControl,webapp.Models.CheckSeverity)">
+        <member name="M:webapp.Models.Check.#ctor(webapp.Models.InfrastructureComponent,System.DateTime,webapp.Models.Collection,webapp.Models.Resource,System.String,webapp.Models.CheckControl,webapp.Models.CheckSeverity)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Models.Check"/> class.
             create unique id on constructor.
@@ -207,12 +209,18 @@
             Message of the control.
             </summary>
         </member>
-        <member name="M:webapp.Models.CheckControl.#ctor(System.String,System.String)">
+        <member name="P:webapp.Models.CheckControl.Category">
+            <summary>
+            Category of the control.
+            </summary>
+        </member>
+        <member name="M:webapp.Models.CheckControl.#ctor(System.String,System.String,System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Models.CheckControl"/> class.
             control constructor.
             </summary>
             <param name="id">id of control.</param>
+            <param name="category">category of control.</param>
             <param name="message">message of control.</param>
         </member>
         <member name="T:webapp.Models.CheckSeverity">
@@ -427,6 +435,35 @@
             <summary>
             Components of second summary.
             </summary>
+        </member>
+        <member name="T:webapp.Models.Resource">
+            <summary>
+            Resource of a check.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.Resource.Id">
+            <summary>
+            Id of the resource.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.Resource.Name">
+            <summary>
+            Name of the resource.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.Resource.Type">
+            <summary>
+            Type of the resource.
+            </summary>
+        </member>
+        <member name="M:webapp.Models.Resource.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Models.Resource"/> class.
+            Resource constructor.
+            </summary>
+            <param name="id">id of Resource.</param>
+            <param name="type">type of Resource.</param>
+            <param name="name">name of Resource.</param>
         </member>
         <member name="T:webapp.Models.ScanResult">
             <summary>

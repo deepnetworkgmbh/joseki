@@ -4,29 +4,31 @@
     <div v-if="loaded" class="segment shadow" style="min-height:300px">
       <div
         class="w-1/4 border-r border-gray-300 flex flex-col justify-center content-center"
-        style="overflow:hidden;">
+        style="overflow:hidden;"
+      >
         <div class="status-icon">
-          <i :class="getScoreIconClass(data.overall.current.score)"></i>
+          <i :class="getScoreIconClass(data.current.score)"></i>
         </div>
         <div class="status-text">
-          <div class="p-1 m-auto rounded-sm text-lg text-center -mt-8 mb-2 pb-4">
-            {{ date | formatDate }}
+          <div
+            class="p-1 m-auto rounded-sm text-lg text-center -mt-8 mb-2 pb-4"
+          >{{ selectedDate | formatDate }}</div>
+
+          <div class="flex flex-row xl:text-xl lg:text-lg md:text-sm">
+            <div class="w-4/12 font-thin text-right mr-1 text-gray-600">Type:</div>
+            <div class="w-6/12 font-hairline text-left">{{ data.component.category }}</div>
           </div>
-          <div class="flex flex-row big-text xl:text-2xl lg:text-xl">
-            <div class="w-7/12 font-thin text-right mr-1 text-gray-600">Score:</div>
-            <div class="w-5/12 font-hairline text-left">{{ data.overall.current.score }}%</div>
+          <div class="flex flex-row xl:text-xl lg:text-lg md:text-sm">
+            <div class="w-4/12 font-thin text-right mr-1 text-gray-600">Id:</div>
+            <div class="w-6/12 font-hairline text-left">{{ data.component.name }}</div>
           </div>
-          <div class="flex flex-row big-text xl:text-2xl lg:text-xl">
-            <div class="w-7/12 font-thin text-right mr-1 text-gray-600">Grade:</div>
-            <div class="w-5/12 font-hairline text-left">{{ getGrade(data.overall.current.score) }}</div>
+          <div class="flex flex-row xl:text-xl lg:text-lg md:text-sm">
+            <div class="w-4/12 font-thin text-right mr-1 text-gray-600">Score:</div>
+            <div class="w-6/12 font-hairline text-left">{{ data.current.score }}%</div>
           </div>
-          <div class="flex flex-row big-text xl:text-2xl lg:text-xl">
-            <div class="w-7/12 font-thin text-right mr-1 text-gray-600">Clusters:</div>
-            <div class="w-5/12 font-hairline text-left">{{ getClusters() }}</div>
-          </div>
-          <div class="flex flex-row big-text xl:text-2xl lg:text-xl">
-            <div class="w-7/12 font-thin text-right mr-1 text-gray-600">Subscriptions:</div>
-            <div class="w-5/12 font-hairline text-left">{{ getSubscriptions() }}</div>
+          <div class="flex flex-row xl:text-xl lg:text-lg md:text-sm">
+            <div class="w-4/12 font-thin text-right mr-1 text-gray-600">Grade:</div>
+            <div class="w-6/12 font-hairline text-left">{{ getGrade(data.current.score) }}</div>
           </div>
         </div>
       </div>
@@ -35,85 +37,72 @@
       </div>
       <div class="w-1/4 border-l border-gray-300" style="z-index:10;">
         <div id="overall_bar" class="w-auto border-b border-gray-500 p-2 ml-1 mb-3"></div>
-        <div class="m-3 mt-0">
-          <table class="border border-gray-200 w-full text-xs p-4">
-            <thead>
-              <tr class="bg-gray-500 text-white">
-                <th colspan="3">Last Scans</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(scan,i) in shortHistory" :key="`scan${i}`">
-                <td>{{ scan.recordedAt | formatDate }}</td>
-                <td class="w-1">{{scan.score}}%</td>
-                <td class="w-1" v-html="getArrowHtml(i)"></td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colspan="3" class="bg-gray-500 text-center">
-                  <button class="btn" @click="goComponentHistory()">See All</button>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
+        <div class="text-center">
+          <button class="btn" @click="goComponentHistory()">See All Scan History</button>
         </div>
       </div>
     </div>
-    <div v-if="loaded" class="segment shadow">
-      <div class="w-full flex flex-wrap pt-2 pl-1">
-        <div v-for="(c, i) in data.components" :key="`scan${i}`" class="scan-detailed-item flex flex-row shadow">
-          <div class="w-full p-2 text-lg pt-0 flex flex-col">
-            <div class='component-history-button'>
-              <button @click="goComponentHistory(c.component)">History</button>
-            </div>            
-            <div class="text-sm">{{ c.component.name }}</div>
-            <div class="text-xs text-gray-600 -mt-1">{{c.component.category}}</div>
-            <div style="height:50px;width:130px;" :id="`bar${i}`"></div>
-          </div>
-          <div class="p-2" style="width: 100px;">
-            <div style="position:relative;font-size:18px;z-index:1;left:19px;top:23px;">{{c.current.score}}%</div>
-            <div style="position:relative;top:-25px;z-index:0;">
-              <vc-donut
-                :sections="c.sections"
-                :size="70"
-                unit="px"
-                :total="c.current.total"
-                :thickness="25"
-              ></vc-donut>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div v-if="loaded" class="segment shadow" style="flex-direction:column">
+      <h1 class="mb-2">Results By Category</h1>
+      <hr class='mb-2' />
+      <div v-for="(category,i) in Object.keys(ResultsByCategory)" :key="category">
+        <ul>
+          <li>
+            <input type="checkbox" v-bind:id="`cat${i}`" />
+            <label class="text-base" v-bind:for="`cat${i}`">
+              <strong>{{category}}</strong>              
+              <span class="text-xs">
+              score <strong>{{ResultsByCategory[category].score}}%</strong>
+              </span>
+            </label>
+            <StatusBar :counters="ResultsByCategory[category]" />
+            <ul>
+             ???
+            </ul>
+          </li>
+        </ul>
+      </div>      
     </div>
-    <div :class="getPanelClass()" style="z-index:90;">
-      <div v-if="panelOpen" class="p-2">
-        <button class="btn m-1" @click="panelOpen=false" style="float:right;border:none;">X</button>
-        <h1 class="-mt-1">Select Scans to Compare</h1>
-        <h1 class="mt-1 font-bold">for Overall</h1>
-        <div class="scan-list">
-          <table style="width:100%">
-            <tr v-for="(scan,i) in data.overall.scoreHistory" :key="`scan${i}1`">
-              <td class="w-1">
-               <input type="checkbox" class='chk' :id="`scan${i}1`" :value="`${scan.recordedAt}`" v-model="checkedScans" 
-               :disabled="checkDisabled(i, `${scan.recordedAt}`)">
-              </td>
-              <td class='text-sm'>{{ scan.recordedAt | formatDate }}</td>
-              <td class='text-sm'>{{ scan.id }}</td>
-              <td class="w-1" v-html="getArrowHtml(i)"></td>
-              <td class="w-1 text-sm">{{scan.score}}%</td>
-            </tr>
-          </table>
-        </div>
-        <div class='panel-button-container'>
-          <div class='text-right m-2'>
-            <button class="btn" @click="CompareScans()" :disabled='canCompare()'>Compare</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div v-if="loaded" class="segment shadow" style="flex-direction:column">
+      <h1 class="mb-2">Results by Resources</h1>
+      <hr class='mb-2' />
+      <ul v-for="(collection,i) in Object.keys(ResultsByCollection)" :key="collection">
+          <li>
+            <input type="checkbox" :id="`target${i}`" checked />
+            <label :for="`target${i}`" class="target">
+               <strong>{{ ResultsByCollection[collection].type }}</strong> : {{ ResultsByCollection[collection].name }}
+                <span class="text-xs">
+                  score <strong>{{ResultsByCollection[collection].score}}%</strong>
+                </span>
+            </label>
+            <StatusBar :counters="ResultsByCollection[collection].counters" />
+            <ul v-for="(obj, g) in Object.keys(ResultsByCollection[collection].objects)" :key="`obj${i}-${g}`">
+              <li>
+                <input type="checkbox" :id="`obj${i}-${g}`" checked />
+                <label :for="`obj${i}-${g}`" class="text-base">
+                   <strong>{{ ResultsByCollection[collection].objects[obj].type }} : </strong>
+                   {{ ResultsByCollection[collection].objects[obj].name }}
+                </label>
+                <ul v-for="(control, c) in ResultsByCollection[collection].objects[obj].controls" 
+                   :key="`control${i}-${g}-${c}`">
+                  <li>
+                    <label :for="`control${i}-${g}-${c}`" class="text-sm">
+                       <i :class="control.icon"></i>
+                      <i>{{ control.id }}</i> : {{ control.text }}
+                       <span class="tool" :data-tip="control.text">
+                        <i class="far fa-question-circle tip-icon"></i>
+                      </span>
+                    </label>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul> 
+
+  </div>
   </div>
 </template>
 
-<script lang="ts" src="./Overview.ts"></script>
-<style lang="scss" src="./Overview.scss"></style>
+<script lang="ts" src="./ComponentDetail.ts"></script>
+<style lang="scss" src="./ComponentDetail.scss"></style>

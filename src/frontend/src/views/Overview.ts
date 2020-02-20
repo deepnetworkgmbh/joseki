@@ -83,9 +83,11 @@ export default class Overview extends Vue {
 
     goComponentDetail(component: InfrastructureComponent, date: string) {
         console.log(`going component detail: ${component.id}`);
-        if (component) {
-            router.push('/component-detail/' + component.id + '/' + date);
+        let params = component.id;
+        if (date) {
+            params += '/' + date;
         }
+        router.push('/component-detail/' + params);
     }
 
 

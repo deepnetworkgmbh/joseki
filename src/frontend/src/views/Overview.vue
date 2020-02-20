@@ -65,7 +65,7 @@
         <div v-for="(c, i) in data.components" :key="`scan${i}`" 
              class="scan-detailed-item flex flex-row shadow">
           <div class="w-full p-2 text-lg pt-0 flex flex-col">
-            <div class='component-history-button'>
+            <div class='component-buttons'>
               <button @click="goComponentHistory(c.component)">History</button>
               <button @click="goComponentDetail(c.component)">Detail</button>
             </div>            
@@ -74,11 +74,11 @@
             <div style="height:50px;width:130px;" :id="`bar${i}`"></div>
           </div>
           <div class="p-2" style="width: 100px;" @click="goComponentDetail(c.component)">
-            <div style="position:relative;font-size:18px;z-index:1;left:19px;top:23px;">{{c.current.score}}%</div>
-            <div style="position:relative;top:-25px;z-index:0;">
+            <div style="position:relative;font-size:18px;z-index:1;left:15px;top:30px;">{{c.current.score}}%</div>
+            <div style="position:relative;top:-12px;z-index:0;">
               <vc-donut
                 :sections="c.sections"
-                :size="70"
+                :size="60"
                 unit="px"
                 :total="c.current.total"
                 :thickness="25"

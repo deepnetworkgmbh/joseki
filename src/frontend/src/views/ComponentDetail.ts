@@ -3,7 +3,7 @@ import { ChartService } from "@/services/ChartService"
 import Spinner from "@/components/spinner/Spinner.vue";
 import StatusBar from "@/components/statusbar/StatusBar.vue";
 import { DataService } from '@/services/DataService';
-import { InfrastructureOverview, InfrastructureComponentSummary, InfrastructureComponent } from '@/models/InfrastructureOverview';
+import { InfrastructureOverview, InfrastructureComponentSummary, InfrastructureComponent, CountersSummary, CheckSeverity } from '@/models/InfrastructureOverview';
 import { ScoreService } from '@/services/ScoreService';
 import router from '@/router';
 
@@ -17,6 +17,8 @@ export default class ComponentDetail extends Vue {
 
     @Prop({ default: null })
     date!: string;
+
+    selectedDate: Date = new Date();
 
     loaded: boolean = false;
     service: DataService = new DataService();
@@ -34,8 +36,8 @@ export default class ComponentDetail extends Vue {
         this.service.getComponentDetailData(this.id, dateString)
             .then(response => {
                 this.data = response;
-                this.data.scoreHistory = this.data.scoreHistory.reverse();
                 console.log(`[] data is`, this.data);
+                this.data.scoreHistory = this.data.scoreHistory.reverse();
                 this.loaded = true;
                 this.setupCharts();
             });
@@ -53,11 +55,11 @@ export default class ComponentDetail extends Vue {
 
 
     drawCharts() {
-        let _date = this.date ?
+        this.selectedDate = this.date ?
             new Date(decodeURIComponent(this.date))
             : this.data.scoreHistory[0].recordedAt;
         ChartService.drawPieChart(this.data.current, "overall_pie", 300)
-        ChartService.drawBarChart(this.data.scoreHistory, "overall_bar", _date, this.dayClicked)
+        ChartService.drawBarChart(this.data.scoreHistory, "overall_bar", this.selectedDate, this.dayClicked)
     }
 
     dayClicked(date: Date) {
@@ -65,9 +67,9 @@ export default class ComponentDetail extends Vue {
         router.push('/overview/' + encodeURIComponent(date.toISOString()));
     }
 
-    goComponentHistory(component: InfrastructureComponent) {
-        if (component) {
-            router.push('/component-history/' + component.id);
+    goComponentHistory() {
+        if (this.data.component) {
+            router.push('/component-history/' + this.data.component.id);
         } else {
             router.push('/component-history/');
         }
@@ -123,5 +125,144 @@ export default class ComponentDetail extends Vue {
 
     getScoreIconClass(score: number) { return ScoreService.getScoreIconClass(score); }
     getGrade(score: number) { return ScoreService.getGrade(score); }
+
+
+    get ResultsByCategory() {
+
+        var categoryCounters = {};
+
+        // walk over all checks and group them by cateory.
+        for (let i = 0; i < this.data.checks.length; i++) {
+
+            const check = this.data.checks[i];
+
+            if (categoryCounters[check.category] === undefined) {
+                categoryCounters[check.category] = new CountersSummary();
+            }
+
+            switch (check.result.toString()) {
+                case 'Failed':
+                    categoryCounters[check.category].failed += 1;
+                    break;
+                case 'NoData':
+                    categoryCounters[check.category].noData += 1;
+                    break;
+                case 'Warning':
+                    categoryCounters[check.category].warning += 1;
+                    break;
+                case 'Success':
+                    categoryCounters[check.category].passed += 1;
+                    break;
+            }
+
+            categoryCounters[check.category].total += 1;
+        }
+        //console.log(categoryCounters);
+
+        let keys = Object.keys(categoryCounters);
+        for (let i = 0; i < keys.length; i++) {
+            categoryCounters[keys[i]].score = categoryCounters[keys[i]].calculateScore();
+        }
+
+        return categoryCounters;
+    }
+
+    get ResultsByCollection() {
+
+        // collection1
+        //  - object1
+        //    - control 1
+        //    - control 2
+        //  - object2
+        //    - control 1
+        //    - control 2
+        // collection2
+        //  - object1
+        //    - control 1
+        //    - control 2
+        //  - object2
+        //    - control 1
+        //    - control 2
+
+        var results = {};
+
+        // walk over all checks and group them by collections.
+        for (let i = 0; i < this.data.checks.length; i++) {
+            let row = this.data.checks[i];
+
+            if (results[row.collection.name] === undefined) {
+                results[row.collection.name] = {
+                    type: row.collection.type,
+                    name: row.collection.name,
+                    counters: new CountersSummary(),
+                    score: 0,
+                    objects: {},
+                };
+            }
+
+            switch (row.result.toString()) {
+                case 'Failed':
+                    results[row.collection.name].counters.failed += 1;
+                    break;
+                case 'NoData':
+                    results[row.collection.name].counters.noData += 1;
+                    break;
+                case 'Warning':
+                    results[row.collection.name].counters.warning += 1;
+                    break;
+                case 'Success':
+                    results[row.collection.name].counters.passed += 1;
+                    break;
+            }
+            results[row.collection.name].counters.total += 1;
+
+            if (results[row.collection.name].objects[row.resource.id] === undefined) {
+                results[row.collection.name].objects[row.resource.id] = {
+                    type: row.resource.type,
+                    name: row.resource.name,
+                    controls: []
+                }
+            }
+
+            results[row.collection.name].objects[row.resource.id].controls.push({
+                id: row.control.id,
+                text: row.control.message,
+                result: row.result,
+                icon: this.getControlIcon(row.result),
+                order: this.getSeverityScore(row.result)
+            });
+        }
+
+        let keys = Object.keys(results);
+        for (let i = 0; i < keys.length; i++) {
+            results[keys[i]].score = results[keys[i]].counters.calculateScore();
+
+            for (let j = 0; j < Object.keys(results[keys[i]].objects).length; j++) {
+                let key = Object.keys(results[keys[i]].objects)[j];
+                results[keys[i]].objects[key].controls.sort((a, b) => (a.order < b.order) ? -1 : (a.order > b.order) ? 1 : 0)
+            }
+        }
+
+        console.log(results);
+        return results;
+    }
+
+    getControlIcon(severity: CheckSeverity) {
+        switch (severity.toString()) {
+            case 'NoData': return "fas fa-times nodata-icon";
+            case 'Failed':
+            case 'Warning': return "fas fa-exclamation-triangle warning-icon";
+            case 'Success': return "fas fa-check noissues-icon";
+        }
+    }
+
+    getSeverityScore(severity: CheckSeverity) {
+        switch (severity.toString()) {
+            case 'NoData': return 100;
+            case 'Failed':
+            case 'Warning': return 10;
+            case 'Success': return 1;
+        }
+    }
 
 }
