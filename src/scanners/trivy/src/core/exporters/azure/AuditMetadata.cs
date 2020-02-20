@@ -7,6 +7,12 @@ namespace core.exporters.azure
         [JsonProperty(PropertyName = "audit-id")]
         public string AuditId { get; set; }
 
+        /// <summary>
+        /// Full image tag.
+        /// </summary>
+        [JsonProperty(PropertyName = "image-tag")]
+        public string ImageTag { get; set; }
+
         [JsonProperty(PropertyName = "scanner-version")]
         public string ScannerVersion { get; set; }
 
