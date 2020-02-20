@@ -41,33 +41,40 @@ namespace webapp.BackgroundJobs
         {
             while (!cancellation.IsCancellationRequested)
             {
-                var item = this.containers.Values.OrderBy(c => c.NextProcessingTime).FirstOrDefault();
-
-                if (item == null)
+                try
                 {
-                    var delay = TimeSpan.FromMinutes(1);
-                    Logger.Information("Scheduler is sleeping for {Delay}. Reason: {TimeoutReason}", delay, "No working items in the queue");
-                    await Task.Delay(delay, cancellation);
-                }
-                else
-                {
-                    Logger.Information("Scheduler is processing {ContainerName}", item.Container.Name);
-                    var now = DateTime.UtcNow;
-                    var nextProcessingTime = item.NextProcessingTime;
+                    var item = this.containers.Values.OrderBy(c => c.NextProcessingTime).FirstOrDefault();
 
-                    if (nextProcessingTime > now)
+                    if (item == null)
                     {
-                        var delay = item.NextProcessingTime - now;
-
-                        Logger.Information("Scheduler is sleeping for {Delay}. Reason: {TimeoutReason}", delay, "Too early to run");
+                        var delay = TimeSpan.FromMinutes(1);
+                        Logger.Information("Scheduler is sleeping for {Delay}. Reason: {TimeoutReason}", delay, "No working items in the queue");
                         await Task.Delay(delay, cancellation);
                     }
+                    else
+                    {
+                        Logger.Information("Scheduler is processing {ContainerName}", item.Container.Name);
+                        var now = DateTime.UtcNow;
+                        var nextProcessingTime = item.NextProcessingTime;
 
-                    var auditProcessor = this.processorFactory.GetProcessor(item.Container.Metadata);
-                    await auditProcessor.Process(item.Container, cancellation);
+                        if (nextProcessingTime > now)
+                        {
+                            var delay = item.NextProcessingTime - now;
 
-                    item.LastProcessed = DateTime.UtcNow;
-                    Logger.Information("Scheduler has processed {ContainerName}", item.Container.Name);
+                            Logger.Information("Scheduler is sleeping for {Delay}. Reason: {TimeoutReason}", delay, "Too early to run");
+                            await Task.Delay(delay, cancellation);
+                        }
+
+                        var auditProcessor = this.processorFactory.GetProcessor(item.Container.Metadata);
+                        await auditProcessor.Process(item.Container, cancellation);
+
+                        item.LastProcessed = DateTime.UtcNow;
+                        Logger.Information("Scheduler has processed {ContainerName}", item.Container.Name);
+                    }
+                }
+                catch (TaskCanceledException ex)
+                {
+                    Logger.Information(ex, "Scheduler Assistant was canceled");
                 }
             }
         }
