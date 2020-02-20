@@ -19,5 +19,14 @@ namespace webapp.Database
         /// <param name="audit">The entire audit object, including checks, check-results, and metadata.</param>
         /// <returns>A task object.</returns>
         Task SaveAuditResult(Audit audit);
+
+        /// <summary>
+        /// Saves all the image-scan related data to the database:
+        /// - image scan itself;
+        /// - associated CVEs.
+        /// </summary>
+        /// <param name="imageScanResult">The entire Image Scan Result object.</param>
+        /// <returns>A task object.</returns>
+        Task SaveImageScanResult(ImageScanResult imageScanResult);
     }
 }

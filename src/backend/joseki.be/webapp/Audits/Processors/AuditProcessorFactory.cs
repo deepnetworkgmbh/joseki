@@ -6,6 +6,7 @@ using Serilog;
 
 using webapp.Audits.Processors.azsk;
 using webapp.Audits.Processors.polaris;
+using webapp.Audits.Processors.trivy;
 
 namespace webapp.Audits.Processors
 {
