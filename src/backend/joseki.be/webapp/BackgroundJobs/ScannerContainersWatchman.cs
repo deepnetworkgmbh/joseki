@@ -47,19 +47,26 @@ namespace webapp.BackgroundJobs
         {
             while (!cancellation.IsCancellationRequested)
             {
-                Logger.Information("Scanner Containers watchman is going out.");
+                try
+                {
+                    Logger.Information("Scanner Containers watchman is going out.");
 
-                var containers = await this.blobStorage.ListAllContainers();
-                var metadataTasks = containers
-                    .Select(this.DownloadAndParseMetadata<ScannerMetadata>)
-                    .ToArray();
-                await Task.WhenAll(metadataTasks);
+                    var containers = await this.blobStorage.ListAllContainers();
+                    var metadataTasks = containers
+                        .Select(this.DownloadAndParseMetadata<ScannerMetadata>)
+                        .ToArray();
+                    await Task.WhenAll(metadataTasks);
 
-                var schedulerItems = metadataTasks.Select(t => t.Result).ToArray();
-                this.scheduler.UpdateWorkingItems(schedulerItems);
+                    var schedulerItems = metadataTasks.Select(t => t.Result).ToArray();
+                    this.scheduler.UpdateWorkingItems(schedulerItems);
 
-                Logger.Information("Scanner Containers watchman finished the detour.");
-                await Task.Delay(TimeSpan.FromSeconds(this.config.Watchmen.ScannerContainersPeriodicity), cancellation);
+                    Logger.Information("Scanner Containers watchman finished the detour.");
+                    await Task.Delay(TimeSpan.FromSeconds(this.config.Watchmen.ScannerContainersPeriodicity), cancellation);
+                }
+                catch (TaskCanceledException ex)
+                {
+                    Logger.Information(ex, "Scanner Containers watchman was canceled");
+                }
             }
         }
 
