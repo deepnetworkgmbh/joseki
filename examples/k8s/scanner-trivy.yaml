@@ -44,13 +44,13 @@ metadata:
   labels:
     app: scanner-trivy
     module: scanners
-    version: 0.1.0
+    version: 0.1.1
 data:
   scanner-trivy-config.yaml:  |-
     scanner:
       !trivy-scanner
       id: 831c5288-5b95-4a28-a664-87d02e50770e
-      version: 0.1.0
+      version: 0.1.1
       trivyVersion: 0.4.3
       binaryPath: /usr/local/bin/trivy
       cachePath: /app/.cache/.trivy
@@ -100,7 +100,7 @@ metadata:
   labels:
     app: scanner-trivy
     module: scanners
-    version: 0.1.0
+    version: 0.1.1
 spec:
   replicas: 1
   strategy:
@@ -118,11 +118,11 @@ spec:
       labels:
         app: scanner-trivy
         module: scanners
-        version: 0.1.0
+        version: 0.1.1
     spec:
       containers:
       - name: scanner-trivy
-        image: deepnetwork/joseki-scanner-trivy:0.1.0
+        image: deepnetwork/joseki-scanner-trivy:0.1.1
         imagePullPolicy: Always
         resources:
           requests:
