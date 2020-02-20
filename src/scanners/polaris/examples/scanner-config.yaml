@@ -1,5 +1,6 @@
 scanner:
   id: 8fc1b601-d5a2-466d-8236-c747c1dc02a2
+  cluster-id: 8fc1b601-d5a2-466d-8236-c747c1dc02a2
   periodicity: "0 2 * * *"
   heartbeat-periodicity: 86400
   version: 0.1.2

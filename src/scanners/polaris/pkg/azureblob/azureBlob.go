@@ -4,12 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/Azure/azure-storage-blob-go/azblob"
-	"github.com/deepnetworkgmbh/joseki/src/scanners/polaris/pkg/config"
-	"github.com/deepnetworkgmbh/joseki/src/scanners/polaris/pkg/scanner"
 	"log"
 	"net/url"
 	"time"
+
+	"github.com/Azure/azure-storage-blob-go/azblob"
+	"github.com/deepnetworkgmbh/joseki/src/scanners/polaris/pkg/config"
+	"github.com/deepnetworkgmbh/joseki/src/scanners/polaris/pkg/scanner"
 )
 
 type Client struct {
@@ -20,9 +21,9 @@ type Client struct {
 
 func CreateBlobClient(config config.Config) *Client {
 	blobclient := Client{
-		config:config,
-		BaseUrl:config.AzureBlob.StorageBaseUrl,
-		SasToken:config.AzureBlob.SasToken,
+		config:   config,
+		BaseUrl:  config.AzureBlob.StorageBaseUrl,
+		SasToken: config.AzureBlob.SasToken,
 	}
 
 	return &blobclient
@@ -38,6 +39,7 @@ type ScannerMetadata struct {
 
 type AuditMetadata struct {
 	Id                 string      `json:"audit-id"`
+	ClusterId          string      `json:"cluster-id"`
 	ScannerVersion     string      `json:"scanner-version"`
 	Timestamp          int64       `json:"timestamp"`
 	Result             AuditResult `json:"result"`
@@ -50,39 +52,40 @@ type AuditMetadata struct {
 type AuditResult string
 
 const (
-	Succeeded AuditResult = "succeeded"
-	AuditFailed = "audit-failed"
-	Unknown = "unknown"
-	UploadFailed = "upload-failed"
+	Succeeded    AuditResult = "succeeded"
+	AuditFailed              = "audit-failed"
+	Unknown                  = "unknown"
+	UploadFailed             = "upload-failed"
 )
 
-func (client *Client) UploadAuditResult(polarisResult scanner.PolarisAudit)  (err error) {
+func (client *Client) UploadAuditResult(polarisResult scanner.PolarisAudit) (err error) {
 	now := time.Now().UTC()
 	result := normalizeResult(polarisResult.Result)
 	folderName := GenerateAuditFolderName(now)
 
 	auditMeta := AuditMetadata{
 		Id:                 client.config.Scanner.Id,
+		ClusterId:          client.config.Scanner.ClusterId,
 		ScannerVersion:     client.config.Scanner.Version,
 		Timestamp:          now.Unix(),
 		Result:             result,
 		FailureDescription: polarisResult.FailureDescription,
 		PolarisVersion:     client.config.Polaris.Version,
-		PolarisAuditPath: "audit.json",
-		KubeMetadataPath: "k8s-meta.json",
+		PolarisAuditPath:   fmt.Sprintf("%s/audit.json", folderName),
+		KubeMetadataPath:   fmt.Sprintf("%s/k8s-meta.json", folderName),
 	}
 
 	if result == AuditFailed {
 		auditMeta.Result = AuditFailed
 		auditMeta.FailureDescription = polarisResult.FailureDescription
 	} else {
-		err = client.uploadObject(fmt.Sprintf("%s/%s", folderName, auditMeta.PolarisAuditPath), polarisResult.Audit)
+		err = client.uploadObject(auditMeta.PolarisAuditPath, polarisResult.Audit)
 		if err != nil {
 			auditMeta.Result = UploadFailed
 			auditMeta.FailureDescription = "Uploading audit result to the blob storage failed"
 		}
 
-		err = client.uploadObject(fmt.Sprintf("%s/%s", folderName, auditMeta.KubeMetadataPath), polarisResult.KubeMetadata)
+		err = client.uploadObject(auditMeta.KubeMetadataPath, polarisResult.KubeMetadata)
 		if err != nil {
 			auditMeta.Result = UploadFailed
 			auditMeta.FailureDescription = "Uploading kubernetes metadata to the blob storage failed"
@@ -125,11 +128,11 @@ func (client *Client) uploadObject(blobPath string, obj interface{}) error {
 func normalizeResult(result string) AuditResult {
 	switch result {
 	case "success":
-		return Succeeded;
+		return Succeeded
 	case "failed":
-		return AuditFailed;
+		return AuditFailed
 	default:
-		return Unknown;
+		return Unknown
 	}
 }
 
