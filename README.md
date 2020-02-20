@@ -6,7 +6,6 @@ The project integrates multiple open-sourced tools:
 
 - Container Image vulnerabilities scanner [trivy](https://github.com/aquasecurity/trivy).
 - Kubernetes objects validator [polaris](https://github.com/FairwindsOps/polaris).
-- Kubernetes cluster configuration validator [kube-bench](https://github.com/aquasecurity/kube-bench).
 - Cloud infrastructure auditor [az-sk](https://github.com/azsk/DevOpsKit)
 
-More are coming ;) Take a look on the project [Overview](./PRODUCTOVERVIEW.md), [Technical Design](./TECH_DESIGN.md), and [Roadmap](./ROADMAP.md).
+More are coming ;) Take a look on the project [Overview](./PRODUCTOVERVIEW.md), [Technical Design](./TECH_DESIGN.md), and [Roadmap](./PRODUCTOVERVIEW.md#roadmap).
