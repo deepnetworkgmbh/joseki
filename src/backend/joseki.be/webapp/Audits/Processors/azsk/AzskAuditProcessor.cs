@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,6 +23,9 @@ namespace webapp.Audits.Processors.azsk
     public class AzskAuditProcessor : IAuditProcessor
     {
         private static readonly ILogger Logger = Log.ForContext<AzskAuditProcessor>();
+
+        // TODO: replace with external Check-cache object
+        private static readonly ConcurrentDictionary<string, Check> ChecksCache = new ConcurrentDictionary<string, Check>();
 
         private readonly IBlobStorageProcessor blobStorage;
         private readonly IJosekiDatabase db;
@@ -49,9 +53,16 @@ namespace webapp.Audits.Processors.azsk
                     return;
                 }
 
-                Logger.Information("Processing audit result from {AuditName} container was {ProcessingState}", audit.Name, "started");
-                await this.ProcessSingleAudit(audit);
-                Logger.Information("Processing audit result from {AuditName} container was {ProcessingState}", audit.Name, "finished");
+                try
+                {
+                    Logger.Information("Processing audit result from {AuditName} container was {ProcessingState}", audit.Name, "started");
+                    await this.ProcessSingleAudit(audit);
+                    Logger.Information("Processing audit result from {AuditName} container was {ProcessingState}", audit.Name, "finished");
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Processing audit result from {AuditName} container was {ProcessingState}", audit.Name, "failed");
+                }
             }
         }
 
@@ -183,8 +194,6 @@ namespace webapp.Audits.Processors.azsk
 
         private (JArray resources, List<CheckResult> checks) ParseResourcesAndChecks(JArray[] rawData, AuditMetadata auditMeta)
         {
-            // TODO: replace with external Check-cache object
-            var checks = new Dictionary<string, Check>();
             var checksResults = new List<CheckResult>();
             var resources = new Dictionary<string, JToken>();
 
@@ -198,19 +207,14 @@ namespace webapp.Audits.Processors.azsk
                         var controlItem = item["ControlItem"];
                         var checkId = $"azsk.{controlItem["ControlID"].Value<string>()}";
 
-                        if (!checks.TryGetValue(checkId, out var check))
+                        var check = ChecksCache.GetOrAdd(checkId, new Check
                         {
-                            check = new Check
-                            {
-                                Id = checkId,
-                                Severity = this.ToSeverity(controlItem["ControlSeverity"].Value<string>()),
-                                Category = item["FeatureName"].Value<string>(),
-                                Description = $"{controlItem["Description"].Value<string>()}{Environment.NewLine}{controlItem["Rationale"].Value<string>()}",
-                                Remediation = controlItem["Recommendation"].Value<string>(),
-                            };
-
-                            checks.Add(checkId, check);
-                        }
+                            Id = checkId,
+                            Severity = this.ToSeverity(controlItem["ControlSeverity"].Value<string>()),
+                            Category = item["FeatureName"].Value<string>(),
+                            Description = $"{controlItem["Description"].Value<string>()}{Environment.NewLine}{controlItem["Rationale"].Value<string>()}",
+                            Remediation = controlItem["Recommendation"].Value<string>(),
+                        });
 
                         var checkResult = this.ToCheckResult(item);
                         checkResult.AuditId = auditMeta.AuditId;

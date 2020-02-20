@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
 using webapp.Audits.Processors.azsk;
+using webapp.Audits.Processors.polaris;
 
 namespace webapp.Audits.Processors
 {
