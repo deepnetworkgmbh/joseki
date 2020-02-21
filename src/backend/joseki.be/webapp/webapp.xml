@@ -537,6 +537,16 @@
             Joseki Backend service configuration.
             </summary>
         </member>
+        <member name="P:webapp.Configuration.JosekiConfiguration.Database">
+            <summary>
+            Database related configuration.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.JosekiConfiguration.Cache">
+            <summary>
+            Aggregated Cache related configuration.
+            </summary>
+        </member>
         <member name="P:webapp.Configuration.JosekiConfiguration.AzureBlob">
             <summary>
             Azure Blob related configuration.
@@ -545,6 +555,26 @@
         <member name="P:webapp.Configuration.JosekiConfiguration.Watchmen">
             <summary>
             Aggregated Watchmen configs.
+            </summary>
+        </member>
+        <member name="T:webapp.Configuration.DatabaseConfig">
+            <summary>
+            Database related configuration.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.DatabaseConfig.ConnectionString">
+            <summary>
+            MSSQL server connection string with place-holders fow username and password.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.DatabaseConfig.Username">
+            <summary>
+            MSSQL database username.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.DatabaseConfig.Password">
+            <summary>
+            MSSQL database password.
             </summary>
         </member>
         <member name="T:webapp.Configuration.AzureBlobConfig">
@@ -1013,15 +1043,15 @@
             Json-encoded representation of kube-metadata.
             </summary>
         </member>
-        <member name="T:webapp.Database.PsqlJosekiDatabase">
+        <member name="T:webapp.Database.MssqlJosekiDatabase">
             <summary>
             P-sql implementation of Database.
             </summary>
         </member>
-        <member name="M:webapp.Database.PsqlJosekiDatabase.SaveAuditResult(webapp.Database.Models.Audit)">
+        <member name="M:webapp.Database.MssqlJosekiDatabase.SaveAuditResult(webapp.Database.Models.Audit)">
             <inheritdoc />
         </member>
-        <member name="M:webapp.Database.PsqlJosekiDatabase.SaveImageScanResult(webapp.Database.Models.ImageScanResult)">
+        <member name="M:webapp.Database.MssqlJosekiDatabase.SaveImageScanResult(webapp.Database.Models.ImageScanResult)">
             <inheritdoc />
         </member>
         <member name="T:webapp.Infrastructure.HttpRequestLoggingMiddleware">
@@ -1425,6 +1455,12 @@
             </summary>
             <param name="app">Builder object.</param>
             <param name="env">Environment configuration.</param>
+        </member>
+        <member name="M:webapp.Startup.RunDbMigrations(Microsoft.AspNetCore.Builder.IApplicationBuilder)">
+            <summary>
+            Apply database schema migrations on service startup.
+            </summary>
+            <param name="app">A instance of <see cref="T:Microsoft.AspNetCore.Builder.IApplicationBuilder"/>.</param>
         </member>
     </members>
 </doc>

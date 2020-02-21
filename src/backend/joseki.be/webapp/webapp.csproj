@@ -39,5 +39,9 @@
     <PackageReference Include="YamlDotNet" Version="8.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\joseki.db\joseki.db.csproj" />
+  </ItemGroup>
+
 
 </Project>

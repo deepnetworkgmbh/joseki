@@ -1,9 +1,12 @@
 using System.IO;
 using System.Text.Json.Serialization;
 
+using joseki.db;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -86,7 +89,18 @@ namespace webapp
             });
 
             services.AddTransient<IBlobStorageProcessor, AzureBlobStorageProcessor>();
-            services.AddTransient<IJosekiDatabase, PsqlJosekiDatabase>();
+
+            services.AddDbContext<JosekiDbContext>((provider, options) =>
+            {
+                var config = provider.GetService<ConfigurationParser>().Get();
+                var sqlConnectionString = string.Format(config.Database.ConnectionString, config.Database.Username, config.Database.Password);
+                options.UseSqlServer(
+                    sqlConnectionString,
+                    o => o
+                        .MigrationsAssembly(typeof(JosekiDbContext).Assembly.GetName().Name)
+                        .EnableRetryOnFailure());
+            });
+            services.AddTransient<IJosekiDatabase, MssqlJosekiDatabase>();
 
             services.AddTransient<AzskAuditProcessor>();
             services.AddTransient<PolarisAuditProcessor>();
@@ -112,6 +126,8 @@ namespace webapp
 
             app.UseHealthChecks("/health/liveness", CreateHealthCheckOptions("liveness"));
             app.UseHealthChecks("/health/readiness", CreateHealthCheckOptions("readiness"));
+
+            RunDbMigrations(app);
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -139,6 +155,17 @@ namespace webapp
             {
                 Predicate = x => x.Tags.Contains(tag),
             };
+        }
+
+        /// <summary>
+        /// Apply database schema migrations on service startup.
+        /// </summary>
+        /// <param name="app">A instance of <see cref="IApplicationBuilder"/>.</param>
+        private static void RunDbMigrations(IApplicationBuilder app)
+        {
+            using var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            using var context = serviceScope.ServiceProvider.GetService<JosekiDbContext>();
+            context.Database.Migrate();
         }
     }
 }

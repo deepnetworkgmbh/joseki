@@ -9,9 +9,9 @@ namespace webapp.Database
     /// <summary>
     /// P-sql implementation of Database.
     /// </summary>
-    public class PsqlJosekiDatabase : IJosekiDatabase
+    public class MssqlJosekiDatabase : IJosekiDatabase
     {
-        private static readonly ILogger Logger = Log.ForContext<PsqlJosekiDatabase>();
+        private static readonly ILogger Logger = Log.ForContext<MssqlJosekiDatabase>();
 
         /// <inheritdoc />
         public Task SaveAuditResult(Audit audit)
