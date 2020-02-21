@@ -189,4 +189,17 @@ export class DataService {
       .finally(() => console.log("component history request finished."));
   }
 
+  public async getComponentDetailData(id: string, date: string) {
+    let suffix = '?id=' + encodeURIComponent(id);
+    if (date != undefined) {
+      suffix += '&date=' + date;
+    }
+    console.log(`[] calling api/audits/component/detail` + suffix);
+    return axios
+      .get(this.baseUrl + "/api/audits/component/detail" + suffix)
+      .then((response) => response.data)
+      .catch((error) => console.log(error))
+      .finally(() => console.log("component history detail finished."));
+  }
+
 }

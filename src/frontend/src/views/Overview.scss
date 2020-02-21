@@ -45,7 +45,7 @@ th {
 }
 
 .scan-detailed-item {
-	width: 240px;
+	width: 220px;
 	height: 90px;
 	background-color: #eee;
 	border: solid 1px #aaa;
@@ -53,10 +53,6 @@ th {
 	margin-right: 10px;
 	border-radius: 5px;
 	cursor: pointer;
-
-	&:hover button:not(:hover) {
-		background-color: #efe;
-	}
 }
 
 .scan-list-item {
@@ -122,10 +118,10 @@ svg > g > g {
 	opacity: .95;
 }
 
-.component-history-button {
+.component-buttons {
 	position: absolute;
-	margin-top: -5px;
-	margin-left: 115px;
+	margin-top: -6px;
+	margin-left: 121px;
 
 	& > button {
 		font-size: 10px;
@@ -133,6 +129,7 @@ svg > g > g {
 		border: solid 1px #666;
 		padding: 0 4px 0 4px;
 		border-radius: 3px;
+		margin-left: 3px;
 	}
 
 	& > button:hover {

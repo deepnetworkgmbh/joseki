@@ -81,6 +81,15 @@ export default class Overview extends Vue {
         }
     }
 
+    goComponentDetail(component: InfrastructureComponent, date: string) {
+        console.log(`going component detail: ${component.id}`);
+        let params = component.id;
+        if (date) {
+            params += '/' + date;
+        }
+        router.push('/component-detail/' + params);
+    }
+
 
     getArrowHtml(i: number) {
         const scans = this.data.overall.scoreHistory;

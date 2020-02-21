@@ -79,7 +79,8 @@ export default class ComponentHistory extends Vue {
     }
 
     GoBack() {
-        router.push('/overview/');
+        router.go(-1);
+        //router.push('/overview/');
     }
     getScoreIconClass(score: number) { return ScoreService.getScoreIconClass(score); }
     getGrade(score: number) { return ScoreService.getGrade(score); }

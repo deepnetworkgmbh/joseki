@@ -27,9 +27,35 @@
             </summary>
             <returns>the component scan history.</returns>
         </member>
+        <member name="M:webapp.Controllers.AuditsController.GetComponentDetail(System.String,System.Nullable{System.DateTime})">
+            <summary>
+            Returns the component summary detail.
+            </summary>
+            <returns>the component summary detail.</returns>
+        </member>
         <member name="T:webapp.Controllers.Data">
             <summary>
             data wrapper before connecting to real results.
+            </summary>
+        </member>
+        <member name="F:webapp.Controllers.Data.K8sCollections">
+            <summary>
+            kubernetes check collections and resources.
+            </summary>
+        </member>
+        <member name="F:webapp.Controllers.Data.K8sControls">
+            <summary>
+            kubernetes check controls.
+            </summary>
+        </member>
+        <member name="F:webapp.Controllers.Data.AzCollections">
+            <summary>
+            azure check collections and resources.
+            </summary>
+        </member>
+        <member name="F:webapp.Controllers.Data.AzControls">
+            <summary>
+            kubernetes check controls.
             </summary>
         </member>
         <member name="F:webapp.Controllers.Data.Dates">
@@ -38,6 +64,11 @@
             date behaves like a key while comparing scans.
             thus an overall scan and a component scan
             must all have the same initial scan date associated.
+            </summary>
+        </member>
+        <member name="M:webapp.Controllers.Data.ComponentChecks">
+            <summary>
+            mock list of Checks.
             </summary>
         </member>
         <member name="F:webapp.Controllers.Data.Components">
@@ -64,6 +95,12 @@
             <summary>
             Returns summary for all components except overall.
             </summary>
+        </member>
+        <member name="M:webapp.Controllers.Data.RandomSeverity">
+            <summary>
+            return a random severity.
+            </summary>
+            <returns>CheckSeverity.</returns>
         </member>
         <member name="F:webapp.Controllers.Data.overallComponent">
             <summary>
@@ -125,9 +162,15 @@
             azks: feature name.
             </summary>
         </member>
-        <member name="P:webapp.Models.Check.Object">
+        <member name="P:webapp.Models.Check.Component">
             <summary>
-            The object to be checked.
+            The parent infrastructure component.
+            k8s cluster or az subscription.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.Check.Resource">
+            <summary>
+            the resource of check made against.
             k8s: object (deployment, pod, service etc).
             azks: resource (keyvault etc).
             </summary>
@@ -139,31 +182,46 @@
             azks: azks `control` name.
             </summary>
         </member>
-        <member name="P:webapp.Models.Check.Severity">
+        <member name="P:webapp.Models.Check.Result">
             <summary>
-            severity of the check.
+            Result of the check.
             </summary>
         </member>
-        <member name="P:webapp.Models.Check.Description">
-            <summary>
-            description of the check.
-            </summary>
-        </member>
-        <member name="P:webapp.Models.Check.Remediation">
-            <summary>
-            the suggested remediation (if any).
-            </summary>
-        </member>
-        <member name="P:webapp.Models.Check.References">
-            <summary>
-            array of references about the check.
-            </summary>
-        </member>
-        <member name="M:webapp.Models.Check.#ctor(webapp.Models.InfrastructureComponent)">
+        <member name="M:webapp.Models.Check.#ctor(webapp.Models.InfrastructureComponent,System.DateTime,webapp.Models.Collection,webapp.Models.Resource,System.String,webapp.Models.CheckControl,webapp.Models.CheckSeverity)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Models.Check"/> class.
             create unique id on constructor.
             </summary>
+        </member>
+        <member name="T:webapp.Models.CheckControl">
+            <summary>
+            Control tag and description of a check.
+            (eg: namespace: default, resource group: common).
+            </summary>
+        </member>
+        <member name="P:webapp.Models.CheckControl.Id">
+            <summary>
+            Id of the control.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.CheckControl.Message">
+            <summary>
+            Message of the control.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.CheckControl.Category">
+            <summary>
+            Category of the control.
+            </summary>
+        </member>
+        <member name="M:webapp.Models.CheckControl.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Models.CheckControl"/> class.
+            control constructor.
+            </summary>
+            <param name="id">id of control.</param>
+            <param name="category">category of control.</param>
+            <param name="message">message of control.</param>
         </member>
         <member name="T:webapp.Models.CheckSeverity">
             <summary>
@@ -189,6 +247,30 @@
             <summary>
             Enum value when a scan succeeded
             </summary>
+        </member>
+        <member name="T:webapp.Models.Collection">
+            <summary>
+            Collection type and name of a check.
+            (eg: namespace: default, resource group: common).
+            </summary>
+        </member>
+        <member name="P:webapp.Models.Collection.Type">
+            <summary>
+            Type of the collection.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.Collection.Name">
+            <summary>
+            Name of the collection.
+            </summary>
+        </member>
+        <member name="M:webapp.Models.Collection.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Models.Collection"/> class.
+            collection constructor.
+            </summary>
+            <param name="type">type of collection.</param>
+            <param name="name">name of collection.</param>
         </member>
         <member name="T:webapp.Models.CountersSummary">
             <summary>
@@ -353,6 +435,35 @@
             <summary>
             Components of second summary.
             </summary>
+        </member>
+        <member name="T:webapp.Models.Resource">
+            <summary>
+            Resource of a check.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.Resource.Id">
+            <summary>
+            Id of the resource.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.Resource.Name">
+            <summary>
+            Name of the resource.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.Resource.Type">
+            <summary>
+            Type of the resource.
+            </summary>
+        </member>
+        <member name="M:webapp.Models.Resource.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Models.Resource"/> class.
+            Resource constructor.
+            </summary>
+            <param name="id">id of Resource.</param>
+            <param name="type">type of Resource.</param>
+            <param name="name">name of Resource.</param>
         </member>
         <member name="T:webapp.Models.ScanResult">
             <summary>

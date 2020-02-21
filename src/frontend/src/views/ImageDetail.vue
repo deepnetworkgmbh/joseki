@@ -34,10 +34,7 @@
                 <input type="checkbox" :id="`t${i}g${g}`" checked />
                 <label :for="`t${i}g${g}`" class="text-base">
                   {{ vul.Count }} issues with
-                  <strong
-                    :class="`severity-${vul.Severity}`"
-                  >{{ vul.Severity }}</strong>
-                  severity
+                  <strong :class="`severity-${vul.Severity}`">{{ vul.Severity }}</strong>severity
                 </label>
                 <ul v-for="(cve, c) in vul.CVEs" :key="`${vul.Severity}${i}-${c}`">
                   <li>

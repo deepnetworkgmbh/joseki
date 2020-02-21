@@ -27,6 +27,8 @@ export class InfrastructureComponentSummary {
 
     sections: any[] = [];
 
+    checks: Check[] = [];
+
     public static getSections(c: CountersSummary): any[] {
         let result: any[] = [];
         if (c.noData > 0) {
@@ -136,4 +138,133 @@ export class CountersSummary {
     /// NoData checks are excluded, Passed and Failed has doubled weight.
     public score: number = 0;
 
+    public calculateScore() {
+        return Math.round(100 * this.passed * 2 / ((this.failed * 2) + (this.passed * 2) + this.warning));
+    }
+
+}
+
+export class Check {
+    /// <summary>
+    /// unique id of the check.
+    /// </summary>
+    public id: string = '';
+
+    /// <summary>
+    /// the date of the check.
+    /// </summary>
+    public date: Date = new Date();
+
+    /// <summary>
+    /// Name of the collection.
+    /// kubernetes: namespace.
+    /// azks: resource-group.
+    /// </summary>
+    public collection: Collection = new Collection();
+
+    /// <summary>
+    /// category of the check
+    /// kubernetes: polaris/trivy category.
+    /// azks: feature name.
+    /// </summary>
+    public category: string = '';
+
+    /// <summary>
+    /// The object to be checked.
+    /// k8s: object (deployment, pod, service etc).
+    /// azks: resource (keyvault etc).
+    /// </summary>
+    public object: InfrastructureComponent = new InfrastructureComponent();
+
+    /// <summary>
+    /// The control name of the check.
+    /// k8s: polaris `check` name.
+    /// azks: azks `control` name.
+    /// </summary>
+    public control: CheckControl = new CheckControl();
+
+    /// <summary>
+    /// Result of the check.
+    /// </summary>
+    public result: CheckSeverity = CheckSeverity.NoData;
+
+    /// <summary>
+    /// Resource of the check.
+    /// </summary>
+    public resource: Resource = new Resource()
+}
+
+/// <summary>
+/// Collection type and name of a check.
+/// (eg: namespace: default, resource group: common).
+/// </summary>
+export class Collection {
+    /// <summary>
+    /// Type of the collection.
+    /// </summary>
+    public type: string = '';
+
+    /// <summary>
+    /// Name of the collection.
+    /// </summary>
+    public name: string = '';
+}
+
+/// <summary>
+/// Control tag and description of a check.
+/// (eg: namespace: default, resource group: common).
+/// </summary>
+export class CheckControl {
+    /// <summary>
+    /// Id of the control.
+    /// </summary>
+    public id: string = '';
+
+    /// <summary>
+    /// Message of the control.
+    /// </summary>
+    public message: string = '';
+}
+
+/// Resource of a check.
+export class Resource {
+    /// <summary>
+    /// Id of the resource.
+    /// </summary>
+    public id: string = '';
+
+    /// <summary>
+    /// Name of the resource.
+    /// </summary>
+    public name: string = '';
+
+    /// <summary>
+    /// Type of the resource.
+    /// </summary>
+    public type: string = '';
+}
+
+/// <summary>
+/// Severity of the check.
+/// </summary>
+export enum CheckSeverity {
+    /// <summary>
+    /// Enum value when a scan was not found
+    /// </summary>
+    NoData = "NO_DATA",
+
+    /// <summary>
+    /// Enum value when a scan failed
+    /// </summary>
+    Failed = "FAILED",
+
+    /// <summary>
+    /// Enum value when a scan has warning
+    /// </summary>
+    Warning = "WARNING",
+
+    /// <summary>
+    /// Enum value when a scan succeeded
+    /// </summary>
+    Success = "SUCCESS",
 }

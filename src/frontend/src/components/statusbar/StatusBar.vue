@@ -1,9 +1,9 @@
 <template>
   <div class="status-bar">
-    <div class="status">
-      <div class="failing">
-        <div class="nodata" :style="{ width: noDataWidth() }">
-          <div class="passing" :style="{ width: passingWidth() }"></div>
+    <div class="status" :style="{ height: height}">
+      <div class="failing" :style="{  height: height}">
+        <div class="nodata" :style="{ width: noDataWidth() , height: height}">
+          <div class="passing" :style="{ width: passingWidth()  , height: height}"></div>
         </div>
       </div>
     </div>
