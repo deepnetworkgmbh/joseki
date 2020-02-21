@@ -80,5 +80,24 @@ namespace webapp.Controllers
 
             return Task.FromResult(this.StatusCode(200, list));
         }
+
+        /// <summary>
+        /// Returns the component summary detail.
+        /// </summary>
+        /// <returns>the component summary detail.</returns>
+        [HttpGet]
+        [Route("component/detail", Name = "get-component-detail")]
+        [ProducesResponseType(200, Type = typeof(InfrastructureComponentSummaryWithHistory))]
+        public Task<ObjectResult> GetComponentDetail(string id, DateTime? date = null)
+        {
+            if (date == null)
+            {
+                date = componentSummaries.OrderBy(x => x.Date).First().Date;
+            }
+
+            var result = componentSummaries.FirstOrDefault(x => x.Component.Id == id && x.Date == date);
+
+            return Task.FromResult(this.StatusCode(200, result));
+        }
     }
 }

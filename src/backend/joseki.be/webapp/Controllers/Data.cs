@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using webapp.Models;
 
 namespace webapp.Controllers
@@ -9,6 +10,107 @@ namespace webapp.Controllers
     /// </summary>
     public static class Data
     {
+        /// <summary>
+        /// kubernetes check collections and resources.
+        /// </summary>
+        public static Dictionary<Collection, Resource[]> K8sCollections
+            = new Dictionary<Collection, Resource[]>
+        {
+            {
+                new Collection("namespace", "default"), new Resource[]
+                {
+                    new Resource("pod", "default-app-pod"),
+                    new Resource("pod2", "app-pod2"),
+                    new Resource("deployment", "deployment-1"),
+                    new Resource("service", "backend"),
+                    new Resource("service", "frontend"),
+                    new Resource("endpoint", "frontend"),
+                    new Resource("volume", "volume1"),
+                }
+            },
+            {
+                new Collection("namespace", "test"), new Resource[]
+                {
+                    new Resource("pod", "test-app-pod"),
+                    new Resource("deployment", "deployment-1"),
+                    new Resource("pod", "test-app-pod2"),
+                    new Resource("deployment", "deployment-2"),
+                }
+            },
+            {
+                new Collection("namespace", "app1"), new Resource[]
+                {
+                    new Resource("pod", "test-app-pod"),
+                    new Resource("deployment", "deployment-1"),
+                }
+            },
+        };
+
+        /// <summary>
+        /// kubernetes check controls.
+        /// </summary>
+        public static CheckControl[] K8sControls =
+        {
+            new CheckControl("Networking", "hostport", "Host Post is not defined."),
+            new CheckControl("Networking", "nixrootweak", "Host network not configured."),
+            new CheckControl("Security", "runasroot", "Should not be allowed to run as root."),
+            new CheckControl("Security", "hostPIDSet", "Host PID is not configured."),
+            new CheckControl("Security", "hostNetworkSet", "Host network is not configured."),
+            new CheckControl("Security", "nixrootweak", "Root user has weak password."),
+            new CheckControl("Security", "privesc", "Priviledge escalation should not be allowed."),
+            new CheckControl("Resources", "cpuReqSet", "CPU requests must be set."),
+            new CheckControl("Resources", "cpuLimitSet", "CPU limits must be set."),
+            new CheckControl("Health Checks", "liveness", "Liveness probe should be configured."),
+            new CheckControl("Health Checks", "readiness", "Readiness probe should be configured."),
+            new CheckControl("Images", "imgcorrupt", "Container image corrupt."),
+            new CheckControl("Images", "imgtoobig", "Container image too big."),
+        };
+
+        /// <summary>
+        /// azure check collections and resources.
+        /// </summary>
+        public static Dictionary<Collection, Resource[]> AzCollections
+            = new Dictionary<Collection, Resource[]>
+        {
+            {
+                new Collection("resource group", "common-rg"), new Resource[]
+                {
+                    new Resource("VM", "vm1"),
+                    new Resource("VM", "dev-ubuntu-18.04"),
+                    new Resource("SQL", "pg12-eu"),
+                    new Resource("virtual network", "vr1"),
+                    new Resource("Event Hub", "eh-dev"),
+                }
+            },
+            {
+                new Collection("resource group", "test-rg"), new Resource[]
+                {
+                    new Resource("VM", "win-10-ui-test"),
+                    new Resource("Storage", "test-storage"),
+                }
+            },
+        };
+
+        /// <summary>
+        /// kubernetes check controls.
+        /// </summary>
+        public static CheckControl[] AzControls =
+        {
+            new CheckControl("Networking", "firewallSet", "firewall is not enabled."),
+            new CheckControl("Networking", "certfault", "invalid certificate."),
+            new CheckControl("Networking", "badnic", "NIC misconfigured."),
+            new CheckControl("Storage", "invalidTemp", "temp directory not defined."),
+            new CheckControl("Storage", "lowfreespace", "running out of disk space."),
+            new CheckControl("Storage", "backupnotdefined", "A backup for this storage is not defined."),
+            new CheckControl("VM", "cpulimit", "Invalid CPU limit."),
+            new CheckControl("VM", "ramlimit", "Invalid RAM limit."),
+            new CheckControl("VM", "virtfailed", "Virtualization failed."),
+            new CheckControl("SQL", "sqluser", "Sql user password is not secure."),
+            new CheckControl("SQL", "sqlpaging", "Paging file not configured."),
+            new CheckControl("Event Hub", "ehports", "Event hub ports not configured."),
+            new CheckControl("Event Hub", "ehshare", "Event hub share keys not defined."),
+        };
+
         /// <summary>
         /// list of dates for ui tests.
         /// date behaves like a key while comparing scans.
@@ -30,6 +132,56 @@ namespace webapp.Controllers
             new DateTime(2020, 02, 11, 12, 0, 0),
             new DateTime(2020, 02, 12, 12, 0, 0),
         };
+
+        /// <summary>
+        /// mock list of Checks.
+        /// </summary>
+        public static List<Check> ComponentChecks()
+        {
+            var list = new List<Check>();
+
+            foreach (var date in Dates)
+            {
+                foreach (var component in Components)
+                {
+                    switch (component.Category)
+                    {
+                        case InfrastructureCategory.Overall:
+                            continue;
+
+                        case InfrastructureCategory.Kubernetes:
+                            foreach (var collection in K8sCollections)
+                            {
+                                foreach (var resource in collection.Value)
+                                {
+                                    foreach (var control in K8sControls)
+                                    {
+                                        list.Add(new Check(component, date, collection.Key, resource, control.Category, control, RandomSeverity()));
+                                    }
+                                }
+                            }
+
+                            break;
+
+                        case InfrastructureCategory.Subscription:
+                            foreach (var collection in AzCollections)
+                            {
+                                foreach (var resource in collection.Value)
+                                {
+                                    foreach (var control in AzControls.Where(x => x.Category == resource.Type))
+                                    {
+                                        list.Add(new Check(component, date, collection.Key, resource, control.Category, control, RandomSeverity()));
+                                    }
+                                }
+                            }
+
+                            break;
+                    }
+                }
+            }
+
+            return list;
+        }
 
         /// <summary>
         /// list of inftastructure components.
@@ -136,6 +288,7 @@ namespace webapp.Controllers
                         Current = GetCounters[component.Id][i],
                         ScoreHistory = GetScoreHistory(component),
                         ScoreTrend = Trend.GetTrend(GetScoreHistory(component)),
+                        Checks = ComponentChecks().Where(check => check.Component.Id == component.Id && check.Date == Dates[i]).ToArray(),
                     };
                     result.Add(summary);
                 }
@@ -166,8 +319,20 @@ namespace webapp.Controllers
         }
 
         /// <summary>
+        /// return a random severity.
+        /// </summary>
+        /// <returns>CheckSeverity.</returns>
+        public static CheckSeverity RandomSeverity()
+        {
+            var v = Enum.GetValues(typeof(CheckSeverity));
+            return (CheckSeverity)v.GetValue(new Random().Next(v.Length));
+        }
+
+        /// <summary>
         /// static placeholder for overall component.
         /// </summary>
         private static InfrastructureComponent overallComponent = Components[0];
+        private static InfrastructureComponent az = Components[1];
+        private static InfrastructureComponent k8s = Components[2];
     }
 }
