@@ -1,0 +1,17 @@
+database:
+  connectionString: Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=sqldb-joseki-be;User ID={0};Password={1};
+  username: test
+  password: t3st
+
+cache:
+  polarisCheckTtl: 1
+  azureCheckTtl: 1
+  cveTtl: 1
+  defaultTtl: 1
+
+watchmen:
+  scannerContainersPeriodicity: 600
+
+azureBlob:
+  basePath: baseUrl
+  sas: token

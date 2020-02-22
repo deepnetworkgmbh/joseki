@@ -101,6 +101,8 @@ namespace webapp
                         .EnableRetryOnFailure());
             });
             services.AddTransient<IJosekiDatabase, MssqlJosekiDatabase>();
+            services.AddSingleton<ChecksCache>();
+            services.AddSingleton<CveCache>();
 
             services.AddTransient<AzskAuditProcessor>();
             services.AddTransient<PolarisAuditProcessor>();

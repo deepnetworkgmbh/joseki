@@ -82,12 +82,13 @@
             Az-sk audit processor.
             </summary>
         </member>
-        <member name="M:webapp.Audits.Processors.azsk.AzskAuditProcessor.#ctor(webapp.BlobStorage.IBlobStorageProcessor,webapp.Database.IJosekiDatabase)">
+        <member name="M:webapp.Audits.Processors.azsk.AzskAuditProcessor.#ctor(webapp.BlobStorage.IBlobStorageProcessor,webapp.Database.IJosekiDatabase,webapp.Database.ChecksCache)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Audits.Processors.azsk.AzskAuditProcessor"/> class.
             </summary>
             <param name="blobStorage">Blob Storage implementation.</param>
             <param name="db">Joseki database implementation.</param>
+            <param name="cache">Checks cache object.</param>
         </member>
         <member name="M:webapp.Audits.Processors.azsk.AzskAuditProcessor.Process(webapp.BlobStorage.ScannerContainer,System.Threading.CancellationToken)">
             <inheritdoc />
@@ -162,12 +163,13 @@
             Polaris audit processor.
             </summary>
         </member>
-        <member name="M:webapp.Audits.Processors.polaris.PolarisAuditProcessor.#ctor(webapp.BlobStorage.IBlobStorageProcessor,webapp.Database.IJosekiDatabase)">
+        <member name="M:webapp.Audits.Processors.polaris.PolarisAuditProcessor.#ctor(webapp.BlobStorage.IBlobStorageProcessor,webapp.Database.IJosekiDatabase,webapp.Database.ChecksCache)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Audits.Processors.polaris.PolarisAuditProcessor"/> class.
             </summary>
             <param name="blobStorage">Blob Storage implementation.</param>
             <param name="db">Joseki database implementation.</param>
+            <param name="cache">Checks cache object.</param>
         </member>
         <member name="M:webapp.Audits.Processors.polaris.PolarisAuditProcessor.Process(webapp.BlobStorage.ScannerContainer,System.Threading.CancellationToken)">
             <inheritdoc />
@@ -577,6 +579,35 @@
             MSSQL database password.
             </summary>
         </member>
+        <member name="T:webapp.Configuration.CacheConfig">
+            <summary>
+            Cache related configurations.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.CacheConfig.PolarisCheckTtl">
+            <summary>
+            How often Polaris Check data should be updated.
+            The measurement is in days.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.CacheConfig.AzureCheckTtl">
+            <summary>
+            How often Azure Check data should be updated.
+            The measurement is in days.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.CacheConfig.CveTtl">
+            <summary>
+            How often CVE data should be updated.
+            The measurement is in days.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.CacheConfig.DefaultTtl">
+            <summary>
+            How often cached data should be updated by default.
+            The measurement is in days.
+            </summary>
+        </member>
         <member name="T:webapp.Configuration.AzureBlobConfig">
             <summary>
             Azure Blob related configuration.
@@ -668,6 +699,95 @@
             <summary>
             static placeholder for overall component.
             </summary>
+        </member>
+        <member name="T:webapp.Database.ChecksCache">
+            <summary>
+            Keeps track of Check items to reduce amount of interactions with real database.
+            The objects stores in memory identifiers of Checks, that are already in database.
+            It does requests only to update expired items or query not cached yet records.
+            The cache is expected to be used in Singleton mode.
+            </summary>
+        </member>
+        <member name="M:webapp.Database.ChecksCache.#ctor(webapp.Configuration.ConfigurationParser,joseki.db.JosekiDbContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Database.ChecksCache"/> class.
+            </summary>
+            <param name="config">Joseki configuration object.</param>
+            <param name="db">Joseki database instance.</param>
+        </member>
+        <member name="M:webapp.Database.ChecksCache.GetOrAddItem(System.String,System.Func{webapp.Database.Models.Check})">
+            <summary>
+            The method gets Check integer identifier from in-memory list, or if it's not there does requests to the Database.
+            The method could do one of the following:
+            - returns integer Id from memory if it's there;
+            - if Id is not cached yet - queries it from the Database;
+            - if Check is not in the Database yet - inserts it and stores the result in memory for future requests.
+            If the cache item was not updated longer than a configured threshold - updates the record in Database.
+            </summary>
+            <param name="id">Check string identifier.</param>
+            <param name="checkFactory">The factory method to generate a new Check object.</param>
+            <returns>The integer identifier, which is used as Database Primary and Foreign Keys.</returns>
+        </member>
+        <member name="T:webapp.Database.CveCache">
+            <summary>
+            Keeps track of CVE items to reduce amount of interactions with real database.
+            The objects stores in memory identifiers of CVEs, that are already in database.
+            It does requests only to update expired items or query not cached yet records.
+            The cache is expected to be used in Singleton mode.
+            </summary>
+        </member>
+        <member name="M:webapp.Database.CveCache.#ctor(webapp.Configuration.ConfigurationParser,joseki.db.JosekiDbContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Database.CveCache"/> class.
+            </summary>
+            <param name="config">Joseki configuration object.</param>
+            <param name="db">Joseki database instance.</param>
+        </member>
+        <member name="M:webapp.Database.CveCache.GetOrAddItem(System.String,System.Func{webapp.Database.Models.CVE})">
+            <summary>
+            The method gets CVE integer identifier from in-memory list, or if it's not there does requests to the Database.
+            The method could do one of the following:
+            - returns integer Id from memory if it's there;
+            - if Id is not cached yet - queries it from the Database;
+            - if CVE is not in the Database yet - inserts it and stores the result in memory for future requests.
+            If the cache item was not updated longer than a configured threshold - updates the record in Database.
+            </summary>
+            <param name="id">CVE string identifier.</param>
+            <param name="cveFactory">The factory method to generate a new CVE object.</param>
+            <returns>The integer identifier, which is used as Database Primary and Foreign Keys.</returns>
+        </member>
+        <member name="T:webapp.Database.DatabaseMapper">
+            <summary>
+            Maps internal object ot database entities and vice versa.
+            </summary>
+        </member>
+        <member name="M:webapp.Database.DatabaseMapper.ToEntity(webapp.Database.Models.Check)">
+            <summary>
+            Creates Check entity from internal model.
+            </summary>
+            <param name="check">Internal Check model.</param>
+            <returns>Database compatible entity.</returns>
+        </member>
+        <member name="M:webapp.Database.DatabaseMapper.ToEntity(webapp.Database.Models.CVE)">
+            <summary>
+            Creates CVE entity from internal model.
+            </summary>
+            <param name="cve">Internal CVE model.</param>
+            <returns>Database compatible entity.</returns>
+        </member>
+        <member name="M:webapp.Database.DatabaseMapper.ToEntity(webapp.Database.Models.CheckSeverity)">
+            <summary>
+            Creates CheckSeverity enum value from internal enum.
+            </summary>
+            <param name="severity">Internal enum.</param>
+            <returns>Database compatible enum.</returns>
+        </member>
+        <member name="M:webapp.Database.DatabaseMapper.ToEntity(webapp.Database.Models.CveSeverity)">
+            <summary>
+            Creates joseki.db.entities.CveSeverity enum value from internal enum.
+            </summary>
+            <param name="severity">Internal enum.</param>
+            <returns>Database compatible enum.</returns>
         </member>
         <member name="T:webapp.Database.IJosekiDatabase">
             <summary>
@@ -804,9 +924,14 @@
             Unique record identifier.
             </summary>
         </member>
-        <member name="P:webapp.Database.Models.CheckResult.CheckId">
+        <member name="P:webapp.Database.Models.CheckResult.InternalCheckId">
             <summary>
             The reference to Check entity.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.CheckResult.ExternalCheckId">
+            <summary>
+            External check identifier with format "{scanner_type}.{scanner-check-id}".
             </summary>
         </member>
         <member name="P:webapp.Database.Models.CheckResult.ComponentId">

@@ -11,6 +11,11 @@
         public DatabaseConfig Database { get; set; }
 
         /// <summary>
+        /// Aggregated Cache related configuration.
+        /// </summary>
+        public CacheConfig Cache { get; set; }
+
+        /// <summary>
         /// Azure Blob related configuration.
         /// </summary>
         public AzureBlobConfig AzureBlob { get; set; }
@@ -40,6 +45,36 @@
         /// MSSQL database password.
         /// </summary>
         public string Password { get; set; }
+    }
+
+    /// <summary>
+    /// Cache related configurations.
+    /// </summary>
+    public class CacheConfig
+    {
+        /// <summary>
+        /// How often Polaris Check data should be updated.
+        /// The measurement is in days.
+        /// </summary>
+        public int PolarisCheckTtl { get; set; } = 7;
+
+        /// <summary>
+        /// How often Azure Check data should be updated.
+        /// The measurement is in days.
+        /// </summary>
+        public int AzureCheckTtl { get; set; } = 7;
+
+        /// <summary>
+        /// How often CVE data should be updated.
+        /// The measurement is in days.
+        /// </summary>
+        public int CveTtl { get; set; } = 7;
+
+        /// <summary>
+        /// How often cached data should be updated by default.
+        /// The measurement is in days.
+        /// </summary>
+        public int DefaultTtl { get; set; } = 7;
     }
 
     /// <summary>

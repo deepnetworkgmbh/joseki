@@ -13,7 +13,12 @@
         /// <summary>
         /// The reference to Check entity.
         /// </summary>
-        public string CheckId { get; set; }
+        public int InternalCheckId { get; set; }
+
+        /// <summary>
+        /// External check identifier with format "{scanner_type}.{scanner-check-id}".
+        /// </summary>
+        public string ExternalCheckId { get; set; }
 
         /// <summary>
         /// Unique component identifier in format:

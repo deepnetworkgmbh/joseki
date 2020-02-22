@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -24,20 +23,21 @@ namespace webapp.Audits.Processors.polaris
     {
         private static readonly ILogger Logger = Log.ForContext<PolarisAuditProcessor>();
 
-        private static readonly ConcurrentDictionary<string, Check> ChecksCache = new ConcurrentDictionary<string, Check>();
-
         private readonly IBlobStorageProcessor blobStorage;
         private readonly IJosekiDatabase db;
+        private readonly ChecksCache cache;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PolarisAuditProcessor"/> class.
         /// </summary>
         /// <param name="blobStorage">Blob Storage implementation.</param>
         /// <param name="db">Joseki database implementation.</param>
-        public PolarisAuditProcessor(IBlobStorageProcessor blobStorage, IJosekiDatabase db)
+        /// <param name="cache">Checks cache object.</param>
+        public PolarisAuditProcessor(IBlobStorageProcessor blobStorage, IJosekiDatabase db, ChecksCache cache)
         {
             this.blobStorage = blobStorage;
             this.db = db;
+            this.cache = cache;
         }
 
         /// <inheritdoc />
@@ -112,7 +112,7 @@ namespace webapp.Audits.Processors.polaris
         private async Task<Audit> NormalizeRawData(AuditBlob auditBlob, AuditMetadata auditMetadata)
         {
             var auditJson = await this.GetJsonObject($"{auditBlob.ParentContainer.Name}/{auditMetadata.PolarisAuditPaths}");
-            var checks = this.ParseChecksResults(auditJson, auditMetadata, auditBlob.ParentContainer.Metadata);
+            var checks = await this.ParseChecksResults(auditJson, auditMetadata, auditBlob.ParentContainer.Metadata);
 
             var k8sJson = await this.GetJsonObject($"{auditBlob.ParentContainer.Name}/{auditMetadata.KubeMetadataPaths}");
             var k8sMetadata = new JObject
@@ -151,7 +151,7 @@ namespace webapp.Audits.Processors.polaris
             return JObject.Parse(fileContent);
         }
 
-        private List<CheckResult> ParseChecksResults(JObject auditJson, AuditMetadata auditMetadata, ScannerMetadata scannerMetadata)
+        private async Task<List<CheckResult>> ParseChecksResults(JObject auditJson, AuditMetadata auditMetadata, ScannerMetadata scannerMetadata)
         {
             if (!(auditJson["Results"] is JArray rootResultsArray))
             {
@@ -171,7 +171,7 @@ namespace webapp.Audits.Processors.polaris
                 // parse deployment/job/daemon-set/etc level checks
                 if (rootResultItem["Results"] != null && rootResultItem["Results"].HasValues)
                 {
-                    checkResults.AddRange(this.ProcessResultsObject(rootResultItem["Results"], idPrefix, auditMetadata.AuditId));
+                    checkResults.AddRange(await this.ProcessResultsObject(rootResultItem["Results"], idPrefix, auditMetadata.AuditId));
                 }
 
                 // parse pod level checks
@@ -182,7 +182,7 @@ namespace webapp.Audits.Processors.polaris
                         ? podNameTokenValue.ToLowerInvariant()
                         : $"{objectName}-pod";
 
-                    checkResults.AddRange(this.ProcessResultsObject(rootResultItem["PodResult"]["Results"], $"{idPrefix}/{podName}", auditMetadata.AuditId));
+                    checkResults.AddRange(await this.ProcessResultsObject(rootResultItem["PodResult"]["Results"], $"{idPrefix}/{podName}", auditMetadata.AuditId));
 
                     // parse container level checks
                     if (rootResultItem["PodResult"]["ContainerResults"] is JArray containersArray)
@@ -192,7 +192,7 @@ namespace webapp.Audits.Processors.polaris
                             var containerName = containersArray[i]["Name"] != null
                                 ? containersArray[i]["Name"].Value<string>()
                                 : $"{podName}-container{i + 1}";
-                            checkResults.AddRange(this.ProcessResultsObject(containersArray[i]["Results"], $"{idPrefix}/{podName}/{containerName}", auditMetadata.AuditId));
+                            checkResults.AddRange(await this.ProcessResultsObject(containersArray[i]["Results"], $"{idPrefix}/{podName}/{containerName}", auditMetadata.AuditId));
                         }
                     }
                 }
@@ -201,8 +201,9 @@ namespace webapp.Audits.Processors.polaris
             return checkResults;
         }
 
-        private IEnumerable<CheckResult> ProcessResultsObject(JToken jToken, string componentId, string auditId)
+        private async Task<List<CheckResult>> ProcessResultsObject(JToken jToken, string componentId, string auditId)
         {
+            var results = new List<CheckResult>();
             foreach (var child in jToken.Children().Select(i => i.First))
             {
                 var id = child["ID"].Value<string>();
@@ -211,25 +212,26 @@ namespace webapp.Audits.Processors.polaris
                 var severity = child["Severity"].Value<string>();
                 var category = child["Category"].Value<string>();
 
-                // TODO: add Remediation and Description
                 var checkId = $"polaris.{id}";
-                var check = ChecksCache.GetOrAdd(checkId, new Check
+                var internalCheckId = await this.cache.GetOrAddItem(checkId, () => new Check
                 {
                     Id = checkId,
                     Severity = this.ToSeverity(severity),
                     Category = category,
                 });
 
-                yield return new CheckResult
+                results.Add(new CheckResult
                 {
-                    CheckId = checkId,
-                    Check = check,
+                    ExternalCheckId = checkId,
+                    InternalCheckId = internalCheckId,
                     ComponentId = componentId,
                     AuditId = auditId,
                     Value = success ? CheckValue.Succeeded : CheckValue.Failed,
                     Message = message,
-                };
+                });
             }
+
+            return results;
         }
 
         private CheckSeverity ToSeverity(string value)
