@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -24,21 +23,21 @@ namespace webapp.Audits.Processors.azsk
     {
         private static readonly ILogger Logger = Log.ForContext<AzskAuditProcessor>();
 
-        // TODO: replace with external Check-cache object
-        private static readonly ConcurrentDictionary<string, Check> ChecksCache = new ConcurrentDictionary<string, Check>();
-
         private readonly IBlobStorageProcessor blobStorage;
         private readonly IJosekiDatabase db;
+        private readonly ChecksCache cache;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AzskAuditProcessor"/> class.
         /// </summary>
         /// <param name="blobStorage">Blob Storage implementation.</param>
         /// <param name="db">Joseki database implementation.</param>
-        public AzskAuditProcessor(IBlobStorageProcessor blobStorage, IJosekiDatabase db)
+        /// <param name="cache">Checks cache object.</param>
+        public AzskAuditProcessor(IBlobStorageProcessor blobStorage, IJosekiDatabase db, ChecksCache cache)
         {
             this.blobStorage = blobStorage;
             this.db = db;
+            this.cache = cache;
         }
 
         /// <inheritdoc />
@@ -96,7 +95,7 @@ namespace webapp.Audits.Processors.azsk
 
                     await Task.WhenAll(tasks);
 
-                    var audit = this.NormalizeRawData(tasks.Select(i => i.Result).ToArray(), auditBlob, auditMetadata);
+                    var audit = await this.NormalizeRawData(tasks.Select(i => i.Result).ToArray(), auditBlob, auditMetadata);
 
                     // TODO: Counter functions could be converted into single iterator
                     Logger.Information(
@@ -129,10 +128,10 @@ namespace webapp.Audits.Processors.azsk
             return JArray.Parse(metadataString);
         }
 
-        private Audit NormalizeRawData(JArray[] rawData, AuditBlob auditBlob, AuditMetadata auditMetadata)
+        private async Task<Audit> NormalizeRawData(JArray[] rawData, AuditBlob auditBlob, AuditMetadata auditMetadata)
         {
             var (scope, id, name) = this.GetSubscriptionMeta(rawData);
-            var (resources, checks) = this.ParseResourcesAndChecks(rawData, auditMetadata);
+            var (resources, checks) = await this.ParseResourcesAndChecks(rawData, auditMetadata);
 
             var azMetadata = new JObject
             {
@@ -192,7 +191,7 @@ namespace webapp.Audits.Processors.azsk
             return (null, null, null);
         }
 
-        private (JArray resources, List<CheckResult> checks) ParseResourcesAndChecks(JArray[] rawData, AuditMetadata auditMeta)
+        private async Task<(JArray resources, List<CheckResult> checks)> ParseResourcesAndChecks(JArray[] rawData, AuditMetadata auditMeta)
         {
             var checksResults = new List<CheckResult>();
             var resources = new Dictionary<string, JToken>();
@@ -207,7 +206,7 @@ namespace webapp.Audits.Processors.azsk
                         var controlItem = item["ControlItem"];
                         var checkId = $"azsk.{controlItem["ControlID"].Value<string>()}";
 
-                        var check = ChecksCache.GetOrAdd(checkId, new Check
+                        var id = await this.cache.GetOrAddItem(checkId, () => new Check
                         {
                             Id = checkId,
                             Severity = this.ToSeverity(controlItem["ControlSeverity"].Value<string>()),
@@ -218,8 +217,8 @@ namespace webapp.Audits.Processors.azsk
 
                         var checkResult = this.ToCheckResult(item);
                         checkResult.AuditId = auditMeta.AuditId;
-                        checkResult.CheckId = check.Id;
-                        checkResult.Check = check;
+                        checkResult.ExternalCheckId = checkId;
+                        checkResult.InternalCheckId = id;
 
                         checksResults.Add(checkResult);
                         if (item["ResourceContext"] != null)
