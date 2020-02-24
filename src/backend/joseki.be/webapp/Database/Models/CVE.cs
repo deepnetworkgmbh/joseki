@@ -50,26 +50,26 @@
         /// <summary>
         /// The level is unknown.
         /// </summary>
-        Unknown,
-
-        /// <summary>
-        /// Top-level issues, that often should be addressed as soon as possible.
-        /// </summary>
-        Critical,
-
-        /// <summary>
-        /// Important issue, which should be carefully reviewed.
-        /// </summary>
-        High,
-
-        /// <summary>
-        /// Medium-level problem, which could cause moderate damage or loss.
-        /// </summary>
-        Medium,
+        Unknown = 0,
 
         /// <summary>
         /// The lowest severity in the rank. Represents only a slight damage.
         /// </summary>
-        Low,
+        Low = 100,
+
+        /// <summary>
+        /// Medium-level problem, which could cause moderate damage or loss.
+        /// </summary>
+        Medium = 200,
+
+        /// <summary>
+        /// Important issue, which should be carefully reviewed.
+        /// </summary>
+        High = 300,
+
+        /// <summary>
+        /// Top-level issues, that often should be addressed as soon as possible.
+        /// </summary>
+        Critical = 400,
     }
 }

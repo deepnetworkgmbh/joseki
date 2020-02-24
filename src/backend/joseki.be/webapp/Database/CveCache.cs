@@ -79,8 +79,16 @@ namespace webapp.Database
             if (item.UpdatedAt < threshold)
             {
                 Logger.Information("Updating expired CVE item {CheckId} in the database", id);
+                var entity = await this.db.Set<CveEntity>().FirstOrDefaultAsync(i => i.CveId == id);
                 var check = cveFactory();
-                this.db.Set<CveEntity>().Update(check.ToEntity());
+
+                entity.PackageName = check.PackageName;
+                entity.Title = check.Title;
+                entity.Severity = check.Severity.ToEntity();
+                entity.Description = check.Description;
+                entity.References = check.References;
+                entity.Remediation = check.Remediation;
+                this.db.Set<CveEntity>().Update(entity);
                 await this.db.SaveChangesAsync();
 
                 item.UpdatedAt = DateTime.UtcNow;

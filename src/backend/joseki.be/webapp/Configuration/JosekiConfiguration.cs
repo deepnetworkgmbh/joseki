@@ -24,6 +24,11 @@
         /// Aggregated Watchmen configs.
         /// </summary>
         public Watchmen Watchmen { get; set; }
+
+        /// <summary>
+        /// Azure Storage Queue related configuration.
+        /// </summary>
+        public AzureQueueConfig AzureQueue { get; set; }
     }
 
     /// <summary>
@@ -71,6 +76,12 @@
         public int CveTtl { get; set; } = 7;
 
         /// <summary>
+        /// How often Image Scan data should be updated.
+        /// The measurement is in hours.
+        /// </summary>
+        public int ImageScanTtl { get; set; } = 12;
+
+        /// <summary>
         /// How often cached data should be updated by default.
         /// The measurement is in days.
         /// </summary>
@@ -103,5 +114,31 @@
         /// The measurement is in seconds.
         /// </summary>
         public int ScannerContainersPeriodicity { get; set; }
+    }
+
+    /// <summary>
+    /// Azure Storage Queue related configuration.
+    /// </summary>
+    public class AzureQueueConfig
+    {
+        /// <summary>
+        /// Azure Storage connection string.
+        /// </summary>
+        public string ConnectionString { get; set; }
+
+        /// <summary>
+        /// Storage Account name.
+        /// </summary>
+        public string AccountName { get; set; }
+
+        /// <summary>
+        /// Storage Account key.
+        /// </summary>
+        public string AccountKey { get; set; }
+
+        /// <summary>
+        /// The name of Image Scan Requests queue.
+        /// </summary>
+        public string ImageScanRequestsQueue { get; set; }
     }
 }

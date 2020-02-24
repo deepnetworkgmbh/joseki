@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -74,59 +75,72 @@ namespace webapp.Audits.Processors.trivy
             var metadataString = sr.ReadToEnd();
             var auditMetadata = JsonConvert.DeserializeObject<AuditMetadata>(metadataString);
 
-            if (auditMetadata.AuditResult != "succeeded")
+            try
             {
-                Logger.Warning(
-                    "Audit {AuditPath} result is {AuditResult} due: {FailureReason}",
-                    path,
-                    auditMetadata.AuditResult,
-                    auditMetadata.FailureDescription);
+                var imageScanResult = await this.NormalizeRawData(auditBlob, auditMetadata);
+
+                await this.db.SaveImageScanResult(imageScanResult);
             }
-            else
+            catch (Exception ex)
             {
-                try
-                {
-                    var imageScanResult = await this.NormalizeRawData(auditBlob, auditMetadata);
-
-                    if (imageScanResult.FoundCVEs.Count > 0)
-                    {
-                        Logger.Information(
-                            "Successfully processed {ImageTag} image scan of {AuditDate} with {FoundCVE} issues",
-                            imageScanResult.ImageTag,
-                            imageScanResult.Date,
-                            imageScanResult.FoundCVEs.Count);
-                    }
-                    else
-                    {
-                        Logger.Information(
-                            "Successfully processed {ImageTag} image scan of {AuditDate} and found no issues",
-                            imageScanResult.ImageTag,
-                            imageScanResult.Date);
-                    }
-
-                    await this.db.SaveImageScanResult(imageScanResult);
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error(ex, "Failed to process audit {AuditPath}", path);
-                }
+                Logger.Error(ex, "Failed to process audit {AuditPath}", path);
             }
 
             await this.blobStorage.MarkAsProcessed(auditBlob);
         }
 
-        private async Task<ImageScanResult> NormalizeRawData(AuditBlob auditBlob, AuditMetadata auditMetadata)
+        private async Task<ImageScanResultWithCVEs> NormalizeRawData(AuditBlob auditBlob, AuditMetadata auditMetadata)
         {
             var auditDate = DateTimeOffset.FromUnixTimeSeconds(auditMetadata.Timestamp).DateTime;
-            var scanResult = new ImageScanResult
+            var scanResult = new ImageScanResultWithCVEs
             {
                 Id = auditMetadata.AuditId,
                 Date = auditDate,
                 ImageTag = auditMetadata.ImageTag,
-                FoundCVEs = new List<ImageScanToCve>(),
             };
 
-            var auditJson = await this.GetJArrayObject($"{auditBlob.ParentContainer.Name}/{auditMetadata.TrivyAuditPath}");
+            if (auditMetadata.AuditResult != "succeeded")
+            {
+                var path = $"{auditBlob.ParentContainer.Name}/{auditBlob.Name}";
+                Logger.Warning(
+                    "Audit {AuditPath} result is {AuditResult} due: {FailureReason}",
+                    path,
+                    auditMetadata.AuditResult,
+                    auditMetadata.FailureDescription);
+                scanResult.Status = ImageScanStatus.Failed;
+            }
+            else
+            {
+                var auditResultFilePath = $"{auditBlob.ParentContainer.Name}/{auditMetadata.TrivyAuditPath}";
+                var (entities, counters) = await this.ParseScanTargets(auditResultFilePath);
+                scanResult.FoundCVEs = entities;
+                scanResult.Counters = counters;
+                scanResult.Status = ImageScanStatus.Succeeded;
+
+                Logger.Information(
+                    "Successfully processed {ImageTag} image scan of {AuditDate} with {ScanSummary}",
+                    scanResult.ImageTag,
+                    scanResult.Date,
+                    scanResult.GetCheckResultMessage());
+            }
+
+            return scanResult;
+        }
+
+        private async Task<(List<ImageScanToCve> entities, VulnerabilityCounter[] counters)> ParseScanTargets(string resultPath)
+        {
+            var stream = await this.blobStorage.DownloadFile(resultPath);
+
+            using var sr = new StreamReader(stream);
+            var fileContent = sr.ReadToEnd();
+
+            var auditJson = JArray.Parse(fileContent);
+
+            // Keep track of severity-counters and entities separately to avoid blowing out memory usage
+            // Some images might have hundreds of different CVEs.
+            // If we keep the entire CVE object in memory - the service would consume much more resources than it needs.
+            var entities = new List<ImageScanToCve>();
+            var countersDict = new Dictionary<CveSeverity, int>();
 
             // trivy is able to scan OS Packages and some Application Dependencies, each of which is named "target"
             // each audit could consist of 1..N targets and each target could have 0..M CVEs
@@ -141,59 +155,61 @@ namespace webapp.Audits.Processors.trivy
                         var id = vulnerability["VulnerabilityID"].Value<string>();
                         var installedVersion = vulnerability["InstalledVersion"].Value<string>();
 
-                        var internalCveId = await this.cache.GetOrAddItem(id, () =>
+                        var internalCveId = await this.cache.GetOrAddItem(id, () => this.ParseSingleCVE(vulnerability, id));
+
+                        // Prepare entities to insert into database
+                        entities.Add(new ImageScanToCve
                         {
-                            var pkg = vulnerability["PkgName"].Value<string>();
-                            var fixedVersion = vulnerability["FixedVersion"]?.Value<string>();
-                            var title = vulnerability["Title"]?.Value<string>();
-                            var description = vulnerability["Description"]?.Value<string>();
-                            var severity = vulnerability["Severity"].Value<string>();
-
-                            var references = new StringBuilder();
-                            if (target["References"] is JArray referencesJson)
-                            {
-                                foreach (var token in referencesJson)
-                                {
-                                    references.AppendLine(token.Value<string>());
-                                }
-                            }
-
-                            return new CVE
-                            {
-                                Id = id,
-                                Severity = this.ToSeverity(severity),
-                                PackageName = pkg,
-                                Description = description,
-                                Title = title,
-                                Remediation = !string.IsNullOrEmpty(fixedVersion) ? $"Update the package to version {fixedVersion}" : null,
-                                References = references.ToString(),
-                            };
-                        });
-
-                        scanResult.FoundCVEs.Add(new ImageScanToCve
-                        {
-                            CveId = id,
                             InternalCveId = internalCveId,
-                            ScanId = scanResult.Id,
-                            ImageScan = scanResult,
                             Target = targetName,
                             UsedPackageVersion = installedVersion,
                         });
+
+                        // calculate issues by severity to compose a right Check Result message
+                        var severity = this.ToSeverity(vulnerability["Severity"].Value<string>());
+                        if (countersDict.TryGetValue(severity, out var counter))
+                        {
+                            countersDict[severity]++;
+                        }
+                        else
+                        {
+                            countersDict.Add(severity, 1);
+                        }
                     }
                 }
             }
 
-            return scanResult;
+            var counters = countersDict.Select(i => new VulnerabilityCounter { Severity = i.Key, Count = i.Value }).ToArray();
+            return (entities, counters);
         }
 
-        private async Task<JArray> GetJArrayObject(string path)
+        private CVE ParseSingleCVE(JToken vulnerability, string id)
         {
-            var stream = await this.blobStorage.DownloadFile(path);
+            var pkg = vulnerability["PkgName"].Value<string>();
+            var fixedVersion = vulnerability["FixedVersion"]?.Value<string>();
+            var title = vulnerability["Title"]?.Value<string>();
+            var description = vulnerability["Description"]?.Value<string>();
+            var severity = vulnerability["Severity"].Value<string>();
 
-            using var sr = new StreamReader(stream);
-            var fileContent = sr.ReadToEnd();
+            var references = new StringBuilder();
+            if (vulnerability["References"] is JArray referencesJson)
+            {
+                foreach (var token in referencesJson)
+                {
+                    references.AppendLine(token.Value<string>());
+                }
+            }
 
-            return JArray.Parse(fileContent);
+            return new CVE
+            {
+                Id = id,
+                Severity = this.ToSeverity(severity),
+                PackageName = pkg,
+                Description = description,
+                Title = title,
+                Remediation = !string.IsNullOrEmpty(fixedVersion) ? $"Update the package to version {fixedVersion}" : null,
+                References = references.ToString(),
+            };
         }
 
         private CveSeverity ToSeverity(string value)

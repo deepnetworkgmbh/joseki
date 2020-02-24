@@ -186,9 +186,14 @@
         <member name="F:joseki.db.entities.CheckValue.NoData">
             <summary>
             There is no result due one of the reasons:
-            - check is still in progress,
+            - the check failed,
             - the check requires a manual step,
             - the check result should be verified by end-user.
+            </summary>
+        </member>
+        <member name="F:joseki.db.entities.CheckValue.InProgress">
+            <summary>
+            The check is still in progress
             </summary>
         </member>
         <member name="F:joseki.db.entities.CheckValue.Failed">
@@ -343,9 +348,35 @@
             UTC point of time when scan was performed.
             </summary>
         </member>
+        <member name="P:joseki.db.entities.ImageScanResultEntity.Status">
+            <summary>
+            The status of the Image Scan.
+            </summary>
+        </member>
         <member name="P:joseki.db.entities.ImageScanResultEntity.FoundCVEs">
             <summary>
             List of discovered vulnerabilities.
+            </summary>
+        </member>
+        <member name="T:joseki.db.entities.ImageScanStatus">
+            <summary>
+            The status of the Image Scan.
+            </summary>
+        </member>
+        <member name="F:joseki.db.entities.ImageScanStatus.Queued">
+            <summary>
+            Image Scan was already queued, but the result is not handled yet.
+            </summary>
+        </member>
+        <member name="F:joseki.db.entities.ImageScanStatus.Failed">
+            <summary>
+            Image scanner failed to perform the scan.
+            </summary>
+        </member>
+        <member name="F:joseki.db.entities.ImageScanStatus.Succeeded">
+            <summary>
+            Image scan succeeded.
+            This status does not mean, that the image passed the scan!
             </summary>
         </member>
         <member name="T:joseki.db.entities.ImageScanToCveEntity">
@@ -530,7 +561,7 @@
         </member>
         <member name="T:joseki.db.JosekiDbContext.JosekiDbContextFactory">
             <summary>
-            ReporterContextFactory used to update the database with the entity framework during design time
+            JosekiDbContextFactory used to update the database with the entity framework during design time
             (update-database).
             </summary>
         </member>
