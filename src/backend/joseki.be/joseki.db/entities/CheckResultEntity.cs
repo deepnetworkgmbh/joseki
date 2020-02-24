@@ -60,11 +60,16 @@ namespace joseki.db.entities
     {
         /// <summary>
         /// There is no result due one of the reasons:
-        /// - check is still in progress,
+        /// - the check failed,
         /// - the check requires a manual step,
         /// - the check result should be verified by end-user.
         /// </summary>
         NoData,
+
+        /// <summary>
+        /// The check is still in progress
+        /// </summary>
+        InProgress,
 
         /// <summary>
         /// The Component failed to satisfy Check requirements.

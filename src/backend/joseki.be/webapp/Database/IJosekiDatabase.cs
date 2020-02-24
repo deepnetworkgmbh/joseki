@@ -27,6 +27,21 @@ namespace webapp.Database
         /// </summary>
         /// <param name="imageScanResult">The entire Image Scan Result object.</param>
         /// <returns>A task object.</returns>
-        Task SaveImageScanResult(ImageScanResult imageScanResult);
+        Task SaveImageScanResult(ImageScanResultWithCVEs imageScanResult);
+
+        /// <summary>
+        /// Saves a placeholder for in-progress image-scan.
+        /// </summary>
+        /// <param name="imageScanResult">The image scan place-holder.</param>
+        /// <returns>A task object.</returns>
+        Task SaveInProgressImageScan(ImageScanResultWithCVEs imageScanResult);
+
+        /// <summary>
+        /// Queries the database for image-scan results, that are within scan TTL.
+        /// Image Scan TTL is defined by joseki configuration.
+        /// </summary>
+        /// <param name="imageTags">Array of unique image-tags.</param>
+        /// <returns>Not expired image scans.</returns>
+        Task<ImageScanResult[]> GetNotExpiredImageScans(string[] imageTags);
     }
 }

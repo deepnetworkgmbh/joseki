@@ -6,16 +6,6 @@
     public class ImageScanToCve
     {
         /// <summary>
-        /// Image Scan Result identifier.
-        /// </summary>
-        public string ScanId { get; set; }
-
-        /// <summary>
-        /// CVE identifier.
-        /// </summary>
-        public string CveId { get; set; }
-
-        /// <summary>
         /// Internal CVE identifier.
         /// </summary>
         public int InternalCveId { get; set; }
@@ -29,10 +19,5 @@
         /// States which exact version of vulnerable package `ScanId` discovered.
         /// </summary>
         public string UsedPackageVersion { get; set; }
-
-        /// <summary>
-        /// Reference to Image Scan Result object.
-        /// </summary>
-        public ImageScanResult ImageScan { get; set; }
     }
 }

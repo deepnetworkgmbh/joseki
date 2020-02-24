@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 using joseki.db.entities;
 
@@ -6,6 +8,8 @@ using webapp.Database.Models;
 
 using CheckSeverity = joseki.db.entities.CheckSeverity;
 using CheckValue = joseki.db.entities.CheckValue;
+using CveSeverity = joseki.db.entities.CveSeverity;
+using ImageScanStatus = joseki.db.entities.ImageScanStatus;
 
 namespace webapp.Database
 {
@@ -108,14 +112,15 @@ namespace webapp.Database
         /// </summary>
         /// <param name="scan">Internal Image Scan model.</param>
         /// <returns>Database compatible entity.</returns>
-        public static ImageScanResultEntity ToEntity(this ImageScanResult scan)
+        public static ImageScanResultEntity ToEntity(this ImageScanResultWithCVEs scan)
         {
             var entity = new ImageScanResultEntity
             {
                 ExternalId = scan.Id,
                 ImageTag = scan.ImageTag,
                 Date = scan.Date,
-                FoundCVEs = scan.FoundCVEs.Select(i => i.ToEntity()).ToList(),
+                Status = scan.Status.ToEntity(),
+                FoundCVEs = scan.FoundCVEs?.Select(i => i.ToEntity()).ToList(),
             };
 
             return entity;
@@ -166,6 +171,7 @@ namespace webapp.Database
             {
                 Models.CheckValue.Succeeded => CheckValue.Succeeded,
                 Models.CheckValue.Failed => CheckValue.Failed,
+                Models.CheckValue.InProgress => CheckValue.InProgress,
                 _ => CheckValue.NoData
             };
         }
@@ -193,16 +199,97 @@ namespace webapp.Database
         /// </summary>
         /// <param name="severity">Internal enum.</param>
         /// <returns>Database compatible enum.</returns>
-        public static joseki.db.entities.CveSeverity ToEntity(this Models.CveSeverity severity)
+        public static CveSeverity ToEntity(this Models.CveSeverity severity)
         {
             return severity switch
             {
-                Models.CveSeverity.Critical => joseki.db.entities.CveSeverity.Critical,
-                Models.CveSeverity.High => joseki.db.entities.CveSeverity.High,
-                Models.CveSeverity.Medium => joseki.db.entities.CveSeverity.Medium,
-                Models.CveSeverity.Low => joseki.db.entities.CveSeverity.Low,
-                Models.CveSeverity.Unknown => joseki.db.entities.CveSeverity.Unknown,
-                _ => joseki.db.entities.CveSeverity.Unknown
+                Models.CveSeverity.Critical => CveSeverity.Critical,
+                Models.CveSeverity.High => CveSeverity.High,
+                Models.CveSeverity.Medium => CveSeverity.Medium,
+                Models.CveSeverity.Low => CveSeverity.Low,
+                Models.CveSeverity.Unknown => CveSeverity.Unknown,
+                _ => CveSeverity.Unknown
+            };
+        }
+
+        /// <summary>
+        /// Creates joseki.db.entities.ImageScanStatus enum value from internal enum.
+        /// </summary>
+        /// <param name="status">Internal enum.</param>
+        /// <returns>Database compatible enum.</returns>
+        public static ImageScanStatus ToEntity(this Models.ImageScanStatus status)
+        {
+            return status switch
+            {
+                Models.ImageScanStatus.Failed => ImageScanStatus.Failed,
+                Models.ImageScanStatus.Queued => ImageScanStatus.Queued,
+                Models.ImageScanStatus.Succeeded => ImageScanStatus.Succeeded,
+                _ => throw new ArgumentOutOfRangeException(nameof(status), status, null)
+            };
+        }
+
+        /// <summary>
+        /// Creates internal enum value from database-compatible.
+        /// </summary>
+        /// <param name="severity">Database compatible enum.</param>
+        /// <returns>Internal enum.</returns>
+        public static Models.CveSeverity FromEntity(this CveSeverity severity)
+        {
+            return severity switch
+            {
+                CveSeverity.Critical => Models.CveSeverity.Critical,
+                CveSeverity.High => Models.CveSeverity.High,
+                CveSeverity.Medium => Models.CveSeverity.Medium,
+                CveSeverity.Low => Models.CveSeverity.Low,
+                CveSeverity.Unknown => Models.CveSeverity.Unknown,
+                _ => Models.CveSeverity.Unknown
+            };
+        }
+
+        /// <summary>
+        /// Creates Image Scan model from database entity.
+        /// </summary>
+        /// <param name="entity">Database entity.</param>
+        /// <returns>Internal model.</returns>
+        public static ImageScanResult GetShortResult(this ImageScanResultEntity entity)
+        {
+            var counters = new Dictionary<CveSeverity, int>();
+            foreach (var foundCve in entity.FoundCVEs)
+            {
+                if (counters.TryGetValue(foundCve.CVE.Severity, out var counter))
+                {
+                    counters[foundCve.CVE.Severity]++;
+                }
+                else
+                {
+                    counters.Add(foundCve.CVE.Severity, 1);
+                }
+            }
+
+            var model = new ImageScanResult
+            {
+                ImageTag = entity.ImageTag,
+                Date = entity.Date,
+                Status = entity.Status.FromEntity(),
+                Counters = counters.Select(i => new VulnerabilityCounter { Severity = i.Key.FromEntity(), Count = i.Value }).ToArray(),
+            };
+
+            return model;
+        }
+
+        /// <summary>
+        /// Creates ImageScanStatus enum value from database-compatible enum.
+        /// </summary>
+        /// <param name="status">Database compatible enum.</param>
+        /// <returns>Internal enum.</returns>
+        public static Models.ImageScanStatus FromEntity(this ImageScanStatus status)
+        {
+            return status switch
+            {
+                ImageScanStatus.Failed => Models.ImageScanStatus.Failed,
+                ImageScanStatus.Succeeded => Models.ImageScanStatus.Succeeded,
+                ImageScanStatus.Queued => Models.ImageScanStatus.Queued,
+                _ => throw new ArgumentOutOfRangeException(nameof(status), status, null)
             };
         }
     }

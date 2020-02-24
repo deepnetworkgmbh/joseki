@@ -12,6 +12,8 @@ using Serilog;
 using webapp.Configuration;
 using webapp.Database.Models;
 
+using CheckSeverity = webapp.Database.Models.CheckSeverity;
+
 namespace webapp.Database
 {
     /// <summary>
@@ -25,6 +27,14 @@ namespace webapp.Database
         private static readonly ILogger Logger = Log.ForContext<ChecksCache>();
 
         private static readonly ConcurrentDictionary<string, CheckCacheItem> Cache = new ConcurrentDictionary<string, CheckCacheItem>();
+        private static readonly Check ImageScanCheck = new Check
+        {
+            Id = "container_image.CVE_scan",
+            Category = "Security",
+            Severity = CheckSeverity.High,
+            Description = "Container Image scan with trivy",
+            Remediation = "Update packages with found CVEs to versions, where these CVEs are addressed",
+        };
 
         private readonly JosekiConfiguration config;
         private readonly JosekiDbContext db;
@@ -79,14 +89,31 @@ namespace webapp.Database
             if (item.UpdatedAt < threshold)
             {
                 Logger.Information("Updating expired Check item {CheckId} in the database", id);
-                var check = checkFactory();
-                this.db.Set<CheckEntity>().Update(check.ToEntity());
+
+                var entity = await this.db.Set<CheckEntity>().FirstOrDefaultAsync(i => i.CheckId == id);
+                var newCheckData = checkFactory();
+
+                entity.Category = newCheckData.Category;
+                entity.Description = newCheckData.Description;
+                entity.Remediation = newCheckData.Remediation;
+                entity.Severity = newCheckData.Severity.ToEntity();
+
+                this.db.Set<CheckEntity>().Update(entity);
                 await this.db.SaveChangesAsync();
 
                 item.UpdatedAt = DateTime.UtcNow;
             }
 
             return item.Id;
+        }
+
+        /// <summary>
+        /// Gets the default Image Scan Check object.
+        /// </summary>
+        /// <returns>Internal id of image-scan Check.</returns>
+        public Task<int> GetImageScanCheck()
+        {
+            return this.GetOrAddItem(ImageScanCheck.Id, () => ImageScanCheck);
         }
 
         private int GetItemTtl(string id)

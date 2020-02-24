@@ -38,8 +38,35 @@ namespace joseki.db.entities
         public DateTime Date { get; set; }
 
         /// <summary>
+        /// The status of the Image Scan.
+        /// </summary>
+        public ImageScanStatus Status { get; set; }
+
+        /// <summary>
         /// List of discovered vulnerabilities.
         /// </summary>
         public List<ImageScanToCveEntity> FoundCVEs { get; set; }
+    }
+
+    /// <summary>
+    /// The status of the Image Scan.
+    /// </summary>
+    public enum ImageScanStatus
+    {
+        /// <summary>
+        /// Image Scan was already queued, but the result is not handled yet.
+        /// </summary>
+        Queued,
+
+        /// <summary>
+        /// Image scanner failed to perform the scan.
+        /// </summary>
+        Failed,
+
+        /// <summary>
+        /// Image scan succeeded.
+        /// This status does not mean, that the image passed the scan!
+        /// </summary>
+        Succeeded,
     }
 }

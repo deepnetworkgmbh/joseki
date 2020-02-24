@@ -145,13 +145,14 @@
             Polaris audit processor.
             </summary>
         </member>
-        <member name="M:webapp.Audits.Processors.polaris.PolarisAuditProcessor.#ctor(webapp.BlobStorage.IBlobStorageProcessor,webapp.Database.IJosekiDatabase,webapp.Database.ChecksCache)">
+        <member name="M:webapp.Audits.Processors.polaris.PolarisAuditProcessor.#ctor(webapp.BlobStorage.IBlobStorageProcessor,webapp.Database.IJosekiDatabase,webapp.Database.ChecksCache,webapp.Queues.IQueue)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Audits.Processors.polaris.PolarisAuditProcessor"/> class.
             </summary>
             <param name="blobStorage">Blob Storage implementation.</param>
             <param name="db">Joseki database implementation.</param>
             <param name="cache">Checks cache object.</param>
+            <param name="queue">Queue Service implementation.</param>
         </member>
         <member name="M:webapp.Audits.Processors.polaris.PolarisAuditProcessor.Process(webapp.BlobStorage.ScannerContainer,System.Threading.CancellationToken)">
             <inheritdoc />
@@ -542,6 +543,11 @@
             Aggregated Watchmen configs.
             </summary>
         </member>
+        <member name="P:webapp.Configuration.JosekiConfiguration.AzureQueue">
+            <summary>
+            Azure Storage Queue related configuration.
+            </summary>
+        </member>
         <member name="T:webapp.Configuration.DatabaseConfig">
             <summary>
             Database related configuration.
@@ -585,6 +591,12 @@
             The measurement is in days.
             </summary>
         </member>
+        <member name="P:webapp.Configuration.CacheConfig.ImageScanTtl">
+            <summary>
+            How often Image Scan data should be updated.
+            The measurement is in hours.
+            </summary>
+        </member>
         <member name="P:webapp.Configuration.CacheConfig.DefaultTtl">
             <summary>
             How often cached data should be updated by default.
@@ -615,6 +627,31 @@
             <summary>
             How often ScannerContainersWatchman is listing root-level containers.
             The measurement is in seconds.
+            </summary>
+        </member>
+        <member name="T:webapp.Configuration.AzureQueueConfig">
+            <summary>
+            Azure Storage Queue related configuration.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzureQueueConfig.ConnectionString">
+            <summary>
+            Azure Storage connection string.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzureQueueConfig.AccountName">
+            <summary>
+            Storage Account name.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzureQueueConfig.AccountKey">
+            <summary>
+            Storage Account key.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzureQueueConfig.ImageScanRequestsQueue">
+            <summary>
+            The name of Image Scan Requests queue.
             </summary>
         </member>
         <member name="T:webapp.Controllers.AuditsController">
@@ -711,6 +748,12 @@
             <param name="checkFactory">The factory method to generate a new Check object.</param>
             <returns>The integer identifier, which is used as Database Primary and Foreign Keys.</returns>
         </member>
+        <member name="M:webapp.Database.ChecksCache.GetImageScanCheck">
+            <summary>
+            Gets the default Image Scan Check object.
+            </summary>
+            <returns>Internal id of image-scan Check.</returns>
+        </member>
         <member name="T:webapp.Database.CveCache">
             <summary>
             Keeps track of CVE items to reduce amount of interactions with real database.
@@ -779,7 +822,7 @@
             <param name="metadata">Internal metadata model.</param>
             <returns>Database compatible entity.</returns>
         </member>
-        <member name="M:webapp.Database.DatabaseMapper.ToEntity(webapp.Database.Models.ImageScanResult)">
+        <member name="M:webapp.Database.DatabaseMapper.ToEntity(webapp.Database.Models.ImageScanResultWithCVEs)">
             <summary>
             Creates Image Scan entity from internal model.
             </summary>
@@ -821,6 +864,34 @@
             <param name="severity">Internal enum.</param>
             <returns>Database compatible enum.</returns>
         </member>
+        <member name="M:webapp.Database.DatabaseMapper.ToEntity(webapp.Database.Models.ImageScanStatus)">
+            <summary>
+            Creates joseki.db.entities.ImageScanStatus enum value from internal enum.
+            </summary>
+            <param name="status">Internal enum.</param>
+            <returns>Database compatible enum.</returns>
+        </member>
+        <member name="M:webapp.Database.DatabaseMapper.FromEntity(joseki.db.entities.CveSeverity)">
+            <summary>
+            Creates internal enum value from database-compatible.
+            </summary>
+            <param name="severity">Database compatible enum.</param>
+            <returns>Internal enum.</returns>
+        </member>
+        <member name="M:webapp.Database.DatabaseMapper.GetShortResult(joseki.db.entities.ImageScanResultEntity)">
+            <summary>
+            Creates Image Scan model from database entity.
+            </summary>
+            <param name="entity">Database entity.</param>
+            <returns>Internal model.</returns>
+        </member>
+        <member name="M:webapp.Database.DatabaseMapper.FromEntity(joseki.db.entities.ImageScanStatus)">
+            <summary>
+            Creates ImageScanStatus enum value from database-compatible enum.
+            </summary>
+            <param name="status">Database compatible enum.</param>
+            <returns>Internal enum.</returns>
+        </member>
         <member name="T:webapp.Database.IJosekiDatabase">
             <summary>
             An abstraction layer on top of Joseki database.
@@ -837,7 +908,7 @@
             <param name="audit">The entire audit object, including checks, check-results, and metadata.</param>
             <returns>A task object.</returns>
         </member>
-        <member name="M:webapp.Database.IJosekiDatabase.SaveImageScanResult(webapp.Database.Models.ImageScanResult)">
+        <member name="M:webapp.Database.IJosekiDatabase.SaveImageScanResult(webapp.Database.Models.ImageScanResultWithCVEs)">
             <summary>
             Saves all the image-scan related data to the database:
             - image scan itself;
@@ -845,6 +916,21 @@
             </summary>
             <param name="imageScanResult">The entire Image Scan Result object.</param>
             <returns>A task object.</returns>
+        </member>
+        <member name="M:webapp.Database.IJosekiDatabase.SaveInProgressImageScan(webapp.Database.Models.ImageScanResultWithCVEs)">
+            <summary>
+            Saves a placeholder for in-progress image-scan.
+            </summary>
+            <param name="imageScanResult">The image scan place-holder.</param>
+            <returns>A task object.</returns>
+        </member>
+        <member name="M:webapp.Database.IJosekiDatabase.GetNotExpiredImageScans(System.String[])">
+            <summary>
+            Queries the database for image-scan results, that are within scan TTL.
+            Image Scan TTL is defined by joseki configuration.
+            </summary>
+            <param name="imageTags">Array of unique image-tags.</param>
+            <returns>Not expired image scans.</returns>
         </member>
         <member name="T:webapp.Database.Models.Audit">
             <summary>
@@ -1002,9 +1088,14 @@
         <member name="F:webapp.Database.Models.CheckValue.NoData">
             <summary>
             There is no result due one of the reasons:
-            - check is still in progress,
+            - the check failed,
             - the check requires a manual step,
             - the check result should be verified by end-user.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.Models.CheckValue.InProgress">
+            <summary>
+            The check is still in progress
             </summary>
         </member>
         <member name="F:webapp.Database.Models.CheckValue.Failed">
@@ -1068,14 +1159,9 @@
             The level is unknown.
             </summary>
         </member>
-        <member name="F:webapp.Database.Models.CveSeverity.Critical">
+        <member name="F:webapp.Database.Models.CveSeverity.Low">
             <summary>
-            Top-level issues, that often should be addressed as soon as possible.
-            </summary>
-        </member>
-        <member name="F:webapp.Database.Models.CveSeverity.High">
-            <summary>
-            Important issue, which should be carefully reviewed.
+            The lowest severity in the rank. Represents only a slight damage.
             </summary>
         </member>
         <member name="F:webapp.Database.Models.CveSeverity.Medium">
@@ -1083,20 +1169,19 @@
             Medium-level problem, which could cause moderate damage or loss.
             </summary>
         </member>
-        <member name="F:webapp.Database.Models.CveSeverity.Low">
+        <member name="F:webapp.Database.Models.CveSeverity.High">
             <summary>
-            The lowest severity in the rank. Represents only a slight damage.
+            Important issue, which should be carefully reviewed.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.Models.CveSeverity.Critical">
+            <summary>
+            Top-level issues, that often should be addressed as soon as possible.
             </summary>
         </member>
         <member name="T:webapp.Database.Models.ImageScanResult">
             <summary>
-            The goal of image scan is verify if known CVEs (Common Vulnerabilities and Exposures) present in used by image packages.
-            Therefore, the Scan Result consists of an array of CVEs. The array might be empty, if no vulnerabilities was found.
-            </summary>
-        </member>
-        <member name="P:webapp.Database.Models.ImageScanResult.Id">
-            <summary>
-            Unique identifier.
+            Short representation of Image Scan Result.
             </summary>
         </member>
         <member name="P:webapp.Database.Models.ImageScanResult.ImageTag">
@@ -1110,7 +1195,76 @@
             UTC point of time when scan was performed.
             </summary>
         </member>
-        <member name="P:webapp.Database.Models.ImageScanResult.FoundCVEs">
+        <member name="P:webapp.Database.Models.ImageScanResult.Status">
+            <summary>
+            The status of image scan.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.ImageScanResult.Counters">
+            <summary>
+            Counts issues by Severity.
+            </summary>
+        </member>
+        <member name="M:webapp.Database.Models.ImageScanResult.GetCheckResultValue">
+            <summary>
+            Maps the object to Check Result value.
+            </summary>
+            <returns>Check Result value.</returns>
+        </member>
+        <member name="M:webapp.Database.Models.ImageScanResult.GetCheckResultMessage">
+            <summary>
+            Compose human-readable result description with format "{severity-1} {issues-count-1}; {severity-2} {issues-count-2};...".
+            </summary>
+            <returns>Short human-readable image-scan summary.</returns>
+        </member>
+        <member name="T:webapp.Database.Models.VulnerabilityCounter">
+            <summary>
+            Represents the amount of issues with a particular severity.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.VulnerabilityCounter.Severity">
+            <summary>
+            The CVE severity.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.VulnerabilityCounter.Count">
+            <summary>
+            Amount of CVEs with this severity.
+            </summary>
+        </member>
+        <member name="T:webapp.Database.Models.ImageScanStatus">
+            <summary>
+            The status of the Image Scan.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.Models.ImageScanStatus.Queued">
+            <summary>
+            Image Scan was already queued, but the result is not handled yet.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.Models.ImageScanStatus.Failed">
+            <summary>
+            Image scanner failed to perform the scan.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.Models.ImageScanStatus.Succeeded">
+            <summary>
+            Image scan succeeded.
+            This status does not mean, that the image passed the scan!
+            </summary>
+        </member>
+        <member name="T:webapp.Database.Models.ImageScanResultWithCVEs">
+            <summary>
+            The goal of image scan is verify if known CVEs (Common Vulnerabilities and Exposures) present in used by image packages.
+            Therefore, the Scan Result consists of an array of CVEs. The array might be empty, if no vulnerabilities was found.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.ImageScanResultWithCVEs.Id">
+            <summary>
+            Unique identifier.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.ImageScanResultWithCVEs.FoundCVEs">
             <summary>
             List of discovered vulnerabilities.
             </summary>
@@ -1118,16 +1272,6 @@
         <member name="T:webapp.Database.Models.ImageScanToCve">
             <summary>
             Maps exact image scans to list of CVEs in this scan.
-            </summary>
-        </member>
-        <member name="P:webapp.Database.Models.ImageScanToCve.ScanId">
-            <summary>
-            Image Scan Result identifier.
-            </summary>
-        </member>
-        <member name="P:webapp.Database.Models.ImageScanToCve.CveId">
-            <summary>
-            CVE identifier.
             </summary>
         </member>
         <member name="P:webapp.Database.Models.ImageScanToCve.InternalCveId">
@@ -1143,11 +1287,6 @@
         <member name="P:webapp.Database.Models.ImageScanToCve.UsedPackageVersion">
             <summary>
             States which exact version of vulnerable package `ScanId` discovered.
-            </summary>
-        </member>
-        <member name="P:webapp.Database.Models.ImageScanToCve.ImageScan">
-            <summary>
-            Reference to Image Scan Result object.
             </summary>
         </member>
         <member name="T:webapp.Database.Models.MetadataAzure">
@@ -1205,7 +1344,7 @@
             MsSQL implementation of Database.
             </summary>
         </member>
-        <member name="M:webapp.Database.MssqlJosekiDatabase.#ctor(joseki.db.JosekiDbContext)">
+        <member name="M:webapp.Database.MssqlJosekiDatabase.#ctor(joseki.db.JosekiDbContext,webapp.Configuration.ConfigurationParser)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Database.MssqlJosekiDatabase"/> class.
             </summary>
@@ -1213,7 +1352,13 @@
         <member name="M:webapp.Database.MssqlJosekiDatabase.SaveAuditResult(webapp.Database.Models.Audit)">
             <inheritdoc />
         </member>
-        <member name="M:webapp.Database.MssqlJosekiDatabase.SaveImageScanResult(webapp.Database.Models.ImageScanResult)">
+        <member name="M:webapp.Database.MssqlJosekiDatabase.SaveInProgressImageScan(webapp.Database.Models.ImageScanResultWithCVEs)">
+            <inheritdoc />
+        </member>
+        <member name="M:webapp.Database.MssqlJosekiDatabase.SaveImageScanResult(webapp.Database.Models.ImageScanResultWithCVEs)">
+            <inheritdoc />
+        </member>
+        <member name="M:webapp.Database.MssqlJosekiDatabase.GetNotExpiredImageScans(System.String[])">
             <inheritdoc />
         </member>
         <member name="T:webapp.Infrastructure.HttpRequestLoggingMiddleware">
@@ -1588,6 +1733,82 @@
             </summary>
             <param name="args">Arguments.</param>
             <returns>HostBuilder object.</returns>
+        </member>
+        <member name="T:webapp.Queues.AzureStorageQueue">
+            <summary>
+            Azure Storage Queue implementation of Queue Service.
+            </summary>
+        </member>
+        <member name="M:webapp.Queues.AzureStorageQueue.#ctor(webapp.Configuration.ConfigurationParser)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Queues.AzureStorageQueue"/> class.
+            </summary>
+            <param name="parser">The service configuration.</param>
+        </member>
+        <member name="M:webapp.Queues.AzureStorageQueue.EnqueueImageScanRequest(webapp.Database.Models.ImageScanResultWithCVEs)">
+            <inheritdoc />
+        </member>
+        <member name="T:webapp.Queues.ImageScanRequestMessage">
+            <summary>
+            The image scan request details.
+            </summary>
+        </member>
+        <member name="P:webapp.Queues.ImageScanRequestMessage.Headers">
+            <summary>
+            Message headers: when the message was created, what is the version of payload, etc.
+            </summary>
+        </member>
+        <member name="P:webapp.Queues.ImageScanRequestMessage.Payload">
+            <summary>
+            Image Scan Request details: image tag, etc.
+            </summary>
+        </member>
+        <member name="T:webapp.Queues.MessageHeaders">
+            <summary>
+            Message headers: when the message was created, what is the version of payload, etc.
+            </summary>
+        </member>
+        <member name="P:webapp.Queues.MessageHeaders.CreationTime">
+            <summary>
+            Unix epoch time, when the scan was requested.
+            </summary>
+        </member>
+        <member name="P:webapp.Queues.MessageHeaders.PayloadVersion">
+            <summary>
+            The version of message payload.
+            </summary>
+        </member>
+        <member name="T:webapp.Queues.ImageScanRequestPayload">
+            <summary>
+            The Image Scan Request message payload.
+            </summary>
+        </member>
+        <member name="F:webapp.Queues.ImageScanRequestPayload.VERSION">
+            <summary>
+            The version of payload.
+            </summary>
+        </member>
+        <member name="P:webapp.Queues.ImageScanRequestPayload.ImageScanId">
+            <summary>
+            Unique image-scan identifier.
+            </summary>
+        </member>
+        <member name="P:webapp.Queues.ImageScanRequestPayload.ImageFullName">
+            <summary>
+            The complete image name including registry, and tag.
+            </summary>
+        </member>
+        <member name="T:webapp.Queues.IQueue">
+            <summary>
+            Represents Queue Service Service.
+            </summary>
+        </member>
+        <member name="M:webapp.Queues.IQueue.EnqueueImageScanRequest(webapp.Database.Models.ImageScanResultWithCVEs)">
+            <summary>
+            Enqueue a single image scan request.
+            </summary>
+            <param name="imageScan">The image-scan details.</param>
+            <returns>A task object.</returns>
         </member>
         <member name="T:webapp.Startup">
             <summary>

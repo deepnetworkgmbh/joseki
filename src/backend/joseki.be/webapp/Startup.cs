@@ -21,6 +21,7 @@ using webapp.BlobStorage;
 using webapp.Configuration;
 using webapp.Database;
 using webapp.Infrastructure;
+using webapp.Queues;
 
 namespace webapp
 {
@@ -88,6 +89,7 @@ namespace webapp
             });
 
             services.AddTransient<IBlobStorageProcessor, AzureBlobStorageProcessor>();
+            services.AddTransient<IQueue, AzureStorageQueue>();
 
             services.AddDbContext<JosekiDbContext>((provider, options) =>
             {

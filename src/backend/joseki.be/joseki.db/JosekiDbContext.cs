@@ -111,7 +111,7 @@ namespace joseki.db
             // TODO: maybe add a computed column which indicates if a record is image-scan? It might make index even faster.
             modelBuilder.Entity<CheckResultEntity>()
                 .HasIndex(checkResult => new { checkResult.ComponentId, checkResult.Value })
-                .HasFilter("[VALUE] = 'NoData'");
+                .HasFilter("[VALUE] = 'InProgress'");
 
             #endregion
 
@@ -154,6 +154,7 @@ namespace joseki.db
             modelBuilder.Entity<ImageScanResultEntity>().HasKey(scan => scan.Id);
             modelBuilder.Entity<ImageScanResultEntity>().Property(scan => scan.ExternalId).IsRequired();
             modelBuilder.Entity<ImageScanResultEntity>().Property(scan => scan.ImageTag).IsRequired();
+            modelBuilder.Entity<ImageScanResultEntity>().Property(scan => scan.Status).HasConversion(new EnumToStringConverter<ImageScanStatus>());
             modelBuilder.Entity<ImageScanResultEntity>()
                 .HasIndex(scan => new { scan.ImageTag, scan.Date })
                 .IsUnique();
@@ -172,8 +173,8 @@ namespace joseki.db
                 .IsRequired();
             modelBuilder.Entity<ImageScanToCveEntity>()
                 .HasOne(scan2cve => scan2cve.CVE)
-                .WithOne()
-                .HasForeignKey<ImageScanToCveEntity>(scan2cve => scan2cve.CveId)
+                .WithMany()
+                .HasForeignKey(scan2cve => scan2cve.CveId)
                 .IsRequired();
 
             #endregion
@@ -200,7 +201,7 @@ namespace joseki.db
         }
 
         /// <summary>
-        /// ReporterContextFactory used to update the database with the entity framework during design time
+        /// JosekiDbContextFactory used to update the database with the entity framework during design time
         /// (update-database).
         /// </summary>
         public class JosekiDbContextFactory : IDesignTimeDbContextFactory<JosekiDbContext>

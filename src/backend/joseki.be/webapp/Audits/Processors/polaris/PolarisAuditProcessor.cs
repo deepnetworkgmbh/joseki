@@ -13,6 +13,7 @@ using Serilog;
 using webapp.BlobStorage;
 using webapp.Database;
 using webapp.Database.Models;
+using webapp.Queues;
 
 namespace webapp.Audits.Processors.polaris
 {
@@ -26,6 +27,7 @@ namespace webapp.Audits.Processors.polaris
         private readonly IBlobStorageProcessor blobStorage;
         private readonly IJosekiDatabase db;
         private readonly ChecksCache cache;
+        private readonly IQueue queue;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PolarisAuditProcessor"/> class.
@@ -33,11 +35,13 @@ namespace webapp.Audits.Processors.polaris
         /// <param name="blobStorage">Blob Storage implementation.</param>
         /// <param name="db">Joseki database implementation.</param>
         /// <param name="cache">Checks cache object.</param>
-        public PolarisAuditProcessor(IBlobStorageProcessor blobStorage, IJosekiDatabase db, ChecksCache cache)
+        /// <param name="queue">Queue Service implementation.</param>
+        public PolarisAuditProcessor(IBlobStorageProcessor blobStorage, IJosekiDatabase db, ChecksCache cache, IQueue queue)
         {
             this.blobStorage = blobStorage;
             this.db = db;
             this.cache = cache;
+            this.queue = queue;
         }
 
         /// <inheritdoc />
@@ -88,15 +92,35 @@ namespace webapp.Audits.Processors.polaris
                 {
                     var audit = await this.NormalizeRawData(auditBlob, auditMetadata);
 
-                    // TODO: Counter functions could be converted into single iterator
+                    int succeeded = 0, failed = 0, nodata = 0, inprogress = 0;
+                    foreach (var checkResult in audit.CheckResults)
+                    {
+                        switch (checkResult.Value)
+                        {
+                            case CheckValue.Succeeded:
+                                succeeded++;
+                                break;
+                            case CheckValue.Failed:
+                                failed++;
+                                break;
+                            case CheckValue.NoData:
+                                nodata++;
+                                break;
+                            case CheckValue.InProgress:
+                                inprogress++;
+                                break;
+                        }
+                    }
+
                     Logger.Information(
-                        "Successfully processed audit {AuditId} of {AuditDate} with {CheckResultCount} check results, where succeeded {Succeeded}; failed {Failed}; no-data {NoData}",
+                        "Successfully processed audit {AuditId} of {AuditDate} with {CheckResultCount} check results, where succeeded {Succeeded}; failed {Failed}; in-progress {InProgress}; no-data {NoData}",
                         audit.Id,
                         audit.Date,
                         audit.CheckResults.Count,
-                        audit.CheckResults.Count(i => i.Value == CheckValue.Succeeded),
-                        audit.CheckResults.Count(i => i.Value == CheckValue.Failed),
-                        audit.CheckResults.Count(i => i.Value == CheckValue.NoData));
+                        succeeded,
+                        failed,
+                        nodata,
+                        inprogress);
 
                     await this.db.SaveAuditResult(audit);
                 }
@@ -111,10 +135,24 @@ namespace webapp.Audits.Processors.polaris
 
         private async Task<Audit> NormalizeRawData(AuditBlob auditBlob, AuditMetadata auditMetadata)
         {
+            var clusterId = string.IsNullOrEmpty(auditMetadata.ClusterId) ? auditBlob.ParentContainer.Metadata.Id : auditMetadata.ClusterId;
+
             var auditJson = await this.GetJsonObject($"{auditBlob.ParentContainer.Name}/{auditMetadata.PolarisAuditPaths}");
-            var checks = await this.ParseChecksResults(auditJson, auditMetadata, auditBlob.ParentContainer.Metadata);
+            var checks = await this.ParseChecksResults(auditJson, auditMetadata, clusterId);
 
             var k8sJson = await this.GetJsonObject($"{auditBlob.ParentContainer.Name}/{auditMetadata.KubeMetadataPaths}");
+
+            try
+            {
+                var imageScanCheckResults = await this.EnrichAuditWithImageScans(auditMetadata.AuditId, k8sJson, clusterId);
+                checks.AddRange(imageScanCheckResults);
+            }
+            catch (Exception ex)
+            {
+                // Failure here should not impact the rest of audit
+                Logger.Warning(ex, "Failed to enrich audit {AuditId} Check Results with image scans", auditMetadata.AuditId);
+            }
+
             var k8sMetadata = new JObject
             {
                 { "scanner", JToken.FromObject(auditBlob.ParentContainer.Metadata) },
@@ -122,7 +160,6 @@ namespace webapp.Audits.Processors.polaris
                 { "cluster", k8sJson },
             };
 
-            // TODO: add place-holder checks for image-scans?
             var auditDate = DateTimeOffset.FromUnixTimeSeconds(auditMetadata.Timestamp).DateTime;
             var audit = new Audit
             {
@@ -151,7 +188,7 @@ namespace webapp.Audits.Processors.polaris
             return JObject.Parse(fileContent);
         }
 
-        private async Task<List<CheckResult>> ParseChecksResults(JObject auditJson, AuditMetadata auditMetadata, ScannerMetadata scannerMetadata)
+        private async Task<List<CheckResult>> ParseChecksResults(JObject auditJson, AuditMetadata auditMetadata, string clusterId)
         {
             if (!(auditJson["Results"] is JArray rootResultsArray))
             {
@@ -162,7 +199,6 @@ namespace webapp.Audits.Processors.polaris
 
             foreach (var rootResultItem in rootResultsArray)
             {
-                var clusterId = string.IsNullOrEmpty(auditMetadata.ClusterId) ? scannerMetadata.Id : auditMetadata.ClusterId;
                 var nsName = rootResultItem["Namespace"].Value<string>();
                 var objectKind = rootResultItem["Kind"].Value<string>().ToLowerInvariant();
                 var objectName = rootResultItem["Name"].Value<string>().ToLowerInvariant();
@@ -177,12 +213,7 @@ namespace webapp.Audits.Processors.polaris
                 // parse pod level checks
                 if (rootResultItem["PodResult"] != null && rootResultItem["PodResult"].HasValues)
                 {
-                    var podNameTokenValue = rootResultItem["PodResult"]["Name"]?.Value<string>();
-                    var podName = !string.IsNullOrEmpty(podNameTokenValue)
-                        ? podNameTokenValue.ToLowerInvariant()
-                        : $"{objectName}-pod";
-
-                    checkResults.AddRange(await this.ProcessResultsObject(rootResultItem["PodResult"]["Results"], $"{idPrefix}/{podName}", auditMetadata.AuditId));
+                    checkResults.AddRange(await this.ProcessResultsObject(rootResultItem["PodResult"]["Results"], $"{idPrefix}/pod", auditMetadata.AuditId));
 
                     // parse container level checks
                     if (rootResultItem["PodResult"]["ContainerResults"] is JArray containersArray)
@@ -191,8 +222,8 @@ namespace webapp.Audits.Processors.polaris
                         {
                             var containerName = containersArray[i]["Name"] != null
                                 ? containersArray[i]["Name"].Value<string>()
-                                : $"{podName}-container{i + 1}";
-                            checkResults.AddRange(await this.ProcessResultsObject(containersArray[i]["Results"], $"{idPrefix}/{podName}/{containerName}", auditMetadata.AuditId));
+                                : $"{objectName}-container{i + 1}";
+                            checkResults.AddRange(await this.ProcessResultsObject(containersArray[i]["Results"], $"{idPrefix}/container/{containerName}", auditMetadata.AuditId));
                         }
                     }
                 }
@@ -242,6 +273,144 @@ namespace webapp.Audits.Processors.polaris
                 "warning" => CheckSeverity.Medium,
                 _ => CheckSeverity.Unknown
             };
+        }
+
+        private async Task<CheckResult[]> EnrichAuditWithImageScans(string auditId, JObject k8sMeta, string clusterId)
+        {
+            var checkResults = new List<CheckResult>();
+            var checkId = await this.cache.GetImageScanCheck();
+
+            // 1. Create Dictionary<ImageTag, List<ComponentId>> from k8sMeta
+            var imageToComponents = new Dictionary<string, List<string>>();
+            if (k8sMeta["Deployments"] is JArray deployments)
+            {
+                this.GetImagesFromResourcesGroup(clusterId, deployments, "Deployment", imageToComponents);
+            }
+
+            if (k8sMeta["StatefulSets"] is JArray statefulSets)
+            {
+                this.GetImagesFromResourcesGroup(clusterId, statefulSets, "StatefulSets", imageToComponents);
+            }
+
+            if (k8sMeta["DaemonSets"] is JArray daemonSets)
+            {
+                this.GetImagesFromResourcesGroup(clusterId, daemonSets, "DaemonSets", imageToComponents);
+            }
+
+            if (k8sMeta["Jobs"] is JArray jobs)
+            {
+                this.GetImagesFromResourcesGroup(clusterId, jobs, "Jobs", imageToComponents);
+            }
+
+            if (k8sMeta["CronJobs"] is JArray cronJobs)
+            {
+                this.GetImagesFromCronJobs(clusterId, cronJobs, imageToComponents);
+            }
+
+            // 2. query latest image-scan results for image-tags
+            var scanResults =
+                (await this.db.GetNotExpiredImageScans(imageToComponents.Keys.ToArray()))
+                .ToDictionary(i => i.ImageTag, i => i);
+
+            // 3. enqueue new scans if needed
+            // 4. add corresponding check-results
+            foreach (var (imageTag, components) in imageToComponents)
+            {
+                if (scanResults.TryGetValue(imageTag, out var existingResult))
+                {
+                    // if there is already not-expired image-scan in the database - create check-results from it
+                    // NOTE: the result might be in any state:
+                    // - Queued (the scan is in progress),
+                    // - Failed (trivy failed to perform the scan),
+                    // - Succeed (trivy successfully did a scan recently)
+                    checkResults.AddRange(components.Select(component => new CheckResult
+                    {
+                        AuditId = auditId,
+                        ComponentId = component,
+                        InternalCheckId = checkId,
+                        Value = existingResult.GetCheckResultValue(),
+                        Message = existingResult.GetCheckResultMessage(),
+                    }));
+                }
+                else
+                {
+                    // if no actual scan in DB, then:
+                    // - queue a new scan;
+                    // - add in-progress result.
+                    var inProgressScan = new ImageScanResultWithCVEs
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Date = DateTime.UtcNow,
+                        ImageTag = imageTag,
+                    };
+
+                    await this.queue.EnqueueImageScanRequest(inProgressScan);
+                    await this.db.SaveInProgressImageScan(inProgressScan);
+
+                    checkResults.AddRange(components.Select(component => new CheckResult
+                    {
+                        AuditId = auditId,
+                        ComponentId = component,
+                        InternalCheckId = checkId,
+                        Value = CheckValue.InProgress,
+                        Message = "The scan is in progress",
+                    }));
+                }
+            }
+
+            return checkResults.ToArray();
+        }
+
+        private void GetImagesFromResourcesGroup(string clusterId, JArray resourceGroup, string objectKind, Dictionary<string, List<string>> dict)
+        {
+            foreach (var resource in resourceGroup)
+            {
+                var nsName = resource["metadata"]["namespace"].Value<string>();
+                var objectName = resource["metadata"]["name"].Value<string>();
+
+                if (resource["spec"]["template"]["spec"]["containers"] is JArray containers)
+                {
+                    for (var i = 0; i < containers.Count; i++)
+                    {
+                        var containerName = containers[i]["name"] != null
+                            ? containers[i]["name"].Value<string>()
+                            : $"{objectName}-container{i + 1}";
+                        var imageTag = containers[i]["image"].Value<string>();
+
+                        var componentId = $"k8s/{clusterId}/ns/{nsName}/{objectKind}/{objectName}/container/{containerName}/{imageTag}";
+                        if (!dict.TryAdd(imageTag, new List<string> { componentId }))
+                        {
+                            dict[imageTag].Add(componentId);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void GetImagesFromCronJobs(string clusterId, JArray resourceGroup, Dictionary<string, List<string>> dict)
+        {
+            foreach (var resource in resourceGroup)
+            {
+                var nsName = resource["metadata"]["namespace"].Value<string>();
+                var objectName = resource["metadata"]["name"].Value<string>();
+
+                if (resource["spec"]["jobTemplate"]["spec"]["template"]["spec"]["containers"] is JArray containers)
+                {
+                    for (var i = 0; i < containers.Count; i++)
+                    {
+                        var containerName = containers[i]["name"] != null
+                            ? containers[i]["name"].Value<string>()
+                            : $"{objectName}-container{i + 1}";
+                        var imageTag = containers[i]["image"].Value<string>();
+
+                        var componentId = $"k8s/{clusterId}/ns/{nsName}/CronJobs/{objectName}/container/{containerName}/image/{imageTag}";
+                        if (!dict.TryAdd(imageTag, new List<string> { componentId }))
+                        {
+                            dict[imageTag].Add(componentId);
+                        }
+                    }
+                }
+            }
         }
     }
 }
