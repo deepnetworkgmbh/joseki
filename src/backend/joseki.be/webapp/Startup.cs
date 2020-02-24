@@ -13,7 +13,6 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
-using webapp.Audits.Processors;
 using webapp.Audits.Processors.azsk;
 using webapp.Audits.Processors.polaris;
 using webapp.Audits.Processors.trivy;
@@ -100,14 +99,13 @@ namespace webapp
                         .MigrationsAssembly(typeof(JosekiDbContext).Assembly.GetName().Name)
                         .EnableRetryOnFailure());
             });
-            services.AddTransient<IJosekiDatabase, MssqlJosekiDatabase>();
-            services.AddSingleton<ChecksCache>();
-            services.AddSingleton<CveCache>();
+            services.AddScoped<IJosekiDatabase, MssqlJosekiDatabase>();
+            services.AddTransient<ChecksCache>();
+            services.AddTransient<CveCache>();
 
             services.AddTransient<AzskAuditProcessor>();
             services.AddTransient<PolarisAuditProcessor>();
             services.AddTransient<TrivyAuditProcessor>();
-            services.AddTransient<AuditProcessorFactory>();
 
             services.AddScoped<ScannerContainersWatchman>();
             services.AddSingleton<SchedulerAssistant>();

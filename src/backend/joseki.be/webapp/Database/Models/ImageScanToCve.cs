@@ -16,6 +16,11 @@
         public string CveId { get; set; }
 
         /// <summary>
+        /// Internal CVE identifier.
+        /// </summary>
+        public int InternalCveId { get; set; }
+
+        /// <summary>
         /// Where the CVE was discovered: container image name or application dependencies file.
         /// </summary>
         public string Target { get; set; }
@@ -24,11 +29,6 @@
         /// States which exact version of vulnerable package `ScanId` discovered.
         /// </summary>
         public string UsedPackageVersion { get; set; }
-
-        /// <summary>
-        /// Reference to associated CVE object.
-        /// </summary>
-        public CVE CVE { get; set; }
 
         /// <summary>
         /// Reference to Image Scan Result object.

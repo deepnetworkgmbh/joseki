@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,20 +23,21 @@ namespace webapp.Audits.Processors.trivy
     {
         private static readonly ILogger Logger = Log.ForContext<TrivyAuditProcessor>();
 
-        private static readonly ConcurrentDictionary<string, CVE> CveCache = new ConcurrentDictionary<string, CVE>();
-
         private readonly IBlobStorageProcessor blobStorage;
         private readonly IJosekiDatabase db;
+        private readonly CveCache cache;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TrivyAuditProcessor"/> class.
         /// </summary>
         /// <param name="blobStorage">Blob Storage implementation.</param>
         /// <param name="db">Joseki database implementation.</param>
-        public TrivyAuditProcessor(IBlobStorageProcessor blobStorage, IJosekiDatabase db)
+        /// <param name="cache">CVE cache object.</param>
+        public TrivyAuditProcessor(IBlobStorageProcessor blobStorage, IJosekiDatabase db, CveCache cache)
         {
             this.blobStorage = blobStorage;
             this.db = db;
+            this.cache = cache;
         }
 
         /// <inheritdoc />
@@ -91,16 +90,11 @@ namespace webapp.Audits.Processors.trivy
 
                     if (imageScanResult.FoundCVEs.Count > 0)
                     {
-                        // TODO: Counter functions could be converted into single iterator
                         Logger.Information(
-                            "Successfully processed {ImageTag} image scan of {AuditDate} with issues: critical {Critical}; high {High}; medium {Medium}; low {Low}; unknown {Unknown}",
+                            "Successfully processed {ImageTag} image scan of {AuditDate} with {FoundCVE} issues",
                             imageScanResult.ImageTag,
                             imageScanResult.Date,
-                            imageScanResult.FoundCVEs.Count(i => i.CVE.Severity == CveSeverity.Critical),
-                            imageScanResult.FoundCVEs.Count(i => i.CVE.Severity == CveSeverity.High),
-                            imageScanResult.FoundCVEs.Count(i => i.CVE.Severity == CveSeverity.Medium),
-                            imageScanResult.FoundCVEs.Count(i => i.CVE.Severity == CveSeverity.Low),
-                            imageScanResult.FoundCVEs.Count(i => i.CVE.Severity == CveSeverity.Unknown));
+                            imageScanResult.FoundCVEs.Count);
                     }
                     else
                     {
@@ -145,37 +139,41 @@ namespace webapp.Audits.Processors.trivy
                     foreach (var vulnerability in vulnerabilities)
                     {
                         var id = vulnerability["VulnerabilityID"].Value<string>();
-                        var pkg = vulnerability["PkgName"].Value<string>();
                         var installedVersion = vulnerability["InstalledVersion"].Value<string>();
-                        var fixedVersion = vulnerability["FixedVersion"]?.Value<string>();
-                        var title = vulnerability["Title"]?.Value<string>();
-                        var description = vulnerability["Description"]?.Value<string>();
-                        var severity = vulnerability["Severity"].Value<string>();
 
-                        var references = new StringBuilder();
-                        if (target["References"] is JArray referencesJson)
+                        var internalCveId = await this.cache.GetOrAddItem(id, () =>
                         {
-                            foreach (var token in referencesJson)
+                            var pkg = vulnerability["PkgName"].Value<string>();
+                            var fixedVersion = vulnerability["FixedVersion"]?.Value<string>();
+                            var title = vulnerability["Title"]?.Value<string>();
+                            var description = vulnerability["Description"]?.Value<string>();
+                            var severity = vulnerability["Severity"].Value<string>();
+
+                            var references = new StringBuilder();
+                            if (target["References"] is JArray referencesJson)
                             {
-                                references.AppendLine(token.Value<string>());
+                                foreach (var token in referencesJson)
+                                {
+                                    references.AppendLine(token.Value<string>());
+                                }
                             }
-                        }
 
-                        var cve = CveCache.GetOrAdd(id, new CVE
-                        {
-                            Id = id,
-                            Severity = this.ToSeverity(severity),
-                            PackageName = pkg,
-                            Description = description,
-                            Title = title,
-                            Remediation = !string.IsNullOrEmpty(fixedVersion) ? $"Update the package to version {fixedVersion}" : null,
-                            References = references.ToString(),
+                            return new CVE
+                            {
+                                Id = id,
+                                Severity = this.ToSeverity(severity),
+                                PackageName = pkg,
+                                Description = description,
+                                Title = title,
+                                Remediation = !string.IsNullOrEmpty(fixedVersion) ? $"Update the package to version {fixedVersion}" : null,
+                                References = references.ToString(),
+                            };
                         });
 
                         scanResult.FoundCVEs.Add(new ImageScanToCve
                         {
                             CveId = id,
-                            CVE = cve,
+                            InternalCveId = internalCveId,
                             ScanId = scanResult.Id,
                             ImageScan = scanResult,
                             Target = targetName,

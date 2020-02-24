@@ -24,7 +24,7 @@ namespace webapp.Database
     {
         private static readonly ILogger Logger = Log.ForContext<CveCache>();
 
-        private readonly ConcurrentDictionary<string, CveCacheItem> cache = new ConcurrentDictionary<string, CveCacheItem>();
+        private static readonly ConcurrentDictionary<string, CveCacheItem> Cache = new ConcurrentDictionary<string, CveCacheItem>();
 
         private readonly JosekiConfiguration config;
         private readonly JosekiDbContext db;
@@ -54,7 +54,7 @@ namespace webapp.Database
         public async Task<int> GetOrAddItem(string id, Func<CVE> cveFactory)
         {
             // if item is not in cache - get it from db or add a new one;
-            if (!this.cache.TryGetValue(id, out var item))
+            if (!Cache.TryGetValue(id, out var item))
             {
                 var entity = await this.db.Set<CveEntity>().AsNoTracking().FirstOrDefaultAsync(e => e.CveId == id);
 
@@ -67,7 +67,7 @@ namespace webapp.Database
                     entity = addedEntity.Entity;
                 }
 
-                item = this.cache.GetOrAdd(id, new CveCacheItem
+                item = Cache.GetOrAdd(id, new CveCacheItem
                 {
                     CveId = id,
                     Id = entity.Id,

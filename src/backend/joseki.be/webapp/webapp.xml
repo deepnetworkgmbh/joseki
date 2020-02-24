@@ -4,24 +4,6 @@
         <name>webapp</name>
     </assembly>
     <members>
-        <member name="T:webapp.Audits.Processors.AuditProcessorFactory">
-            <summary>
-            The factory knows how to instantiate proper Audit Processor object.
-            </summary>
-        </member>
-        <member name="M:webapp.Audits.Processors.AuditProcessorFactory.#ctor(System.IServiceProvider)">
-            <summary>
-            Initializes a new instance of the <see cref="T:webapp.Audits.Processors.AuditProcessorFactory"/> class.
-            </summary>
-            <param name="services">DI container.</param>
-        </member>
-        <member name="M:webapp.Audits.Processors.AuditProcessorFactory.GetProcessor(webapp.Audits.ScannerMetadata)">
-            <summary>
-            Based on scanner-metadata finds a proper Audit Processor object.
-            </summary>
-            <param name="metadata">Scanner metadata object.</param>
-            <returns>Audit Processor instance.</returns>
-        </member>
         <member name="T:webapp.Audits.Processors.AuditProcessorStub">
             <summary>
             Does nothing.
@@ -226,12 +208,13 @@
             Trivy audit processor.
             </summary>
         </member>
-        <member name="M:webapp.Audits.Processors.trivy.TrivyAuditProcessor.#ctor(webapp.BlobStorage.IBlobStorageProcessor,webapp.Database.IJosekiDatabase)">
+        <member name="M:webapp.Audits.Processors.trivy.TrivyAuditProcessor.#ctor(webapp.BlobStorage.IBlobStorageProcessor,webapp.Database.IJosekiDatabase,webapp.Database.CveCache)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Audits.Processors.trivy.TrivyAuditProcessor"/> class.
             </summary>
             <param name="blobStorage">Blob Storage implementation.</param>
             <param name="db">Joseki database implementation.</param>
+            <param name="cache">CVE cache object.</param>
         </member>
         <member name="M:webapp.Audits.Processors.trivy.TrivyAuditProcessor.Process(webapp.BlobStorage.ScannerContainer,System.Threading.CancellationToken)">
             <inheritdoc />
@@ -334,11 +317,11 @@
             Knows when to run a single container processor.
             </summary>
         </member>
-        <member name="M:webapp.BackgroundJobs.SchedulerAssistant.#ctor(webapp.Audits.Processors.AuditProcessorFactory)">
+        <member name="M:webapp.BackgroundJobs.SchedulerAssistant.#ctor(System.IServiceProvider)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.BackgroundJobs.SchedulerAssistant"/> class.
             </summary>
-            <param name="processorFactory">Audit Processor factory.</param>
+            <param name="services">DI container.</param>
         </member>
         <member name="M:webapp.BackgroundJobs.SchedulerAssistant.Run(System.Threading.CancellationToken)">
             <summary>
@@ -768,12 +751,61 @@
             <param name="check">Internal Check model.</param>
             <returns>Database compatible entity.</returns>
         </member>
+        <member name="M:webapp.Database.DatabaseMapper.ToEntity(webapp.Database.Models.Audit)">
+            <summary>
+            Creates Audit entity from internal model.
+            </summary>
+            <param name="audit">Internal Audit model.</param>
+            <returns>Database compatible entity.</returns>
+        </member>
+        <member name="M:webapp.Database.DatabaseMapper.ToEntity(webapp.Database.Models.CheckResult)">
+            <summary>
+            Creates Check Result entity from internal model.
+            </summary>
+            <param name="checkResult">Internal Check Result model.</param>
+            <returns>Database compatible entity.</returns>
+        </member>
+        <member name="M:webapp.Database.DatabaseMapper.ToEntity(webapp.Database.Models.MetadataKube)">
+            <summary>
+            Creates Kubernetes Metadata entity from internal model.
+            </summary>
+            <param name="metadata">Internal metadata model.</param>
+            <returns>Database compatible entity.</returns>
+        </member>
+        <member name="M:webapp.Database.DatabaseMapper.ToEntity(webapp.Database.Models.MetadataAzure)">
+            <summary>
+            Creates Azure Metadata entity from internal model.
+            </summary>
+            <param name="metadata">Internal metadata model.</param>
+            <returns>Database compatible entity.</returns>
+        </member>
+        <member name="M:webapp.Database.DatabaseMapper.ToEntity(webapp.Database.Models.ImageScanResult)">
+            <summary>
+            Creates Image Scan entity from internal model.
+            </summary>
+            <param name="scan">Internal Image Scan model.</param>
+            <returns>Database compatible entity.</returns>
+        </member>
+        <member name="M:webapp.Database.DatabaseMapper.ToEntity(webapp.Database.Models.ImageScanToCve)">
+            <summary>
+            Creates Image Scan to CVE entity from internal model.
+            </summary>
+            <param name="scanToCve">Internal Image Scan to CVE model.</param>
+            <returns>Database compatible entity.</returns>
+        </member>
         <member name="M:webapp.Database.DatabaseMapper.ToEntity(webapp.Database.Models.CVE)">
             <summary>
             Creates CVE entity from internal model.
             </summary>
             <param name="cve">Internal CVE model.</param>
             <returns>Database compatible entity.</returns>
+        </member>
+        <member name="M:webapp.Database.DatabaseMapper.ToEntity(webapp.Database.Models.CheckValue)">
+            <summary>
+            Creates CheckValue enum value from internal enum.
+            </summary>
+            <param name="value">Internal enum.</param>
+            <returns>Database compatible enum.</returns>
         </member>
         <member name="M:webapp.Database.DatabaseMapper.ToEntity(webapp.Database.Models.CheckSeverity)">
             <summary>
@@ -1098,6 +1130,11 @@
             CVE identifier.
             </summary>
         </member>
+        <member name="P:webapp.Database.Models.ImageScanToCve.InternalCveId">
+            <summary>
+            Internal CVE identifier.
+            </summary>
+        </member>
         <member name="P:webapp.Database.Models.ImageScanToCve.Target">
             <summary>
             Where the CVE was discovered: container image name or application dependencies file.
@@ -1106,11 +1143,6 @@
         <member name="P:webapp.Database.Models.ImageScanToCve.UsedPackageVersion">
             <summary>
             States which exact version of vulnerable package `ScanId` discovered.
-            </summary>
-        </member>
-        <member name="P:webapp.Database.Models.ImageScanToCve.CVE">
-            <summary>
-            Reference to associated CVE object.
             </summary>
         </member>
         <member name="P:webapp.Database.Models.ImageScanToCve.ImageScan">
@@ -1170,7 +1202,12 @@
         </member>
         <member name="T:webapp.Database.MssqlJosekiDatabase">
             <summary>
-            P-sql implementation of Database.
+            MsSQL implementation of Database.
+            </summary>
+        </member>
+        <member name="M:webapp.Database.MssqlJosekiDatabase.#ctor(joseki.db.JosekiDbContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Database.MssqlJosekiDatabase"/> class.
             </summary>
         </member>
         <member name="M:webapp.Database.MssqlJosekiDatabase.SaveAuditResult(webapp.Database.Models.Audit)">
