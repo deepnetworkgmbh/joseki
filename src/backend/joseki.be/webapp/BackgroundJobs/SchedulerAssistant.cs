@@ -4,10 +4,15 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Microsoft.Extensions.DependencyInjection;
+
 using Serilog;
 
 using webapp.Audits;
 using webapp.Audits.Processors;
+using webapp.Audits.Processors.azsk;
+using webapp.Audits.Processors.polaris;
+using webapp.Audits.Processors.trivy;
 using webapp.BlobStorage;
 
 namespace webapp.BackgroundJobs
@@ -21,15 +26,15 @@ namespace webapp.BackgroundJobs
         private static readonly ILogger Logger = Log.ForContext<SchedulerAssistant>();
 
         private readonly ConcurrentDictionary<string, SchedulableItem> containers = new ConcurrentDictionary<string, SchedulableItem>();
-        private readonly AuditProcessorFactory processorFactory;
+        private readonly IServiceProvider services;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SchedulerAssistant"/> class.
         /// </summary>
-        /// <param name="processorFactory">Audit Processor factory.</param>
-        public SchedulerAssistant(AuditProcessorFactory processorFactory)
+        /// <param name="services">DI container.</param>
+        public SchedulerAssistant(IServiceProvider services)
         {
-            this.processorFactory = processorFactory;
+            this.services = services;
         }
 
         /// <summary>
@@ -47,7 +52,7 @@ namespace webapp.BackgroundJobs
 
                     if (item == null)
                     {
-                        var delay = TimeSpan.FromMinutes(1);
+                        var delay = TimeSpan.FromSeconds(10);
                         Logger.Information("Scheduler is sleeping for {Delay}. Reason: {TimeoutReason}", delay, "No working items in the queue");
                         await Task.Delay(delay, cancellation);
                     }
@@ -65,16 +70,25 @@ namespace webapp.BackgroundJobs
                             await Task.Delay(delay, cancellation);
                         }
 
-                        var auditProcessor = this.processorFactory.GetProcessor(item.Container.Metadata);
-                        await auditProcessor.Process(item.Container, cancellation);
+                        using (var serviceScope = this.services.CreateScope())
+                        {
+                            var auditProcessor = GetProcessor(serviceScope, item.Container.Metadata);
+                            await auditProcessor.Process(item.Container, cancellation);
 
-                        item.LastProcessed = DateTime.UtcNow;
+                            item.LastProcessed = DateTime.UtcNow;
+                        }
+
                         Logger.Information("Scheduler has processed {ContainerName}", item.Container.Name);
                     }
                 }
                 catch (TaskCanceledException ex)
                 {
                     Logger.Information(ex, "Scheduler Assistant was canceled");
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Scheduler Assistant encountered unexpected exception");
+                    throw;
                 }
             }
         }
@@ -117,6 +131,24 @@ namespace webapp.BackgroundJobs
             return metadata.Periodicity == "on-message"
                 ? TimeSpan.FromMinutes(1)
                 : TimeSpan.FromHours(1);
+        }
+
+        private static IAuditProcessor GetProcessor(IServiceScope scope, ScannerMetadata metadata)
+        {
+            Logger.Information("Instantiating {ScannerType} processor", metadata.Type);
+
+            switch (metadata.Type)
+            {
+                case ScannerType.Azsk:
+                    return scope.ServiceProvider.GetRequiredService<AzskAuditProcessor>();
+                case ScannerType.Polaris:
+                    return scope.ServiceProvider.GetRequiredService<PolarisAuditProcessor>();
+                case ScannerType.Trivy:
+                    return scope.ServiceProvider.GetRequiredService<TrivyAuditProcessor>();
+                default:
+                    Logger.Warning("AuditProcessorFactory was requested to instantiate {ScannerType} processor, which is not supported", metadata.Type);
+                    throw new NotSupportedException($"{metadata.Type} audit processor is not supported");
+            }
         }
 
         /// <summary>

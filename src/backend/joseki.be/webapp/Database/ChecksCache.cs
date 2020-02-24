@@ -24,7 +24,7 @@ namespace webapp.Database
     {
         private static readonly ILogger Logger = Log.ForContext<ChecksCache>();
 
-        private readonly ConcurrentDictionary<string, CheckCacheItem> cache = new ConcurrentDictionary<string, CheckCacheItem>();
+        private static readonly ConcurrentDictionary<string, CheckCacheItem> Cache = new ConcurrentDictionary<string, CheckCacheItem>();
 
         private readonly JosekiConfiguration config;
         private readonly JosekiDbContext db;
@@ -54,7 +54,7 @@ namespace webapp.Database
         public async Task<int> GetOrAddItem(string id, Func<Check> checkFactory)
         {
             // if item is not in cache - get it from db or add a new one;
-            if (!this.cache.TryGetValue(id, out var item))
+            if (!Cache.TryGetValue(id, out var item))
             {
                 var entity = await this.db.Set<CheckEntity>().AsNoTracking().FirstOrDefaultAsync(e => e.CheckId == id);
 
@@ -67,7 +67,7 @@ namespace webapp.Database
                     entity = addedEntity.Entity;
                 }
 
-                item = this.cache.GetOrAdd(id, new CheckCacheItem
+                item = Cache.GetOrAdd(id, new CheckCacheItem
                 {
                     CheckId = id,
                     Id = entity.Id,

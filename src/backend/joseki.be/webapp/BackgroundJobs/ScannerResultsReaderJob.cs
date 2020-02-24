@@ -31,17 +31,25 @@ namespace webapp.BackgroundJobs
         /// <inheritdoc />
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            Logger.Information("Starting audit processors");
+            try
+            {
+                Logger.Information("Starting audit processors");
 
-            using var scope = this.services.CreateScope();
-            var scannerContainersWatchman = scope.ServiceProvider.GetRequiredService<ScannerContainersWatchman>();
-            var schedulerAssistant = scope.ServiceProvider.GetRequiredService<SchedulerAssistant>();
+                using var scope = this.services.CreateScope();
+                var scannerContainersWatchman = scope.ServiceProvider.GetRequiredService<ScannerContainersWatchman>();
+                var schedulerAssistant = scope.ServiceProvider.GetRequiredService<SchedulerAssistant>();
 
-            await Task.WhenAll(
-                schedulerAssistant.Run(stoppingToken),
-                scannerContainersWatchman.Watch(stoppingToken));
+                await Task.WhenAll(
+                    schedulerAssistant.Run(stoppingToken),
+                    scannerContainersWatchman.Watch(stoppingToken));
 
-            Logger.Information("Audit processors finished the work");
+                Logger.Information("Audit processors finished the work");
+            }
+            catch (Exception ex)
+            {
+                Logger.Fatal(ex, "Scanner Result Listener job failed");
+                throw;
+            }
         }
     }
 }
