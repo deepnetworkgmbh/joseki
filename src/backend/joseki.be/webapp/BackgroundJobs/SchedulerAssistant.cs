@@ -52,7 +52,7 @@ namespace webapp.BackgroundJobs
 
                     if (item == null)
                     {
-                        var delay = TimeSpan.FromSeconds(10);
+                        var delay = TimeSpan.FromMinutes(1);
                         Logger.Information("Scheduler is sleeping for {Delay}. Reason: {TimeoutReason}", delay, "No working items in the queue");
                         await Task.Delay(delay, cancellation);
                     }

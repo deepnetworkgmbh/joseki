@@ -287,7 +287,7 @@ Each table record represents a single result of evaluating a _Check_ against a p
 - `CheckId` - unique identifier of a record from _Check_ table.
 - `ComponentId` - fully-qualified infrastructure _Component_ identifier:
   - for azure components: `subscription/{id}/resource_group/{rg_name}/{object_type}/{object_name}`;
-  - for k8s resources: `k8s/{cluster_id}/namespace/{ns_name}/{object_type}/{object_name}/pod/{pod_name}/container/{container_name}/{image_tag}`, where all sections after `{object_name}` are optional, as there might be separate checks on object-type, pod, container, or image.
+  - for k8s resources: `k8s/{cluster_id}/namespace/{ns_name}/{object_type}/{object_name}/container/{container_name}/image/{image_tag}`, where all sections after `{object_name}` are optional, as there might be separate checks on object-type, pod, container, or image.
 - `AuditId` - unique identifier of a single record from _Audit_ table. In other words, it represents a _time component_ of the key.
 
 `Result` column can be one of three states:
