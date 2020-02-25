@@ -45,17 +45,17 @@
     <div v-if="loaded" class="segment shadow" style="flex-direction:column">
       <h1 class="mb-2">Results By Category</h1>
       <hr class='mb-2' />
-      <div v-for="(category,i) in Object.keys(ResultsByCategory)" :key="category">
+      <div v-for="(category,i) in ResultsByCategory" :key="`category${i}`">
         <ul>
           <li>
             <input type="checkbox" v-bind:id="`cat${i}`" />
             <label class="text-base" v-bind:for="`cat${i}`">
-              <strong>{{category}}</strong>              
+              <strong>{{category.category}}</strong>              
               <span class="text-xs">
-              score <strong>{{ResultsByCategory[category].score}}%</strong>
+              score <strong>{{category.score}}%</strong>
               </span>
             </label>
-            <StatusBar :counters="ResultsByCategory[category]" />
+            <StatusBar :counters="category.counters" />
             <ul>
              ???
             </ul>
@@ -66,25 +66,25 @@
     <div v-if="loaded" class="segment shadow" style="flex-direction:column">
       <h1 class="mb-2">Results by Resources</h1>
       <hr class='mb-2' />
-      <ul v-for="(collection,i) in Object.keys(ResultsByCollection)" :key="collection">
+      <ul v-for="(collection,i) in ResultsByCollection" :key="`collection${i}`">
           <li>
             <input type="checkbox" :id="`target${i}`" checked />
             <label :for="`target${i}`" class="target">
-               <strong>{{ ResultsByCollection[collection].type }}</strong> : {{ ResultsByCollection[collection].name }}
+               <strong>{{ collection.type }}</strong> : {{ collection.name }}
                 <span class="text-xs">
-                  score <strong>{{ResultsByCollection[collection].score}}%</strong>
+                  score <strong>{{ collection.score}}%</strong>
                 </span>
             </label>
-            <StatusBar :counters="ResultsByCollection[collection].counters" />
-            <ul v-for="(obj, g) in Object.keys(ResultsByCollection[collection].objects)" :key="`obj${i}-${g}`">
+            <StatusBar :counters="collection.counters" />
+            <ul v-for="(obj, g) in collection.objects" :key="`obj${i}-${g}`">
               <li>
                 <input type="checkbox" :id="`obj${i}-${g}`" />
                 <label :for="`obj${i}-${g}`" class="text-base">
-                   <strong>{{ ResultsByCollection[collection].objects[obj].type }} : </strong>
-                   {{ ResultsByCollection[collection].objects[obj].name }}
+                   <strong>{{ obj.type }} : </strong>
+                   {{ obj.name }}
                 </label>
-                <StatusBar :mini='false' :counters="ResultsByCollection[collection].objects[obj].counters" style="margin-right:-10px;" />
-                <ul v-for="(control, c) in ResultsByCollection[collection].objects[obj].controls" 
+                <StatusBar :mini='false' :counters="obj.counters" style="margin-right:-10px;" />
+                <ul v-for="(control, c) in obj.controls" 
                    :key="`control${i}-${g}-${c}`">
                   <li>
                     <label :for="`control${i}-${g}-${c}`" class="text-sm">
@@ -100,8 +100,7 @@
             </ul>
           </li>
         </ul> 
-
-  </div>
+    </div>
   </div>
 </template>
 

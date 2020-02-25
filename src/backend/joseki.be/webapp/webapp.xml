@@ -33,6 +33,12 @@
             </summary>
             <returns>the component summary detail.</returns>
         </member>
+        <member name="M:webapp.Controllers.AuditsController.GetComponentDiff(System.String,System.DateTime,System.DateTime)">
+            <summary>
+            Returns the component summary diff.
+            </summary>
+            <returns>the component summary diff.</returns>
+        </member>
         <member name="T:webapp.Controllers.Data">
             <summary>
             data wrapper before connecting to real results.
@@ -353,6 +359,21 @@
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Models.InfrastructureComponent"/> class.
             Creates random id on constructor.
+            </summary>
+        </member>
+        <member name="T:webapp.Models.InfrastructureComponentDiff">
+            <summary>
+            Returns infrastructure summary diff.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.InfrastructureComponentDiff.Summary1">
+            <summary>
+            First Component infrastructure summary.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.InfrastructureComponentDiff.Summary2">
+            <summary>
+            Second Component infrastructure summary.
             </summary>
         </member>
         <member name="T:webapp.Models.InfrastructureComponentSummary">

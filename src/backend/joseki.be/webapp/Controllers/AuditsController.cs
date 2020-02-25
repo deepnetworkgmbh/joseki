@@ -99,5 +99,23 @@ namespace webapp.Controllers
 
             return Task.FromResult(this.StatusCode(200, result));
         }
+
+        /// <summary>
+        /// Returns the component summary diff.
+        /// </summary>
+        /// <returns>the component summary diff.</returns>
+        [HttpGet]
+        [Route("component/diff", Name = "get-component-diff")]
+        [ProducesResponseType(200, Type = typeof(InfrastructureComponentDiff))]
+        public Task<ObjectResult> GetComponentDiff(string id, DateTime date1, DateTime date2)
+        {
+            var result = new InfrastructureComponentDiff()
+            {
+                Summary1 = componentSummaries.FirstOrDefault(x => x.Component.Id == id && x.Date == date1),
+                Summary2 = componentSummaries.FirstOrDefault(x => x.Component.Id == id && x.Date == date2),
+            };
+
+            return Task.FromResult(this.StatusCode(200, result));
+        }
     }
 }

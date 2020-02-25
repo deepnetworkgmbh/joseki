@@ -7,6 +7,7 @@ import ImageDetail from "@/views/ImageDetail.vue";
 import OverviewDiff from '@/views/OverviewDiff.vue';
 import ComponentHistory from '@/views/ComponentHistory.vue';
 import ComponentDetail from '@/views/ComponentDetail.vue';
+import ComponentDiff from '@/views/ComponentDiff.vue';
 
 Vue.use(VueRouter);
 
@@ -31,6 +32,12 @@ const routes = [
     path: "/component-detail/:id/:date?",
     name: "ComponentDetail",
     component: ComponentDetail,
+    props: true
+  },
+  {
+    path: "/component-diff/:id/:date/:date2",
+    name: "ComponentDiff",
+    component: ComponentDiff,
     props: true
   },
   {
