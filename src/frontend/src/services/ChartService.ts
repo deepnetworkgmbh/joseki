@@ -129,7 +129,7 @@ export class ChartService {
 		data: ScoreHistoryItem[],
 		key: string,
 		selected: Date,
-		cb: Function,
+		cb?: Function,
 		height: number = 100,
 		selected2: string = '') {
 
@@ -188,14 +188,16 @@ export class ChartService {
 
 			console.log('[] selectedItem ', selectedItem);
 
-			if (selectedItem) {
+			if (selectedItem && cb) {
 				let row = selectedItem.row as number;
 				var selectedDate = chart_data.getValue(row, 0);
 				cb(selectedDate);
 			}
 		}
 
-		google.visualization.events.addListener(chart, 'select', selectHandler);
+		if (cb) {
+			google.visualization.events.addListener(chart, 'select', cb);
+		}
 		chart.draw(chart_data, options);
 	}
 

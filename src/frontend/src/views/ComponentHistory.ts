@@ -73,7 +73,8 @@ export default class ComponentHistory extends Vue {
             router.push('/overview-diff/' + params);
         } else {
             if (this.component) {
-                alert('scan diff for ' + this.component.category + ' not implemented yet')
+                const params = this.component.id + '/' + this.checkedScans[1] + '/' + this.checkedScans[0];
+                router.push('/component-diff/' + params);
             }
         }
     }

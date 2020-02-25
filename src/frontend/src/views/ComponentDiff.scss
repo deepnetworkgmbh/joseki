@@ -1,3 +1,5 @@
+$border: dashed 2px #aaa;
+
 .scan-detailed-diff-item {
 	width: 320px;
 	height: 90px;
@@ -7,4 +9,17 @@
 	margin-right: 10px;
 	border-radius: 5px;
 	cursor: pointer;
+
+	&:hover {
+		background-color: #efe;
+	}
+}
+
+.top-seperator {
+	overflow: hidden;
+	border-left: $border;
+}
+
+.bottom-seperator {
+	border-left: $border;
 }

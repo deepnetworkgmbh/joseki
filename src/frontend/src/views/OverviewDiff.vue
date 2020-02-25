@@ -55,8 +55,10 @@
     </div>
     <div v-if="loaded" class="segment shadow">
       <div class="w-full flex flex-wrap pt-2 pl-1">
-        <div v-for="(c, i) in data.components1" :key="`scan${i}`" class="scan-detailed-diff-item flex flex-row shadow">
-          <div class="w-full p-2 text-lg pt-0 flex flex-col">
+        <div v-for="(c, i) in data.components1" :key="`scan${i}`" 
+            class="scan-detailed-diff-item flex flex-row shadow"
+            @click="goDiffPage(c.component)">
+          <div class="w-full p-2 text-lg pt-0 flex flex-col">        
             <div class="text-sm">{{ c.component.name }}</div>
             <div class="text-xs text-gray-600">{{c.component.category}}</div>
             <div style="height:50px;width:130px;" :id="`bar${i}`"></div>

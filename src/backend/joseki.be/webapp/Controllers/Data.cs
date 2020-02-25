@@ -324,6 +324,11 @@ namespace webapp.Controllers
         /// <returns>CheckSeverity.</returns>
         public static CheckSeverity RandomSeverity()
         {
+            if (new Random().Next() * 100 > 70)
+            {
+                return CheckSeverity.Success;
+            }
+
             var v = Enum.GetValues(typeof(CheckSeverity));
             return (CheckSeverity)v.GetValue(new Random().Next(v.Length));
         }
