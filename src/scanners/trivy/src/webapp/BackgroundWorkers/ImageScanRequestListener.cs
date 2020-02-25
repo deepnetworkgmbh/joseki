@@ -60,8 +60,11 @@ namespace webapp.BackgroundWorkers
 
         private Task ProcessImageScanRequest(ImageScanRequestMessage msg)
         {
-            var image = ContainerImage.FromFullName(msg.Payload.ImageFullName);
-            return this.scanner.Scan(image);
+            return this.scanner.Scan(new ScanRequest
+            {
+                Image = ContainerImage.FromFullName(msg.Payload.ImageFullName),
+                ScanId = msg.Payload.ImageScanId,
+            });
         }
     }
 }
