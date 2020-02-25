@@ -404,6 +404,20 @@
         <member name="M:webapp.BlobStorage.AzureBlobStorageProcessor.MarkAsProcessed(webapp.BlobStorage.AuditBlob)">
             <inheritdoc />
         </member>
+        <member name="M:webapp.BlobStorage.AzureBlobStorageProcessor.GetAllAudits(webapp.BlobStorage.ScannerContainer)">
+            <summary>
+            The method returns all audit files in the container.
+            </summary>
+            <param name="container">The container with audits.</param>
+            <returns>Array of Audit blobs.</returns>
+        </member>
+        <member name="M:webapp.BlobStorage.AzureBlobStorageProcessor.MarkAsUnprocessed(webapp.BlobStorage.AuditBlob)">
+            <summary>
+            Cleans-up Processed tag.
+            </summary>
+            <param name="auditBlob">Audit blob to remove Processed tag.</param>
+            <returns>A task object.</returns>
+        </member>
         <member name="T:webapp.BlobStorage.IBlobStorageMaintainer">
             <summary>
             Takes care of managing Archive and Garbage Bin in the Blob Storage service.

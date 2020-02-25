@@ -87,5 +87,46 @@ namespace webapp.BlobStorage
             var client = new Azure.Storage.Blobs.BlobClient(uri);
             await client.SetMetadataAsync(new Dictionary<string, string>() { { ProcessedMetadataKey, string.Empty } });
         }
+
+        /// <summary>
+        /// The method returns all audit files in the container.
+        /// </summary>
+        /// <param name="container">The container with audits.</param>
+        /// <returns>Array of Audit blobs.</returns>
+        public async Task<AuditBlob[]> GetAllAudits(ScannerContainer container)
+        {
+            var uri = new Uri($"{this.config.AzureBlob.BasePath}/{container.Name}?{this.config.AzureBlob.Sas}");
+            var client = new Azure.Storage.Blobs.BlobContainerClient(uri);
+
+            var blobs = new List<AuditBlob>();
+            await foreach (var blob in client.GetBlobsAsync())
+            {
+                // skip all not metadata file.
+                if (!blob.Name.EndsWith("meta"))
+                {
+                    continue;
+                }
+
+                blobs.Add(new AuditBlob
+                {
+                    Name = blob.Name,
+                    ParentContainer = container,
+                });
+            }
+
+            return blobs.ToArray();
+        }
+
+        /// <summary>
+        /// Cleans-up Processed tag.
+        /// </summary>
+        /// <param name="auditBlob">Audit blob to remove Processed tag.</param>
+        /// <returns>A task object.</returns>
+        public async Task MarkAsUnprocessed(AuditBlob auditBlob)
+        {
+            var uri = new Uri($"{this.config.AzureBlob.BasePath}/{auditBlob.ParentContainer.Name}/{auditBlob.Name}?{this.config.AzureBlob.Sas}");
+            var client = new Azure.Storage.Blobs.BlobClient(uri);
+            await client.SetMetadataAsync(new Dictionary<string, string>());
+        }
     }
 }
