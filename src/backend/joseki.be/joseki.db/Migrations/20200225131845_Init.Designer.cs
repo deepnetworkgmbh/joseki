@@ -11,8 +11,8 @@ namespace joseki.db.Migrations
 {
 #pragma warning disable 612, 618, 1591
     [DbContext(typeof(JosekiDbContext))]
-    [Migration("20200221140642_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20200225131845_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -136,7 +136,7 @@ namespace joseki.db.Migrations
                     b.HasIndex("AuditId");
 
                     b.HasIndex("ComponentId", "Value")
-                        .HasFilter("[VALUE] = 'NoData'");
+                        .HasFilter("[VALUE] = 'InProgress'");
 
                     b.ToTable("CheckResult");
                 });
@@ -216,6 +216,10 @@ namespace joseki.db.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ImageTag", "Date")
@@ -256,8 +260,7 @@ namespace joseki.db.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CveId")
-                        .IsUnique();
+                    b.HasIndex("CveId");
 
                     b.HasIndex("ScanId");
 
@@ -344,8 +347,8 @@ namespace joseki.db.Migrations
             modelBuilder.Entity("joseki.db.entities.ImageScanToCveEntity", b =>
                 {
                     b.HasOne("joseki.db.entities.CveEntity", "CVE")
-                        .WithOne()
-                        .HasForeignKey("joseki.db.entities.ImageScanToCveEntity", "CveId")
+                        .WithMany()
+                        .HasForeignKey("CveId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

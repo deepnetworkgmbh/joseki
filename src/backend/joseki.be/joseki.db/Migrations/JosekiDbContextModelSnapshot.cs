@@ -134,7 +134,7 @@ namespace joseki.db.Migrations
                     b.HasIndex("AuditId");
 
                     b.HasIndex("ComponentId", "Value")
-                        .HasFilter("[VALUE] = 'NoData'");
+                        .HasFilter("[VALUE] = 'InProgress'");
 
                     b.ToTable("CheckResult");
                 });
@@ -214,6 +214,10 @@ namespace joseki.db.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ImageTag", "Date")
@@ -254,8 +258,7 @@ namespace joseki.db.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CveId")
-                        .IsUnique();
+                    b.HasIndex("CveId");
 
                     b.HasIndex("ScanId");
 
@@ -342,8 +345,8 @@ namespace joseki.db.Migrations
             modelBuilder.Entity("joseki.db.entities.ImageScanToCveEntity", b =>
                 {
                     b.HasOne("joseki.db.entities.CveEntity", "CVE")
-                        .WithOne()
-                        .HasForeignKey("joseki.db.entities.ImageScanToCveEntity", "CveId")
+                        .WithMany()
+                        .HasForeignKey("CveId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
