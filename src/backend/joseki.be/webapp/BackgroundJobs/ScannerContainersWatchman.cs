@@ -53,7 +53,7 @@ namespace webapp.BackgroundJobs
 
                     var containers = await this.blobStorage.ListAllContainers();
                     var metadataTasks = containers
-                        .Select(this.DownloadAndParseMetadata<ScannerMetadata>)
+                        .Select(this.DownloadAndParseMetadata)
                         .ToArray();
                     await Task.WhenAll(metadataTasks);
 
@@ -70,7 +70,7 @@ namespace webapp.BackgroundJobs
             }
         }
 
-        private async Task<ScannerContainer> DownloadAndParseMetadata<TResult>(ScannerContainer container)
+        private async Task<ScannerContainer> DownloadAndParseMetadata(ScannerContainer container)
         {
             const int oneHourSeconds = 3600;
 

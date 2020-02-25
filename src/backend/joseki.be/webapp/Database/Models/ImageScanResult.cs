@@ -62,6 +62,10 @@ namespace webapp.Database.Models
             {
                 return "The scan is in progress";
             }
+            else if (this.Status == ImageScanStatus.Failed)
+            {
+                return "The image scan failed";
+            }
             else if (this.Counters.Length == 0)
             {
                 return "No issues";
