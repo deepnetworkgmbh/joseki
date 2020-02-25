@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace joseki.db.Migrations
 {
 #pragma warning disable 1591
-    public partial class InitialCreate : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -80,7 +80,8 @@ namespace joseki.db.Migrations
                     ChangedBy = table.Column<string>(nullable: true),
                     ExternalId = table.Column<string>(nullable: false),
                     ImageTag = table.Column<string>(nullable: false),
-                    Date = table.Column<DateTime>(nullable: false)
+                    Date = table.Column<DateTime>(nullable: false),
+                    Status = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -214,7 +215,7 @@ namespace joseki.db.Migrations
                 name: "IX_CheckResult_ComponentId_Value",
                 table: "CheckResult",
                 columns: new[] { "ComponentId", "Value" },
-                filter: "[VALUE] = 'NoData'");
+                filter: "[VALUE] = 'InProgress'");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Cve_CveId",
@@ -231,8 +232,7 @@ namespace joseki.db.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_ImageScanResultToCve_CveId",
                 table: "ImageScanResultToCve",
-                column: "CveId",
-                unique: true);
+                column: "CveId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ImageScanResultToCve_ScanId",
