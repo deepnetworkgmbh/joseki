@@ -96,12 +96,17 @@ namespace webapp.Database
         public async Task<ImageScanResult[]> GetNotExpiredImageScans(string[] imageTags)
         {
             var expirationTime = DateTime.UtcNow.AddHours(-this.config.Cache.ImageScanTtl);
-            return await this.db.Set<ImageScanResultEntity>()
+            var existingScans = await this.db.Set<ImageScanResultEntity>()
                 .Include("FoundCVEs.CVE")
                 .AsNoTracking()
                 .Where(sr => imageTags.Contains(sr.ImageTag) && sr.Date > expirationTime)
                 .Select(i => i.GetShortResult())
                 .ToArrayAsync();
+
+            return existingScans
+                .GroupBy(i => i.ImageTag)
+                .Select(i => i.OrderByDescending(scan => scan.Date).FirstOrDefault())
+                .ToArray();
         }
     }
 }
