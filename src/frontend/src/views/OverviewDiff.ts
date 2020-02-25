@@ -3,7 +3,7 @@ import { ChartService } from "@/services/ChartService"
 import Spinner from "@/components/spinner/Spinner.vue";
 import StatusBar from "@/components/statusbar/StatusBar.vue";
 import { DataService } from '@/services/DataService';
-import { InfrastructureComponentSummary, InfrastructureOverviewDiff } from '@/models/InfrastructureOverview';
+import { InfrastructureComponentSummary, InfrastructureOverviewDiff, InfrastructureComponent } from '@/models/InfrastructureOverview';
 import { ScoreService } from '@/services/ScoreService';
 import router from '@/router';
 
@@ -57,19 +57,18 @@ export default class OverviewDiff extends Vue {
         google.charts.setOnLoadCallback(this.drawCharts);
     }
 
+    goDiffPage(component: InfrastructureComponent) {
+        console.log(`[] id: ${component.id} dates: ${this.date} , ${this.date2}`);
+        router.push('/component-diff/' + component.id + '/' + this.date + '/' + this.date2);
+    }
 
     drawCharts() {
         ChartService.drawPieChart(this.data.overall1.current, "overall_pie1", 200)
         ChartService.drawPieChart(this.data.overall2.current, "overall_pie2", 200)
         for (let i = 0; i < this.data.components1.length; i++) {
-            ChartService.drawBarChart(this.data.components1[i].scoreHistory, 'bar' + i, new Date(this.date), this.dayClicked, 48, this.date2);
+            ChartService.drawBarChart(this.data.components1[i].scoreHistory, 'bar' + i, new Date(this.date), undefined, 48, this.date2);
         }
     }
-
-    dayClicked(date: string) {
-        console.log(`[] date clicked ${date}`);
-    }
-
 
     getClusters1() { return this.data.components1.filter(x => x.component.category === 'Kubernetes').length; }
     getSubscriptions1() { return this.data.components1.filter(x => x.component.category === 'Subscription').length; }

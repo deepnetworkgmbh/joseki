@@ -6,6 +6,7 @@ import { DataService } from '@/services/DataService';
 import { InfrastructureOverview, InfrastructureComponentSummary, InfrastructureComponent, CountersSummary, CheckSeverity } from '@/models/InfrastructureOverview';
 import { ScoreService } from '@/services/ScoreService';
 import router from '@/router';
+import { MappingService } from '@/services/MappingService';
 
 @Component({
     components: { Spinner, StatusBar }
@@ -126,134 +127,8 @@ export default class ComponentDetail extends Vue {
     getScoreIconClass(score: number) { return ScoreService.getScoreIconClass(score); }
     getGrade(score: number) { return ScoreService.getGrade(score); }
 
+    get ResultsByCategory() { return MappingService.getResultsByCategory(this.data.checks); }
+    get ResultsByCollection() { return MappingService.getResultsByCollection(this.data.checks); }
 
-    get ResultsByCategory() {
-
-        var categoryCounters = {};
-
-        // walk over all checks and group them by cateory.
-        for (let i = 0; i < this.data.checks.length; i++) {
-
-            const check = this.data.checks[i];
-
-            if (categoryCounters[check.category] === undefined) {
-                categoryCounters[check.category] = new CountersSummary();
-            }
-
-            switch (check.result.toString()) {
-                case 'Failed':
-                    categoryCounters[check.category].failed += 1;
-                    break;
-                case 'NoData':
-                    categoryCounters[check.category].noData += 1;
-                    break;
-                case 'Warning':
-                    categoryCounters[check.category].warning += 1;
-                    break;
-                case 'Success':
-                    categoryCounters[check.category].passed += 1;
-                    break;
-            }
-
-            categoryCounters[check.category].total += 1;
-        }
-        //console.log(categoryCounters);
-
-        let keys = Object.keys(categoryCounters);
-        for (let i = 0; i < keys.length; i++) {
-            categoryCounters[keys[i]].score = categoryCounters[keys[i]].calculateScore();
-        }
-
-        return categoryCounters;
-    }
-
-    get ResultsByCollection() {
-
-        var results = {};
-
-        // walk over all checks and group them by collections.
-        for (let i = 0; i < this.data.checks.length; i++) {
-            let row = this.data.checks[i];
-
-            if (results[row.collection.name] === undefined) {
-                results[row.collection.name] = {
-                    type: row.collection.type,
-                    name: row.collection.name,
-                    counters: new CountersSummary(),
-                    score: 0,
-                    objects: {},
-                };
-            }
-
-            if (results[row.collection.name].objects[row.resource.id] === undefined) {
-                results[row.collection.name].objects[row.resource.id] = {
-                    type: row.resource.type,
-                    name: row.resource.name,
-                    controls: [],
-                    counters: new CountersSummary()
-                }
-            }
-
-            switch (row.result.toString()) {
-                case 'Failed':
-                    results[row.collection.name].counters.failed += 1;
-                    results[row.collection.name].objects[row.resource.id].counters.failed += 1;
-                    break;
-                case 'NoData':
-                    results[row.collection.name].counters.noData += 1;
-                    results[row.collection.name].objects[row.resource.id].counters.noData += 1;
-                    break;
-                case 'Warning':
-                    results[row.collection.name].counters.warning += 1;
-                    results[row.collection.name].objects[row.resource.id].counters.warning += 1;
-                    break;
-                case 'Success':
-                    results[row.collection.name].counters.passed += 1;
-                    results[row.collection.name].objects[row.resource.id].counters.passed += 1;
-                    break;
-            }
-            results[row.collection.name].counters.total += 1;
-            results[row.collection.name].objects[row.resource.id].counters.total += 1;
-
-            results[row.collection.name].objects[row.resource.id].controls.push({
-                id: row.control.id,
-                text: row.control.message,
-                result: row.result,
-                icon: this.getControlIcon(row.result),
-                order: this.getSeverityScore(row.result)
-            });
-        }
-
-        let keys = Object.keys(results);
-        for (let i = 0; i < keys.length; i++) {
-            results[keys[i]].score = results[keys[i]].counters.calculateScore();
-
-            for (let j = 0; j < Object.keys(results[keys[i]].objects).length; j++) {
-                let key = Object.keys(results[keys[i]].objects)[j];
-                results[keys[i]].objects[key].controls.sort((a, b) => (a.order < b.order) ? -1 : (a.order > b.order) ? 1 : 0)
-            }
-        }
-
-        console.log(results);
-        return results;
-    }
-
-    getControlIcon(severity: CheckSeverity) {
-        switch (severity.toString()) {
-            case 'NoData': return "fas fa-times nodata-icon";
-            case 'Failed':
-            case 'Warning': return "fas fa-exclamation-triangle warning-icon";
-            case 'Success': return "fas fa-check noissues-icon";
-        }
-    }
-
-    getSeverityScore(severity: CheckSeverity) {
-        switch (severity.toString()) {
-            case 'NoData': return 10;
-            case 'Failed':
-            case 'Warning': return 100;
-            case 'Success': return 1;
-        }
-    }
 
 }
