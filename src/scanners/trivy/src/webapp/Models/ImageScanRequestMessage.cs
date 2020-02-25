@@ -38,6 +38,11 @@
     public class ImageScanRequestPayload
     {
         /// <summary>
+        /// Unique image-scan identifier.
+        /// </summary>
+        public string ImageScanId { get; set; }
+
+        /// <summary>
         /// The complete image name including registry, and tag.
         /// </summary>
         public string ImageFullName { get; set; }

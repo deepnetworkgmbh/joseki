@@ -106,7 +106,7 @@ namespace core.exporters.azure
 
             var metadata = new AuditMetadata
             {
-                AuditId = Guid.NewGuid().ToString(),
+                AuditId = details.Id,
                 ImageTag = details.Image.FullName,
                 ScannerVersion = this.config.Version,
                 TrivyVersion = this.config.TrivyVersion,

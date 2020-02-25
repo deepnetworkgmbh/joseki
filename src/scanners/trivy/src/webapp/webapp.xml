@@ -348,6 +348,11 @@
             The Image Scan Request message payload.
             </summary>
         </member>
+        <member name="P:webapp.Models.ImageScanRequestPayload.ImageScanId">
+            <summary>
+            Unique image-scan identifier.
+            </summary>
+        </member>
         <member name="P:webapp.Models.ImageScanRequestPayload.ImageFullName">
             <summary>
             The complete image name including registry, and tag.

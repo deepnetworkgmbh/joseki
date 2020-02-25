@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -52,7 +53,30 @@ namespace webapp.Queues
             {
                 try
                 {
-                    await this.OneMessageListenerIteration(handler, linkedTokens.Token);
+                    var queueMessage = await this.mainQueue.GetMessageAsync(
+                        TimeSpan.FromMinutes(1),
+                        new QueueRequestOptions
+                        {
+                            RetryPolicy = new ExponentialRetry(TimeSpan.FromSeconds(5), 3),
+                            MaximumExecutionTime = TimeSpan.FromMinutes(5),
+                        },
+                        null,
+                        linkedTokens.Token);
+
+                    // Dequeued until queue is empty
+                    if (queueMessage == null)
+                    {
+                        await this.Delay(linkedTokens.Token);
+                    }
+                    else
+                    {
+                        var (contentIsSafe, messageContent) = await this.TryGetMessageContent(queueMessage, linkedTokens.Token);
+
+                        if (contentIsSafe)
+                        {
+                            await this.TryProcessMessage(queueMessage, messageContent, handler, cancellationToken);
+                        }
+                    }
                 }
                 catch (TaskCanceledException)
                 {
@@ -72,56 +96,78 @@ namespace webapp.Queues
             this.cts.Cancel();
         }
 
-        private async Task OneMessageListenerIteration(Func<ImageScanRequestMessage, Task> handler, CancellationToken cancellationToken)
+        private async Task<(bool ok, string content)> TryGetMessageContent(CloudQueueMessage queueMessage, CancellationToken cancellationToken)
         {
-            var queueMessage = await this.mainQueue.GetMessageAsync(
-                TimeSpan.FromMinutes(1),
-                new QueueRequestOptions
-                {
-                    RetryPolicy = new ExponentialRetry(TimeSpan.FromSeconds(5), 3),
-                    MaximumExecutionTime = TimeSpan.FromMinutes(5),
-                },
-                null,
-                cancellationToken);
-
-            // Dequeued until queue is empty
-            if (queueMessage == null)
+            try
             {
-                await this.Delay(cancellationToken);
+                return (true, queueMessage.AsString);
+            }
+            catch (FormatException formatEx)
+            {
+                Logger.Warning(formatEx, "The message {MessageId} is in wrong format", queueMessage.Id);
+
+                try
+                {
+                    // try to read message content as bytes to move it to quarantine
+                    var bytes = queueMessage.AsBytes;
+                    var rawString = Encoding.UTF8.GetString(bytes);
+                    await this.quarantineQueue.AddMessageAsync(new CloudQueueMessage(rawString), cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Warning(ex, "Failed to move message {MessageId} to quarantine", queueMessage.Id);
+                }
+
+                try
+                {
+                    Logger.Warning("Delete the message {MessageId} from the queue", queueMessage.Id);
+                    await this.mainQueue.DeleteMessageAsync(queueMessage, cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Failed to delete the message {MessageId}", queueMessage.Id);
+                }
+            }
+
+            return (false, null);
+        }
+
+        private async Task TryProcessMessage(
+            CloudQueueMessage queueMessage,
+            string messageContent,
+            Func<ImageScanRequestMessage, Task> handler,
+            CancellationToken cancellationToken)
+        {
+            if (queueMessage.DequeueCount > 3)
+            {
+                Logger.Warning("Moving message {MessageId} to quarantine", queueMessage.Id);
+
+                await this.quarantineQueue.AddMessageAsync(new CloudQueueMessage(messageContent), cancellationToken);
+                await this.mainQueue.DeleteMessageAsync(queueMessage, cancellationToken);
             }
             else
             {
-                if (queueMessage.DequeueCount > 3)
-                {
-                    Logger.Warning("Moving message {MessageId} to quarantine", queueMessage.Id);
+                Logger.Information("Try to process the message {MessageId}", queueMessage.Id);
 
-                    await this.quarantineQueue.AddMessageAsync(new CloudQueueMessage(queueMessage.AsString), cancellationToken);
+                var processed = false;
+                try
+                {
+                    var imageScanRequest = JsonConvert.DeserializeObject<ImageScanRequestMessage>(messageContent);
+
+                    await handler(imageScanRequest);
+
                     await this.mainQueue.DeleteMessageAsync(queueMessage, cancellationToken);
+                    processed = true;
                 }
-                else
+                catch (Exception ex)
                 {
-                    Logger.Information("Try to process the message {MessageId}", queueMessage.Id);
+                    Logger.Warning(ex, "Failed to process Message {MessageId}. Attempt {RetryCount}", queueMessage.Id, queueMessage.DequeueCount);
+                }
 
-                    var processed = false;
-                    try
-                    {
-                        var imageScanRequest = JsonConvert.DeserializeObject<ImageScanRequestMessage>(queueMessage.AsString);
-
-                        await handler(imageScanRequest);
-
-                        await this.mainQueue.DeleteMessageAsync(queueMessage, cancellationToken);
-                        processed = true;
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Warning(ex, "Failed to process Message {MessageId}. Attempt {RetryCount}", queueMessage.Id, queueMessage.DequeueCount);
-                    }
-
-                    if (!processed)
-                    {
-                        var visibilityTimeout = TimeSpan.FromMilliseconds(BASERETRYSTEP * queueMessage.DequeueCount);
-                        await this.mainQueue.UpdateMessageAsync(queueMessage, visibilityTimeout, MessageUpdateFields.Visibility, cancellationToken);
-                    }
+                if (!processed)
+                {
+                    var visibilityTimeout = TimeSpan.FromMilliseconds(BASERETRYSTEP * queueMessage.DequeueCount);
+                    await this.mainQueue.UpdateMessageAsync(queueMessage, visibilityTimeout, MessageUpdateFields.Visibility, cancellationToken);
                 }
             }
         }
