@@ -11,6 +11,7 @@ import (
 	"github.com/Azure/azure-storage-blob-go/azblob"
 	"github.com/deepnetworkgmbh/joseki/src/scanners/polaris/pkg/config"
 	"github.com/deepnetworkgmbh/joseki/src/scanners/polaris/pkg/scanner"
+	"github.com/google/uuid"
 )
 
 type Client struct {
@@ -64,7 +65,7 @@ func (client *Client) UploadAuditResult(polarisResult scanner.PolarisAudit) (err
 	folderName := GenerateAuditFolderName(now)
 
 	auditMeta := AuditMetadata{
-		Id:                 client.config.Scanner.Id,
+		Id:                 uuid.New().String(),
 		ClusterId:          client.config.Scanner.ClusterId,
 		ScannerVersion:     client.config.Scanner.Version,
 		Timestamp:          now.Unix(),
