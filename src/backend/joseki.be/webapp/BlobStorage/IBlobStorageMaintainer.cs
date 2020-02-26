@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace webapp.BlobStorage
 {
@@ -8,30 +9,17 @@ namespace webapp.BlobStorage
     public interface IBlobStorageMaintainer
     {
         /// <summary>
-        /// Moves audit blob from scanner container to Archive container.
+        /// Moves all processed audit blobs from scanner containers to Archive container.
         /// </summary>
-        /// <param name="blob">Audit blob object.</param>
-        /// <returns>A task object.</returns>
-        Task MoveToArchive(AuditBlob blob);
+        /// <param name="cancellation">Cancellation token.</param>
+        /// <returns>Number of records, that were moved to Archive.</returns>
+        Task<int> MoveProcessedBlobsToArchive(CancellationToken cancellation);
 
         /// <summary>
-        /// Moves blob from Archive to Garbage Bin.
+        /// Deletes all expired blobs from Archive.
         /// </summary>
-        /// <param name="blob">Audit blob object.</param>
-        /// <returns>A task object.</returns>
-        Task DeleteStale(AuditBlob blob);
-
-        /// <summary>
-        /// Moves the entire scanner container to Garbage Bin.
-        /// </summary>
-        /// <param name="container">Scanner container object.</param>
-        /// <returns>A task object.</returns>
-        Task DeleteStale(ScannerContainer container);
-
-        /// <summary>
-        /// Deletes all expired blobs from Garbage Bin.
-        /// </summary>
-        /// <returns>A task object.</returns>
-        Task CleanupGarbageBin();
+        /// <param name="cancellation">Cancellation token.</param>
+        /// <returns>Number of records, that were removed from Archive.</returns>
+        Task<int> CleanupArchive(CancellationToken cancellation);
     }
 }

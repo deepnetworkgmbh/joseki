@@ -89,6 +89,7 @@ namespace webapp
             });
 
             services.AddTransient<IBlobStorageProcessor, AzureBlobStorageProcessor>();
+            services.AddTransient<IBlobStorageMaintainer, AzureBlobStorageMaintainer>();
             services.AddTransient<IQueue, AzureStorageQueue>();
 
             services.AddDbContext<JosekiDbContext>((provider, options) =>
@@ -112,6 +113,8 @@ namespace webapp
             services.AddScoped<ScannerContainersWatchman>();
             services.AddSingleton<SchedulerAssistant>();
             services.AddHostedService<ScannerResultsReaderJob>();
+            services.AddScoped<ArchiveWatchman>();
+            services.AddHostedService<ArchiverJob>();
         }
 
         /// <summary>

@@ -102,6 +102,21 @@
         /// Sas token.
         /// </summary>
         public string Sas { get; set; }
+
+        /// <summary>
+        /// Azure Storage connection string.
+        /// </summary>
+        public string ConnectionString { get; set; }
+
+        /// <summary>
+        /// Storage Account name.
+        /// </summary>
+        public string AccountName { get; set; }
+
+        /// <summary>
+        /// Storage Account key.
+        /// </summary>
+        public string AccountKey { get; set; }
     }
 
     /// <summary>
@@ -114,6 +129,18 @@
         /// The measurement is in seconds.
         /// </summary>
         public int ScannerContainersPeriodicity { get; set; }
+
+        /// <summary>
+        /// How often ArchiveWatchman is maintaining the Archive.
+        /// The measurement is in hours.
+        /// </summary>
+        public int ArchiverPeriodicityHours { get; set; } = 24;
+
+        /// <summary>
+        /// How long processed audits should be stored in Archive.
+        /// The measurement is in days.
+        /// </summary>
+        public int ArchiveTtlDays { get; set; } = 90;
     }
 
     /// <summary>
