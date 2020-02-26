@@ -64,7 +64,7 @@ export default class Overview extends Vue {
         ChartService.drawPieChart(this.data.overall.current, "overall_pie", 300)
         ChartService.drawBarChart(this.data.overall.scoreHistory, "overall_bar", _date, this.dayClicked)
         for (let i = 0; i < this.data.components.length; i++) {
-            ChartService.drawBarChart(this.data.components[i].scoreHistory, 'bar' + i, _date, this.dayClicked, 48);
+            ChartService.drawBarChart(this.data.components[i].scoreHistory, 'bar' + i, _date, undefined, 48);
         }
     }
 

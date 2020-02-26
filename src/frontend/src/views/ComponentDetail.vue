@@ -36,9 +36,30 @@
         <div id="overall_pie" class="w-auto" style="z-index:0;"></div>
       </div>
       <div class="w-1/4 border-l border-gray-300" style="z-index:10;">
-        <div id="overall_bar" class="w-auto border-b border-gray-500 p-2 ml-1 mb-3"></div>
-        <div class="text-center">
-          <button class="btn" @click="goComponentHistory()">See All Scan History</button>
+        <div class="w-auto p-2 ml-1 mb-2">
+          <div class='text-center text-xs font-bold border-b border-gray-500'>Scan History</div>
+          <div id="overall_bar" style="width:100%"></div>
+        </div>
+        <div class="m-3 mt-0">
+          <div class='text-center text-xs font-bold border-b border-gray-500'>Last 5 scans</div>
+          <table class="w-full text-xs p-4">
+            <tbody>
+              <tr v-for="(scan,i) in shortHistory" :key="`scan${i}`">
+                <td>{{ scan.recordedAt | formatDate }}</td>
+                <td class="w-1">{{scan.score}}%</td>
+                <td class="w-1" v-html="getArrowHtml(i)"></td>
+              </tr>
+            </tbody>
+            <tfoot class='border-t border-gray-500'>
+              <tr>
+                <td colspan="3" class="text-right">
+                  <button class="btn mt-2" @click="goComponentHistory()">
+                    <span class="px-4"><i class="fas fa-history pr-2"></i>See Scan History</span>
+                  </button>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
         </div>
       </div>
     </div>
@@ -51,7 +72,7 @@
             <input type="checkbox" v-bind:id="`cat${i}`" />
             <label class="text-base" v-bind:for="`cat${i}`">
               <strong>{{category.category}}</strong>              
-              <span class="text-xs">
+              <span class="text-xs scan-score">
               score <strong>{{category.score}}%</strong>
               </span>
             </label>
@@ -71,7 +92,7 @@
             <input type="checkbox" :id="`target${i}`" checked />
             <label :for="`target${i}`" class="target">
                <strong>{{ collection.type }}</strong> : {{ collection.name }}
-                <span class="text-xs">
+                <span class="text-xs scan-score">
                   score <strong>{{ collection.score}}%</strong>
                 </span>
             </label>
@@ -83,7 +104,11 @@
                    <strong>{{ obj.type }} : </strong>
                    {{ obj.name }}
                 </label>
-                <StatusBar :mini='false' :counters="obj.counters" style="margin-right:-10px;" />
+                <span class="text-xs scan-score">
+                  score <strong>{{ obj.score}}%</strong>
+                </span>
+
+                <StatusBar :mini='false' :counters="obj.counters" style="margin-right:-5px;" />
                 <ul v-for="(control, c) in obj.controls" 
                    :key="`control${i}-${g}-${c}`">
                   <li>

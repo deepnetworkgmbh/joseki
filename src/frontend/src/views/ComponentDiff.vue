@@ -41,16 +41,18 @@
     <div v-if="loaded" class="segment shadow" style="flex-direction:row">
         <div class="w-1/2" style="min-height:200px;">
             <div style="float:right;padding:10px">
-              <a class='btn' :href="scanDetail1url">Scan Detail</a>
+              <a class='btn' :href="scanDetail1url">
+                 <span class="px-2"><i class="fas fa-external-link-alt pr-2"></i>Scan Detail</span>
+              </a>
             </div>
               <ul v-for="(collection,i) in ResultsByDiff" :key="`collection1${i}`">
                 <li>
                   <input type="checkbox" :id="`target1${i}`" checked />
                   <label :for="`target1${i}`" class="target">
                     <strong>{{ collection.type }}</strong> : {{ collection.name }}
-                      <span class="text-xs">
+                      <!-- <span class="text-xs scan-score">
                         score <strong>{{collection.score1}}%</strong>
-                      </span>
+                      </span> -->
                   </label>
                   <ul v-for="(obj, g) in collection.objects" :key="`obj1${i}-${g}`">
                     <li>
@@ -58,6 +60,9 @@
                       <label :for="`obj1-${i}-${g}`" class="text-base">
                         <strong>{{ obj.type }} : </strong> {{ obj.name }}
                       </label>
+                      <!-- <span class="text-xs scan-score">
+                        score <strong>{{ obj.score1}}%</strong>
+                      </span> -->
                       <ul v-for="(control, c) in obj.controls" 
                         :key="`control${i}-${g}-${c}`">
                         <li>
@@ -78,16 +83,18 @@
         </div>
         <div class="w-1/2 bottom-seperator" style="min-height:200px;">
             <div style="float:right;padding:10px">
-              <a class='btn' :href="scanDetail2url">Scan Detail</a>
+              <a class='btn' :href="scanDetail2url">
+                <span class="px-2"><i class="fas fa-external-link-alt pr-2"></i>Scan Detail</span>
+              </a>
             </div>
              <ul v-for="(collection,i) in ResultsByDiff" :key="`collection2${i}`">
                 <li>
                   <input type="checkbox" :id="`target2${i}`" checked />
                   <label :for="`target2${i}`" class="target">
                     <strong>{{ collection.type }}</strong> : {{ collection.name }}
-                      <span class="text-xs">
+                      <!-- <span class="text-xs scan-score">
                         score <strong>{{collection.score2}}%</strong>
-                      </span>
+                      </span> -->
                   </label>
                   <ul v-for="(obj, g) in collection.objects" :key="`obj2${i}-${g}`">
                     <li>
@@ -95,6 +102,9 @@
                       <label :for="`obj2-${i}-${g}`" class="text-base">
                         <strong>{{ obj.type }} : </strong> {{ obj.name }}
                       </label>
+                      <!-- <span class="text-xs scan-score">
+                        score <strong>{{ obj.score2}}%</strong>
+                      </span> -->
                       <ul v-for="(control, c) in obj.controls" 
                         :key="`control${i}-${g}-${c}`">
                         <li>

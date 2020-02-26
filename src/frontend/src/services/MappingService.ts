@@ -13,6 +13,8 @@ export class DiffObject {
     type: string = ''
     name: string = ''
     controls: DiffControl[] = []
+    score1: number = 0;
+    score2: number = 0;
 }
 
 export class DiffControl {
@@ -134,7 +136,8 @@ export class MappingService {
             results[i].score = results[i].counters.calculateScore()
 
             for (let j = 0; j < results[i].objects.length; j++) {
-                results[i].objects[j].controls.sort((a, b) => (a.order < b.order ? -1 : a.order > b.order ? 1 : 0))
+                results[i].objects[j].controls.sort((a, b) => (a.order < b.order ? -1 : a.order > b.order ? 1 : 0));
+                results[i].objects[j].score = results[i].objects[j].counters.calculateScore();
             }
         }
 
@@ -198,6 +201,8 @@ export class MappingService {
                             type: obj1.type,
                             name: obj1.name,
                             controls: [],
+                            score1: obj1.score,
+                            score2: obj2.score
                         });
                         objIndex = results[colIndex].objects.findIndex(x => x.id === obj1.id);
                     }

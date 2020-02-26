@@ -54,6 +54,20 @@ export default class ComponentHistory extends Vue {
         return '-'
     }
 
+    getErrorArrowHtml(key: string, i: number, reverseColor: boolean = false) {
+        let data = { class: '-', color: '-' };
+
+        if (i < (this.data.length - 1)) {
+            if (this.data[i].current[key] > this.data[i + 1].current[key]) {
+                data = { class: 'up', color: reverseColor ? 'green' : 'red' };
+            } else if (this.data[i].current[key] < this.data[i + 1].current[key]) {
+                data = { class: 'down', color: reverseColor ? 'red' : 'green' };
+            }
+        }
+        if (data.class === '-') return '-'
+        return `<i class="fas fa-arrow-${data.class}" style="color:${data.color};"></i>`
+    }
+
     getScanRowClass(i: number): string {
         return i % 2 === 0 ? 'bg-gray-100' : 'bg-gray-200';
     }
