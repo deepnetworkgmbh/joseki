@@ -21,17 +21,17 @@ namespace core
             this.exporter = exporter;
         }
 
-        public async Task<ImageScanDetails> Scan(ContainerImage image)
+        public async Task<ImageScanDetails> Scan(ScanRequest request)
         {
             try
             {
-                var details = await this.scanner.Scan(image);
+                var details = await this.scanner.Scan(request);
                 await this.exporter.UploadAsync(details, CancellationToken.None);
                 return details;
             }
             catch (Exception ex)
             {
-                Logger.Error(ex, "Failed to scan {Image}", image.FullName);
+                Logger.Error(ex, "Failed to scan {Image}", request.Image.FullName);
                 throw;
             }
         }

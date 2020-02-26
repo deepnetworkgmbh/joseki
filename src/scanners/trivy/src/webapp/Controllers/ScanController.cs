@@ -43,7 +43,11 @@ namespace webapp.Controllers
             {
                 var unescapedTag = HttpUtility.UrlDecode(imageTag);
                 var image = ContainerImage.FromFullName(unescapedTag);
-                var result = await this.scanner.Scan(image);
+                var result = await this.scanner.Scan(new ScanRequest
+                {
+                    Image = image,
+                    ScanId = Guid.NewGuid().ToString(),
+                });
                 return this.StatusCode(201, result);
             }
             catch (Exception ex)

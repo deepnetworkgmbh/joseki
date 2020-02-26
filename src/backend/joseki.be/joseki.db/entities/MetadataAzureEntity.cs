@@ -1,0 +1,42 @@
+﻿using System;
+
+namespace joseki.db.entities
+{
+    /// <summary>
+    /// Json-serialized azure metadata, actual at a particular audit time.
+    /// </summary>
+    public class MetadataAzureEntity : IJosekiBaseEntity
+    {
+        /// <inheritdoc />
+        public int Id { get; set; }
+
+        /// <inheritdoc />
+        public DateTime DateUpdated { get; set; }
+
+        /// <inheritdoc />
+        public DateTime DateCreated { get; set; }
+
+        /// <inheritdoc />
+        public string ChangedBy { get; set; }
+
+        /// <summary>
+        /// Reference to the audit record.
+        /// </summary>
+        public int AuditId { get; set; }
+
+        /// <summary>
+        /// Date and time, when metadata was collected.
+        /// </summary>
+        public DateTime Date { get; set; }
+
+        /// <summary>
+        /// Json-encoded representation of azure-metadata.
+        /// </summary>
+        public string JSON { get; set; }
+
+        /// <summary>
+        /// Reference to Audit row.
+        /// </summary>
+        public AuditEntity Audit { get; set; }
+    }
+}

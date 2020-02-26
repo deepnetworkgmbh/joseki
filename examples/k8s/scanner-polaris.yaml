@@ -7,14 +7,15 @@ metadata:
   labels:
     app: scanner-polaris
     module: scanners
-    version: 0.1.2
+    version: 0.2.0
 data:
   scanner-polaris-config.yaml:  |
     scanner:
       id: SCANNER_ID
+      cluster-id: CLUSTER_ID
       periodicity: "0 2 * * *"
       heartbeat-periodicity: 86400
-      version: 0.1.2
+      version: 0.2.0
     polaris:
       configPath: /app/polaris-config.yaml
       version: 0.6.0
@@ -223,7 +224,7 @@ metadata:
   labels:
     app: scanner-polaris
     module: scanners
-    version: 0.1.2
+    version: 0.2.0
 spec:
   schedule: "0 2 * * *"
   jobTemplate:
@@ -232,7 +233,7 @@ spec:
         spec:
           containers:
           - name: scanner-polaris
-            image: deepnetwork/joseki-scanner-polaris:0.1.2
+            image: deepnetwork/joseki-scanner-polaris:0.2.0
             imagePullPolicy: Always
             args:
             - --config

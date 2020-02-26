@@ -1,0 +1,23 @@
+database:
+  connectionString: Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=local-joseki-db;Integrated Security=True;
+  username: test
+  password: t3st
+
+cache:
+  polarisCheckTtl: 1
+  azureCheckTtl: 1
+  cveTtl: 1
+  defaultTtl: 1
+
+watchmen:
+  scannerContainersPeriodicity: 600
+
+azureBlob:
+  basePath: https://ACCOUNT_NAME.blob.core.windows.net
+  sas: token
+
+azureQueue:
+  connectionString: DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};EndpointSuffix=core.windows.net
+  imageScanRequestsQueue: image-scan-requests
+  accountName: ACCOUNT_NAME
+  accountKey: ACCOUNT_KEY
