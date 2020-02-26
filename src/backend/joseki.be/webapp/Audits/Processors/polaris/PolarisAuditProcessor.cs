@@ -377,7 +377,7 @@ namespace webapp.Audits.Processors.polaris
                             : $"{objectName}-container{i + 1}";
                         var imageTag = containers[i]["image"].Value<string>();
 
-                        var componentId = $"k8s/{clusterId}/ns/{nsName}/{objectKind}/{objectName}/container/{containerName}/{imageTag}";
+                        var componentId = $"k8s/{clusterId}/ns/{nsName}/{objectKind}/{objectName}/container/{containerName}/image/{imageTag}";
                         if (!dict.TryAdd(imageTag, new List<string> { componentId }))
                         {
                             dict[imageTag].Add(componentId);

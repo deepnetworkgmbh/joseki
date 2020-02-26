@@ -13,6 +13,11 @@ FROM mcr.microsoft.com/dotnet/core/aspnet:3.1.2-alpine3.11 AS webapp
 WORKDIR /app
 COPY --from=publish /app/publish .
 
+# Disable invariant mode due SqlClient exceptions
+# https://github.com/dotnet/SqlClient/issues/220
+RUN apk add --no-cache icu-libs
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+
 # Change to 8080 because 80 requires elevated privileges
 ENV ASPNETCORE_URLS="http://*:8080"
 EXPOSE 8080
