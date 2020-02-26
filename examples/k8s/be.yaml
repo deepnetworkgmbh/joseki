@@ -139,13 +139,17 @@ spec:
           failureThreshold: 3
         volumeMounts:
           - name: backend-config-volume
-            mountPath: /config.yaml
+            mountPath: /app/config.yaml
+            subPath: config.yaml
         securityContext:
           runAsUser: 10001
           runAsGroup: 10001
           allowPrivilegeEscalation: false
           runAsNonRoot: true
           readOnlyRootFilesystem: false
+        env:
+          - name: JOSEKI_CONFIG_FILE_PATH
+            value: "/app/config.yaml"
       serviceAccountName: joseki-be
       securityContext:
         fsGroup: 10001
@@ -154,3 +158,6 @@ spec:
           configMap:
             name: backend-config
             defaultMode: 0777
+            items:
+              - key: config.yaml
+                path: config.yaml
