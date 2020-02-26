@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "webapp", "webapp\webapp.csproj", "{9DFF81ED-FEFC-4A6F-968B-350DF75D09D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "webapp", "webapp\webapp.csproj", "{9DFF81ED-FEFC-4A6F-968B-350DF75D09D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests", "tests\tests.csproj", "{8802DBF3-D40A-424D-B34C-A37250C7AA4D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tests", "tests\tests.csproj", "{8802DBF3-D40A-424D-B34C-A37250C7AA4D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "joseki.db", "joseki.db\joseki.db.csproj", "{092CC17D-10F2-40EE-A2EC-E11B5934393C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{8802DBF3-D40A-424D-B34C-A37250C7AA4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8802DBF3-D40A-424D-B34C-A37250C7AA4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8802DBF3-D40A-424D-B34C-A37250C7AA4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{092CC17D-10F2-40EE-A2EC-E11B5934393C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{092CC17D-10F2-40EE-A2EC-E11B5934393C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{092CC17D-10F2-40EE-A2EC-E11B5934393C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{092CC17D-10F2-40EE-A2EC-E11B5934393C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

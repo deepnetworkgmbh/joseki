@@ -3,11 +3,34 @@ kind: ConfigMap
 metadata:
   name: backend-config
   namespace: joseki
+  labels:
+    app: joseki-backend
+    version: 0.2.0
 data:
   config.yaml: |-
-    # Configuration values can be set as key-value properties
-    parallelization: 10
-    buffer: 1000
+    database:
+      connectionString: Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=local-joseki-db;Integrated Security=True;
+      username: test
+      password: t3st
+    
+    cache:
+      polarisCheckTtl: 1
+      azureCheckTtl: 1
+      cveTtl: 1
+      defaultTtl: 1
+    
+    watchmen:
+      scannerContainersPeriodicity: 600
+    
+    azureBlob:
+      basePath: https://ACCOUNT_NAME.blob.core.windows.net
+      sas: token
+    
+    azureQueue:
+      connectionString: DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};EndpointSuffix=core.windows.net
+      imageScanRequestsQueue: image-scan-requests
+      accountName: ACCOUNT_NAME
+      accountKey: ACCOUNT_KEY
 
 ---
 apiVersion: v1
@@ -70,7 +93,7 @@ metadata:
   namespace: joseki
   labels:
     app: joseki-backend 
-    version: 0.1.0
+    version: 0.2.0
 spec:
   replicas: 1
   selector:
@@ -83,7 +106,7 @@ spec:
     spec:
       containers:
       - name: joseki-be
-        image: 'deepnetwork/joseki-backend:0.1.5'
+        image: 'deepnetwork/joseki-backend:0.2.0'
         imagePullPolicy: 'Always'
         name: joseki-be
         ports:

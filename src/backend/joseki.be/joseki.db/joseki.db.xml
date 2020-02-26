@@ -1,0 +1,572 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>joseki.db</name>
+    </assembly>
+    <members>
+        <member name="T:joseki.db.entities.AuditEntity">
+            <summary>
+            The entity represents a single Audit object.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.AuditEntity.Id">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.AuditEntity.DateUpdated">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.AuditEntity.DateCreated">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.AuditEntity.ChangedBy">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.AuditEntity.AuditId">
+            <summary>
+            External audit identifier.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.AuditEntity.Date">
+            <summary>
+            date when audit was performed.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.AuditEntity.ScannerId">
+            <summary>
+            Which scanner did the audit.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.AuditEntity.CheckResults">
+            <summary>
+            List of all check-results, that belongs to the audit.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.AuditEntity.MetadataKube">
+            <summary>
+            Reference to associated Kubernetes metadata.
+            The property is null, if audit belongs to azure.
+            Only one of MetadataAzure and MetadataKube is not null.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.AuditEntity.MetadataAzure">
+            <summary>
+            Reference to associated Azure metadata.
+            The property is null, if audit belongs to kubernetes.
+            Only one of MetadataAzure and MetadataKube is not null.
+            </summary>
+        </member>
+        <member name="T:joseki.db.entities.CheckEntity">
+            <summary>
+            Describes in details a single check type.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.CheckEntity.Id">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.CheckEntity.DateUpdated">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.CheckEntity.DateCreated">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.CheckEntity.ChangedBy">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.CheckEntity.CheckId">
+            <summary>
+            The check identifier in form "{scanner-type}.{scanner-check-id}".
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.CheckEntity.Category">
+            <summary>
+            It groups related check types, for example "k8s.security", "azure.storage".
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.CheckEntity.Severity">
+            <summary>
+            The severity answers the question: how dangerous the failure of this check could be.
+            It helps to prioritize check results.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.CheckEntity.Description">
+            <summary>
+            Detailed check description: what exactly it verifies and why it's important.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.CheckEntity.Remediation">
+            <summary>
+            The suggestion how to fix the issue.
+            </summary>
+        </member>
+        <member name="T:joseki.db.entities.CheckSeverity">
+            <summary>
+            Check severities.
+            </summary>
+        </member>
+        <member name="F:joseki.db.entities.CheckSeverity.Unknown">
+            <summary>
+            The level is unknown.
+            </summary>
+        </member>
+        <member name="F:joseki.db.entities.CheckSeverity.Critical">
+            <summary>
+            Top-level issues, that often should be addressed as soon as possible.
+            </summary>
+        </member>
+        <member name="F:joseki.db.entities.CheckSeverity.High">
+            <summary>
+            Important issue, which should be carefully reviewed.
+            </summary>
+        </member>
+        <member name="F:joseki.db.entities.CheckSeverity.Medium">
+            <summary>
+            Medium-level problem, which could cause moderate damage or loss.
+            </summary>
+        </member>
+        <member name="F:joseki.db.entities.CheckSeverity.Low">
+            <summary>
+            The lowest severity in the rank. Represents only a slight damage.
+            </summary>
+        </member>
+        <member name="T:joseki.db.entities.CheckResultEntity">
+            <summary>
+            A single check result object.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.CheckResultEntity.Id">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.CheckResultEntity.DateUpdated">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.CheckResultEntity.DateCreated">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.CheckResultEntity.ChangedBy">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.CheckResultEntity.CheckId">
+            <summary>
+            The reference to Check entity.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.CheckResultEntity.ComponentId">
+            <summary>
+            Unique component identifier in format:
+            - for azure components: `subscription/{id}/resource_group/{rg_name}/{object_type}/{object_name}`;
+            - for k8s resources: `k8s/{cluster_id}/namespace/{ns_name}/{object_type}/{object_name}/pod/{pod_name}/container/{container_name}/{image_tag}`,
+            where all sections after `{object_name}` are optional, as there might be separate checks on object-type, pod, container, or image.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.CheckResultEntity.AuditId">
+            <summary>
+            The reference to Audit entity.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.CheckResultEntity.Value">
+            <summary>
+            The check result itself.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.CheckResultEntity.Message">
+            <summary>
+            Free-format associated message.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.CheckResultEntity.Audit">
+            <summary>
+            Audit object.
+            </summary>
+        </member>
+        <member name="T:joseki.db.entities.CheckValue">
+            <summary>
+            Represents the check result value.
+            </summary>
+        </member>
+        <member name="F:joseki.db.entities.CheckValue.NoData">
+            <summary>
+            There is no result due one of the reasons:
+            - the check failed,
+            - the check requires a manual step,
+            - the check result should be verified by end-user.
+            </summary>
+        </member>
+        <member name="F:joseki.db.entities.CheckValue.InProgress">
+            <summary>
+            The check is still in progress
+            </summary>
+        </member>
+        <member name="F:joseki.db.entities.CheckValue.Failed">
+            <summary>
+            The Component failed to satisfy Check requirements.
+            </summary>
+        </member>
+        <member name="F:joseki.db.entities.CheckValue.Succeeded">
+            <summary>
+            The Component satisfied Check requirements.
+            </summary>
+        </member>
+        <member name="T:joseki.db.entities.CveEntity">
+            <summary>
+            The object describes a single CVE (Common Vulnerabilities and Exposures).
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.CveEntity.Id">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.CveEntity.DateUpdated">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.CveEntity.DateCreated">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.CveEntity.ChangedBy">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.CveEntity.CveId">
+            <summary>
+            The <see href="https://cve.mitre.org/cve/identifiers/index.html">CVE identifier</see>,
+            which looks like `CVE-2005-2541` or `TEMP-0290435-0B57B5`.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.CveEntity.Title">
+            <summary>
+            Short CVE description.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.CveEntity.PackageName">
+            <summary>
+            The name of the package, where CVE was found, for example "tar" or "sysvinit-utils".
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.CveEntity.Description">
+            <summary>
+            Detailed CVE description.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.CveEntity.Severity">
+            <summary>
+            Highlights how dangerous the CVE is.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.CveEntity.Remediation">
+            <summary>
+            In most cases, suggests to update the sources to the version of the package, that addresses the issue.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.CveEntity.References">
+            <summary>
+            Links to external source with more details about the CVE.
+            </summary>
+        </member>
+        <member name="T:joseki.db.entities.CveSeverity">
+            <summary>
+            CVE severities.
+            </summary>
+        </member>
+        <member name="F:joseki.db.entities.CveSeverity.Unknown">
+            <summary>
+            The level is unknown.
+            </summary>
+        </member>
+        <member name="F:joseki.db.entities.CveSeverity.Critical">
+            <summary>
+            Top-level issues, that often should be addressed as soon as possible.
+            </summary>
+        </member>
+        <member name="F:joseki.db.entities.CveSeverity.High">
+            <summary>
+            Important issue, which should be carefully reviewed.
+            </summary>
+        </member>
+        <member name="F:joseki.db.entities.CveSeverity.Medium">
+            <summary>
+            Medium-level problem, which could cause moderate damage or loss.
+            </summary>
+        </member>
+        <member name="F:joseki.db.entities.CveSeverity.Low">
+            <summary>
+            The lowest severity in the rank. Represents only a slight damage.
+            </summary>
+        </member>
+        <member name="T:joseki.db.entities.IJosekiBaseEntity">
+            <summary>
+            The base interface for EF core entities.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.IJosekiBaseEntity.Id">
+            <summary>
+            Auto-increment PK column.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.IJosekiBaseEntity.DateUpdated">
+            <summary>
+            Set to current UTC time every time when the record is changed.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.IJosekiBaseEntity.DateCreated">
+            <summary>
+            UTC time, when the record was created.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.IJosekiBaseEntity.ChangedBy">
+            <summary>
+            Name of the actor who requested the record creation/change.
+            </summary>
+        </member>
+        <member name="T:joseki.db.entities.ImageScanResultEntity">
+            <summary>
+            The goal of image scan is verify if known CVEs (Common Vulnerabilities and Exposures) present in used by image packages.
+            Therefore, the Scan Result consists of an array of CVEs. The array might be empty, if no vulnerabilities was found.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.ImageScanResultEntity.Id">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.ImageScanResultEntity.DateUpdated">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.ImageScanResultEntity.DateCreated">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.ImageScanResultEntity.ChangedBy">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.ImageScanResultEntity.ExternalId">
+            <summary>
+            Unique identifier.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.ImageScanResultEntity.ImageTag">
+            <summary>
+            Full image tag, which includes registry, image name and version.
+            For example `mcr.microsoft.com/dotnet/core/sdk:3.1.101-alpine3.10`.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.ImageScanResultEntity.Date">
+            <summary>
+            UTC point of time when scan was performed.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.ImageScanResultEntity.Status">
+            <summary>
+            The status of the Image Scan.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.ImageScanResultEntity.FoundCVEs">
+            <summary>
+            List of discovered vulnerabilities.
+            </summary>
+        </member>
+        <member name="T:joseki.db.entities.ImageScanStatus">
+            <summary>
+            The status of the Image Scan.
+            </summary>
+        </member>
+        <member name="F:joseki.db.entities.ImageScanStatus.Queued">
+            <summary>
+            Image Scan was already queued, but the result is not handled yet.
+            </summary>
+        </member>
+        <member name="F:joseki.db.entities.ImageScanStatus.Failed">
+            <summary>
+            Image scanner failed to perform the scan.
+            </summary>
+        </member>
+        <member name="F:joseki.db.entities.ImageScanStatus.Succeeded">
+            <summary>
+            Image scan succeeded.
+            This status does not mean, that the image passed the scan!
+            </summary>
+        </member>
+        <member name="T:joseki.db.entities.ImageScanToCveEntity">
+            <summary>
+            Maps exact image scans to list of CVEs in this scan.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.ImageScanToCveEntity.Id">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.ImageScanToCveEntity.DateUpdated">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.ImageScanToCveEntity.DateCreated">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.ImageScanToCveEntity.ChangedBy">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.ImageScanToCveEntity.ScanId">
+            <summary>
+            Image Scan Result identifier.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.ImageScanToCveEntity.CveId">
+            <summary>
+            CVE identifier.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.ImageScanToCveEntity.Target">
+            <summary>
+            Where the CVE was discovered: container image name or application dependencies file.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.ImageScanToCveEntity.UsedPackageVersion">
+            <summary>
+            States which exact version of vulnerable package `ScanId` discovered.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.ImageScanToCveEntity.CVE">
+            <summary>
+            Reference to associated CVE object.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.ImageScanToCveEntity.ImageScan">
+            <summary>
+            Reference to Image Scan Result object.
+            </summary>
+        </member>
+        <member name="T:joseki.db.entities.MetadataAzureEntity">
+            <summary>
+            Json-serialized azure metadata, actual at a particular audit time.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.MetadataAzureEntity.Id">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.MetadataAzureEntity.DateUpdated">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.MetadataAzureEntity.DateCreated">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.MetadataAzureEntity.ChangedBy">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.MetadataAzureEntity.AuditId">
+            <summary>
+            Reference to the audit record.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.MetadataAzureEntity.Date">
+            <summary>
+            Date and time, when metadata was collected.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.MetadataAzureEntity.JSON">
+            <summary>
+            Json-encoded representation of azure-metadata.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.MetadataAzureEntity.Audit">
+            <summary>
+            Reference to Audit row.
+            </summary>
+        </member>
+        <member name="T:joseki.db.entities.MetadataKubeEntity">
+            <summary>
+            Json-serialized kubernetes metadata, actual at a particular audit time.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.MetadataKubeEntity.Id">
+            <summary>
+            The record identifier.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.MetadataKubeEntity.DateUpdated">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.MetadataKubeEntity.DateCreated">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.MetadataKubeEntity.ChangedBy">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.MetadataKubeEntity.AuditId">
+            <summary>
+            Reference to the audit record.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.MetadataKubeEntity.Date">
+            <summary>
+            Date and time, when metadata was collected.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.MetadataKubeEntity.JSON">
+            <summary>
+            Json-encoded representation of kube-metadata.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.MetadataKubeEntity.Audit">
+            <summary>
+            Reference to Audit row.
+            </summary>
+        </member>
+        <member name="T:joseki.db.JosekiDbContext">
+            <summary>
+            Joseki database EF context.
+            </summary>
+        </member>
+        <member name="M:joseki.db.JosekiDbContext.#ctor(Microsoft.EntityFrameworkCore.DbContextOptions)">
+            <summary>
+            Initializes a new instance of the <see cref="T:joseki.db.JosekiDbContext"/> class.
+            </summary>
+            <param name="options">Context options.</param>
+        </member>
+        <member name="P:joseki.db.JosekiDbContext.Audit">
+            <summary>
+            Audit table.
+            </summary>
+        </member>
+        <member name="P:joseki.db.JosekiDbContext.Check">
+            <summary>
+            Check table.
+            </summary>
+        </member>
+        <member name="P:joseki.db.JosekiDbContext.CheckResult">
+            <summary>
+            Check Result table.
+            </summary>
+        </member>
+        <member name="P:joseki.db.JosekiDbContext.MetadataAzure">
+            <summary>
+            Azure Metadata table.
+            </summary>
+        </member>
+        <member name="P:joseki.db.JosekiDbContext.MetadataKube">
+            <summary>
+            Kubernetes Metadata table.
+            </summary>
+        </member>
+        <member name="P:joseki.db.JosekiDbContext.Cve">
+            <summary>
+            CVE table.
+            </summary>
+        </member>
+        <member name="P:joseki.db.JosekiDbContext.ImageScanResult">
+            <summary>
+            Image Scan Result table.
+            </summary>
+        </member>
+        <member name="P:joseki.db.JosekiDbContext.ImageScanResultToCve">
+            <summary>
+            Image Scan Result to Cve table.
+            </summary>
+        </member>
+        <member name="M:joseki.db.JosekiDbContext.SaveChangesAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:joseki.db.JosekiDbContext.OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:joseki.db.JosekiDbContext.JosekiDbContextFactory">
+            <summary>
+            JosekiDbContextFactory used to update the database with the entity framework during design time
+            (update-database).
+            </summary>
+        </member>
+        <member name="M:joseki.db.JosekiDbContext.JosekiDbContextFactory.CreateDbContext(System.String[])">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

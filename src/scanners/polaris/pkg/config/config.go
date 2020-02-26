@@ -21,6 +21,7 @@ type Config struct {
 
 type Scanner struct {
 	Id                   string `json:"id"`
+	ClusterId            string `json:"cluster-id"`
 	Periodicity          string `json:"periodicity"`
 	HeartbeatPeriodicity int64  `json:"heartbeat-periodicity"`
 	Version              string `json:"version"`

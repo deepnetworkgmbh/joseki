@@ -1,16 +1,27 @@
 using System.IO;
 using System.Text.Json.Serialization;
 
+using joseki.db;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
+using webapp.Audits.Processors.azsk;
+using webapp.Audits.Processors.polaris;
+using webapp.Audits.Processors.trivy;
+using webapp.BackgroundJobs;
+using webapp.BlobStorage;
+using webapp.Configuration;
+using webapp.Database;
 using webapp.Infrastructure;
+using webapp.Queues;
 
 namespace webapp
 {
@@ -69,6 +80,38 @@ namespace webapp
                 // Set the comments path for the swagger json and ui.
                 c.IncludeXmlComments(xmlPath);
             });
+
+            services.AddSingleton(provider =>
+            {
+                const string envVarName = "JOSEKI_CONFIG_FILE_PATH";
+                var configFilePath = this.Configuration[envVarName];
+                return new ConfigurationParser(configFilePath);
+            });
+
+            services.AddTransient<IBlobStorageProcessor, AzureBlobStorageProcessor>();
+            services.AddTransient<IQueue, AzureStorageQueue>();
+
+            services.AddDbContext<JosekiDbContext>((provider, options) =>
+            {
+                var config = provider.GetService<ConfigurationParser>().Get();
+                var sqlConnectionString = string.Format(config.Database.ConnectionString, config.Database.Username, config.Database.Password);
+                options.UseSqlServer(
+                    sqlConnectionString,
+                    o => o
+                        .MigrationsAssembly(typeof(JosekiDbContext).Assembly.GetName().Name)
+                        .EnableRetryOnFailure());
+            });
+            services.AddScoped<IJosekiDatabase, MssqlJosekiDatabase>();
+            services.AddTransient<ChecksCache>();
+            services.AddTransient<CveCache>();
+
+            services.AddTransient<AzskAuditProcessor>();
+            services.AddTransient<PolarisAuditProcessor>();
+            services.AddTransient<TrivyAuditProcessor>();
+
+            services.AddScoped<ScannerContainersWatchman>();
+            services.AddSingleton<SchedulerAssistant>();
+            services.AddHostedService<ScannerResultsReaderJob>();
         }
 
         /// <summary>
@@ -85,6 +128,8 @@ namespace webapp
 
             app.UseHealthChecks("/health/liveness", CreateHealthCheckOptions("liveness"));
             app.UseHealthChecks("/health/readiness", CreateHealthCheckOptions("readiness"));
+
+            RunDbMigrations(app);
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -112,6 +157,17 @@ namespace webapp
             {
                 Predicate = x => x.Tags.Contains(tag),
             };
+        }
+
+        /// <summary>
+        /// Apply database schema migrations on service startup.
+        /// </summary>
+        /// <param name="app">A instance of <see cref="IApplicationBuilder"/>.</param>
+        private static void RunDbMigrations(IApplicationBuilder app)
+        {
+            using var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            using var context = serviceScope.ServiceProvider.GetService<JosekiDbContext>();
+            context.Database.Migrate();
         }
     }
 }
