@@ -277,6 +277,40 @@
             Represents azsk scanner.
             </summary>
         </member>
+        <member name="T:webapp.BackgroundJobs.ArchiverJob">
+            <summary>
+            The object is responsible for moving processed audits to Archive.
+            </summary>
+        </member>
+        <member name="M:webapp.BackgroundJobs.ArchiverJob.#ctor(System.IServiceProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.BackgroundJobs.ArchiverJob"/> class.
+            </summary>
+            <param name="services">DI container.</param>
+        </member>
+        <member name="M:webapp.BackgroundJobs.ArchiverJob.ExecuteAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:webapp.BackgroundJobs.ArchiveWatchman">
+            <summary>
+            Archive processed audits and delete expired archive records.
+            </summary>
+        </member>
+        <member name="M:webapp.BackgroundJobs.ArchiveWatchman.#ctor(webapp.BlobStorage.IBlobStorageMaintainer,webapp.Configuration.ConfigurationParser)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.BackgroundJobs.ArchiveWatchman"/> class.
+            </summary>
+            <param name="blobStorage">The Blob Storage.</param>
+            <param name="config">Joseki Backend configuration.</param>
+        </member>
+        <member name="M:webapp.BackgroundJobs.ArchiveWatchman.Watch(System.Threading.CancellationToken)">
+            <summary>
+            Every Watchmen.ArchiverPeriodicityHours hours:
+            - removes expired audits from Archive,
+            - moves processed audits to Archive.
+            </summary>
+            <returns>A task object.</returns>
+        </member>
         <member name="T:webapp.BackgroundJobs.ScannerContainersWatchman">
             <summary>
             ScannerContainers watchman is responsible for following actual state of root-level containers in Blob Storage
@@ -366,6 +400,22 @@
             Returns the point of time, when the container should be processed.
             </summary>
         </member>
+        <member name="M:webapp.BackgroundJobs.SchedulerAssistant.SchedulableItem.StartNewIteration">
+             <summary>
+             The fundamental problem - once in a while, joseki should write log messages.
+             BUT, if joseki writes on each iteration of scanner processor - logs might be flooded with meaningless events.
+             For example, Trivy scanner-processors are executed each minute, which leads to 3*60 log-events each hour.
+            
+             To reduce the noise, this method helps to switch log-level from Debug to Information each hour.
+             </summary>
+        </member>
+        <member name="M:webapp.BackgroundJobs.SchedulerAssistant.SchedulableItem.GetLogEventLevel">
+            <summary>
+            If iteration should be logged _globally_ - returns Information log-level.
+            Otherwise - returns Debug.
+            </summary>
+            <returns>Serilog log-level enumeration.</returns>
+        </member>
         <member name="T:webapp.BlobStorage.AuditBlob">
             <summary>
             Describes a single audit folder within a scanner container.
@@ -381,9 +431,37 @@
             Parent scanner container.
             </summary>
         </member>
+        <member name="T:webapp.BlobStorage.AzureBlobStorageMaintainer">
+            <summary>
+            Azure blob storage implementation of IBlobStorageMaintainer.
+            </summary>
+        </member>
+        <member name="M:webapp.BlobStorage.AzureBlobStorageMaintainer.#ctor(webapp.Configuration.ConfigurationParser)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.BlobStorage.AzureBlobStorageMaintainer"/> class.
+            </summary>
+            <param name="parser">The application configuration object.</param>
+        </member>
+        <member name="M:webapp.BlobStorage.AzureBlobStorageMaintainer.MoveProcessedBlobsToArchive(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:webapp.BlobStorage.AzureBlobStorageMaintainer.CleanupArchive(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:webapp.BlobStorage.AzureBlobStorageMaintainer.CleanupContainer(webapp.BlobStorage.ScannerContainer)">
+            <summary>
+            Deletes everything from the container.
+            </summary>
+            <returns>A task object.</returns>
+        </member>
         <member name="T:webapp.BlobStorage.AzureBlobStorageProcessor">
             <summary>
             Azure Blob Storage implementation of Blob Storage Processor.
+            </summary>
+        </member>
+        <member name="F:webapp.BlobStorage.AzureBlobStorageProcessor.ProcessedMetadataKey">
+            <summary>
+            Metadata tag name for "processed" audits.
             </summary>
         </member>
         <member name="M:webapp.BlobStorage.AzureBlobStorageProcessor.#ctor(webapp.Configuration.ConfigurationParser)">
@@ -404,51 +482,32 @@
         <member name="M:webapp.BlobStorage.AzureBlobStorageProcessor.MarkAsProcessed(webapp.BlobStorage.AuditBlob)">
             <inheritdoc />
         </member>
-        <member name="M:webapp.BlobStorage.AzureBlobStorageProcessor.GetAllAudits(webapp.BlobStorage.ScannerContainer)">
+        <member name="M:webapp.BlobStorage.AzureBlobStorageProcessor.MarkAllAuditsAsUnprocessed(webapp.BlobStorage.ScannerContainer)">
             <summary>
             The method returns all audit files in the container.
             </summary>
             <param name="container">The container with audits.</param>
             <returns>Array of Audit blobs.</returns>
         </member>
-        <member name="M:webapp.BlobStorage.AzureBlobStorageProcessor.MarkAsUnprocessed(webapp.BlobStorage.AuditBlob)">
-            <summary>
-            Cleans-up Processed tag.
-            </summary>
-            <param name="auditBlob">Audit blob to remove Processed tag.</param>
-            <returns>A task object.</returns>
-        </member>
         <member name="T:webapp.BlobStorage.IBlobStorageMaintainer">
             <summary>
             Takes care of managing Archive and Garbage Bin in the Blob Storage service.
             </summary>
         </member>
-        <member name="M:webapp.BlobStorage.IBlobStorageMaintainer.MoveToArchive(webapp.BlobStorage.AuditBlob)">
+        <member name="M:webapp.BlobStorage.IBlobStorageMaintainer.MoveProcessedBlobsToArchive(System.Threading.CancellationToken)">
             <summary>
-            Moves audit blob from scanner container to Archive container.
+            Moves all processed audit blobs from scanner containers to Archive container.
+            The process keeps scanner containers working set small, which reduces amount of processors work.
             </summary>
-            <param name="blob">Audit blob object.</param>
-            <returns>A task object.</returns>
+            <param name="cancellation">Cancellation token.</param>
+            <returns>Number of records, that were moved to Archive.</returns>
         </member>
-        <member name="M:webapp.BlobStorage.IBlobStorageMaintainer.DeleteStale(webapp.BlobStorage.AuditBlob)">
+        <member name="M:webapp.BlobStorage.IBlobStorageMaintainer.CleanupArchive(System.Threading.CancellationToken)">
             <summary>
-            Moves blob from Archive to Garbage Bin.
+            Deletes all expired blobs from Archive.
             </summary>
-            <param name="blob">Audit blob object.</param>
-            <returns>A task object.</returns>
-        </member>
-        <member name="M:webapp.BlobStorage.IBlobStorageMaintainer.DeleteStale(webapp.BlobStorage.ScannerContainer)">
-            <summary>
-            Moves the entire scanner container to Garbage Bin.
-            </summary>
-            <param name="container">Scanner container object.</param>
-            <returns>A task object.</returns>
-        </member>
-        <member name="M:webapp.BlobStorage.IBlobStorageMaintainer.CleanupGarbageBin">
-            <summary>
-            Deletes all expired blobs from Garbage Bin.
-            </summary>
-            <returns>A task object.</returns>
+            <param name="cancellation">Cancellation token.</param>
+            <returns>Number of records, that were removed from Archive.</returns>
         </member>
         <member name="T:webapp.BlobStorage.IBlobStorageProcessor">
             <summary>
@@ -632,6 +691,21 @@
             Sas token.
             </summary>
         </member>
+        <member name="P:webapp.Configuration.AzureBlobConfig.ConnectionString">
+            <summary>
+            Azure Storage connection string.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzureBlobConfig.AccountName">
+            <summary>
+            Storage Account name.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzureBlobConfig.AccountKey">
+            <summary>
+            Storage Account key.
+            </summary>
+        </member>
         <member name="T:webapp.Configuration.Watchmen">
             <summary>
             Watchmen related configurations.
@@ -641,6 +715,18 @@
             <summary>
             How often ScannerContainersWatchman is listing root-level containers.
             The measurement is in seconds.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.Watchmen.ArchiverPeriodicityHours">
+            <summary>
+            How often ArchiveWatchman is maintaining the Archive.
+            The measurement is in hours.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.Watchmen.ArchiveTtlDays">
+            <summary>
+            How long processed audits should be stored in Archive.
+            The measurement is in days.
             </summary>
         </member>
         <member name="T:webapp.Configuration.AzureQueueConfig">

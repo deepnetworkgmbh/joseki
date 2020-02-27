@@ -14,7 +14,10 @@ namespace webapp.BlobStorage
     /// </summary>
     public class AzureBlobStorageProcessor : IBlobStorageProcessor
     {
-        private const string ProcessedMetadataKey = "processed";
+        /// <summary>
+        /// Metadata tag name for "processed" audits.
+        /// </summary>
+        public const string ProcessedMetadataKey = "processed";
 
         private readonly JosekiConfiguration config;
 
@@ -36,7 +39,11 @@ namespace webapp.BlobStorage
             var containers = new List<ScannerContainer>();
             await foreach (var container in client.GetBlobContainersAsync())
             {
-                containers.Add(new ScannerContainer(container.Name));
+                // skip "system" containers
+                if (!container.Name.StartsWith("0-"))
+                {
+                    containers.Add(new ScannerContainer(container.Name));
+                }
             }
 
             return containers.ToArray();
@@ -93,12 +100,11 @@ namespace webapp.BlobStorage
         /// </summary>
         /// <param name="container">The container with audits.</param>
         /// <returns>Array of Audit blobs.</returns>
-        public async Task<AuditBlob[]> GetAllAudits(ScannerContainer container)
+        public async Task MarkAllAuditsAsUnprocessed(ScannerContainer container)
         {
             var uri = new Uri($"{this.config.AzureBlob.BasePath}/{container.Name}?{this.config.AzureBlob.Sas}");
             var client = new Azure.Storage.Blobs.BlobContainerClient(uri);
 
-            var blobs = new List<AuditBlob>();
             await foreach (var blob in client.GetBlobsAsync())
             {
                 // skip all not metadata file.
@@ -107,26 +113,8 @@ namespace webapp.BlobStorage
                     continue;
                 }
 
-                blobs.Add(new AuditBlob
-                {
-                    Name = blob.Name,
-                    ParentContainer = container,
-                });
+                await client.GetBlobClient(blob.Name).SetMetadataAsync(new Dictionary<string, string>());
             }
-
-            return blobs.ToArray();
-        }
-
-        /// <summary>
-        /// Cleans-up Processed tag.
-        /// </summary>
-        /// <param name="auditBlob">Audit blob to remove Processed tag.</param>
-        /// <returns>A task object.</returns>
-        public async Task MarkAsUnprocessed(AuditBlob auditBlob)
-        {
-            var uri = new Uri($"{this.config.AzureBlob.BasePath}/{auditBlob.ParentContainer.Name}/{auditBlob.Name}?{this.config.AzureBlob.Sas}");
-            var client = new Azure.Storage.Blobs.BlobClient(uri);
-            await client.SetMetadataAsync(new Dictionary<string, string>());
         }
     }
 }
