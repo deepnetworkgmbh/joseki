@@ -10,6 +10,7 @@ namespace webapp.BlobStorage
     {
         /// <summary>
         /// Moves all processed audit blobs from scanner containers to Archive container.
+        /// The process keeps scanner containers working set small, which reduces amount of processors work.
         /// </summary>
         /// <param name="cancellation">Cancellation token.</param>
         /// <returns>Number of records, that were moved to Archive.</returns>

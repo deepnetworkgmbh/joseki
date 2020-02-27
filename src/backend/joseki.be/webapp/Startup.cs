@@ -13,6 +13,8 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
+using Serilog.Events;
+
 using webapp.Audits.Processors.azsk;
 using webapp.Audits.Processors.polaris;
 using webapp.Audits.Processors.trivy;
@@ -126,6 +128,7 @@ namespace webapp
         {
             if (env.IsDevelopment())
             {
+                Program.LoggingLevelSwitch.MinimumLevel = LogEventLevel.Debug;
                 app.UseDeveloperExceptionPage();
             }
 

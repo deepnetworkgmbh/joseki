@@ -39,7 +39,11 @@ namespace webapp.BlobStorage
             var containers = new List<ScannerContainer>();
             await foreach (var container in client.GetBlobContainersAsync())
             {
-                containers.Add(new ScannerContainer(container.Name));
+                // skip "system" containers
+                if (!container.Name.StartsWith("0-"))
+                {
+                    containers.Add(new ScannerContainer(container.Name));
+                }
             }
 
             return containers.ToArray();

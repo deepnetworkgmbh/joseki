@@ -19,6 +19,7 @@ RUN apk add --no-cache icu-libs
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 
 # Change to 8080 because 80 requires elevated privileges
+ENV ASPNETCORE_ENVIRONMENT="Production"
 ENV ASPNETCORE_URLS="http://*:8080"
 EXPOSE 8080
 

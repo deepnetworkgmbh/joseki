@@ -128,7 +128,7 @@
         /// How often ScannerContainersWatchman is listing root-level containers.
         /// The measurement is in seconds.
         /// </summary>
-        public int ScannerContainersPeriodicity { get; set; }
+        public int ScannerContainersPeriodicitySeconds { get; set; } = 1800;
 
         /// <summary>
         /// How often ArchiveWatchman is maintaining the Archive.

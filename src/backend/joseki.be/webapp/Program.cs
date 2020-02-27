@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
 using Serilog;
+using Serilog.Core;
 using Serilog.Events;
 
 namespace webapp
@@ -12,6 +13,8 @@ namespace webapp
     /// </summary>
     public class Program
     {
+        internal static LoggingLevelSwitch LoggingLevelSwitch { get; set; } = new LoggingLevelSwitch();
+
         /// <summary>
         /// The entry point.
         /// </summary>
@@ -34,7 +37,7 @@ namespace webapp
                 .UseSerilog((ctx, config) =>
                 {
                     config
-                        .MinimumLevel.Information()
+                        .MinimumLevel.ControlledBy(LoggingLevelSwitch)
                         .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                         .MinimumLevel.Override("System", LogEventLevel.Warning)
                         .Enrich.FromLogContext();

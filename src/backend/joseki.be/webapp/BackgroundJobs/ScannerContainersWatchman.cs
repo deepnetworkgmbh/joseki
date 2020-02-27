@@ -61,7 +61,7 @@ namespace webapp.BackgroundJobs
                     this.scheduler.UpdateWorkingItems(schedulerItems);
 
                     Logger.Information("Scanner Containers watchman finished the detour.");
-                    await Task.Delay(TimeSpan.FromSeconds(this.config.Watchmen.ScannerContainersPeriodicity), cancellation);
+                    await Task.Delay(TimeSpan.FromSeconds(this.config.Watchmen.ScannerContainersPeriodicitySeconds), cancellation);
                 }
                 catch (TaskCanceledException ex)
                 {

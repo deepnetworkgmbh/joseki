@@ -40,7 +40,6 @@ namespace webapp.BlobStorage
             this.storageClient = new BlobServiceClient(connectionString);
         }
 
-        /// <param name="cancellation"></param>
         /// <inheritdoc />
         public async Task<int> MoveProcessedBlobsToArchive(CancellationToken cancellation)
         {
@@ -154,7 +153,6 @@ namespace webapp.BlobStorage
             return deleteBlobTasks.Length;
         }
 
-        /// <param name="cancellation"></param>
         /// <inheritdoc />
         public async Task<int> CleanupArchive(CancellationToken cancellation)
         {
