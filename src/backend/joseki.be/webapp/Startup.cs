@@ -13,6 +13,8 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
+using Serilog.Events;
+
 using webapp.Audits.Processors.azsk;
 using webapp.Audits.Processors.polaris;
 using webapp.Audits.Processors.trivy;
@@ -89,6 +91,7 @@ namespace webapp
             });
 
             services.AddTransient<IBlobStorageProcessor, AzureBlobStorageProcessor>();
+            services.AddTransient<IBlobStorageMaintainer, AzureBlobStorageMaintainer>();
             services.AddTransient<IQueue, AzureStorageQueue>();
 
             services.AddDbContext<JosekiDbContext>((provider, options) =>
@@ -112,6 +115,8 @@ namespace webapp
             services.AddScoped<ScannerContainersWatchman>();
             services.AddSingleton<SchedulerAssistant>();
             services.AddHostedService<ScannerResultsReaderJob>();
+            services.AddScoped<ArchiveWatchman>();
+            services.AddHostedService<ArchiverJob>();
         }
 
         /// <summary>
@@ -123,6 +128,7 @@ namespace webapp
         {
             if (env.IsDevelopment())
             {
+                Program.LoggingLevelSwitch.MinimumLevel = LogEventLevel.Debug;
                 app.UseDeveloperExceptionPage();
             }
 
