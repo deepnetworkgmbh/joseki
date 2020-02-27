@@ -13,6 +13,7 @@ namespace webapp.Controllers
     /// .Audit data endpoints.
     /// </summary>
     [ApiController]
+    [ApiVersion("0.1")]
     [Route("api/audits")]
     public class AuditsController : Controller
     {
