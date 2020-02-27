@@ -400,6 +400,22 @@
             Returns the point of time, when the container should be processed.
             </summary>
         </member>
+        <member name="M:webapp.BackgroundJobs.SchedulerAssistant.SchedulableItem.StartNewIteration">
+             <summary>
+             The fundamental problem - once in a while, joseki should write log messages.
+             BUT, if joseki writes on each iteration of scanner processor - logs might be flooded with meaningless events.
+             For example, Trivy scanner-processors are executed each minute, which leads to 3*60 log-events each hour.
+            
+             To reduce the noise, this method helps to switch log-level from Debug to Information each hour.
+             </summary>
+        </member>
+        <member name="M:webapp.BackgroundJobs.SchedulerAssistant.SchedulableItem.GetLogEventLevel">
+            <summary>
+            If iteration should be logged _globally_ - returns Information log-level.
+            Otherwise - returns Debug.
+            </summary>
+            <returns>Serilog log-level enumeration.</returns>
+        </member>
         <member name="T:webapp.BlobStorage.AuditBlob">
             <summary>
             Describes a single audit folder within a scanner container.
@@ -427,11 +443,9 @@
             <param name="parser">The application configuration object.</param>
         </member>
         <member name="M:webapp.BlobStorage.AzureBlobStorageMaintainer.MoveProcessedBlobsToArchive(System.Threading.CancellationToken)">
-            <param name="cancellation"></param>
             <inheritdoc />
         </member>
         <member name="M:webapp.BlobStorage.AzureBlobStorageMaintainer.CleanupArchive(System.Threading.CancellationToken)">
-            <param name="cancellation"></param>
             <inheritdoc />
         </member>
         <member name="M:webapp.BlobStorage.AzureBlobStorageMaintainer.CleanupContainer(webapp.BlobStorage.ScannerContainer)">
@@ -483,6 +497,7 @@
         <member name="M:webapp.BlobStorage.IBlobStorageMaintainer.MoveProcessedBlobsToArchive(System.Threading.CancellationToken)">
             <summary>
             Moves all processed audit blobs from scanner containers to Archive container.
+            The process keeps scanner containers working set small, which reduces amount of processors work.
             </summary>
             <param name="cancellation">Cancellation token.</param>
             <returns>Number of records, that were moved to Archive.</returns>

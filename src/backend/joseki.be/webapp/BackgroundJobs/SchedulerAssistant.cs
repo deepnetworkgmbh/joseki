@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
 using Serilog;
+using Serilog.Events;
 
 using webapp.Audits;
 using webapp.Audits.Processors;
@@ -58,7 +59,9 @@ namespace webapp.BackgroundJobs
                     }
                     else
                     {
-                        Logger.Information("Scheduler is processing {ContainerName}", item.Container.Name);
+                        item.StartNewIteration();
+
+                        Logger.Write(item.GetLogEventLevel(), "Scheduler is processing {ContainerName}", item.Container.Name);
                         var now = DateTime.UtcNow;
                         var nextProcessingTime = item.NextProcessingTime;
 
@@ -66,7 +69,7 @@ namespace webapp.BackgroundJobs
                         {
                             var delay = item.NextProcessingTime - now;
 
-                            Logger.Information("Scheduler is sleeping for {Delay}. Reason: {TimeoutReason}", delay, "Too early to run");
+                            Logger.Write(item.GetLogEventLevel(), "Scheduler is sleeping for {Delay}. Reason: {TimeoutReason}", delay, "Too early to run");
                             await Task.Delay(delay, cancellation);
                         }
 
@@ -78,7 +81,7 @@ namespace webapp.BackgroundJobs
                             item.LastProcessed = DateTime.UtcNow;
                         }
 
-                        Logger.Information("Scheduler has processed {ContainerName}", item.Container.Name);
+                        Logger.Write(item.GetLogEventLevel(), "Scheduler has processed {ContainerName}", item.Container.Name);
                     }
                 }
                 catch (TaskCanceledException ex)
@@ -104,7 +107,7 @@ namespace webapp.BackgroundJobs
                 actualItems.Length);
 
             var anyItem = this.containers.Values.FirstOrDefault();
-            var nextGeneration = anyItem?.Generation ?? 0;
+            var nextGeneration = (anyItem?.Generation ?? 0) + 1;
 
             // The first iterator goes through actual list
             // It adds new items to the dictionary or update existing ones
@@ -156,6 +159,9 @@ namespace webapp.BackgroundJobs
         /// </summary>
         internal class SchedulableItem
         {
+            private DateTime lastLoggableIterationAt;
+            private bool isLoggableIteration;
+
             /// <summary>
             /// The container, which should be periodically processed.
             /// </summary>
@@ -180,6 +186,44 @@ namespace webapp.BackgroundJobs
             /// Returns the point of time, when the container should be processed.
             /// </summary>
             internal DateTime NextProcessingTime => this.LastProcessed.Add(this.Periodicity);
+
+            /// <summary>
+            /// The fundamental problem - once in a while, joseki should write log messages.
+            /// BUT, if joseki writes on each iteration of scanner processor - logs might be flooded with meaningless events.
+            /// For example, Trivy scanner-processors are executed each minute, which leads to 3*60 log-events each hour.
+            ///
+            /// To reduce the noise, this method helps to switch log-level from Debug to Information each hour.
+            /// </summary>
+            internal void StartNewIteration()
+            {
+                var sinceLastLog = DateTime.UtcNow - this.lastLoggableIterationAt;
+
+                // if last logged iteration was more than 1 hour ago - log this one too.
+                if (sinceLastLog.TotalHours >= 1)
+                {
+                    this.lastLoggableIterationAt = DateTime.UtcNow;
+                    this.isLoggableIteration = true;
+                    return;
+                }
+
+                // if we logged the previous iteration - skip this one
+                if (this.isLoggableIteration)
+                {
+                    this.isLoggableIteration = false;
+                }
+            }
+
+            /// <summary>
+            /// If iteration should be logged _globally_ - returns Information log-level.
+            /// Otherwise - returns Debug.
+            /// </summary>
+            /// <returns>Serilog log-level enumeration.</returns>
+            internal LogEventLevel GetLogEventLevel()
+            {
+                return this.isLoggableIteration
+                    ? LogEventLevel.Information
+                    : LogEventLevel.Debug;
+            }
         }
     }
 }
