@@ -8,9 +8,27 @@ namespace webapp.Models
     public class InfrastructureComponent
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="InfrastructureComponent"/> class.
+        /// Creates random id on constructor.
+        /// </summary>
+        public InfrastructureComponent()
+            : this(Guid.NewGuid().ToString())
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InfrastructureComponent"/> class.
+        /// </summary>
+        /// <param name="id">Component identifier.</param>
+        public InfrastructureComponent(string id)
+        {
+            this.Id = id;
+        }
+
+        /// <summary>
         /// The unique Id of a component.
         /// </summary>
-        public string Id { get; }
+        public string Id { get; set; }
 
         /// <summary>
         /// The name of the component: dev-cluster, subscription-1, etc.
@@ -21,14 +39,5 @@ namespace webapp.Models
         /// The bucket of infrastructure component: Cloud Subscription, Kubernetes cluster, etc.
         /// </summary>
         public InfrastructureCategory Category { get; set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="InfrastructureComponent"/> class.
-        /// Creates random id on constructor.
-        /// </summary>
-        public InfrastructureComponent()
-        {
-            this.Id = Guid.NewGuid().ToString();
-        }
     }
 }

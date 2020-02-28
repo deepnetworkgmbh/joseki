@@ -141,6 +141,12 @@
         /// The measurement is in days.
         /// </summary>
         public int ArchiveTtlDays { get; set; } = 90;
+
+        /// <summary>
+        /// How often InfraScoreWatchman is reloading cache.
+        /// The measurement is in hours.
+        /// </summary>
+        public int InfraScorePeriodicityHours { get; set; } = 12;
     }
 
     /// <summary>

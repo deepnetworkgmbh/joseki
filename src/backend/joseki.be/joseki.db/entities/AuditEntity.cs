@@ -36,6 +36,16 @@ namespace joseki.db.entities
         public string ScannerId { get; set; }
 
         /// <summary>
+        /// Which infrastructure component was audited: k8s-cluster id or azure-subscription-id.
+        /// </summary>
+        public string ComponentId { get; set; }
+
+        /// <summary>
+        /// Human-friendly infrastructure component name.
+        /// </summary>
+        public string ComponentName { get; set; }
+
+        /// <summary>
         /// List of all check-results, that belongs to the audit.
         /// </summary>
         public List<CheckResultEntity> CheckResults { get; set; }

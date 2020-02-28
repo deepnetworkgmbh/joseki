@@ -36,6 +36,16 @@
             Which scanner did the audit.
             </summary>
         </member>
+        <member name="P:joseki.db.entities.AuditEntity.ComponentId">
+            <summary>
+            Which infrastructure component was audited: k8s-cluster id or azure-subscription-id.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.AuditEntity.ComponentName">
+            <summary>
+            Human-friendly infrastructure component name.
+            </summary>
+        </member>
         <member name="P:joseki.db.entities.AuditEntity.CheckResults">
             <summary>
             List of all check-results, that belongs to the audit.
@@ -176,6 +186,11 @@
         <member name="P:joseki.db.entities.CheckResultEntity.Audit">
             <summary>
             Audit object.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.CheckResultEntity.Check">
+            <summary>
+            Check object.
             </summary>
         </member>
         <member name="T:joseki.db.entities.CheckValue">

@@ -6,14 +6,18 @@ using joseki.db;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Options;
 
 using Serilog.Events;
+
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 using webapp.Audits.Processors.azsk;
 using webapp.Audits.Processors.polaris;
@@ -22,6 +26,7 @@ using webapp.BackgroundJobs;
 using webapp.BlobStorage;
 using webapp.Configuration;
 using webapp.Database;
+using webapp.Handlers;
 using webapp.Infrastructure;
 using webapp.Queues;
 
@@ -68,14 +73,35 @@ namespace webapp
                     options.JsonSerializerOptions.IgnoreNullValues = true;
                 });
 
+            services.AddApiVersioning(o =>
+            {
+                o.ReportApiVersions = true;
+                o.AssumeDefaultVersionWhenUnspecified = true;
+                o.DefaultApiVersion = new ApiVersion(0, 1);
+            });
+            services.AddVersionedApiExplorer(
+                options =>
+                {
+                    // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
+                    // note: the specified format code will format the version as "'v'major[.minor][-status]"
+                    options.GroupNameFormat = "'v'VVV";
+
+                    // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
+                    // can also be used to control the format of the API version in route templates
+                    options.SubstituteApiVersionInUrl = true;
+                });
+
             services
                 .AddHealthChecks()
                 .AddCheck("Live", () => HealthCheckResult.Healthy(), new[] { "liveness" })
                 .AddCheck("Ready", () => HealthCheckResult.Healthy(), new[] { "readiness" });
 
+            services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Joseki Backend", Version = "v1" });
+                // add a custom operation filter which sets default values
+                c.OperationFilter<SwaggerDefaultValues>();
+
                 var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(System.AppContext.BaseDirectory, xmlFile);
 
@@ -107,16 +133,22 @@ namespace webapp
             services.AddScoped<IJosekiDatabase, MssqlJosekiDatabase>();
             services.AddTransient<ChecksCache>();
             services.AddTransient<CveCache>();
+            services.AddTransient<InfrastructureScoreCache>();
 
             services.AddTransient<AzskAuditProcessor>();
             services.AddTransient<PolarisAuditProcessor>();
             services.AddTransient<TrivyAuditProcessor>();
 
+            services.AddTransient<GetInfrastructureOverviewHandler>();
+
             services.AddScoped<ScannerContainersWatchman>();
             services.AddSingleton<SchedulerAssistant>();
-            services.AddHostedService<ScannerResultsReaderJob>();
             services.AddScoped<ArchiveWatchman>();
+            services.AddScoped<InfraScoreCacheWatchman>();
+
+            services.AddHostedService<ScannerResultsReaderJob>();
             services.AddHostedService<ArchiverJob>();
+            services.AddHostedService<InfraScoreCacheReloaderJob>();
         }
 
         /// <summary>
@@ -124,7 +156,8 @@ namespace webapp
         /// </summary>
         /// <param name="app">Builder object.</param>
         /// <param name="env">Environment configuration.</param>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        /// <param name="provider">API version provider.</param>
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
         {
             if (env.IsDevelopment())
             {
@@ -140,7 +173,11 @@ namespace webapp
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Joseki Backend V1");
+                // build a swagger endpoint for each discovered API version
+                foreach (var description in provider.ApiVersionDescriptions)
+                {
+                    c.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
+                }
             });
 
             app.UseMiddleware<HttpRequestLoggingMiddleware>();

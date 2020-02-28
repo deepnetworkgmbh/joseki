@@ -4,7 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
+using Serilog;
+
+using webapp.Handlers;
 using webapp.Models;
 
 namespace webapp.Controllers
@@ -13,11 +17,25 @@ namespace webapp.Controllers
     /// .Audit data endpoints.
     /// </summary>
     [ApiController]
+    [ApiVersion("0.1")]
     [Route("api/audits")]
     public class AuditsController : Controller
     {
+        private static readonly ILogger Logger = Log.ForContext<AuditsController>();
+
         private static List<InfrastructureComponentSummaryWithHistory> overallSummary = Data.GetComponentSummary();
         private static List<InfrastructureComponentSummaryWithHistory> componentSummaries = Data.GetComponentSummaries();
+
+        private readonly IServiceProvider services;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuditsController"/> class.
+        /// </summary>
+        /// <param name="services">DI container.</param>
+        public AuditsController(IServiceProvider services)
+        {
+            this.services = services;
+        }
 
         /// <summary>
         /// Returns the overall infrastructure overview for Joseki landing page.
@@ -26,15 +44,24 @@ namespace webapp.Controllers
         [HttpGet]
         [Route("overview", Name = "get-overview")]
         [ProducesResponseType(200, Type = typeof(InfrastructureOverview))]
-        public Task<ObjectResult> GetOverview(DateTime? date = null)
+        public async Task<ObjectResult> GetOverview(DateTime? date = null)
         {
-            var summary = new InfrastructureOverview();
-            var indexDate = (date == null) ? Data.Dates.First() : date;
+            try
+            {
+                var handler = this.services.GetService<GetInfrastructureOverviewHandler>();
+                if (date == null)
+                {
+                    date = DateTime.UtcNow;
+                }
 
-            summary.Overall = overallSummary.FirstOrDefault(summary => summary.Date == indexDate);
-            summary.Components = componentSummaries.Where(summary => summary.Date == indexDate).ToArray();
-
-            return Task.FromResult(this.StatusCode(200, summary));
+                var overview = await handler.GetOverview(date.Value);
+                return this.StatusCode(200, overview);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Failed to get infrastructure overview on {AuditDate}", date);
+                return this.StatusCode(500, $"Failed to get infrastructure overview");
+            }
         }
 
         /// <summary>

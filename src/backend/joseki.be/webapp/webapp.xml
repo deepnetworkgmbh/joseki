@@ -311,6 +311,38 @@
             </summary>
             <returns>A task object.</returns>
         </member>
+        <member name="T:webapp.BackgroundJobs.InfraScoreCacheReloaderJob">
+            <summary>
+            The object is responsible for keeping actual records in Infrastructure-Score cache.
+            </summary>
+        </member>
+        <member name="M:webapp.BackgroundJobs.InfraScoreCacheReloaderJob.#ctor(System.IServiceProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.BackgroundJobs.InfraScoreCacheReloaderJob"/> class.
+            </summary>
+            <param name="services">DI container.</param>
+        </member>
+        <member name="M:webapp.BackgroundJobs.InfraScoreCacheReloaderJob.ExecuteAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:webapp.BackgroundJobs.InfraScoreCacheWatchman">
+            <summary>
+            Regularly reloads Infrastructure Score cache items.
+            </summary>
+        </member>
+        <member name="M:webapp.BackgroundJobs.InfraScoreCacheWatchman.#ctor(webapp.Database.InfrastructureScoreCache,webapp.Configuration.ConfigurationParser)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.BackgroundJobs.InfraScoreCacheWatchman"/> class.
+            </summary>
+            <param name="cache">The cache.</param>
+            <param name="config">Joseki Backend configuration.</param>
+        </member>
+        <member name="M:webapp.BackgroundJobs.InfraScoreCacheWatchman.Watch(System.Threading.CancellationToken)">
+            <summary>
+            Every Watchmen.InfraScorePeriodicityHours hours forces cache reload.
+            </summary>
+            <returns>A task object.</returns>
+        </member>
         <member name="T:webapp.BackgroundJobs.ScannerContainersWatchman">
             <summary>
             ScannerContainers watchman is responsible for following actual state of root-level containers in Blob Storage
@@ -711,7 +743,7 @@
             Watchmen related configurations.
             </summary>
         </member>
-        <member name="P:webapp.Configuration.Watchmen.ScannerContainersPeriodicity">
+        <member name="P:webapp.Configuration.Watchmen.ScannerContainersPeriodicitySeconds">
             <summary>
             How often ScannerContainersWatchman is listing root-level containers.
             The measurement is in seconds.
@@ -727,6 +759,12 @@
             <summary>
             How long processed audits should be stored in Archive.
             The measurement is in days.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.Watchmen.InfraScorePeriodicityHours">
+            <summary>
+            How often InfraScoreWatchman is reloading cache.
+            The measurement is in hours.
             </summary>
         </member>
         <member name="T:webapp.Configuration.AzureQueueConfig">
@@ -758,6 +796,12 @@
             <summary>
             .Audit data endpoints.
             </summary>
+        </member>
+        <member name="M:webapp.Controllers.AuditsController.#ctor(System.IServiceProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Controllers.AuditsController"/> class.
+            </summary>
+            <param name="services">DI container.</param>
         </member>
         <member name="M:webapp.Controllers.AuditsController.GetOverview(System.Nullable{System.DateTime})">
             <summary>
@@ -862,6 +906,48 @@
             <summary>
             static placeholder for overall component.
             </summary>
+        </member>
+        <member name="T:webapp.Controllers.v0._2.AuditsController">
+            <summary>
+            Audit data endpoints.
+            </summary>
+        </member>
+        <member name="M:webapp.Controllers.v0._2.AuditsController.#ctor(System.IServiceProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Controllers.v0._2.AuditsController"/> class.
+            </summary>
+            <param name="services">DI container.</param>
+        </member>
+        <member name="M:webapp.Controllers.v0._2.AuditsController.GetOverview(System.Nullable{System.DateTime})">
+            <summary>
+            Returns the overall infrastructure overview for Joseki landing page.
+            </summary>
+            <returns>The overall infrastructure overview.</returns>
+        </member>
+        <member name="M:webapp.Controllers.v0._2.AuditsController.GetOverviewDiff(System.DateTime,System.DateTime)">
+            <summary>
+            Returns the overall infrastructure overview diff.
+            </summary>
+            <returns>The overall infrastructure overview diff.</returns>
+        </member>
+        <member name="M:webapp.Controllers.v0._2.AuditsController.GetComponentHistory(System.String)">
+            <summary>
+            Returns the overall infrastructure overview diff.
+            </summary>
+            <param name="id">Unique component identifier.</param>
+            <returns>The overall infrastructure overview diff.</returns>
+        </member>
+        <member name="M:webapp.Controllers.v0._2.AuditsController.GetComponentDetail(System.String,System.Nullable{System.DateTime})">
+            <summary>
+            Returns the component summary detail.
+            </summary>
+            <returns>the component summary detail.</returns>
+        </member>
+        <member name="M:webapp.Controllers.v0._2.AuditsController.GetComponentDiff(System.String,System.DateTime,System.DateTime)">
+            <summary>
+            Returns the component summary diff.
+            </summary>
+            <returns>the component summary diff.</returns>
         </member>
         <member name="T:webapp.Database.ChecksCache">
             <summary>
@@ -1028,6 +1114,13 @@
             <param name="entity">Database entity.</param>
             <returns>Internal model.</returns>
         </member>
+        <member name="M:webapp.Database.DatabaseMapper.FromEntity(joseki.db.entities.AuditEntity)">
+            <summary>
+            Creates Audit internal model from database entity.
+            </summary>
+            <param name="entity">Database compatible entity.</param>
+            <returns>Internal Audit model.</returns>
+        </member>
         <member name="M:webapp.Database.DatabaseMapper.FromEntity(joseki.db.entities.ImageScanStatus)">
             <summary>
             Creates ImageScanStatus enum value from database-compatible enum.
@@ -1075,6 +1168,83 @@
             <param name="imageTags">Array of unique image-tags.</param>
             <returns>Not expired image scans.</returns>
         </member>
+        <member name="M:webapp.Database.IJosekiDatabase.GetAuditedComponents(System.DateTime)">
+            <summary>
+            Gets latest audits for each component at particular date.
+            </summary>
+            <param name="date">The date.</param>
+            <returns>Latest audits.</returns>
+        </member>
+        <member name="T:webapp.Database.InfrastructureScoreCache">
+            <summary>
+            Takes care of keeping pre-calculated counter-summaries.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.InfrastructureScoreCache.OverallId">
+            <summary>
+            Overall infrastructure id.
+            </summary>
+        </member>
+        <member name="M:webapp.Database.InfrastructureScoreCache.#ctor(joseki.db.JosekiDbContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Database.InfrastructureScoreCache"/> class.
+            </summary>
+            <param name="db">Joseki database.</param>
+        </member>
+        <member name="M:webapp.Database.InfrastructureScoreCache.ReloadEntireCache">
+            <summary>
+            Pre-calculate counters for all available scanners during last month.
+            </summary>
+            <returns>A task object.</returns>
+        </member>
+        <member name="M:webapp.Database.InfrastructureScoreCache.GetCountersSummary(System.String,System.DateTime)">
+            <summary>
+            Returns counters summary for requested component and date.
+            First method tries to look inside local cache.
+            Only if there is no record in the case - requests it from DB.
+            </summary>
+            <param name="componentId">Infrastructure component identifier.</param>
+            <param name="date">Audit date.</param>
+            <returns>Counters Summary for requested component and date.</returns>
+        </member>
+        <member name="M:webapp.Database.InfrastructureScoreCache.GetAllComponentsIds">
+            <summary>
+            Returns all scanner-ids used during last month.
+            </summary>
+            <returns>Array of unique scanner identifiers.</returns>
+        </member>
+        <member name="M:webapp.Database.InfrastructureScoreCache.GetLastMonthAudits(System.String)">
+            <summary>
+            Returns latest audit entities for each day during the last month.
+            If there is several audits for the same day - methods returns only the last one.
+            </summary>
+            <param name="componentId">Scanner identifier to get audits for.</param>
+            <returns>Array of latest audits per day.</returns>
+        </member>
+        <member name="M:webapp.Database.InfrastructureScoreCache.GetAudit(System.String,System.DateTime)">
+            <summary>
+            Returns latest audit entity for requested day.
+            If there is several audits for the same day - methods returns only the last one.
+            </summary>
+            <param name="componentId">Scanner identifier to get audits for.</param>
+            <param name="date">Audit date.</param>
+            <returns>Latest audits for the day.</returns>
+        </member>
+        <member name="M:webapp.Database.InfrastructureScoreCache.GetAudits(System.DateTime)">
+            <summary>
+            Returns latest audits for each scanner for requested day.
+            If there is several audits for the same day - methods returns only the latest one per scanner.
+            </summary>
+            <param name="date">Audits date.</param>
+            <returns>Latest audits for each scanner for the day.</returns>
+        </member>
+        <member name="M:webapp.Database.InfrastructureScoreCache.GetCounterSummariesForAudit(System.Int32)">
+            <summary>
+            Calculate Counter Summary for requested audits.
+            </summary>
+            <param name="auditId">Audit identifier to calculate summaries.</param>
+            <returns>counters-summary for requested audit-id.</returns>
+        </member>
         <member name="T:webapp.Database.Models.Audit">
             <summary>
             The entity represents a single Audit object.
@@ -1093,6 +1263,16 @@
         <member name="P:webapp.Database.Models.Audit.ScannerId">
             <summary>
             Which scanner did the audit.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.Audit.ComponentId">
+            <summary>
+            Which infrastructure component was audited: k8s-cluster id or azure-subscription-id.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.Audit.ComponentName">
+            <summary>
+            Human-friendly infrastructure component name.
             </summary>
         </member>
         <member name="P:webapp.Database.Models.Audit.CheckResults">
@@ -1504,6 +1684,44 @@
         <member name="M:webapp.Database.MssqlJosekiDatabase.GetNotExpiredImageScans(System.String[])">
             <inheritdoc />
         </member>
+        <member name="M:webapp.Database.MssqlJosekiDatabase.GetAuditedComponents(System.DateTime)">
+            <inheritdoc />
+        </member>
+        <member name="T:webapp.Handlers.GetInfrastructureOverviewHandler">
+            <summary>
+            Prepares response to get-overall-infrastructure request.
+            </summary>
+        </member>
+        <member name="M:webapp.Handlers.GetInfrastructureOverviewHandler.#ctor(webapp.Database.IJosekiDatabase,webapp.Database.InfrastructureScoreCache)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Handlers.GetInfrastructureOverviewHandler"/> class.
+            </summary>
+            <param name="db">Joseki database.</param>
+            <param name="cache">Score cache.</param>
+        </member>
+        <member name="M:webapp.Handlers.GetInfrastructureOverviewHandler.GetOverview(System.DateTime)">
+            <summary>
+            Returns overall infrastructure overview object.
+            </summary>
+            <param name="date">date to calculate overview.</param>
+            <returns>Infrastructure overview.</returns>
+        </member>
+        <member name="T:webapp.Infrastructure.ConfigureSwaggerOptions">
+            <summary>
+            Configures the Swagger generation options.
+            </summary>
+            <remarks>This allows API versioning to define a Swagger document per API version after the
+            <see cref="T:Microsoft.AspNetCore.Mvc.ApiExplorer.IApiVersionDescriptionProvider"/> service has been resolved from the service container.</remarks>
+        </member>
+        <member name="M:webapp.Infrastructure.ConfigureSwaggerOptions.#ctor(Microsoft.AspNetCore.Mvc.ApiExplorer.IApiVersionDescriptionProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Infrastructure.ConfigureSwaggerOptions"/> class.
+            </summary>
+            <param name="provider">The <see cref="T:Microsoft.AspNetCore.Mvc.ApiExplorer.IApiVersionDescriptionProvider">provider</see> used to generate Swagger documents.</param>
+        </member>
+        <member name="M:webapp.Infrastructure.ConfigureSwaggerOptions.Configure(Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions)">
+            <inheritdoc />
+        </member>
         <member name="T:webapp.Infrastructure.HttpRequestLoggingMiddleware">
             <summary>
             Writes logs in common format for any incoming HTTP request.
@@ -1529,6 +1747,20 @@
             <param name="start">Ticks on a start.</param>
             <param name="stop">Ticks in the end.</param>
             <returns>Elapsed milliseconds.</returns>
+        </member>
+        <member name="T:webapp.Infrastructure.SwaggerDefaultValues">
+            <summary>
+            Represents the Swagger/Swashbuckle operation filter used to document the implicit API version parameter.
+            </summary>
+            <remarks>This <see cref="T:Swashbuckle.AspNetCore.SwaggerGen.IOperationFilter"/> is only required due to bugs in the <see cref="T:Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator"/>.
+            Once they are fixed and published, this class can be removed.</remarks>
+        </member>
+        <member name="M:webapp.Infrastructure.SwaggerDefaultValues.Apply(Microsoft.OpenApi.Models.OpenApiOperation,Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext)">
+            <summary>
+            Applies the filter to the specified operation using the given context.
+            </summary>
+            <param name="operation">The operation to apply the filter to.</param>
+            <param name="context">The current operation filter context.</param>
         </member>
         <member name="T:webapp.Models.Check">
             <summary>
@@ -1731,6 +1963,18 @@
             The class for Infrastructure Component object.
             </summary>
         </member>
+        <member name="M:webapp.Models.InfrastructureComponent.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Models.InfrastructureComponent"/> class.
+            Creates random id on constructor.
+            </summary>
+        </member>
+        <member name="M:webapp.Models.InfrastructureComponent.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Models.InfrastructureComponent"/> class.
+            </summary>
+            <param name="id">Component identifier.</param>
+        </member>
         <member name="P:webapp.Models.InfrastructureComponent.Id">
             <summary>
             The unique Id of a component.
@@ -1744,12 +1988,6 @@
         <member name="P:webapp.Models.InfrastructureComponent.Category">
             <summary>
             The bucket of infrastructure component: Cloud Subscription, Kubernetes cluster, etc.
-            </summary>
-        </member>
-        <member name="M:webapp.Models.InfrastructureComponent.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:webapp.Models.InfrastructureComponent"/> class.
-            Creates random id on constructor.
             </summary>
         </member>
         <member name="T:webapp.Models.InfrastructureComponentDiff">
@@ -2064,12 +2302,13 @@
             </summary>
             <param name="services">Services collection.</param>
         </member>
-        <member name="M:webapp.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+        <member name="M:webapp.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment,Microsoft.AspNetCore.Mvc.ApiExplorer.IApiVersionDescriptionProvider)">
             <summary>
             This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
             </summary>
             <param name="app">Builder object.</param>
             <param name="env">Environment configuration.</param>
+            <param name="provider">API version provider.</param>
         </member>
         <member name="M:webapp.Startup.RunDbMigrations(Microsoft.AspNetCore.Builder.IApplicationBuilder)">
             <summary>
