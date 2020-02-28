@@ -47,6 +47,8 @@ namespace webapp.Database
                 AuditId = audit.Id,
                 Date = audit.Date,
                 ScannerId = audit.ScannerId,
+                ComponentId = audit.ComponentId,
+                ComponentName = audit.ComponentName,
             };
 
             if (audit.MetadataKube != null)
