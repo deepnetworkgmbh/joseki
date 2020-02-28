@@ -81,6 +81,8 @@ namespace joseki.db
             modelBuilder.Entity<AuditEntity>().HasKey(audit => audit.Id);
             modelBuilder.Entity<AuditEntity>().Property(audit => audit.ScannerId).IsRequired();
             modelBuilder.Entity<AuditEntity>().Property(audit => audit.AuditId).IsRequired();
+            modelBuilder.Entity<AuditEntity>().Property(audit => audit.ComponentId).IsRequired().HasDefaultValue("undefined-id");
+            modelBuilder.Entity<AuditEntity>().Property(audit => audit.ComponentName).IsRequired().HasDefaultValue("undefined-name");
             modelBuilder.Entity<AuditEntity>()
                 .HasIndex(audit => new { audit.Date, audit.ScannerId })
                 .IncludeProperties(audit => audit.AuditId)
@@ -107,6 +109,11 @@ namespace joseki.db
                 .WithMany(audit => audit.CheckResults)
                 .HasForeignKey(checkResult => checkResult.AuditId)
                 .IsRequired();
+            modelBuilder.Entity<CheckResultEntity>()
+                .HasOne(checkResult => checkResult.Check)
+                .WithMany()
+                .HasForeignKey(checkResult => checkResult.CheckId)
+                .IsRequired();
 
             // TODO: maybe add a computed column which indicates if a record is image-scan? It might make index even faster.
             modelBuilder.Entity<CheckResultEntity>()
@@ -118,7 +125,10 @@ namespace joseki.db
             #region Azure Metadata
 
             modelBuilder.Entity<MetadataAzureEntity>().HasKey(metadata => metadata.Id);
-            modelBuilder.Entity<MetadataAzureEntity>().Property(metadata => metadata.JSON).IsRequired();
+            modelBuilder.Entity<MetadataAzureEntity>()
+                .Property(metadata => metadata.JSON)
+                .HasColumnType("text")
+                .IsRequired();
             modelBuilder.Entity<MetadataAzureEntity>()
                 .HasOne(metadata => metadata.Audit)
                 .WithOne(audit => audit.MetadataAzure)
@@ -130,7 +140,10 @@ namespace joseki.db
             #region Kube Metadata
 
             modelBuilder.Entity<MetadataKubeEntity>().HasKey(metadata => metadata.Id);
-            modelBuilder.Entity<MetadataKubeEntity>().Property(metadata => metadata.JSON).IsRequired();
+            modelBuilder.Entity<MetadataKubeEntity>()
+                .Property(metadata => metadata.JSON)
+                .HasColumnType("text")
+                .IsRequired();
             modelBuilder.Entity<MetadataKubeEntity>()
                 .HasOne(metadata => metadata.Audit)
                 .WithOne(audit => audit.MetadataKube)

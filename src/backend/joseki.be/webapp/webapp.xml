@@ -1130,6 +1130,16 @@
             Which scanner did the audit.
             </summary>
         </member>
+        <member name="P:webapp.Database.Models.Audit.ComponentId">
+            <summary>
+            Which infrastructure component was audited: k8s-cluster id or azure-subscription-id.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.Audit.ComponentName">
+            <summary>
+            Human-friendly infrastructure component name.
+            </summary>
+        </member>
         <member name="P:webapp.Database.Models.Audit.CheckResults">
             <summary>
             List of all check-results, that belongs to the audit.

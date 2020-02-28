@@ -154,6 +154,8 @@ namespace webapp.Audits.Processors.azsk
                 Id = auditMetadata.AuditId,
                 Date = auditDate,
                 ScannerId = $"{auditBlob.ParentContainer.Metadata.Type}/{auditBlob.ParentContainer.Metadata.Id}",
+                ComponentId = $"/subscriptions/{id}",
+                ComponentName = name,
                 CheckResults = checks,
                 MetadataAzure = new MetadataAzure
                 {
