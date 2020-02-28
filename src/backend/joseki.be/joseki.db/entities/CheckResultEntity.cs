@@ -51,6 +51,11 @@ namespace joseki.db.entities
         /// Audit object.
         /// </summary>
         public AuditEntity Audit { get; set; }
+
+        /// <summary>
+        /// Check object.
+        /// </summary>
+        public CheckEntity Check { get; set; }
     }
 
     /// <summary>

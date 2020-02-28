@@ -161,11 +161,15 @@ namespace webapp.Audits.Processors.polaris
             };
 
             var auditDate = DateTimeOffset.FromUnixTimeSeconds(auditMetadata.Timestamp).DateTime;
+            var infraComponentId = $"/k8s/{auditMetadata.ClusterId}";
+            var k8sName = this.ParseClusterName(k8sJson) ?? infraComponentId;
             var audit = new Audit
             {
                 Id = auditMetadata.AuditId,
                 Date = auditDate,
                 ScannerId = $"{auditBlob.ParentContainer.Metadata.Type}/{auditBlob.ParentContainer.Metadata.Id}",
+                ComponentId = infraComponentId,
+                ComponentName = k8sName,
                 CheckResults = checks,
                 MetadataKube = new MetadataKube
                 {
@@ -176,6 +180,33 @@ namespace webapp.Audits.Processors.polaris
             };
 
             return audit;
+        }
+
+        private string ParseClusterName(JObject k8sJson)
+        {
+            try
+            {
+                var name = k8sJson["cluster"]["SourceName"].Value<string>();
+                var starts = 0;
+                var ends = name.Length;
+
+                if (name.StartsWith("https://"))
+                {
+                    starts = 7;
+                }
+
+                if (name.EndsWith(":443"))
+                {
+                    ends -= 4;
+                }
+
+                return name[starts..ends];
+            }
+            catch (Exception ex)
+            {
+                Logger.Warning(ex, "Failed to parse cluster name");
+                return string.Empty;
+            }
         }
 
         private async Task<JObject> GetJsonObject(string path)
@@ -202,7 +233,7 @@ namespace webapp.Audits.Processors.polaris
                 var nsName = rootResultItem["Namespace"].Value<string>();
                 var objectKind = rootResultItem["Kind"].Value<string>().ToLowerInvariant();
                 var objectName = rootResultItem["Name"].Value<string>().ToLowerInvariant();
-                var idPrefix = $"k8s/{clusterId}/ns/{nsName}/{objectKind}/{objectName}";
+                var idPrefix = $"/k8s/{clusterId}/ns/{nsName}/{objectKind}/{objectName}";
 
                 // parse deployment/job/daemon-set/etc level checks
                 if (rootResultItem["Results"] != null && rootResultItem["Results"].HasValues)
@@ -377,7 +408,7 @@ namespace webapp.Audits.Processors.polaris
                             : $"{objectName}-container{i + 1}";
                         var imageTag = containers[i]["image"].Value<string>();
 
-                        var componentId = $"k8s/{clusterId}/ns/{nsName}/{objectKind}/{objectName}/container/{containerName}/image/{imageTag}";
+                        var componentId = $"/k8s/{clusterId}/ns/{nsName}/{objectKind}/{objectName}/container/{containerName}/image/{imageTag}";
                         if (!dict.TryAdd(imageTag, new List<string> { componentId }))
                         {
                             dict[imageTag].Add(componentId);
@@ -403,7 +434,7 @@ namespace webapp.Audits.Processors.polaris
                             : $"{objectName}-container{i + 1}";
                         var imageTag = containers[i]["image"].Value<string>();
 
-                        var componentId = $"k8s/{clusterId}/ns/{nsName}/CronJobs/{objectName}/container/{containerName}/image/{imageTag}";
+                        var componentId = $"/k8s/{clusterId}/ns/{nsName}/CronJobs/{objectName}/container/{containerName}/image/{imageTag}";
                         if (!dict.TryAdd(imageTag, new List<string> { componentId }))
                         {
                             dict[imageTag].Add(componentId);

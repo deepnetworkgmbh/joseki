@@ -47,6 +47,8 @@ namespace webapp.Database
                 AuditId = audit.Id,
                 Date = audit.Date,
                 ScannerId = audit.ScannerId,
+                ComponentId = audit.ComponentId,
+                ComponentName = audit.ComponentName,
             };
 
             if (audit.MetadataKube != null)
@@ -275,6 +277,25 @@ namespace webapp.Database
             };
 
             return model;
+        }
+
+        /// <summary>
+        /// Creates Audit internal model from database entity.
+        /// </summary>
+        /// <param name="entity">Database compatible entity.</param>
+        /// <returns>Internal Audit model.</returns>
+        public static Audit FromEntity(this AuditEntity entity)
+        {
+            var audit = new Audit
+            {
+                Id = entity.AuditId,
+                Date = entity.Date,
+                ScannerId = entity.ScannerId,
+                ComponentId = entity.ComponentId,
+                ComponentName = entity.ComponentName,
+            };
+
+            return audit;
         }
 
         /// <summary>
