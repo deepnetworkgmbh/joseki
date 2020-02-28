@@ -311,6 +311,38 @@
             </summary>
             <returns>A task object.</returns>
         </member>
+        <member name="T:webapp.BackgroundJobs.InfraScoreCacheReloaderJob">
+            <summary>
+            The object is responsible for keeping actual records in Infrastructure-Score cache.
+            </summary>
+        </member>
+        <member name="M:webapp.BackgroundJobs.InfraScoreCacheReloaderJob.#ctor(System.IServiceProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.BackgroundJobs.InfraScoreCacheReloaderJob"/> class.
+            </summary>
+            <param name="services">DI container.</param>
+        </member>
+        <member name="M:webapp.BackgroundJobs.InfraScoreCacheReloaderJob.ExecuteAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:webapp.BackgroundJobs.InfraScoreCacheWatchman">
+            <summary>
+            Regularly reloads Infrastructure Score cache items.
+            </summary>
+        </member>
+        <member name="M:webapp.BackgroundJobs.InfraScoreCacheWatchman.#ctor(webapp.Database.InfrastructureScoreCache,webapp.Configuration.ConfigurationParser)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.BackgroundJobs.InfraScoreCacheWatchman"/> class.
+            </summary>
+            <param name="cache">The cache.</param>
+            <param name="config">Joseki Backend configuration.</param>
+        </member>
+        <member name="M:webapp.BackgroundJobs.InfraScoreCacheWatchman.Watch(System.Threading.CancellationToken)">
+            <summary>
+            Every Watchmen.InfraScorePeriodicityHours hours forces cache reload.
+            </summary>
+            <returns>A task object.</returns>
+        </member>
         <member name="T:webapp.BackgroundJobs.ScannerContainersWatchman">
             <summary>
             ScannerContainers watchman is responsible for following actual state of root-level containers in Blob Storage
@@ -729,6 +761,12 @@
             The measurement is in days.
             </summary>
         </member>
+        <member name="P:webapp.Configuration.Watchmen.InfraScorePeriodicityHours">
+            <summary>
+            How often InfraScoreWatchman is reloading cache.
+            The measurement is in hours.
+            </summary>
+        </member>
         <member name="T:webapp.Configuration.AzureQueueConfig">
             <summary>
             Azure Storage Queue related configuration.
@@ -758,6 +796,12 @@
             <summary>
             .Audit data endpoints.
             </summary>
+        </member>
+        <member name="M:webapp.Controllers.AuditsController.#ctor(System.IServiceProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Controllers.AuditsController"/> class.
+            </summary>
+            <param name="services">DI container.</param>
         </member>
         <member name="M:webapp.Controllers.AuditsController.GetOverview(System.Nullable{System.DateTime})">
             <summary>
@@ -868,6 +912,12 @@
             Audit data endpoints.
             </summary>
         </member>
+        <member name="M:webapp.Controllers.v0._2.AuditsController.#ctor(System.IServiceProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Controllers.v0._2.AuditsController"/> class.
+            </summary>
+            <param name="services">DI container.</param>
+        </member>
         <member name="M:webapp.Controllers.v0._2.AuditsController.GetOverview(System.Nullable{System.DateTime})">
             <summary>
             Returns the overall infrastructure overview for Joseki landing page.
@@ -882,9 +932,10 @@
         </member>
         <member name="M:webapp.Controllers.v0._2.AuditsController.GetComponentHistory(System.String)">
             <summary>
-            Returns the component scan history.
+            Returns the overall infrastructure overview diff.
             </summary>
-            <returns>the component scan history.</returns>
+            <param name="id">Unique component identifier.</param>
+            <returns>The overall infrastructure overview diff.</returns>
         </member>
         <member name="M:webapp.Controllers.v0._2.AuditsController.GetComponentDetail(System.String,System.Nullable{System.DateTime})">
             <summary>
@@ -1063,6 +1114,13 @@
             <param name="entity">Database entity.</param>
             <returns>Internal model.</returns>
         </member>
+        <member name="M:webapp.Database.DatabaseMapper.FromEntity(joseki.db.entities.AuditEntity)">
+            <summary>
+            Creates Audit internal model from database entity.
+            </summary>
+            <param name="entity">Database compatible entity.</param>
+            <returns>Internal Audit model.</returns>
+        </member>
         <member name="M:webapp.Database.DatabaseMapper.FromEntity(joseki.db.entities.ImageScanStatus)">
             <summary>
             Creates ImageScanStatus enum value from database-compatible enum.
@@ -1109,6 +1167,83 @@
             </summary>
             <param name="imageTags">Array of unique image-tags.</param>
             <returns>Not expired image scans.</returns>
+        </member>
+        <member name="M:webapp.Database.IJosekiDatabase.GetAuditedComponents(System.DateTime)">
+            <summary>
+            Gets latest audits for each component at particular date.
+            </summary>
+            <param name="date">The date.</param>
+            <returns>Latest audits.</returns>
+        </member>
+        <member name="T:webapp.Database.InfrastructureScoreCache">
+            <summary>
+            Takes care of keeping pre-calculated counter-summaries.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.InfrastructureScoreCache.OverallId">
+            <summary>
+            Overall infrastructure id.
+            </summary>
+        </member>
+        <member name="M:webapp.Database.InfrastructureScoreCache.#ctor(joseki.db.JosekiDbContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Database.InfrastructureScoreCache"/> class.
+            </summary>
+            <param name="db">Joseki database.</param>
+        </member>
+        <member name="M:webapp.Database.InfrastructureScoreCache.ReloadEntireCache">
+            <summary>
+            Pre-calculate counters for all available scanners during last month.
+            </summary>
+            <returns>A task object.</returns>
+        </member>
+        <member name="M:webapp.Database.InfrastructureScoreCache.GetCountersSummary(System.String,System.DateTime)">
+            <summary>
+            Returns counters summary for requested component and date.
+            First method tries to look inside local cache.
+            Only if there is no record in the case - requests it from DB.
+            </summary>
+            <param name="componentId">Infrastructure component identifier.</param>
+            <param name="date">Audit date.</param>
+            <returns>Counters Summary for requested component and date.</returns>
+        </member>
+        <member name="M:webapp.Database.InfrastructureScoreCache.GetAllComponentsIds">
+            <summary>
+            Returns all scanner-ids used during last month.
+            </summary>
+            <returns>Array of unique scanner identifiers.</returns>
+        </member>
+        <member name="M:webapp.Database.InfrastructureScoreCache.GetLastMonthAudits(System.String)">
+            <summary>
+            Returns latest audit entities for each day during the last month.
+            If there is several audits for the same day - methods returns only the last one.
+            </summary>
+            <param name="componentId">Scanner identifier to get audits for.</param>
+            <returns>Array of latest audits per day.</returns>
+        </member>
+        <member name="M:webapp.Database.InfrastructureScoreCache.GetAudit(System.String,System.DateTime)">
+            <summary>
+            Returns latest audit entity for requested day.
+            If there is several audits for the same day - methods returns only the last one.
+            </summary>
+            <param name="componentId">Scanner identifier to get audits for.</param>
+            <param name="date">Audit date.</param>
+            <returns>Latest audits for the day.</returns>
+        </member>
+        <member name="M:webapp.Database.InfrastructureScoreCache.GetAudits(System.DateTime)">
+            <summary>
+            Returns latest audits for each scanner for requested day.
+            If there is several audits for the same day - methods returns only the latest one per scanner.
+            </summary>
+            <param name="date">Audits date.</param>
+            <returns>Latest audits for each scanner for the day.</returns>
+        </member>
+        <member name="M:webapp.Database.InfrastructureScoreCache.GetCounterSummariesForAudit(System.Int32)">
+            <summary>
+            Calculate Counter Summary for requested audits.
+            </summary>
+            <param name="auditId">Audit identifier to calculate summaries.</param>
+            <returns>counters-summary for requested audit-id.</returns>
         </member>
         <member name="T:webapp.Database.Models.Audit">
             <summary>
@@ -1549,6 +1684,28 @@
         <member name="M:webapp.Database.MssqlJosekiDatabase.GetNotExpiredImageScans(System.String[])">
             <inheritdoc />
         </member>
+        <member name="M:webapp.Database.MssqlJosekiDatabase.GetAuditedComponents(System.DateTime)">
+            <inheritdoc />
+        </member>
+        <member name="T:webapp.Handlers.GetInfrastructureOverviewHandler">
+            <summary>
+            Prepares response to get-overall-infrastructure request.
+            </summary>
+        </member>
+        <member name="M:webapp.Handlers.GetInfrastructureOverviewHandler.#ctor(webapp.Database.IJosekiDatabase,webapp.Database.InfrastructureScoreCache)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Handlers.GetInfrastructureOverviewHandler"/> class.
+            </summary>
+            <param name="db">Joseki database.</param>
+            <param name="cache">Score cache.</param>
+        </member>
+        <member name="M:webapp.Handlers.GetInfrastructureOverviewHandler.GetOverview(System.DateTime)">
+            <summary>
+            Returns overall infrastructure overview object.
+            </summary>
+            <param name="date">date to calculate overview.</param>
+            <returns>Infrastructure overview.</returns>
+        </member>
         <member name="T:webapp.Infrastructure.ConfigureSwaggerOptions">
             <summary>
             Configures the Swagger generation options.
@@ -1806,6 +1963,18 @@
             The class for Infrastructure Component object.
             </summary>
         </member>
+        <member name="M:webapp.Models.InfrastructureComponent.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Models.InfrastructureComponent"/> class.
+            Creates random id on constructor.
+            </summary>
+        </member>
+        <member name="M:webapp.Models.InfrastructureComponent.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Models.InfrastructureComponent"/> class.
+            </summary>
+            <param name="id">Component identifier.</param>
+        </member>
         <member name="P:webapp.Models.InfrastructureComponent.Id">
             <summary>
             The unique Id of a component.
@@ -1819,12 +1988,6 @@
         <member name="P:webapp.Models.InfrastructureComponent.Category">
             <summary>
             The bucket of infrastructure component: Cloud Subscription, Kubernetes cluster, etc.
-            </summary>
-        </member>
-        <member name="M:webapp.Models.InfrastructureComponent.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:webapp.Models.InfrastructureComponent"/> class.
-            Creates random id on constructor.
             </summary>
         </member>
         <member name="T:webapp.Models.InfrastructureComponentDiff">

@@ -138,8 +138,6 @@ namespace webapp.BackgroundJobs
 
         private static IAuditProcessor GetProcessor(IServiceScope scope, ScannerMetadata metadata)
         {
-            Logger.Information("Instantiating {ScannerType} processor", metadata.Type);
-
             switch (metadata.Type)
             {
                 case ScannerType.Azsk:
