@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -107,6 +108,34 @@ namespace webapp.Database
                 .GroupBy(i => i.ImageTag)
                 .Select(i => i.OrderByDescending(scan => scan.Date).FirstOrDefault())
                 .ToArray();
+        }
+
+        /// <inheritdoc />
+        public async Task<Audit[]> GetAuditedComponents(DateTime date)
+        {
+            // 1. find latest audited-components;
+            var audits = await this.db.Set<AuditEntity>().Where(i => i.Date >= date.Date).ToArrayAsync();
+
+            var componentIds = audits
+                .GroupBy(i => i.ComponentId)
+                .Select(i => i.OrderByDescending(scan => scan.Date).First())
+                .Select(i => i.ComponentId)
+                .ToArray();
+
+            var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-31);
+            var oneMonthAudits = await this.db.Set<AuditEntity>()
+                .Where(i => i.Date > oneMonthAgo && componentIds.Contains(i.ComponentId))
+                .ToArrayAsync();
+
+            var result = new List<Audit>(oneMonthAudits.Length);
+            foreach (var oneComponentAudits in oneMonthAudits.GroupBy(i => i.ComponentId))
+            {
+                result.AddRange(oneComponentAudits
+                    .GroupBy(i => i.Date.Date)
+                    .Select(i => i.OrderByDescending(scan => scan.Date).First().FromEntity()));
+            }
+
+            return result.ToArray();
         }
     }
 }

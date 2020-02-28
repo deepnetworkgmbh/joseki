@@ -14,7 +14,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
 
 using Serilog.Events;
 
@@ -27,6 +26,7 @@ using webapp.BackgroundJobs;
 using webapp.BlobStorage;
 using webapp.Configuration;
 using webapp.Database;
+using webapp.Handlers;
 using webapp.Infrastructure;
 using webapp.Queues;
 
@@ -133,16 +133,22 @@ namespace webapp
             services.AddScoped<IJosekiDatabase, MssqlJosekiDatabase>();
             services.AddTransient<ChecksCache>();
             services.AddTransient<CveCache>();
+            services.AddTransient<InfrastructureScoreCache>();
 
             services.AddTransient<AzskAuditProcessor>();
             services.AddTransient<PolarisAuditProcessor>();
             services.AddTransient<TrivyAuditProcessor>();
 
+            services.AddTransient<GetInfrastructureOverviewHandler>();
+
             services.AddScoped<ScannerContainersWatchman>();
             services.AddSingleton<SchedulerAssistant>();
-            services.AddHostedService<ScannerResultsReaderJob>();
             services.AddScoped<ArchiveWatchman>();
+            services.AddScoped<InfraScoreCacheWatchman>();
+
+            services.AddHostedService<ScannerResultsReaderJob>();
             services.AddHostedService<ArchiverJob>();
+            services.AddHostedService<InfraScoreCacheReloaderJob>();
         }
 
         /// <summary>

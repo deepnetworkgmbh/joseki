@@ -2,7 +2,11 @@
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
+using Serilog;
+
+using webapp.Handlers;
 using webapp.Models;
 
 namespace webapp.Controllers.v0._2
@@ -15,16 +19,43 @@ namespace webapp.Controllers.v0._2
     [Route("api/audits")]
     public class AuditsController : Controller
     {
+        private static readonly ILogger Logger = Log.ForContext<AuditsController>();
+        private readonly IServiceProvider services;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuditsController"/> class.
+        /// </summary>
+        /// <param name="services">DI container.</param>
+        public AuditsController(IServiceProvider services)
+        {
+            this.services = services;
+        }
+
         /// <summary>
         /// Returns the overall infrastructure overview for Joseki landing page.
         /// </summary>
         /// <returns>The overall infrastructure overview.</returns>
         [HttpGet]
-        [Route("overview", Name = "get-overview")]
+        [Route("overview", Name = "get-overall-infrastructure-overview")]
         [ProducesResponseType(200, Type = typeof(InfrastructureOverview))]
-        public Task<ObjectResult> GetOverview(DateTime? date = null)
+        public async Task<ObjectResult> GetOverview([FromQuery]DateTime? date = null)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var handler = this.services.GetService<GetInfrastructureOverviewHandler>();
+                if (date == null)
+                {
+                    date = DateTime.UtcNow;
+                }
+
+                var overview = await handler.GetOverview(date.Value);
+                return this.StatusCode(200, overview);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Failed to get infrastructure overview on {AuditDate}", date);
+                return this.StatusCode(500, $"Failed to get infrastructure overview");
+            }
         }
 
         /// <summary>
@@ -32,21 +63,22 @@ namespace webapp.Controllers.v0._2
         /// </summary>
         /// <returns>The overall infrastructure overview diff.</returns>
         [HttpGet]
-        [Route("overview/diff", Name = "get-overview-diff")]
+        [Route("overview/diff", Name = "get-overall-infrastructure-diff")]
         [ProducesResponseType(200, Type = typeof(InfrastructureOverviewDiff))]
-        public Task<ObjectResult> GetOverviewDiff(DateTime date1, DateTime date2)
+        public Task<ObjectResult> GetOverviewDiff([FromQuery]DateTime date1, [FromQuery]DateTime date2)
         {
             throw new NotImplementedException();
         }
 
         /// <summary>
-        /// Returns the component scan history.
+        /// Returns the overall infrastructure overview diff.
         /// </summary>
-        /// <returns>the component scan history.</returns>
+        /// <param name="id">Unique component identifier.</param>
+        /// <returns>The overall infrastructure overview diff.</returns>
         [HttpGet]
-        [Route("component/history", Name = "get-component-history")]
+        [Route("component/{id}/history", Name = "get-single-component-history")]
         [ProducesResponseType(200, Type = typeof(InfrastructureComponentSummaryWithHistory[]))]
-        public Task<ObjectResult> GetComponentHistory(string id)
+        public Task<ObjectResult> GetComponentHistory([FromRoute]string id)
         {
             throw new NotImplementedException();
         }
@@ -56,9 +88,9 @@ namespace webapp.Controllers.v0._2
         /// </summary>
         /// <returns>the component summary detail.</returns>
         [HttpGet]
-        [Route("component/detail", Name = "get-component-detail")]
+        [Route("component/{id}/details", Name = "get-single-component-detail")]
         [ProducesResponseType(200, Type = typeof(InfrastructureComponentSummaryWithHistory))]
-        public Task<ObjectResult> GetComponentDetail(string id, DateTime? date = null)
+        public Task<ObjectResult> GetComponentDetail([FromRoute]string id, [FromQuery]DateTime? date = null)
         {
             throw new NotImplementedException();
         }
@@ -68,9 +100,9 @@ namespace webapp.Controllers.v0._2
         /// </summary>
         /// <returns>the component summary diff.</returns>
         [HttpGet]
-        [Route("component/diff", Name = "get-component-diff")]
+        [Route("component/{id}/diff", Name = "get-single-component-diff")]
         [ProducesResponseType(200, Type = typeof(InfrastructureComponentDiff))]
-        public Task<ObjectResult> GetComponentDiff(string id, DateTime date1, DateTime date2)
+        public Task<ObjectResult> GetComponentDiff([FromRoute]string id, [FromQuery]DateTime date1, [FromQuery]DateTime date2)
         {
             throw new NotImplementedException();
         }

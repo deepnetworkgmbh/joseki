@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 using webapp.Database.Models;
 
@@ -43,5 +44,12 @@ namespace webapp.Database
         /// <param name="imageTags">Array of unique image-tags.</param>
         /// <returns>Not expired image scans.</returns>
         Task<ImageScanResult[]> GetNotExpiredImageScans(string[] imageTags);
+
+        /// <summary>
+        /// Gets latest audits for each component at particular date.
+        /// </summary>
+        /// <param name="date">The date.</param>
+        /// <returns>Latest audits.</returns>
+        Task<Audit[]> GetAuditedComponents(DateTime date);
     }
 }

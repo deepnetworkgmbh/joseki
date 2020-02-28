@@ -13,6 +13,7 @@ watchmen:
   scannerContainersPeriodicitySeconds: 1800
   archiverPeriodicityHours: 24
   archiveTtlDays: 90
+  infraScorePeriodicityHours: 12
 
 azureBlob:
   basePath: https://ACCOUNT_NAME.blob.core.windows.net
