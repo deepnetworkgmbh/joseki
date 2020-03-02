@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using webapp.Database;
+using webapp.Database.Models;
 using webapp.Models;
 
 namespace webapp.Handlers
@@ -20,7 +21,7 @@ namespace webapp.Handlers
         /// <param name="date">The date to calculate overview for.</param>
         /// <param name="audits">List of audits to include into overview.</param>
         /// <returns>Complete infrastructure-overview object.</returns>
-        public static async Task<InfrastructureOverview> GetInfrastructureOverview(this InfrastructureScoreCache cache, DateTime date, Database.Models.Audit[] audits)
+        public static async Task<InfrastructureOverview> GetInfrastructureOverview(this InfrastructureScoreCache cache, DateTime date, Audit[] audits)
         {
             // 0. if no audits - return stub
             if (audits.Length == 0)
@@ -29,7 +30,7 @@ namespace webapp.Handlers
                 {
                     Overall = new InfrastructureComponentSummaryWithHistory
                     {
-                        Component = new InfrastructureComponent(InfrastructureScoreCache.OverallId)
+                        Component = new InfrastructureComponent(Audit.OverallId)
                         {
                             Category = InfrastructureCategory.Overall,
                             Name = "Overall infrastructure",
@@ -46,20 +47,20 @@ namespace webapp.Handlers
             var overallHistory = new List<ScoreHistoryItem>();
             foreach (var dateTime in audits.Select(i => i.Date.Date).Distinct())
             {
-                var historyItem = await cache.GetCountersSummary(InfrastructureScoreCache.OverallId, dateTime);
+                var historyItem = await cache.GetCountersSummary(Audit.OverallId, dateTime);
                 overallHistory.Add(new ScoreHistoryItem(dateTime, historyItem.Score));
             }
 
             var overall = new InfrastructureComponentSummaryWithHistory
             {
-                Component = new InfrastructureComponent(InfrastructureScoreCache.OverallId)
+                Component = new InfrastructureComponent(Audit.OverallId)
                 {
                     Category = InfrastructureCategory.Overall,
                     Name = "Overall infrastructure",
                 },
                 Date = date,
                 ScoreHistory = overallHistory.ToArray(),
-                Current = await cache.GetCountersSummary(InfrastructureScoreCache.OverallId, date),
+                Current = await cache.GetCountersSummary(Audit.OverallId, date),
             };
 
             // 2. Calculate each component data
@@ -100,6 +101,37 @@ namespace webapp.Handlers
             };
         }
 
+        /// <summary>
+        /// Composes a component history array.
+        /// </summary>
+        /// <param name="cache">Extended cache object.</param>
+        /// <param name="componentId">Component identifier.</param>
+        /// <returns>Complete component history object.</returns>
+        public static async Task<InfrastructureComponentSummaryWithHistory[]> GetInfrastructureHistory(this InfrastructureScoreCache cache, string componentId)
+        {
+            var today = DateTimeOffset.UtcNow.Date;
+            var infrastructureCategory = GetCategory(componentId);
+            var components = new List<InfrastructureComponentSummaryWithHistory>();
+
+            foreach (var date in Enumerable.Range(-30, 31).Select(i => today.AddDays(i)))
+            {
+                var currentSummary = await cache.GetCountersSummary(componentId, date);
+                var component = new InfrastructureComponentSummaryWithHistory
+                {
+                    Date = date,
+                    Component = new InfrastructureComponent(componentId)
+                    {
+                        Category = infrastructureCategory,
+                    },
+                    Current = currentSummary,
+                };
+
+                components.Add(component);
+            }
+
+            return components.ToArray();
+        }
+
         private static InfrastructureCategory GetCategory(string componentId)
         {
             if (componentId.StartsWith("/k8s/"))
@@ -109,6 +141,10 @@ namespace webapp.Handlers
             else if (componentId.StartsWith("/subscriptions/"))
             {
                 return InfrastructureCategory.Subscription;
+            }
+            else if (componentId == Audit.OverallId)
+            {
+                return InfrastructureCategory.Overall;
             }
 
             throw new NotSupportedException($"Not supported category for {componentId}");

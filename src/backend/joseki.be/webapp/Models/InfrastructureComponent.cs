@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web;
 
 namespace webapp.Models
 {
@@ -22,7 +23,7 @@ namespace webapp.Models
         /// <param name="id">Component identifier.</param>
         public InfrastructureComponent(string id)
         {
-            this.Id = id;
+            this.Id = HttpUtility.UrlEncode(id);
         }
 
         /// <summary>

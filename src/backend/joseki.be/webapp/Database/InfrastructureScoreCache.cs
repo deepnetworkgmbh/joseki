@@ -12,7 +12,10 @@ using Microsoft.EntityFrameworkCore;
 
 using Serilog;
 
+using webapp.Database.Models;
 using webapp.Models;
+
+using CheckValue = joseki.db.entities.CheckValue;
 
 namespace webapp.Database
 {
@@ -21,11 +24,6 @@ namespace webapp.Database
     /// </summary>
     public class InfrastructureScoreCache
     {
-        /// <summary>
-        /// Overall infrastructure id.
-        /// </summary>
-        public const string OverallId = "/all";
-
         private static readonly ConcurrentDictionary<string, CacheItem> Cache = new ConcurrentDictionary<string, CacheItem>();
         private static readonly ILogger Logger = Log.ForContext<InfrastructureScoreCache>();
 
@@ -82,7 +80,7 @@ namespace webapp.Database
                 var cacheItem = new CacheItem
                 {
                     AuditDate = grouping.Key,
-                    ComponentId = OverallId,
+                    ComponentId = Audit.OverallId,
                     Summary = summary,
                 };
                 Cache.AddOrUpdate(cacheItem.Key, key => cacheItem, (key, old) => cacheItem);
@@ -123,7 +121,7 @@ namespace webapp.Database
 
             try
             {
-                if (componentId == OverallId)
+                if (componentId == Audit.OverallId)
                 {
                     return await this.ReloadOverallCacheItem(date);
                 }
@@ -131,7 +129,15 @@ namespace webapp.Database
                 var auditEntity = await this.GetAudit(componentId, date);
                 if (auditEntity == null)
                 {
-                    throw new Exception("There is no audit for requested date and component");
+                    var emptyItem = new CacheItem
+                    {
+                        AuditDate = date,
+                        ComponentId = componentId,
+                        Summary = new CountersSummary(),
+                    };
+                    Cache.AddOrUpdate(emptyItem.Key, key => emptyItem, (key, old) => emptyItem);
+
+                    return emptyItem.Summary;
                 }
 
                 var summary = await this.GetCounterSummariesForAudit(auditEntity.Id);
@@ -143,7 +149,7 @@ namespace webapp.Database
                 };
                 Cache.AddOrUpdate(cacheItem.Key, key => cacheItem, (key, old) => cacheItem);
 
-                if (Cache.TryGetValue(CacheItem.GetKey(OverallId, date), out var overallItem))
+                if (Cache.TryGetValue(CacheItem.GetKey(Audit.OverallId, date), out var overallItem))
                 {
                     overallItem.ForceReload();
                 }
@@ -163,7 +169,15 @@ namespace webapp.Database
 
             if (audits.Length == 0)
             {
-                throw new Exception("There is no audits for requested date");
+                var emptyItem = new CacheItem
+                {
+                    AuditDate = date,
+                    ComponentId = Audit.OverallId,
+                    Summary = new CountersSummary(),
+                };
+                Cache.AddOrUpdate(emptyItem.Key, key => emptyItem, (key, old) => emptyItem);
+
+                return emptyItem.Summary;
             }
 
             var summaries = new List<CountersSummary>(audits.Length);
@@ -194,7 +208,7 @@ namespace webapp.Database
             var overallCacheItem = new CacheItem
             {
                 AuditDate = date.Date,
-                ComponentId = OverallId,
+                ComponentId = Audit.OverallId,
                 Summary = overallSummary,
             };
 
@@ -336,6 +350,8 @@ namespace webapp.Database
             public CountersSummary Summary { get; set; }
 
             public string ComponentId { get; set; }
+
+            public string ComponentName { get; set; }
 
             public DateTime AuditDate { get; set; }
 

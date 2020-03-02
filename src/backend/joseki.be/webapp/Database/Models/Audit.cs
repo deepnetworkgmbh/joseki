@@ -9,6 +9,11 @@ namespace webapp.Database.Models
     public class Audit
     {
         /// <summary>
+        /// Overall infrastructure id.
+        /// </summary>
+        public const string OverallId = "/all";
+
+        /// <summary>
         /// Unique audit identifier.
         /// </summary>
         public string Id { get; set; }
