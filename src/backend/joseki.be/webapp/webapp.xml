@@ -1782,6 +1782,66 @@
             <param name="stop">Ticks in the end.</param>
             <returns>Elapsed milliseconds.</returns>
         </member>
+        <member name="T:webapp.Infrastructure.JosekiStateManager">
+            <summary>
+            Knows when Joseki is Ready and Healthy.
+            </summary>
+        </member>
+        <member name="M:webapp.Infrastructure.JosekiStateManager.ArchiverIsInitialized">
+            <summary>
+            Marks Archiver as initialized.
+            </summary>
+        </member>
+        <member name="M:webapp.Infrastructure.JosekiStateManager.ScannerContainersIsInitialized">
+            <summary>
+            Marks Scanner Containers watchman as initialized.
+            </summary>
+        </member>
+        <member name="M:webapp.Infrastructure.JosekiStateManager.ScoreCacheIsInitialized">
+            <summary>
+            Marks Infrastructure Score cache as initialized.
+            </summary>
+        </member>
+        <member name="P:webapp.Infrastructure.JosekiStateManager.Ready">
+            <summary>
+            Joseki is ready to receive traffic, when infra-score cache is pre-loaded.
+            </summary>
+        </member>
+        <member name="P:webapp.Infrastructure.JosekiStateManager.Live">
+            <summary>
+            Joseki is not in "live" state, if any watchman is not properly started.
+            </summary>
+        </member>
+        <member name="T:webapp.Infrastructure.Watchman">
+            <summary>
+            Indicates what watchmen were started.
+            </summary>
+        </member>
+        <member name="F:webapp.Infrastructure.Watchman.None">
+            <summary>
+            No pre-processors has been finished.
+            </summary>
+        </member>
+        <member name="F:webapp.Infrastructure.Watchman.ScoreCache">
+            <summary>
+            Infrastructure score cache is warmed up.
+            </summary>
+        </member>
+        <member name="F:webapp.Infrastructure.Watchman.Archiver">
+            <summary>
+            Archiver is started.
+            </summary>
+        </member>
+        <member name="F:webapp.Infrastructure.Watchman.ScannerContainers">
+            <summary>
+            Scanner Containers watchman is started.
+            </summary>
+        </member>
+        <member name="F:webapp.Infrastructure.Watchman.All">
+            <summary>
+            All are initialized.
+            </summary>
+        </member>
         <member name="T:webapp.Infrastructure.SwaggerDefaultValues">
             <summary>
             Represents the Swagger/Swashbuckle operation filter used to document the implicit API version parameter.

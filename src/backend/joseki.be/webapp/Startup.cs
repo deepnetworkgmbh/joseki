@@ -93,8 +93,8 @@ namespace webapp
 
             services
                 .AddHealthChecks()
-                .AddCheck("Live", () => HealthCheckResult.Healthy(), new[] { "liveness" })
-                .AddCheck("Ready", () => HealthCheckResult.Healthy(), new[] { "readiness" });
+                .AddCheck("Live", () => JosekiStateManager.Live, new[] { "liveness" })
+                .AddCheck("Ready", () => JosekiStateManager.Ready, new[] { "readiness" });
 
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
             services.AddSwaggerGen(c =>
