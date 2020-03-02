@@ -160,6 +160,12 @@ namespace webapp.Database
         private async Task<CountersSummary> ReloadOverallCacheItem(DateTime date)
         {
             var audits = await this.GetAudits(date);
+
+            if (audits.Length == 0)
+            {
+                throw new Exception("There is no audits for requested date");
+            }
+
             var summaries = new List<CountersSummary>(audits.Length);
             foreach (var auditEntity in audits)
             {
@@ -257,11 +263,11 @@ namespace webapp.Database
         /// <returns>Latest audits for each scanner for the day.</returns>
         private async Task<AuditEntity[]> GetAudits(DateTime date)
         {
-            var todayAudits = await this.db.Set<AuditEntity>()
-                .Where(i => i.Date >= date.Date)
-                .ToListAsync();
+            var theDay = date.Date;
+            var theNextDay = theDay.AddDays(1);
+            var oneDayAudits = await this.db.Set<AuditEntity>().Where(i => i.Date >= theDay && i.Date < theNextDay).ToArrayAsync();
 
-            var audits = todayAudits
+            var audits = oneDayAudits
                 .GroupBy(i => i.ComponentId)
                 .Select(i => i.OrderByDescending(a => a.Date).First())
                 .ToArray();

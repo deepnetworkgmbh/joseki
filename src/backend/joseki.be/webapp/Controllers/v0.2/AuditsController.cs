@@ -40,6 +40,23 @@ namespace webapp.Controllers.v0._2
         [ProducesResponseType(200, Type = typeof(InfrastructureOverview))]
         public async Task<ObjectResult> GetOverview([FromQuery]DateTime? date = null)
         {
+            #region input validation
+
+            var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-31);
+            if (date.HasValue)
+            {
+                if (date < oneMonthAgo)
+                {
+                    return this.BadRequest($"Requested date {date} is more than one month ago. Joseki supports only 31 days.");
+                }
+                else if (date >= DateTime.UtcNow.Date.AddDays(1))
+                {
+                    return this.BadRequest($"Requested date {date} is in future. Unfortunately, Joseki could not see future yet.");
+                }
+            }
+
+            #endregion
+
             try
             {
                 var handler = this.services.GetService<GetInfrastructureOverviewHandler>();

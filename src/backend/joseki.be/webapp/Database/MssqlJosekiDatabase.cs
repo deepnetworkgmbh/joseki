@@ -113,20 +113,25 @@ namespace webapp.Database
         /// <inheritdoc />
         public async Task<Audit[]> GetAuditedComponents(DateTime date)
         {
-            // 1. find latest audited-components;
-            var audits = await this.db.Set<AuditEntity>().Where(i => i.Date >= date.Date).ToArrayAsync();
+            // find audits-for a particular date;
+            var theDay = date.Date;
+            var theNextDay = theDay.AddDays(1);
+            var audits = await this.db.Set<AuditEntity>().Where(i => i.Date >= theDay && i.Date < theNextDay).ToArrayAsync();
 
+            // find unique component-ids for this date;
             var componentIds = audits
                 .GroupBy(i => i.ComponentId)
                 .Select(i => i.OrderByDescending(scan => scan.Date).First())
                 .Select(i => i.ComponentId)
                 .ToArray();
 
+            // find all audits for these components during the 31 days (~month)
             var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-31);
             var oneMonthAudits = await this.db.Set<AuditEntity>()
                 .Where(i => i.Date > oneMonthAgo && componentIds.Contains(i.ComponentId))
                 .ToArrayAsync();
 
+            // Select only the most recent audit for each date for each component
             var result = new List<Audit>(oneMonthAudits.Length);
             foreach (var oneComponentAudits in oneMonthAudits.GroupBy(i => i.ComponentId))
             {

@@ -1706,6 +1706,20 @@
             <param name="date">date to calculate overview.</param>
             <returns>Infrastructure overview.</returns>
         </member>
+        <member name="T:webapp.Handlers.InfraScoreExtensions">
+            <summary>
+            Common Infra-Score extensions.
+            </summary>
+        </member>
+        <member name="M:webapp.Handlers.InfraScoreExtensions.GetInfrastructureOverview(webapp.Database.InfrastructureScoreCache,System.DateTime,webapp.Database.Models.Audit[])">
+            <summary>
+            Composes an infrastructure overview object for a requested date and provided audits.
+            </summary>
+            <param name="cache">Extended cache object.</param>
+            <param name="date">The date to calculate overview for.</param>
+            <param name="audits">List of audits to include into overview.</param>
+            <returns>Complete infrastructure-overview object.</returns>
+        </member>
         <member name="T:webapp.Infrastructure.ConfigureSwaggerOptions">
             <summary>
             Configures the Swagger generation options.
