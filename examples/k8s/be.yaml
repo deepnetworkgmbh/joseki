@@ -5,7 +5,7 @@ metadata:
   namespace: joseki
   labels:
     app: joseki-backend
-    version: 0.2.2
+    version: 0.2.3
 data:
   config.yaml: |-
     database:
@@ -99,7 +99,7 @@ metadata:
   namespace: joseki
   labels:
     app: joseki-backend 
-    version: 0.2.2
+    version: 0.2.3
 spec:
   replicas: 1
   selector:

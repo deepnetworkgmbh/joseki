@@ -186,7 +186,7 @@ namespace webapp.Audits.Processors.polaris
         {
             try
             {
-                var name = k8sJson["cluster"]["SourceName"].Value<string>();
+                var name = k8sJson["SourceName"].Value<string>();
                 var starts = 0;
                 var ends = name.Length;
 
