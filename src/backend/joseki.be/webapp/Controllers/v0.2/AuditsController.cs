@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Serilog;
 
-using webapp.Database;
 using webapp.Database.Models;
 using webapp.Handlers;
 using webapp.Models;
@@ -186,9 +185,41 @@ namespace webapp.Controllers.v0._2
         [HttpGet]
         [Route("component/{id}/details", Name = "get-single-component-detail")]
         [ProducesResponseType(200, Type = typeof(InfrastructureComponentSummaryWithHistory))]
-        public Task<ObjectResult> GetComponentDetail([FromRoute]string id, [FromQuery]DateTime? date = null)
+        [ProducesResponseType(400, Type = typeof(string))]
+        [ProducesResponseType(500, Type = typeof(string))]
+        public async Task<ObjectResult> GetComponentDetail([FromRoute]string id, [FromQuery]DateTime? date = null)
         {
-            throw new NotImplementedException();
+            #region input validation
+
+            var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-31);
+            if (date.HasValue)
+            {
+                if (date < oneMonthAgo)
+                {
+                    return this.BadRequest($"Requested date {date} is more than one month ago. Joseki supports only 31 days.");
+                }
+                else if (date >= DateTime.UtcNow.Date.AddDays(1))
+                {
+                    return this.BadRequest($"Requested date {date} is in future. Unfortunately, Joseki could not see future yet.");
+                }
+            }
+
+            #endregion
+
+            var unescapedId = HttpUtility.UrlDecode(id);
+            var detailsDate = date?.Date ?? DateTime.UtcNow.Date;
+            try
+            {
+                var handler = this.services.GetService<GetComponentDetailsHandler>();
+
+                var details = await handler.GetDetails(unescapedId, detailsDate);
+                return this.StatusCode(200, details);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Failed to get component {ComponentId} details", unescapedId);
+                return this.StatusCode(500, $"Failed to get component {unescapedId} details");
+            }
         }
 
         /// <summary>

@@ -351,8 +351,6 @@ namespace webapp.Database
 
             public string ComponentId { get; set; }
 
-            public string ComponentName { get; set; }
-
             public DateTime AuditDate { get; set; }
 
             public DateTime CachedAt { get; set; }

@@ -6,7 +6,7 @@ namespace webapp.Models
     /// <summary>
     /// Severity of the check.
     /// </summary>
-    public enum CheckSeverity
+    public enum CheckResult
     {
         /// <summary>
         /// Enum value when a scan was not found
