@@ -1711,6 +1711,26 @@
             <param name="message">Exception message.</param>
             <param name="ex">Inner exception.</param>
         </member>
+        <member name="T:webapp.Handlers.GetComponentDetailsHandler">
+            <summary>
+            Prepares response to get-component-details request.
+            </summary>0
+        </member>
+        <member name="M:webapp.Handlers.GetComponentDetailsHandler.#ctor(joseki.db.JosekiDbContext,webapp.Database.InfrastructureScoreCache)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Handlers.GetComponentDetailsHandler"/> class.
+            </summary>
+            <param name="db">Joseki database object.</param>
+            <param name="cache">Score cache.</param>
+        </member>
+        <member name="M:webapp.Handlers.GetComponentDetailsHandler.GetDetails(System.String,System.DateTime)">
+            <summary>
+            Returns infrastructure history for requested component.
+            </summary>
+            <param name="componentId">Component identifier.</param>
+            <param name="date">The date to get details for.</param>
+            <returns>Component details.</returns>
+        </member>
         <member name="T:webapp.Handlers.GetInfrastructureHistoryHandler">
             <summary>
             Prepares response to get-infrastructure-history request.
@@ -1789,6 +1809,13 @@
             <param name="cache">Extended cache object.</param>
             <param name="componentId">Component identifier.</param>
             <returns>Complete component history object.</returns>
+        </member>
+        <member name="M:webapp.Handlers.InfraScoreExtensions.GetCategory(System.String)">
+            <summary>
+            Gets component category by identifier.
+            </summary>
+            <param name="componentId">Component unique identifier.</param>
+            <returns>Component category.</returns>
         </member>
         <member name="T:webapp.Infrastructure.ConfigureSwaggerOptions">
             <summary>
@@ -1960,7 +1987,7 @@
             Result of the check.
             </summary>
         </member>
-        <member name="M:webapp.Models.Check.#ctor(webapp.Models.InfrastructureComponent,System.DateTime,webapp.Models.Collection,webapp.Models.Resource,System.String,webapp.Models.CheckControl,webapp.Models.CheckSeverity)">
+        <member name="M:webapp.Models.Check.#ctor(webapp.Models.InfrastructureComponent,System.DateTime,webapp.Models.Collection,webapp.Models.Resource,System.String,webapp.Models.CheckControl,webapp.Models.CheckResult)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Models.Check"/> class.
             create unique id on constructor.
@@ -1996,27 +2023,27 @@
             <param name="category">category of control.</param>
             <param name="message">message of control.</param>
         </member>
-        <member name="T:webapp.Models.CheckSeverity">
+        <member name="T:webapp.Models.CheckResult">
             <summary>
             Severity of the check.
             </summary>
         </member>
-        <member name="F:webapp.Models.CheckSeverity.NoData">
+        <member name="F:webapp.Models.CheckResult.NoData">
             <summary>
             Enum value when a scan was not found
             </summary>
         </member>
-        <member name="F:webapp.Models.CheckSeverity.Failed">
+        <member name="F:webapp.Models.CheckResult.Failed">
             <summary>
             Enum value when a scan failed
             </summary>
         </member>
-        <member name="F:webapp.Models.CheckSeverity.Warning">
+        <member name="F:webapp.Models.CheckResult.Warning">
             <summary>
             Enum value when a scan has warning
             </summary>
         </member>
-        <member name="F:webapp.Models.CheckSeverity.Success">
+        <member name="F:webapp.Models.CheckResult.Success">
             <summary>
             Enum value when a scan succeeded
             </summary>

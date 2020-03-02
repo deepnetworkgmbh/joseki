@@ -132,7 +132,12 @@ namespace webapp.Handlers
             return components.ToArray();
         }
 
-        private static InfrastructureCategory GetCategory(string componentId)
+        /// <summary>
+        /// Gets component category by identifier.
+        /// </summary>
+        /// <param name="componentId">Component unique identifier.</param>
+        /// <returns>Component category.</returns>
+        public static InfrastructureCategory GetCategory(string componentId)
         {
             if (componentId.StartsWith("/k8s/"))
             {

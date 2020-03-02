@@ -322,15 +322,15 @@ namespace webapp.Controllers
         /// return a random severity.
         /// </summary>
         /// <returns>CheckSeverity.</returns>
-        public static CheckSeverity RandomSeverity()
+        public static CheckResult RandomSeverity()
         {
             if (new Random().Next() * 100 > 70)
             {
-                return CheckSeverity.Success;
+                return CheckResult.Success;
             }
 
-            var v = Enum.GetValues(typeof(CheckSeverity));
-            return (CheckSeverity)v.GetValue(new Random().Next(v.Length));
+            var v = Enum.GetValues(typeof(CheckResult));
+            return (CheckResult)v.GetValue(new Random().Next(v.Length));
         }
 
         /// <summary>
