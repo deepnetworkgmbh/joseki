@@ -229,9 +229,52 @@ namespace webapp.Controllers.v0._2
         [HttpGet]
         [Route("component/{id}/diff", Name = "get-single-component-diff")]
         [ProducesResponseType(200, Type = typeof(InfrastructureComponentDiff))]
-        public Task<ObjectResult> GetComponentDiff([FromRoute]string id, [FromQuery]DateTime date1, [FromQuery]DateTime date2)
+        public async Task<ObjectResult> GetComponentDiff([FromRoute]string id, [FromQuery]DateTime date1, [FromQuery]DateTime date2)
         {
-            throw new NotImplementedException();
+            #region input validation
+
+            var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-31);
+            var tomorrow = DateTime.UtcNow.Date.AddDays(1);
+            if (date1 < oneMonthAgo)
+            {
+                return this.BadRequest($"Requested date {date1} is more than one month ago. Joseki supports only 31 days.");
+            }
+            else if (date1 >= tomorrow)
+            {
+                return this.BadRequest($"Requested date {date1} is in future. Unfortunately, Joseki could not see future yet.");
+            }
+
+            if (date2 < oneMonthAgo)
+            {
+                return this.BadRequest($"Requested date {date2} is more than one month ago. Joseki supports only 31 days.");
+            }
+            else if (date2 >= tomorrow)
+            {
+                return this.BadRequest($"Requested date {date2} is in future. Unfortunately, Joseki could not see future yet.");
+            }
+
+            #endregion
+
+            var unescapedId = HttpUtility.UrlDecode(id);
+
+            try
+            {
+                var handler = this.services.GetService<GetComponentDetailsHandler>();
+
+                var details1 = await handler.GetDetails(unescapedId, date1);
+                var details2 = await handler.GetDetails(unescapedId, date2);
+
+                return this.StatusCode(200, new InfrastructureComponentDiff
+                {
+                    Summary1 = details1,
+                    Summary2 = details2,
+                });
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Failed to get component {ComponentId} diff between {AuditDate1} and {AuditDate2}", unescapedId, date1, date2);
+                return this.StatusCode(500, $"Failed to get component {unescapedId} diff between {date1} and {date2}");
+            }
         }
     }
 }
