@@ -140,6 +140,7 @@ namespace webapp
             services.AddTransient<TrivyAuditProcessor>();
 
             services.AddTransient<GetInfrastructureOverviewHandler>();
+            services.AddTransient<GetInfrastructureOverviewDiffHandler>();
 
             services.AddScoped<ScannerContainersWatchman>();
             services.AddSingleton<SchedulerAssistant>();

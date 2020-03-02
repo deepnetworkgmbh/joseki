@@ -1687,6 +1687,26 @@
         <member name="M:webapp.Database.MssqlJosekiDatabase.GetAuditedComponents(System.DateTime)">
             <inheritdoc />
         </member>
+        <member name="T:webapp.Handlers.GetInfrastructureOverviewDiffHandler">
+            <summary>
+            Prepares response to get-overall-infrastructure-diff request.
+            </summary>
+        </member>
+        <member name="M:webapp.Handlers.GetInfrastructureOverviewDiffHandler.#ctor(webapp.Database.IJosekiDatabase,webapp.Database.InfrastructureScoreCache)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Handlers.GetInfrastructureOverviewDiffHandler"/> class.
+            </summary>
+            <param name="db">Joseki database.</param>
+            <param name="cache">Score cache.</param>
+        </member>
+        <member name="M:webapp.Handlers.GetInfrastructureOverviewDiffHandler.GetOverview(System.DateTime,System.DateTime)">
+            <summary>
+            Returns overall infrastructure overview objects for two dates.
+            </summary>
+            <param name="date1">The first date to calculate overview.</param>
+            <param name="date2">The second date to calculate overview.</param>
+            <returns>Infrastructure overview diff.</returns>
+        </member>
         <member name="T:webapp.Handlers.GetInfrastructureOverviewHandler">
             <summary>
             Prepares response to get-overall-infrastructure request.

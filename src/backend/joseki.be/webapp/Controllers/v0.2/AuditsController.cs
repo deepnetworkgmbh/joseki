@@ -82,9 +82,44 @@ namespace webapp.Controllers.v0._2
         [HttpGet]
         [Route("overview/diff", Name = "get-overall-infrastructure-diff")]
         [ProducesResponseType(200, Type = typeof(InfrastructureOverviewDiff))]
-        public Task<ObjectResult> GetOverviewDiff([FromQuery]DateTime date1, [FromQuery]DateTime date2)
+        public async Task<ObjectResult> GetOverviewDiff([FromQuery]DateTime date1, [FromQuery]DateTime date2)
         {
-            throw new NotImplementedException();
+            #region input validation
+
+            var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-31);
+            var tomorrow = DateTime.UtcNow.Date.AddDays(1);
+            if (date1 < oneMonthAgo)
+            {
+                return this.BadRequest($"Requested date {date1} is more than one month ago. Joseki supports only 31 days.");
+            }
+            else if (date1 >= tomorrow)
+            {
+                return this.BadRequest($"Requested date {date1} is in future. Unfortunately, Joseki could not see future yet.");
+            }
+
+            if (date2 < oneMonthAgo)
+            {
+                return this.BadRequest($"Requested date {date2} is more than one month ago. Joseki supports only 31 days.");
+            }
+            else if (date2 >= tomorrow)
+            {
+                return this.BadRequest($"Requested date {date2} is in future. Unfortunately, Joseki could not see future yet.");
+            }
+
+            #endregion
+
+            try
+            {
+                var handler = this.services.GetService<GetInfrastructureOverviewDiffHandler>();
+
+                var overview = await handler.GetOverview(date1, date2);
+                return this.StatusCode(200, overview);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Failed to get infrastructure overview diff for {AuditDate1} and {AuditDate2}", date1, date2);
+                return this.StatusCode(500, $"Failed to get infrastructure overview diff");
+            }
         }
 
         /// <summary>
