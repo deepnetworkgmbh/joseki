@@ -6,6 +6,7 @@ using Serilog;
 
 using webapp.Configuration;
 using webapp.Database;
+using webapp.Infrastructure;
 
 namespace webapp.BackgroundJobs
 {
@@ -36,6 +37,7 @@ namespace webapp.BackgroundJobs
         /// <returns>A task object.</returns>
         public async Task Watch(CancellationToken cancellation)
         {
+            var initialized = false;
             while (!cancellation.IsCancellationRequested)
             {
                 try
@@ -45,6 +47,12 @@ namespace webapp.BackgroundJobs
                     try
                     {
                         await this.cache.ReloadEntireCache();
+
+                        if (!initialized)
+                        {
+                            JosekiStateManager.ScoreCacheIsInitialized();
+                            initialized = true;
+                        }
                     }
                     catch (Exception ex)
                     {
