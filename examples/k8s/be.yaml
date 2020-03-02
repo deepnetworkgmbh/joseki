@@ -112,7 +112,7 @@ spec:
     spec:
       containers:
       - name: joseki-be
-        image: 'deepnetwork/joseki-backend:0.2.2'
+        image: 'deepnetwork/joseki-backend:0.2.3'
         imagePullPolicy: 'Always'
         name: joseki-be
         ports:
