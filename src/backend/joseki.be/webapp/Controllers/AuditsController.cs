@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -24,9 +22,6 @@ namespace webapp.Controllers
     public class AuditsController : Controller
     {
         private static readonly ILogger Logger = Log.ForContext<AuditsController>();
-
-        private static List<InfrastructureComponentSummaryWithHistory> overallSummary = Data.GetComponentSummary();
-        private static List<InfrastructureComponentSummaryWithHistory> componentSummaries = Data.GetComponentSummaries();
 
         private readonly IServiceProvider services;
 
@@ -110,7 +105,7 @@ namespace webapp.Controllers
             }
             catch (Exception ex)
             {
-                Logger.Error(ex, "Failed to get infrastructure overview diff for {AuditDate1} and {AuditDate2}", date1, date2);
+                Logger.Error(ex, "Failed to get infrastructure overview diff between {AuditDate1} and {AuditDate2}", date1, date2);
                 return this.StatusCode(500, $"Failed to get infrastructure overview diff");
             }
         }
@@ -194,15 +189,54 @@ namespace webapp.Controllers
         [HttpGet]
         [Route("component/diff", Name = "get-component-diff")]
         [ProducesResponseType(200, Type = typeof(InfrastructureComponentDiff))]
-        public Task<ObjectResult> GetComponentDiff(string id, DateTime date1, DateTime date2)
+        [ProducesResponseType(400, Type = typeof(string))]
+        [ProducesResponseType(500, Type = typeof(string))]
+        public async Task<ObjectResult> GetComponentDiff(string id, DateTime date1, DateTime date2)
         {
-            var result = new InfrastructureComponentDiff()
-            {
-                Summary1 = componentSummaries.FirstOrDefault(x => x.Component.Id == id && x.Date == date1),
-                Summary2 = componentSummaries.FirstOrDefault(x => x.Component.Id == id && x.Date == date2),
-            };
+            #region input validation
 
-            return Task.FromResult(this.StatusCode(200, result));
+            var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-31);
+            var tomorrow = DateTime.UtcNow.Date.AddDays(1);
+            if (date1 < oneMonthAgo)
+            {
+                return this.BadRequest($"Requested date {date1} is more than one month ago. Joseki supports only 31 days.");
+            }
+            else if (date1 >= tomorrow)
+            {
+                return this.BadRequest($"Requested date {date1} is in future. Unfortunately, Joseki could not see future yet.");
+            }
+
+            if (date2 < oneMonthAgo)
+            {
+                return this.BadRequest($"Requested date {date2} is more than one month ago. Joseki supports only 31 days.");
+            }
+            else if (date2 >= tomorrow)
+            {
+                return this.BadRequest($"Requested date {date2} is in future. Unfortunately, Joseki could not see future yet.");
+            }
+
+            #endregion
+
+            var unescapedId = HttpUtility.UrlDecode(id);
+
+            try
+            {
+                var handler = this.services.GetService<GetComponentDetailsHandler>();
+
+                var details1 = await handler.GetDetails(unescapedId, date1);
+                var details2 = await handler.GetDetails(unescapedId, date2);
+
+                return this.StatusCode(200, new InfrastructureComponentDiff
+                {
+                    Summary1 = details1,
+                    Summary2 = details2,
+                });
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Failed to get component {ComponentId} diff between {AuditDate1} and {AuditDate2}", unescapedId, date1, date2);
+                return this.StatusCode(500, $"Failed to get component {unescapedId} diff between {date1} and {date2}");
+            }
         }
     }
 }
