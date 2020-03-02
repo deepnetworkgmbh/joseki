@@ -930,12 +930,18 @@
             </summary>
             <returns>The overall infrastructure overview diff.</returns>
         </member>
+        <member name="M:webapp.Controllers.v0._2.AuditsController.GetOverallInfrastructureHistory">
+            <summary>
+            Returns the overall infrastructure overview history.
+            </summary>
+            <returns>The overall infrastructure overview history.</returns>
+        </member>
         <member name="M:webapp.Controllers.v0._2.AuditsController.GetComponentHistory(System.String)">
             <summary>
-            Returns the overall infrastructure overview diff.
+            Returns the single component history.
             </summary>
             <param name="id">Unique component identifier.</param>
-            <returns>The overall infrastructure overview diff.</returns>
+            <returns>The component history.</returns>
         </member>
         <member name="M:webapp.Controllers.v0._2.AuditsController.GetComponentDetail(System.String,System.Nullable{System.DateTime})">
             <summary>
@@ -1180,11 +1186,6 @@
             Takes care of keeping pre-calculated counter-summaries.
             </summary>
         </member>
-        <member name="F:webapp.Database.InfrastructureScoreCache.OverallId">
-            <summary>
-            Overall infrastructure id.
-            </summary>
-        </member>
         <member name="M:webapp.Database.InfrastructureScoreCache.#ctor(joseki.db.JosekiDbContext)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Database.InfrastructureScoreCache"/> class.
@@ -1248,6 +1249,11 @@
         <member name="T:webapp.Database.Models.Audit">
             <summary>
             The entity represents a single Audit object.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.Models.Audit.OverallId">
+            <summary>
+            Overall infrastructure id.
             </summary>
         </member>
         <member name="P:webapp.Database.Models.Audit.Id">
@@ -1687,6 +1693,42 @@
         <member name="M:webapp.Database.MssqlJosekiDatabase.GetAuditedComponents(System.DateTime)">
             <inheritdoc />
         </member>
+        <member name="T:webapp.Exceptions.JosekiException">
+            <summary>
+            Custom exception for the project.
+            </summary>
+        </member>
+        <member name="M:webapp.Exceptions.JosekiException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Exceptions.JosekiException"/> class.
+            </summary>
+            <param name="message">Exception message.</param>
+        </member>
+        <member name="M:webapp.Exceptions.JosekiException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Exceptions.JosekiException"/> class.
+            </summary>
+            <param name="message">Exception message.</param>
+            <param name="ex">Inner exception.</param>
+        </member>
+        <member name="T:webapp.Handlers.GetInfrastructureHistoryHandler">
+            <summary>
+            Prepares response to get-infrastructure-history request.
+            </summary>
+        </member>
+        <member name="M:webapp.Handlers.GetInfrastructureHistoryHandler.#ctor(webapp.Database.InfrastructureScoreCache)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Handlers.GetInfrastructureHistoryHandler"/> class.
+            </summary>
+            <param name="cache">Score cache.</param>
+        </member>
+        <member name="M:webapp.Handlers.GetInfrastructureHistoryHandler.GetHistory(System.String)">
+            <summary>
+            Returns infrastructure history for requested component.
+            </summary>
+            <param name="componentId">Component identifier.</param>
+            <returns>Infrastructure history.</returns>
+        </member>
         <member name="T:webapp.Handlers.GetInfrastructureOverviewDiffHandler">
             <summary>
             Prepares response to get-overall-infrastructure-diff request.
@@ -1699,7 +1741,7 @@
             <param name="db">Joseki database.</param>
             <param name="cache">Score cache.</param>
         </member>
-        <member name="M:webapp.Handlers.GetInfrastructureOverviewDiffHandler.GetOverview(System.DateTime,System.DateTime)">
+        <member name="M:webapp.Handlers.GetInfrastructureOverviewDiffHandler.GetDiff(System.DateTime,System.DateTime)">
             <summary>
             Returns overall infrastructure overview objects for two dates.
             </summary>
@@ -1739,6 +1781,14 @@
             <param name="date">The date to calculate overview for.</param>
             <param name="audits">List of audits to include into overview.</param>
             <returns>Complete infrastructure-overview object.</returns>
+        </member>
+        <member name="M:webapp.Handlers.InfraScoreExtensions.GetInfrastructureHistory(webapp.Database.InfrastructureScoreCache,System.String)">
+            <summary>
+            Composes a component history array.
+            </summary>
+            <param name="cache">Extended cache object.</param>
+            <param name="componentId">Component identifier.</param>
+            <returns>Complete component history object.</returns>
         </member>
         <member name="T:webapp.Infrastructure.ConfigureSwaggerOptions">
             <summary>

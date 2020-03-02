@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Web;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
 using Serilog;
 
+using webapp.Database;
+using webapp.Database.Models;
 using webapp.Handlers;
 using webapp.Models;
 
@@ -38,6 +41,8 @@ namespace webapp.Controllers.v0._2
         [HttpGet]
         [Route("overview", Name = "get-overall-infrastructure-overview")]
         [ProducesResponseType(200, Type = typeof(InfrastructureOverview))]
+        [ProducesResponseType(400, Type = typeof(string))]
+        [ProducesResponseType(500, Type = typeof(string))]
         public async Task<ObjectResult> GetOverview([FromQuery]DateTime? date = null)
         {
             #region input validation
@@ -71,7 +76,7 @@ namespace webapp.Controllers.v0._2
             catch (Exception ex)
             {
                 Logger.Error(ex, "Failed to get infrastructure overview on {AuditDate}", date);
-                return this.StatusCode(500, $"Failed to get infrastructure overview");
+                return this.StatusCode(500, "Failed to get infrastructure overview");
             }
         }
 
@@ -82,6 +87,8 @@ namespace webapp.Controllers.v0._2
         [HttpGet]
         [Route("overview/diff", Name = "get-overall-infrastructure-diff")]
         [ProducesResponseType(200, Type = typeof(InfrastructureOverviewDiff))]
+        [ProducesResponseType(400, Type = typeof(string))]
+        [ProducesResponseType(500, Type = typeof(string))]
         public async Task<ObjectResult> GetOverviewDiff([FromQuery]DateTime date1, [FromQuery]DateTime date2)
         {
             #region input validation
@@ -112,27 +119,64 @@ namespace webapp.Controllers.v0._2
             {
                 var handler = this.services.GetService<GetInfrastructureOverviewDiffHandler>();
 
-                var overview = await handler.GetOverview(date1, date2);
+                var overview = await handler.GetDiff(date1, date2);
                 return this.StatusCode(200, overview);
             }
             catch (Exception ex)
             {
                 Logger.Error(ex, "Failed to get infrastructure overview diff for {AuditDate1} and {AuditDate2}", date1, date2);
-                return this.StatusCode(500, $"Failed to get infrastructure overview diff");
+                return this.StatusCode(500, "Failed to get infrastructure overview diff");
             }
         }
 
         /// <summary>
-        /// Returns the overall infrastructure overview diff.
+        /// Returns the overall infrastructure overview history.
+        /// </summary>
+        /// <returns>The overall infrastructure overview history.</returns>
+        [HttpGet]
+        [Route("overview/history", Name = "get-overall-infrastructure-history")]
+        [ProducesResponseType(200, Type = typeof(InfrastructureComponentSummaryWithHistory[]))]
+        [ProducesResponseType(500, Type = typeof(string))]
+        public async Task<ObjectResult> GetOverallInfrastructureHistory()
+        {
+            try
+            {
+                var handler = this.services.GetService<GetInfrastructureHistoryHandler>();
+
+                var history = await handler.GetHistory(Audit.OverallId);
+                return this.StatusCode(200, history);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Failed to get infrastructure overview history");
+                return this.StatusCode(500, "Failed to get infrastructure overview history");
+            }
+        }
+
+        /// <summary>
+        /// Returns the single component history.
         /// </summary>
         /// <param name="id">Unique component identifier.</param>
-        /// <returns>The overall infrastructure overview diff.</returns>
+        /// <returns>The component history.</returns>
         [HttpGet]
         [Route("component/{id}/history", Name = "get-single-component-history")]
         [ProducesResponseType(200, Type = typeof(InfrastructureComponentSummaryWithHistory[]))]
-        public Task<ObjectResult> GetComponentHistory([FromRoute]string id)
+        [ProducesResponseType(500, Type = typeof(string))]
+        public async Task<ObjectResult> GetComponentHistory([FromRoute]string id)
         {
-            throw new NotImplementedException();
+            var unescapedId = HttpUtility.UrlDecode(id);
+            try
+            {
+                var handler = this.services.GetService<GetInfrastructureHistoryHandler>();
+
+                var history = await handler.GetHistory(unescapedId);
+                return this.StatusCode(200, history);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Failed to get component {ComponentId} history", unescapedId);
+                return this.StatusCode(500, $"Failed to get component {unescapedId} history");
+            }
         }
 
         /// <summary>

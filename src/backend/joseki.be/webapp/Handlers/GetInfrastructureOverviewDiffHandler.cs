@@ -31,7 +31,7 @@ namespace webapp.Handlers
         /// <param name="date1">The first date to calculate overview.</param>
         /// <param name="date2">The second date to calculate overview.</param>
         /// <returns>Infrastructure overview diff.</returns>
-        public async Task<InfrastructureOverviewDiff> GetOverview(DateTime date1, DateTime date2)
+        public async Task<InfrastructureOverviewDiff> GetDiff(DateTime date1, DateTime date2)
         {
             var infra1 = await this.GetInfrastructureOverview(date1);
             var infra2 = await this.GetInfrastructureOverview(date2);
