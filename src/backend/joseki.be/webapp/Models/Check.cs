@@ -54,13 +54,13 @@ namespace webapp.Models
         /// <summary>
         /// Result of the check.
         /// </summary>
-        public CheckSeverity Result { get; set; }
+        public CheckResult Result { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Check"/> class.
         /// create unique id on constructor.
         /// </summary>
-        public Check(InfrastructureComponent component, DateTime date, Collection collection, Resource resource, string category, CheckControl control, CheckSeverity severity)
+        public Check(InfrastructureComponent component, DateTime date, Collection collection, Resource resource, string category, CheckControl control, CheckResult result)
         {
             this.Id = Guid.NewGuid().ToString();
             this.Component = component;
@@ -68,7 +68,7 @@ namespace webapp.Models
             this.Category = category;
             this.Collection = collection;
             this.Control = control;
-            this.Result = severity;
+            this.Result = result;
             this.Resource = resource;
         }
     }

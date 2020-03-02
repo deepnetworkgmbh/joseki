@@ -315,22 +315,22 @@ namespace webapp.Audits.Processors.polaris
             var imageToComponents = new Dictionary<string, List<string>>();
             if (k8sMeta["Deployments"] is JArray deployments)
             {
-                this.GetImagesFromResourcesGroup(clusterId, deployments, "Deployment", imageToComponents);
+                this.GetImagesFromResourcesGroup(clusterId, deployments, "deployment", imageToComponents);
             }
 
             if (k8sMeta["StatefulSets"] is JArray statefulSets)
             {
-                this.GetImagesFromResourcesGroup(clusterId, statefulSets, "StatefulSets", imageToComponents);
+                this.GetImagesFromResourcesGroup(clusterId, statefulSets, "statefulset", imageToComponents);
             }
 
             if (k8sMeta["DaemonSets"] is JArray daemonSets)
             {
-                this.GetImagesFromResourcesGroup(clusterId, daemonSets, "DaemonSets", imageToComponents);
+                this.GetImagesFromResourcesGroup(clusterId, daemonSets, "daemonset", imageToComponents);
             }
 
             if (k8sMeta["Jobs"] is JArray jobs)
             {
-                this.GetImagesFromResourcesGroup(clusterId, jobs, "Jobs", imageToComponents);
+                this.GetImagesFromResourcesGroup(clusterId, jobs, "job", imageToComponents);
             }
 
             if (k8sMeta["CronJobs"] is JArray cronJobs)
@@ -434,7 +434,7 @@ namespace webapp.Audits.Processors.polaris
                             : $"{objectName}-container{i + 1}";
                         var imageTag = containers[i]["image"].Value<string>();
 
-                        var componentId = $"/k8s/{clusterId}/ns/{nsName}/CronJobs/{objectName}/container/{containerName}/image/{imageTag}";
+                        var componentId = $"/k8s/{clusterId}/ns/{nsName}/cronjob/{objectName}/container/{containerName}/image/{imageTag}";
                         if (!dict.TryAdd(imageTag, new List<string> { componentId }))
                         {
                             dict[imageTag].Add(componentId);

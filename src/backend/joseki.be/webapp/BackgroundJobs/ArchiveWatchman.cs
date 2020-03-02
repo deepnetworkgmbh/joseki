@@ -6,6 +6,7 @@ using Serilog;
 
 using webapp.BlobStorage;
 using webapp.Configuration;
+using webapp.Infrastructure;
 
 namespace webapp.BackgroundJobs
 {
@@ -38,6 +39,7 @@ namespace webapp.BackgroundJobs
         /// <returns>A task object.</returns>
         public async Task Watch(CancellationToken cancellation)
         {
+            var initialized = false;
             while (!cancellation.IsCancellationRequested)
             {
                 try
@@ -50,6 +52,12 @@ namespace webapp.BackgroundJobs
                         // if the order is opposite - Cleanup task has a bit more work to do
                         var deleted = await this.blobStorage.CleanupArchive(cancellation);
                         var archived = await this.blobStorage.MoveProcessedBlobsToArchive(cancellation);
+
+                        if (!initialized)
+                        {
+                            JosekiStateManager.ArchiverIsInitialized();
+                            initialized = true;
+                        }
 
                         Logger.Information("Archiver archived {ArchivedCount} and deleted {DeletedCount} blobs", archived, deleted);
                     }

@@ -11,6 +11,7 @@ using Serilog;
 using webapp.Audits;
 using webapp.BlobStorage;
 using webapp.Configuration;
+using webapp.Infrastructure;
 
 namespace webapp.BackgroundJobs
 {
@@ -45,6 +46,7 @@ namespace webapp.BackgroundJobs
         /// <returns>A task object.</returns>
         public async Task Watch(CancellationToken cancellation)
         {
+            var initialized = false;
             while (!cancellation.IsCancellationRequested)
             {
                 try
@@ -59,6 +61,12 @@ namespace webapp.BackgroundJobs
 
                     var schedulerItems = metadataTasks.Select(t => t.Result).ToArray();
                     this.scheduler.UpdateWorkingItems(schedulerItems);
+
+                    if (!initialized)
+                    {
+                        JosekiStateManager.ScannerContainersIsInitialized();
+                        initialized = true;
+                    }
 
                     Logger.Information("Scanner Containers watchman finished the detour.");
                     await Task.Delay(TimeSpan.FromSeconds(this.config.Watchmen.ScannerContainersPeriodicitySeconds), cancellation);

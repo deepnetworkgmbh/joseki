@@ -37,8 +37,11 @@ namespace webapp.Models
         /// NoData checks are excluded, Passed and Failed has doubled weight.
         /// The final formula is Passed*2/(Failed*2 + Passed*2 + Warning).
         /// </summary>
-        public int Score => Convert.ToInt16(Math.Round(
-            100M * this.Passed * 2 / ((this.Failed * 2) + (this.Passed * 2) + this.Warning),
-            MidpointRounding.AwayFromZero));
+        public int Score =>
+            this.Failed == 0 && this.Passed == 0 && this.Warning == 0
+                ? 0
+                : Convert.ToInt16(Math.Round(
+                    100M * this.Passed * 2 / ((this.Failed * 2) + (this.Passed * 2) + this.Warning),
+                    MidpointRounding.AwayFromZero));
     }
 }

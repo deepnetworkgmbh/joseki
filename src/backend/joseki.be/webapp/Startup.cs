@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
@@ -93,8 +92,8 @@ namespace webapp
 
             services
                 .AddHealthChecks()
-                .AddCheck("Live", () => HealthCheckResult.Healthy(), new[] { "liveness" })
-                .AddCheck("Ready", () => HealthCheckResult.Healthy(), new[] { "readiness" });
+                .AddCheck("Live", () => JosekiStateManager.Live, new[] { "liveness" })
+                .AddCheck("Ready", () => JosekiStateManager.Ready, new[] { "readiness" });
 
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
             services.AddSwaggerGen(c =>
@@ -140,6 +139,9 @@ namespace webapp
             services.AddTransient<TrivyAuditProcessor>();
 
             services.AddTransient<GetInfrastructureOverviewHandler>();
+            services.AddTransient<GetInfrastructureOverviewDiffHandler>();
+            services.AddTransient<GetInfrastructureHistoryHandler>();
+            services.AddTransient<GetComponentDetailsHandler>();
 
             services.AddScoped<ScannerContainersWatchman>();
             services.AddSingleton<SchedulerAssistant>();
