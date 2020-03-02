@@ -833,80 +833,6 @@
             </summary>
             <returns>the component summary diff.</returns>
         </member>
-        <member name="T:webapp.Controllers.Data">
-            <summary>
-            data wrapper before connecting to real results.
-            </summary>
-        </member>
-        <member name="P:webapp.Controllers.Data.K8sCollections">
-            <summary>
-            kubernetes check collections and resources.
-            </summary>
-        </member>
-        <member name="P:webapp.Controllers.Data.K8sControls">
-            <summary>
-            kubernetes check controls.
-            </summary>
-        </member>
-        <member name="P:webapp.Controllers.Data.AzCollections">
-            <summary>
-            azure check collections and resources.
-            </summary>
-        </member>
-        <member name="P:webapp.Controllers.Data.AzControls">
-            <summary>
-            kubernetes check controls.
-            </summary>
-        </member>
-        <member name="P:webapp.Controllers.Data.Dates">
-            <summary>
-            list of dates for ui tests.
-            date behaves like a key while comparing scans.
-            thus an overall scan and a component scan
-            must all have the same initial scan date associated.
-            </summary>
-        </member>
-        <member name="M:webapp.Controllers.Data.ComponentChecks">
-            <summary>
-            mock list of Checks.
-            </summary>
-        </member>
-        <member name="P:webapp.Controllers.Data.Components">
-            <summary>
-            Mocked components.
-            </summary>
-        </member>
-        <member name="P:webapp.Controllers.Data.Counters">
-            <summary>
-            list of counter summaries.
-            </summary>
-        </member>
-        <member name="M:webapp.Controllers.Data.GetScoreHistory(webapp.Models.InfrastructureComponent)">
-            <summary>
-            score history, combination of dates and scores.
-            </summary>
-        </member>
-        <member name="M:webapp.Controllers.Data.GetComponentSummary(webapp.Models.InfrastructureComponent)">
-            <summary>
-            Returns summary for the selected component.
-            </summary>
-        </member>
-        <member name="M:webapp.Controllers.Data.GetComponentSummaries">
-            <summary>
-            Returns summary for all components except overall.
-            </summary>
-        </member>
-        <member name="M:webapp.Controllers.Data.RandomSeverity">
-            <summary>
-            return a random severity.
-            </summary>
-            <returns>CheckSeverity.</returns>
-        </member>
-        <member name="F:webapp.Controllers.Data.OverallComponent">
-            <summary>
-            static placeholder for overall component.
-            </summary>
-        </member>
         <member name="T:webapp.Controllers.v0._2.AuditsController">
             <summary>
             Audit data endpoints.
@@ -930,12 +856,18 @@
             </summary>
             <returns>The overall infrastructure overview diff.</returns>
         </member>
+        <member name="M:webapp.Controllers.v0._2.AuditsController.GetOverallInfrastructureHistory">
+            <summary>
+            Returns the overall infrastructure overview history.
+            </summary>
+            <returns>The overall infrastructure overview history.</returns>
+        </member>
         <member name="M:webapp.Controllers.v0._2.AuditsController.GetComponentHistory(System.String)">
             <summary>
-            Returns the overall infrastructure overview diff.
+            Returns the single component history.
             </summary>
             <param name="id">Unique component identifier.</param>
-            <returns>The overall infrastructure overview diff.</returns>
+            <returns>The component history.</returns>
         </member>
         <member name="M:webapp.Controllers.v0._2.AuditsController.GetComponentDetail(System.String,System.Nullable{System.DateTime})">
             <summary>
@@ -1180,11 +1112,6 @@
             Takes care of keeping pre-calculated counter-summaries.
             </summary>
         </member>
-        <member name="F:webapp.Database.InfrastructureScoreCache.OverallId">
-            <summary>
-            Overall infrastructure id.
-            </summary>
-        </member>
         <member name="M:webapp.Database.InfrastructureScoreCache.#ctor(joseki.db.JosekiDbContext)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Database.InfrastructureScoreCache"/> class.
@@ -1248,6 +1175,11 @@
         <member name="T:webapp.Database.Models.Audit">
             <summary>
             The entity represents a single Audit object.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.Models.Audit.OverallId">
+            <summary>
+            Overall infrastructure id.
             </summary>
         </member>
         <member name="P:webapp.Database.Models.Audit.Id">
@@ -1687,6 +1619,82 @@
         <member name="M:webapp.Database.MssqlJosekiDatabase.GetAuditedComponents(System.DateTime)">
             <inheritdoc />
         </member>
+        <member name="T:webapp.Exceptions.JosekiException">
+            <summary>
+            Custom exception for the project.
+            </summary>
+        </member>
+        <member name="M:webapp.Exceptions.JosekiException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Exceptions.JosekiException"/> class.
+            </summary>
+            <param name="message">Exception message.</param>
+        </member>
+        <member name="M:webapp.Exceptions.JosekiException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Exceptions.JosekiException"/> class.
+            </summary>
+            <param name="message">Exception message.</param>
+            <param name="ex">Inner exception.</param>
+        </member>
+        <member name="T:webapp.Handlers.GetComponentDetailsHandler">
+            <summary>
+            Prepares response to get-component-details request.
+            </summary>0
+        </member>
+        <member name="M:webapp.Handlers.GetComponentDetailsHandler.#ctor(joseki.db.JosekiDbContext,webapp.Database.InfrastructureScoreCache)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Handlers.GetComponentDetailsHandler"/> class.
+            </summary>
+            <param name="db">Joseki database object.</param>
+            <param name="cache">Score cache.</param>
+        </member>
+        <member name="M:webapp.Handlers.GetComponentDetailsHandler.GetDetails(System.String,System.DateTime)">
+            <summary>
+            Returns infrastructure history for requested component.
+            </summary>
+            <param name="componentId">Component identifier.</param>
+            <param name="date">The date to get details for.</param>
+            <returns>Component details.</returns>
+        </member>
+        <member name="T:webapp.Handlers.GetInfrastructureHistoryHandler">
+            <summary>
+            Prepares response to get-infrastructure-history request.
+            </summary>
+        </member>
+        <member name="M:webapp.Handlers.GetInfrastructureHistoryHandler.#ctor(webapp.Database.InfrastructureScoreCache)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Handlers.GetInfrastructureHistoryHandler"/> class.
+            </summary>
+            <param name="cache">Score cache.</param>
+        </member>
+        <member name="M:webapp.Handlers.GetInfrastructureHistoryHandler.GetHistory(System.String)">
+            <summary>
+            Returns infrastructure history for requested component.
+            </summary>
+            <param name="componentId">Component identifier.</param>
+            <returns>Infrastructure history.</returns>
+        </member>
+        <member name="T:webapp.Handlers.GetInfrastructureOverviewDiffHandler">
+            <summary>
+            Prepares response to get-overall-infrastructure-diff request.
+            </summary>
+        </member>
+        <member name="M:webapp.Handlers.GetInfrastructureOverviewDiffHandler.#ctor(webapp.Database.IJosekiDatabase,webapp.Database.InfrastructureScoreCache)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Handlers.GetInfrastructureOverviewDiffHandler"/> class.
+            </summary>
+            <param name="db">Joseki database.</param>
+            <param name="cache">Score cache.</param>
+        </member>
+        <member name="M:webapp.Handlers.GetInfrastructureOverviewDiffHandler.GetDiff(System.DateTime,System.DateTime)">
+            <summary>
+            Returns overall infrastructure overview objects for two dates.
+            </summary>
+            <param name="date1">The first date to calculate overview.</param>
+            <param name="date2">The second date to calculate overview.</param>
+            <returns>Infrastructure overview diff.</returns>
+        </member>
         <member name="T:webapp.Handlers.GetInfrastructureOverviewHandler">
             <summary>
             Prepares response to get-overall-infrastructure request.
@@ -1705,6 +1713,35 @@
             </summary>
             <param name="date">date to calculate overview.</param>
             <returns>Infrastructure overview.</returns>
+        </member>
+        <member name="T:webapp.Handlers.InfraScoreExtensions">
+            <summary>
+            Common Infra-Score extensions.
+            </summary>
+        </member>
+        <member name="M:webapp.Handlers.InfraScoreExtensions.GetInfrastructureOverview(webapp.Database.InfrastructureScoreCache,System.DateTime,webapp.Database.Models.Audit[])">
+            <summary>
+            Composes an infrastructure overview object for a requested date and provided audits.
+            </summary>
+            <param name="cache">Extended cache object.</param>
+            <param name="date">The date to calculate overview for.</param>
+            <param name="audits">List of audits to include into overview.</param>
+            <returns>Complete infrastructure-overview object.</returns>
+        </member>
+        <member name="M:webapp.Handlers.InfraScoreExtensions.GetInfrastructureHistory(webapp.Database.InfrastructureScoreCache,System.String)">
+            <summary>
+            Composes a component history array.
+            </summary>
+            <param name="cache">Extended cache object.</param>
+            <param name="componentId">Component identifier.</param>
+            <returns>Complete component history object.</returns>
+        </member>
+        <member name="M:webapp.Handlers.InfraScoreExtensions.GetCategory(System.String)">
+            <summary>
+            Gets component category by identifier.
+            </summary>
+            <param name="componentId">Component unique identifier.</param>
+            <returns>Component category.</returns>
         </member>
         <member name="T:webapp.Infrastructure.ConfigureSwaggerOptions">
             <summary>
@@ -1747,6 +1784,66 @@
             <param name="start">Ticks on a start.</param>
             <param name="stop">Ticks in the end.</param>
             <returns>Elapsed milliseconds.</returns>
+        </member>
+        <member name="T:webapp.Infrastructure.JosekiStateManager">
+            <summary>
+            Knows when Joseki is Ready and Healthy.
+            </summary>
+        </member>
+        <member name="M:webapp.Infrastructure.JosekiStateManager.ArchiverIsInitialized">
+            <summary>
+            Marks Archiver as initialized.
+            </summary>
+        </member>
+        <member name="M:webapp.Infrastructure.JosekiStateManager.ScannerContainersIsInitialized">
+            <summary>
+            Marks Scanner Containers watchman as initialized.
+            </summary>
+        </member>
+        <member name="M:webapp.Infrastructure.JosekiStateManager.ScoreCacheIsInitialized">
+            <summary>
+            Marks Infrastructure Score cache as initialized.
+            </summary>
+        </member>
+        <member name="P:webapp.Infrastructure.JosekiStateManager.Ready">
+            <summary>
+            Joseki is ready to receive traffic, when infra-score cache is pre-loaded.
+            </summary>
+        </member>
+        <member name="P:webapp.Infrastructure.JosekiStateManager.Live">
+            <summary>
+            Joseki is not in "live" state, if any watchman is not properly started.
+            </summary>
+        </member>
+        <member name="T:webapp.Infrastructure.Watchman">
+            <summary>
+            Indicates what watchmen were started.
+            </summary>
+        </member>
+        <member name="F:webapp.Infrastructure.Watchman.None">
+            <summary>
+            No pre-processors has been finished.
+            </summary>
+        </member>
+        <member name="F:webapp.Infrastructure.Watchman.ScoreCache">
+            <summary>
+            Infrastructure score cache is warmed up.
+            </summary>
+        </member>
+        <member name="F:webapp.Infrastructure.Watchman.Archiver">
+            <summary>
+            Archiver is started.
+            </summary>
+        </member>
+        <member name="F:webapp.Infrastructure.Watchman.ScannerContainers">
+            <summary>
+            Scanner Containers watchman is started.
+            </summary>
+        </member>
+        <member name="F:webapp.Infrastructure.Watchman.All">
+            <summary>
+            All are initialized.
+            </summary>
         </member>
         <member name="T:webapp.Infrastructure.SwaggerDefaultValues">
             <summary>
@@ -1816,7 +1913,7 @@
             Result of the check.
             </summary>
         </member>
-        <member name="M:webapp.Models.Check.#ctor(webapp.Models.InfrastructureComponent,System.DateTime,webapp.Models.Collection,webapp.Models.Resource,System.String,webapp.Models.CheckControl,webapp.Models.CheckSeverity)">
+        <member name="M:webapp.Models.Check.#ctor(webapp.Models.InfrastructureComponent,System.DateTime,webapp.Models.Collection,webapp.Models.Resource,System.String,webapp.Models.CheckControl,webapp.Models.CheckResult)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Models.Check"/> class.
             create unique id on constructor.
@@ -1852,27 +1949,27 @@
             <param name="category">category of control.</param>
             <param name="message">message of control.</param>
         </member>
-        <member name="T:webapp.Models.CheckSeverity">
+        <member name="T:webapp.Models.CheckResult">
             <summary>
             Severity of the check.
             </summary>
         </member>
-        <member name="F:webapp.Models.CheckSeverity.NoData">
+        <member name="F:webapp.Models.CheckResult.NoData">
             <summary>
             Enum value when a scan was not found
             </summary>
         </member>
-        <member name="F:webapp.Models.CheckSeverity.Failed">
+        <member name="F:webapp.Models.CheckResult.Failed">
             <summary>
             Enum value when a scan failed
             </summary>
         </member>
-        <member name="F:webapp.Models.CheckSeverity.Warning">
+        <member name="F:webapp.Models.CheckResult.Warning">
             <summary>
             Enum value when a scan has warning
             </summary>
         </member>
-        <member name="F:webapp.Models.CheckSeverity.Success">
+        <member name="F:webapp.Models.CheckResult.Success">
             <summary>
             Enum value when a scan succeeded
             </summary>

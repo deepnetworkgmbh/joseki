@@ -19,7 +19,6 @@
   <ItemGroup>
     <Compile Remove="Models\CheckCategory.cs" />
     <Compile Remove="Models\CheckCategory.cs" />
-    <Compile Remove="Models\CheckResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\GlobalSuppressions.cs" Link="GlobalSuppressions.cs" />
