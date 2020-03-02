@@ -89,7 +89,7 @@ namespace webapp.Database
             }
 
             sw.Stop();
-            Logger.Information("Reloading Infrastructure Score cache tool {Elapsed}", sw.Elapsed);
+            Logger.Information("Reloading Infrastructure Score cache took {Elapsed}", sw.Elapsed);
         }
 
         /// <summary>
@@ -257,11 +257,14 @@ namespace webapp.Database
         /// <returns>Latest audits for each scanner for the day.</returns>
         private async Task<AuditEntity[]> GetAudits(DateTime date)
         {
-            var audits = await this.db.Set<AuditEntity>()
-                .Where(i => i.Date.Date == date.Date)
+            var todayAudits = await this.db.Set<AuditEntity>()
+                .Where(i => i.Date >= date.Date)
+                .ToListAsync();
+
+            var audits = todayAudits
                 .GroupBy(i => i.ComponentId)
                 .Select(i => i.OrderByDescending(a => a.Date).First())
-                .ToArrayAsync();
+                .ToArray();
 
             return audits;
         }
