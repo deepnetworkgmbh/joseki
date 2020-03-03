@@ -59,8 +59,8 @@ export default class ComponentDetail extends Vue {
         this.selectedDate = this.date ?
             new Date(decodeURIComponent(this.date))
             : this.data.scoreHistory[0].recordedAt;
-        ChartService.drawPieChart(this.data.current, "overall_pie", 300)
-        ChartService.drawBarChart(this.data.scoreHistory, "overall_bar", this.selectedDate, this.dayClicked)
+        ChartService.drawPieChart(this.data.current, "overall_pie", 300);
+        ChartService.drawBarChart(this.data.scoreHistory, "overall_bar", this.selectedDate, this.dayClicked, 100, undefined, 4);
     }
 
     dayClicked(date: Date) {

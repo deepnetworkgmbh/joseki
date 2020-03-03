@@ -37,7 +37,7 @@
       </div>
       <div class="w-1/4 border-l border-gray-300" style="z-index:10;">
         <div class="w-auto p-2 ml-1 mb-2">
-          <div class='text-center text-xs font-bold border-b border-gray-500'>Scan History</div>
+          <div class='text-center text-xs font-bold'>Scan History</div>
           <div id="overall_bar" style="width:100%"></div>
         </div>
         <div class="m-3 mt-0">
