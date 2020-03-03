@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :class="getWrapperClass()">
+  <div id="app" class="wrapper">
     <Navigation />
     <router-view @sideWindowOpened='toggleSideWindow(true)' @sideWindowClosed='toggleSideWindow(false)' />
     <div class="footer">

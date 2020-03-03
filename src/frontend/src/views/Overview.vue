@@ -34,14 +34,13 @@
         <div id="overall_pie" class="w-auto" style="z-index:0;"></div>
       </div>
       <div class="w-1/4 border-l border-gray-300" style="z-index:10;">
-        <div id="overall_bar" class="w-auto border-b border-gray-500 p-2 ml-1 mb-3"></div>
+        <div class="w-auto p-2 ml-1 mb-2">
+          <div class='text-center text-xs font-bold border-b border-gray-500'>Scan History</div>
+          <div id="overall_bar" style="width:100%"></div>
+        </div>
         <div class="m-3 mt-0">
-          <table class="border border-gray-200 w-full text-xs p-4">
-            <thead>
-              <tr class="bg-gray-500 text-white">
-                <th colspan="3">Last Scans</th>
-              </tr>
-            </thead>
+          <div class='text-center text-xs font-bold border-b border-gray-500'>Last 5 scans</div>
+          <table class="w-full text-xs p-4">
             <tbody>
               <tr v-for="(scan,i) in shortHistory" :key="`scan${i}`">
                 <td>{{ scan.recordedAt | formatDate }}</td>
@@ -49,10 +48,12 @@
                 <td class="w-1" v-html="getArrowHtml(i)"></td>
               </tr>
             </tbody>
-            <tfoot>
+            <tfoot class='border-t border-gray-500'>
               <tr>
-                <td colspan="3" class="bg-gray-500 text-center">
-                  <button class="btn" @click="goComponentHistory()">See All</button>
+                <td colspan="3" class="text-right">
+                  <button class="btn mt-2" @click="goComponentHistory()">
+                    <span class="px-4"><i class="fas fa-history pr-2"></i>See Scan History</span>
+                  </button>
                 </td>
               </tr>
             </tfoot>
@@ -64,18 +65,18 @@
       <div class="w-full flex flex-wrap pt-2 pl-1">
         <div v-for="(c, i) in data.components" :key="`scan${i}`" 
              class="scan-detailed-item flex flex-row shadow">
-          <div class="w-full p-2 text-lg pt-0 flex flex-col">
+          <div class="p-2 text-lg pt-0 flex flex-col">
             <div class='component-buttons'>
               <button @click="goComponentHistory(c.component)">History</button>
               <button @click="goComponentDetail(c.component)">Detail</button>
             </div>            
-            <div class="text-sm">{{ c.component.name }}</div>
+            <div class="component-name">{{ c.component.name }}</div>
             <div class="text-xs text-gray-600 -mt-1">{{c.component.category}}</div>
-            <div style="height:50px;width:130px;" :id="`bar${i}`"></div>
+            <div style="height:45px;width:130px;" :id="`bar${i}`"></div>
           </div>
-          <div class="p-2" style="width: 100px;" @click="goComponentDetail(c.component)">
-            <div style="position:relative;font-size:18px;z-index:1;left:15px;top:30px;">{{c.current.score}}%</div>
-            <div style="position:relative;top:-12px;z-index:0;">
+          <div class="p-2" style="width: 100px;">
+            <div style="position:relative;font-size:18px;z-index:1;left:28px;top:30px;">{{c.current.score}}%</div>
+            <div style="position:relative;top:-12px;z-index:0;left:5px;">
               <vc-donut
                 :sections="c.sections"
                 :size="60"

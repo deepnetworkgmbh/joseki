@@ -2,10 +2,7 @@ import axios from "axios";
 import { ContainerImageScan, VulnerabilityCounter } from "@/models";
 import { ImageScan } from "@/models/ImageScan";
 import { ImageScanGroup } from "@/models/ImageScanGroup";
-import { VulnerabilityGroup, TargetGroup, ImageScanDetailModel } from "@/models/VulnerabilityGroup";
-import { ScanSummary } from '../models/ScanSummary';
-import { ScanObjectType } from '@/types/Enums';
-import { InfrastructureOverview } from '../models/InfrastructureOverview';
+import { VulnerabilityGroup, TargetGroup, ImageScanDetailModel } from "@/models/InfrastructureOverview";
 
 import { ScoreService } from './ScoreService';
 

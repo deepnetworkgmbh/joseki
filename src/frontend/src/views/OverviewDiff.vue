@@ -59,9 +59,9 @@
             class="scan-detailed-diff-item flex flex-row shadow"
             @click="goDiffPage(c.component)">
           <div class="w-full p-2 text-lg pt-0 flex flex-col">        
-            <div class="text-sm">{{ c.component.name }}</div>
+            <div class="component-name">{{ c.component.name }}{{ c.component.name }}</div>
             <div class="text-xs text-gray-600">{{c.component.category}}</div>
-            <div style="height:50px;width:130px;" :id="`bar${i}`"></div>
+            <div style="height:45px;width:130px;" :id="`bar${i}`"></div>
           </div>
           <div class="p-2 pl-0" style="width: 100px;">
             <div style="position:relative;font-size:18px;z-index:1;left:19px;top:23px;">{{c.current.score}}%</div>
