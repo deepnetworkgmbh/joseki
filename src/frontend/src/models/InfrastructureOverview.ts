@@ -57,6 +57,8 @@ export class InfrastructureComponent {
 
     /// The bucket of infrastructure component: Cloud Subscription, Kubernetes cluster, etc.
     category: string = ''
+
+    sections: any[] = [];
 }
 
 

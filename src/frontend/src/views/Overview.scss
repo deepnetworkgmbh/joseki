@@ -44,17 +44,6 @@ th {
 	margin-top: -350px;
 }
 
-.scan-detailed-item {
-	width: 250px;
-	height: 90px;
-	background-color: #eee;
-	border: solid 1px #aaa;
-	margin-bottom: 10px;
-	margin-right: 10px;
-	border-radius: 5px;
-	cursor: pointer;
-}
-
 .scan-list-item {
 	padding: 5px;
 	width: 100%;
@@ -116,31 +105,4 @@ svg > g > g {
 	transition: right 0.5s;
 	border-left: solid 2px #444;
 	opacity: .95;
-}
-
-.component-buttons {
-	position: absolute;
-	margin-top: -6px;
-	margin-left: 151px;
-
-	& > button {
-		font-size: 10px;
-		background-color: #eee;
-		border: solid 1px #666;
-		padding: 0 4px 0 4px;
-		border-radius: 3px;
-		margin-left: 3px;
-	}
-
-	& > button:hover {
-		background-color: #efe;
-	}
-}
-
-.component-name {
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	overflow: hidden;
-	font-size: 12px;
-	max-width: 140px;
 }
