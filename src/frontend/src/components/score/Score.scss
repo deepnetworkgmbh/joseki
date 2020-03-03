@@ -1,0 +1,24 @@
+.scan-score {
+	background-color: #ccc;
+	border-radius: 5px;
+	padding: 1px 5px 1px 5px;
+	margin-left: 5px;
+	font-size: 10px;
+	color: white;
+
+	&-0 {
+		background-color: red;
+	}
+
+	&-25 {
+		background-color: rgb(219, 103, 35);
+	}
+
+	&-50 {
+		background-color: orange;
+	}
+
+	&-75 {
+		background-color: green;
+	}
+}

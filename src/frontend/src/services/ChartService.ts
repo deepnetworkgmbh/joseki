@@ -81,6 +81,7 @@ export class ChartService {
 				},
 				textPosition: 'out'
 			},
+
 			orientation: 'horizontal'
 		};
 
@@ -131,7 +132,8 @@ export class ChartService {
 		selected: Date,
 		cb?: Function,
 		height: number = 100,
-		selected2: string = '') {
+		selected2: string = '',
+		gridlines: number = 0) {
 
 		let element = document.getElementById(key) as any;
 
@@ -162,13 +164,14 @@ export class ChartService {
 			},
 			vAxis: {
 				baselineColor: '#fff',
+				format: '',
 				//gridlineColor: '#fff',
-				//textPosition: 'none',
+				textPosition: 'left',
 				viewWindow: {
 					max: 100,
 					min: 0
 				},
-				gridlines: { count: 0 }
+				gridlines: { count: gridlines }
 			},
 			series: {
 				0: { color: '#41C6B9' }
@@ -177,8 +180,8 @@ export class ChartService {
 			legend: { position: 'none' },
 			orientation: 'horizontal',
 			chartArea: {
-				width: '100%',
-				height: '100%'
+				width: '89%',
+				height: '90%'
 			},
 		};
 		var chart = new google.visualization.BarChart(element);

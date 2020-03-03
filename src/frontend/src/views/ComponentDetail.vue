@@ -37,7 +37,7 @@
       </div>
       <div class="w-1/4 border-l border-gray-300" style="z-index:10;">
         <div class="w-auto p-2 ml-1 mb-2">
-          <div class='text-center text-xs font-bold border-b border-gray-500'>Scan History</div>
+          <div class='text-center text-xs font-bold'>Scan History</div>
           <div id="overall_bar" style="width:100%"></div>
         </div>
         <div class="m-3 mt-0">
@@ -71,10 +71,8 @@
           <li>
             <input type="checkbox" v-bind:id="`cat${i}`" />
             <label class="text-base" v-bind:for="`cat${i}`">
-              <strong>{{category.category}}</strong>              
-              <span class="text-xs scan-score">
-              score <strong>{{category.score}}%</strong>
-              </span>
+              <strong>{{category.category}}</strong>
+              <Score :label='`Score`' :score='category.score' />              
             </label>
             <StatusBar :counters="category.counters" />
             <ul>
@@ -92,26 +90,21 @@
             <input type="checkbox" :id="`target${i}`" checked />
             <label :for="`target${i}`" class="target">
                <strong>{{ collection.type }}</strong> : {{ collection.name }}
-                <span class="text-xs scan-score">
-                  score <strong>{{ collection.score}}%</strong>
-                </span>
+               <Score :label='`Score`' :score='collection.score' />             
             </label>
             <StatusBar :counters="collection.counters" />
-            <ul v-for="(obj, g) in collection.objects" :key="`obj${i}-${g}`">
-              <li>
+            <ul v-for="(obj, g) in collection.objects" :key="`obj${i}-${g}`" style="border-bottom: dashed 1px #eee;">
+              <li style="margin-top:5px;margin-left:5px;">
                 <input type="checkbox" :id="`obj${i}-${g}`" />
                 <label :for="`obj${i}-${g}`" class="text-base">
                    <strong>{{ obj.type }} : </strong>
                    {{ obj.name }}
                 </label>
-                <span class="text-xs scan-score">
-                  score <strong>{{ obj.score}}%</strong>
-                </span>
-
+                <Score :label='`Score`' :score='obj.score' />         
                 <StatusBar :mini='false' :counters="obj.counters" style="margin-right:-5px;" />
                 <ul v-for="(control, c) in obj.controls" 
-                   :key="`control${i}-${g}-${c}`">
-                  <li>
+                   :key="`control${i}-${g}-${c}`" style="border-bottom: dashed 1px #eee;">
+                  <li style="margin-left:5px;">
                     <label :for="`control${i}-${g}-${c}`" class="text-sm">
                        <i :class="control.icon"></i>
                       <i>{{ control.id }}</i> : {{ control.text }}

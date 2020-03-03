@@ -1,0 +1,101 @@
+.inf-component {
+	width: 300px;
+	height: 100px;
+	background-color: #eee;
+	border: solid 1px #aaa;
+	margin-bottom: 10px;
+	margin-right: 10px;
+	border-radius: 5px;
+	padding: 5px;
+	display: flex;
+	flex-direction: row;
+	align-content: stretch;
+
+	&-left {
+		display: flex;
+		flex-direction: column;
+		flex: 1 1 auto;
+	}
+
+	&-right {
+		width: 100px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	&-info {
+		max-width: 170px;
+		padding-left: 4px;
+	}
+
+	&-left-top {
+		display: flex;
+	}
+
+	&-histogram {
+		height: 60px;
+	}
+
+	&-name {
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+		font-size: 12px;
+	}
+
+	&-category {
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+		font-size: 11px;
+		color: #444;
+	}
+
+	&-icon {
+		background-color: white;
+		width: 36px;
+		height: 36px;
+		top: 10px;
+		left: 0;
+		border-radius: 5px;
+		padding: 2px;
+		border: solid 1px #ccc;
+	}
+
+	&-buttons {
+		position: relative;
+		top: -5px;
+		right: 0px;
+		padding: 0;
+		margin: 0;
+
+		& > button {
+			font-size: 10px;
+			background-color: #eee;
+			border: solid 1px #666;
+			padding: 0 4px 0 4px;
+			border-radius: 3px;
+			margin-left: 3px;
+		}
+
+		& > button:hover {
+			background-color: #efe;
+		}
+	}
+
+	&-score {
+		position: relative;
+		font-size: 18px;
+		z-index: 1;
+		left: 7px;
+		top: 18px;
+	}
+
+	&-pie {
+		position: relative;
+		top: -25px;
+		z-index: 0;
+		left: 5px;
+	}
+}

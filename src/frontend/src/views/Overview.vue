@@ -35,8 +35,8 @@
       </div>
       <div class="w-1/4 border-l border-gray-300" style="z-index:10;">
         <div class="w-auto p-2 ml-1 mb-2">
-          <div class='text-center text-xs font-bold border-b border-gray-500'>Scan History</div>
-          <div id="overall_bar" style="width:100%"></div>
+          <div class='text-center text-xs font-bold'>Scan History</div>
+          <div id="overall_bar" style="width:100%;border-bottom:solid 1px #ccc;padding-bottom:0px;"></div>
         </div>
         <div class="m-3 mt-0">
           <div class='text-center text-xs font-bold border-b border-gray-500'>Last 5 scans</div>
@@ -62,31 +62,14 @@
       </div>
     </div>
     <div v-if="loaded" class="segment shadow">
-      <div class="w-full flex flex-wrap pt-2 pl-1">
-        <div v-for="(c, i) in data.components" :key="`scan${i}`" 
-             class="scan-detailed-item flex flex-row shadow">
-          <div class="p-2 text-lg pt-0 flex flex-col">
-            <div class='component-buttons'>
-              <button @click="goComponentHistory(c.component)">History</button>
-              <button @click="goComponentDetail(c.component)">Detail</button>
-            </div>            
-            <div class="component-name">{{ c.component.name }}</div>
-            <div class="text-xs text-gray-600 -mt-1">{{c.component.category}}</div>
-            <div style="height:45px;width:130px;" :id="`bar${i}`"></div>
-          </div>
-          <div class="p-2" style="width: 100px;">
-            <div style="position:relative;font-size:18px;z-index:1;left:28px;top:30px;">{{c.current.score}}%</div>
-            <div style="position:relative;top:-12px;z-index:0;left:5px;">
-              <vc-donut
-                :sections="c.sections"
-                :size="60"
-                unit="px"
-                :total="c.current.total"
-                :thickness="25"
-              ></vc-donut>
-            </div>
-          </div>
-        </div>
+      <div class="w-full flex flex-wrap pt-2 pl-1 justify-center">
+        <InfComponent v-for="(c, i) in data.components" :key="`scan${i}`"
+          :component="c.component"
+          :sections="c.sections"
+          :score="c.current.score"
+          :total="c.current.total"
+          :index="i"
+        ></InfComponent>        
       </div>
     </div>
     <div :class="getPanelClass()" style="z-index:90;">
