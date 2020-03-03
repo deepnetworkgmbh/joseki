@@ -142,6 +142,7 @@ namespace webapp
             services.AddTransient<GetInfrastructureOverviewDiffHandler>();
             services.AddTransient<GetInfrastructureHistoryHandler>();
             services.AddTransient<GetComponentDetailsHandler>();
+            services.AddTransient<GetImageScanHandler>();
 
             services.AddScoped<ScannerContainersWatchman>();
             services.AddSingleton<SchedulerAssistant>();

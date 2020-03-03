@@ -238,5 +238,133 @@ namespace webapp.Controllers
                 return this.StatusCode(500, $"Failed to get component {unescapedId} diff between {date1} and {date2}");
             }
         }
+
+        /// <summary>
+        /// Returns the Image scans history.
+        /// </summary>
+        /// <param name="imageTag">Full image tag.</param>
+        /// <returns>The Image scans history.</returns>
+        [HttpGet]
+        [Route("container-image/{imageTag}/history", Name = "get-image-scan-history")]
+        [ProducesResponseType(200, Type = typeof(ContainerImageScanResult[]))]
+        [ProducesResponseType(500, Type = typeof(string))]
+        public async Task<ObjectResult> GetImageScanHistory([FromRoute]string imageTag)
+        {
+            var unescapedTag = HttpUtility.UrlDecode(imageTag);
+            try
+            {
+                var handler = this.services.GetService<GetImageScanHandler>();
+
+                var history = await handler.GetHistory(unescapedTag);
+                return this.StatusCode(200, history);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Failed to get Image Scan {ImageTag} history", unescapedTag);
+                return this.StatusCode(500, $"Failed to get Image Scan {unescapedTag} history");
+            }
+        }
+
+        /// <summary>
+        /// Returns the Image Scan detail.
+        /// </summary>
+        /// <returns>the component summary detail.</returns>
+        [HttpGet]
+        [Route("container-image/{imageTag}/details", Name = "get-image-scan-detail")]
+        [ProducesResponseType(200, Type = typeof(ContainerImageScanResult))]
+        [ProducesResponseType(400, Type = typeof(string))]
+        [ProducesResponseType(500, Type = typeof(string))]
+        public async Task<ObjectResult> GetImageScanDetail([FromRoute]string imageTag, [FromQuery]DateTime? date = null)
+        {
+            #region input validation
+
+            var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-31);
+            if (date.HasValue)
+            {
+                if (date < oneMonthAgo)
+                {
+                    return this.BadRequest($"Requested date {date} is more than one month ago. Joseki supports only 31 days.");
+                }
+                else if (date >= DateTime.UtcNow.Date.AddDays(1))
+                {
+                    return this.BadRequest($"Requested date {date} is in future. Unfortunately, Joseki could not see future yet.");
+                }
+            }
+
+            #endregion
+
+            var unescapedTag = HttpUtility.UrlDecode(imageTag);
+            var detailsDate = date?.Date ?? DateTime.UtcNow.Date;
+            try
+            {
+                var handler = this.services.GetService<GetImageScanHandler>();
+
+                var details = await handler.GetDetails(unescapedTag, detailsDate);
+                return this.StatusCode(200, details);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Failed to get Image Scan {ImageTag} details", unescapedTag);
+                return this.StatusCode(500, $"Failed to get Image Scan {unescapedTag} details");
+            }
+        }
+
+        /// <summary>
+        /// Returns the Image Scan diff.
+        /// </summary>
+        /// <param name="imageTag">The full image tag.</param>
+        /// <param name="date1">The first date to compare.</param>
+        /// <param name="date2">The second date to compare.</param>
+        /// <returns>The Image Scan diff.</returns>
+        [HttpGet]
+        [Route("container-image/{imageTag}/diff", Name = "get-image-scan-diff")]
+        [ProducesResponseType(200, Type = typeof(ContainerImageScanResultDiff))]
+        public async Task<ObjectResult> GetImageScanDiff([FromRoute]string imageTag, [FromQuery]DateTime date1, [FromQuery]DateTime date2)
+        {
+            #region input validation
+
+            var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-31);
+            var tomorrow = DateTime.UtcNow.Date.AddDays(1);
+            if (date1 < oneMonthAgo)
+            {
+                return this.BadRequest($"Requested date {date1} is more than one month ago. Joseki supports only 31 days.");
+            }
+            else if (date1 >= tomorrow)
+            {
+                return this.BadRequest($"Requested date {date1} is in future. Unfortunately, Joseki could not see future yet.");
+            }
+
+            if (date2 < oneMonthAgo)
+            {
+                return this.BadRequest($"Requested date {date2} is more than one month ago. Joseki supports only 31 days.");
+            }
+            else if (date2 >= tomorrow)
+            {
+                return this.BadRequest($"Requested date {date2} is in future. Unfortunately, Joseki could not see future yet.");
+            }
+
+            #endregion
+
+            var unescapedTag = HttpUtility.UrlDecode(imageTag);
+
+            try
+            {
+                var handler = this.services.GetService<GetImageScanHandler>();
+
+                var scan1 = await handler.GetDetails(unescapedTag, date1);
+                var scan2 = await handler.GetDetails(unescapedTag, date2);
+
+                return this.StatusCode(200, new ContainerImageScanResultDiff
+                {
+                    Scan1 = scan1,
+                    Scan2 = scan2,
+                });
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Failed to get Image Scan {ImageTag} diff between {AuditDate1} and {AuditDate2}", unescapedTag, date1, date2);
+                return this.StatusCode(500, $"Failed to get Image Scan {unescapedTag} diff between {date1} and {date2}");
+            }
+        }
     }
 }
