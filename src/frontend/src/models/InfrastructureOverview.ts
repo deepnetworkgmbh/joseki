@@ -148,7 +148,8 @@ export class CountersSummary {
     public score: number = 0;
 
     public calculateScore() {
-        return Math.round(100 * this.passed * 2 / ((this.failed * 2) + (this.passed * 2) + this.warning));
+        var result = Math.round(100 * this.passed * 2 / ((this.failed * 2) + (this.passed * 2) + this.warning));
+        return isNaN(result) ? 0 : result;
     }
 
 }
@@ -276,4 +277,34 @@ export enum CheckSeverity {
     /// Enum value when a scan succeeded
     /// </summary>
     Success = "SUCCESS",
+}
+
+export class Vulnerability {
+    VulnerabilityID: string = "";
+    PkgName: string = "";
+    InstalledVersion: string = "";
+    FixedVersion: string = "";
+    Title: string = ""; //
+    Description: string = "";
+    Severity: string = "";
+    References: string[] = [];
+}
+
+export class VulnerabilityGroup {
+    Count: number = 0;
+    CVEs: Vulnerability[] = [];
+    Order: number = 0;
+    constructor(public Severity: string) { }
+}
+
+export class TargetGroup {
+    vulgroups: VulnerabilityGroup[] = [];
+    constructor(public name: string) { }
+}
+
+export class ImageScanDetailModel {
+    image: string = "";
+    scanResult: string = "";
+    description: string = "";
+    targets: TargetGroup[] = []
 }

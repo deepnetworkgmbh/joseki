@@ -195,8 +195,8 @@ export class ChartService {
 			}
 		}
 
-		if (cb) {
-			google.visualization.events.addListener(chart, 'select', cb);
+		if (cb !== undefined) {
+			google.visualization.events.addListener(chart, 'select', selectHandler);
 		}
 		chart.draw(chart_data, options);
 	}

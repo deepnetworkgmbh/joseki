@@ -11,6 +11,7 @@ body {
 
 @import "colors.scss";
 @import "charts.scss";
+@import "expand.scss";
 @import url("https://use.fontawesome.com/releases/v5.8.1/css/all.css");
 @import url("https://fonts.googleapis.com/css?family=Noto+Sans&display=swap");
 
@@ -22,17 +23,13 @@ body {
 	@apply flex flex-row justify-around p-2 mb-3;
 }
 
-.footer {
-	@apply text-center text-xs my-2;
-}
-
 .big-text {
 	@apply text-xl antialiased;
 }
 
 .btn {
 	@apply text-center bg-gray-300 text-black p-1 border border-gray-600 rounded text-xs ml-1;
-	min-width: 30px;
+	min-width: 100px;
 
 	&-selected {
 		@apply text-center bg-green-300 text-white p-1 border border-gray-600 rounded text-xs ml-1;

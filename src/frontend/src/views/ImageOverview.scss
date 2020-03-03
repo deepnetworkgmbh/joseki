@@ -1,65 +1,17 @@
-ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
-label {
-  padding: 3px;
-  color: black;
-  width: 100%;
-  cursor: pointer;
-}
-li {
-  padding: 1px;
-  margin: 0px 10px 2px 10px;
-}
-input[type="checkbox"] {
-  visibility: hidden;
-}
-input[type="checkbox"] ~ ul {
-  visibility: hidden;
-  display: none;
-}
-input[type="checkbox"]:checked ~ ul {
-  visibility: visible;
-  display: block;
-}
-input[type="checkbox"] + label:before {
-  margin-left: -15px;
-  width: 0;
-  height: 0;
-  display: inline-block;
-  text-align: center;
-  content: "\f105";
-  color: #666;
-  position: absolute;
-  margin-top: -3px;
-  font-family: "Font Awesome 5 Free";
-  font-weight: 900;
-  font-size: 19px;
-}
-input[type="checkbox"]:checked + label:before {
-  content: "\f107";
-  font-family: "Font Awesome 5 Free";
-  font-weight: 900;
-}
-
-
-
 .searchbox {
-  max-width: 380px;
-  height: 25px;
-  border: solid 1px #ccc;
-  border-radius: 20px;
-  padding-left: 10px;
-  color: #444;
-  float: left;
+	max-width: 380px;
+	height: 25px;
+	border: solid 1px #ccc;
+	border-radius: 20px;
+	padding-left: 10px;
+	color: #444;
+	float: left;
 }
 
 .search-icon {
-  float: left;
-  display: revert;
-  margin-left: -26px;
-  margin-top: 5px;
-  color: #ccc;
+	float: left;
+	display: revert;
+	margin-left: -26px;
+	margin-top: 5px;
+	color: #ccc;
 }
