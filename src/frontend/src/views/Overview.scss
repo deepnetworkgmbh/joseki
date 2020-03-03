@@ -45,7 +45,7 @@ th {
 }
 
 .scan-detailed-item {
-	width: 220px;
+	width: 250px;
 	height: 90px;
 	background-color: #eee;
 	border: solid 1px #aaa;
@@ -121,7 +121,7 @@ svg > g > g {
 .component-buttons {
 	position: absolute;
 	margin-top: -6px;
-	margin-left: 121px;
+	margin-left: 151px;
 
 	& > button {
 		font-size: 10px;
@@ -135,4 +135,12 @@ svg > g > g {
 	& > button:hover {
 		background-color: #efe;
 	}
+}
+
+.component-name {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	font-size: 12px;
+	max-width: 140px;
 }
