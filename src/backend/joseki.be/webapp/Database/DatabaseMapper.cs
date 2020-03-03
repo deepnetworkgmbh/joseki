@@ -122,6 +122,7 @@ namespace webapp.Database
                 ImageTag = scan.ImageTag,
                 Date = scan.Date,
                 Status = scan.Status.ToEntity(),
+                Description = scan.Description,
                 FoundCVEs = scan.FoundCVEs?.Select(i => i.ToEntity()).ToList(),
             };
 
@@ -273,6 +274,7 @@ namespace webapp.Database
                 ImageTag = entity.ImageTag,
                 Date = entity.Date,
                 Status = entity.Status.FromEntity(),
+                Description = entity.Description,
                 Counters = counters.Select(i => new VulnerabilityCounter { Severity = i.Key.FromEntity(), Count = i.Value }).ToArray(),
             };
 

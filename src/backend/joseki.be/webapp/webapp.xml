@@ -220,6 +220,33 @@
         <member name="M:webapp.Audits.Processors.trivy.TrivyAuditProcessor.Process(webapp.BlobStorage.ScannerContainer,System.Threading.CancellationToken)">
             <inheritdoc />
         </member>
+        <member name="T:webapp.Audits.Processors.trivy.TrivyScanDescriptionNormalizer">
+            <summary>
+            The object normalizes trivy output.
+            </summary>
+        </member>
+        <member name="F:webapp.Audits.Processors.trivy.TrivyScanDescriptionNormalizer.NotAuthorized">
+            <summary>
+            Human-friendly not-authorized message.
+            </summary>
+        </member>
+        <member name="F:webapp.Audits.Processors.trivy.TrivyScanDescriptionNormalizer.UnknownOS">
+            <summary>
+            Human-friendly Unknown-OS message.
+            </summary>
+        </member>
+        <member name="F:webapp.Audits.Processors.trivy.TrivyScanDescriptionNormalizer.UnknownError">
+            <summary>
+            Human-friendly Unknown-Error message.
+            </summary>
+        </member>
+        <member name="M:webapp.Audits.Processors.trivy.TrivyScanDescriptionNormalizer.ToHumanReadable(System.String)">
+            <summary>
+            Converts trivy output to human-friendly text.
+            </summary>
+            <param name="description">Trivy scan output.</param>
+            <returns>Human readable result description.</returns>
+        </member>
         <member name="T:webapp.Audits.ScannerMetadata">
             <summary>
             Scanner metadata: identifier, type, heartbeat parameters.
@@ -833,6 +860,28 @@
             </summary>
             <returns>the component summary diff.</returns>
         </member>
+        <member name="M:webapp.Controllers.AuditsController.GetImageScanHistory(System.String)">
+            <summary>
+            Returns the Image scans history.
+            </summary>
+            <param name="imageTag">Full image tag.</param>
+            <returns>The Image scans history.</returns>
+        </member>
+        <member name="M:webapp.Controllers.AuditsController.GetImageScanDetail(System.String,System.Nullable{System.DateTime})">
+            <summary>
+            Returns the Image Scan detail.
+            </summary>
+            <returns>the component summary detail.</returns>
+        </member>
+        <member name="M:webapp.Controllers.AuditsController.GetImageScanDiff(System.String,System.DateTime,System.DateTime)">
+            <summary>
+            Returns the Image Scan diff.
+            </summary>
+            <param name="imageTag">The full image tag.</param>
+            <param name="date1">The first date to compare.</param>
+            <param name="date2">The second date to compare.</param>
+            <returns>The Image Scan diff.</returns>
+        </member>
         <member name="T:webapp.Controllers.v0._2.AuditsController">
             <summary>
             Audit data endpoints.
@@ -880,6 +929,28 @@
             Returns the component summary diff.
             </summary>
             <returns>the component summary diff.</returns>
+        </member>
+        <member name="M:webapp.Controllers.v0._2.AuditsController.GetImageScanHistory(System.String)">
+            <summary>
+            Returns the Image scans history.
+            </summary>
+            <param name="imageTag">Full image tag.</param>
+            <returns>The Image scans history.</returns>
+        </member>
+        <member name="M:webapp.Controllers.v0._2.AuditsController.GetImageScanDetail(System.String,System.Nullable{System.DateTime})">
+            <summary>
+            Returns the Image Scan detail.
+            </summary>
+            <returns>the component summary detail.</returns>
+        </member>
+        <member name="M:webapp.Controllers.v0._2.AuditsController.GetImageScanDiff(System.String,System.DateTime,System.DateTime)">
+            <summary>
+            Returns the Image Scan diff.
+            </summary>
+            <param name="imageTag">The full image tag.</param>
+            <param name="date1">The first date to compare.</param>
+            <param name="date2">The second date to compare.</param>
+            <returns>The Image Scan diff.</returns>
         </member>
         <member name="T:webapp.Database.ChecksCache">
             <summary>
@@ -1455,6 +1526,11 @@
             The status of image scan.
             </summary>
         </member>
+        <member name="P:webapp.Database.Models.ImageScanResult.Description">
+            <summary>
+            Human-readable description of the scan.
+            </summary>
+        </member>
         <member name="P:webapp.Database.Models.ImageScanResult.Counters">
             <summary>
             Counts issues by Severity.
@@ -1619,24 +1695,6 @@
         <member name="M:webapp.Database.MssqlJosekiDatabase.GetAuditedComponents(System.DateTime)">
             <inheritdoc />
         </member>
-        <member name="T:webapp.Exceptions.JosekiException">
-            <summary>
-            Custom exception for the project.
-            </summary>
-        </member>
-        <member name="M:webapp.Exceptions.JosekiException.#ctor(System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:webapp.Exceptions.JosekiException"/> class.
-            </summary>
-            <param name="message">Exception message.</param>
-        </member>
-        <member name="M:webapp.Exceptions.JosekiException.#ctor(System.String,System.Exception)">
-            <summary>
-            Initializes a new instance of the <see cref="T:webapp.Exceptions.JosekiException"/> class.
-            </summary>
-            <param name="message">Exception message.</param>
-            <param name="ex">Inner exception.</param>
-        </member>
         <member name="T:webapp.Handlers.GetComponentDetailsHandler">
             <summary>
             Prepares response to get-component-details request.
@@ -1656,6 +1714,40 @@
             <param name="componentId">Component identifier.</param>
             <param name="date">The date to get details for.</param>
             <returns>Component details.</returns>
+        </member>
+        <member name="T:webapp.Handlers.GetImageScanHandler">
+            <summary>
+            Prepares response to get-image-scan-details request.
+            </summary>0
+        </member>
+        <member name="M:webapp.Handlers.GetImageScanHandler.#ctor(joseki.db.JosekiDbContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Handlers.GetImageScanHandler"/> class.
+            </summary>
+            <param name="db">Joseki database object.</param>
+        </member>
+        <member name="M:webapp.Handlers.GetImageScanHandler.GetHistory(System.String)">
+            <summary>
+            Returns Image Scan details history for requested Tag.
+            </summary>
+            <param name="imageTag">Image full tag.</param>
+            <returns>Image scan details.</returns>
+        </member>
+        <member name="M:webapp.Handlers.GetImageScanHandler.GetDetails(System.String,System.DateTime)">
+            <summary>
+            Returns Image Scan details for requested Tag and Date.
+            </summary>
+            <param name="imageTag">Image full tag.</param>
+            <param name="date">The date to get details for.</param>
+            <returns>Image scan details.</returns>
+        </member>
+        <member name="M:webapp.Handlers.GetImageScanHandler.GetCounters(System.String,System.DateTime)">
+            <summary>
+            Returns only CVE counters for Image Scan at requested Date.
+            </summary>
+            <param name="imageTag">Image full tag.</param>
+            <param name="date">The date to get details for.</param>
+            <returns>Image scan details.</returns>
         </member>
         <member name="T:webapp.Handlers.GetInfrastructureHistoryHandler">
             <summary>
@@ -1998,6 +2090,152 @@
             <param name="type">type of collection.</param>
             <param name="name">name of collection.</param>
         </member>
+        <member name="T:webapp.Models.ContainerImageScanResult">
+            <summary>
+            Represents container image scan result.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.ContainerImageScanResult.Image">
+            <summary>
+            The full image name.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.ContainerImageScanResult.Date">
+            <summary>
+            The scan date.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.ContainerImageScanResult.ScanResult">
+            <summary>
+            Scan result.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.ContainerImageScanResult.Description">
+            <summary>
+            Description for Failed scans.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.ContainerImageScanResult.Counters">
+            <summary>
+            Counts issues by Severity.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.ContainerImageScanResult.Targets">
+            <summary>
+            List of scanned targets.
+            </summary>
+        </member>
+        <member name="T:webapp.Models.ContainerImageScanResultDiff">
+            <summary>
+            Represents scan result for the same image, but for two dates.
+            Used to display Image scan diff page.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.ContainerImageScanResultDiff.Scan1">
+            <summary>
+            The result of image scan at Date1.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.ContainerImageScanResultDiff.Scan2">
+            <summary>
+            The result of image scan at Date2.
+            </summary>
+        </member>
+        <member name="T:webapp.Models.ScanResult">
+            <summary>
+            Scan result enum.
+            </summary>
+        </member>
+        <member name="F:webapp.Models.ScanResult.NotFound">
+            <summary>
+            Enum value when a scan was not found.
+            </summary>
+        </member>
+        <member name="F:webapp.Models.ScanResult.Failed">
+            <summary>
+            Enum value when a scan failed.
+            </summary>
+        </member>
+        <member name="F:webapp.Models.ScanResult.Succeeded">
+            <summary>
+            Enum value when a scan succeeded.
+            </summary>
+        </member>
+        <member name="T:webapp.Models.VulnerabilityCounters">
+            <summary>
+            Represents the amount of issues with a particular severity.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.VulnerabilityCounters.Severity">
+            <summary>
+            The CVE severity.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.VulnerabilityCounters.Count">
+            <summary>
+            Amount of CVEs with this severity.
+            </summary>
+        </member>
+        <member name="T:webapp.Models.ImageScanTarget">
+            <summary>
+            List of vulnerabilities in the scanned target (OS and application packages).
+            </summary>
+        </member>
+        <member name="P:webapp.Models.ImageScanTarget.Target">
+            <summary>
+            The target name. for example, OS name or ruby gems file.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.ImageScanTarget.Vulnerabilities">
+            <summary>
+            The list of found vulnerabilities.
+            </summary>
+        </member>
+        <member name="T:webapp.Models.VulnerabilityDescription">
+            <summary>
+            Single vulnerability details.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.VulnerabilityDescription.VulnerabilityID">
+            <summary>
+            CVE identifier.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.VulnerabilityDescription.PkgName">
+            <summary>
+            Package name, where CVE was discovered.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.VulnerabilityDescription.InstalledVersion">
+            <summary>
+            The version of package in container.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.VulnerabilityDescription.Remediation">
+            <summary>
+            the version of package, where the CVE was fixed.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.VulnerabilityDescription.Title">
+            <summary>
+            Short CVE title.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.VulnerabilityDescription.Description">
+            <summary>
+            Detailed CVE description.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.VulnerabilityDescription.Severity">
+            <summary>
+            The severity.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.VulnerabilityDescription.References">
+            <summary>
+            List of references with further information.
+            </summary>
+        </member>
         <member name="T:webapp.Models.CountersSummary">
             <summary>
             Represents short summary of check-result counters.
@@ -2211,26 +2449,6 @@
             <param name="id">id of Resource.</param>
             <param name="type">type of Resource.</param>
             <param name="name">name of Resource.</param>
-        </member>
-        <member name="T:webapp.Models.ScanResult">
-            <summary>
-            Scan result enum.
-            </summary>
-        </member>
-        <member name="F:webapp.Models.ScanResult.NotFound">
-            <summary>
-            Enum value when a scan was not found
-            </summary>
-        </member>
-        <member name="F:webapp.Models.ScanResult.Failed">
-            <summary>
-            Enum value when a scan faile d
-            </summary>
-        </member>
-        <member name="F:webapp.Models.ScanResult.Succeeded">
-            <summary>
-            Enum value when a scan succeeded
-            </summary>
         </member>
         <member name="T:webapp.Models.ScoreHistoryItem">
             <summary>
