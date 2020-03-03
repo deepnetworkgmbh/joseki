@@ -25,6 +25,11 @@ namespace webapp.Database.Models
         public ImageScanStatus Status { get; set; }
 
         /// <summary>
+        /// Human-readable description of the scan.
+        /// </summary>
+        public string Description { get; set; }
+
+        /// <summary>
         /// Counts issues by Severity.
         /// </summary>
         public VulnerabilityCounter[] Counters { get; set; }
