@@ -368,6 +368,11 @@
             The status of the Image Scan.
             </summary>
         </member>
+        <member name="P:joseki.db.entities.ImageScanResultEntity.Description">
+            <summary>
+            Human-readable description of the scan.
+            </summary>
+        </member>
         <member name="P:joseki.db.entities.ImageScanResultEntity.FoundCVEs">
             <summary>
             List of discovered vulnerabilities.

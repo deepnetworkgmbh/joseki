@@ -108,6 +108,7 @@ namespace webapp.Audits.Processors.trivy
                     auditMetadata.AuditResult,
                     auditMetadata.FailureDescription);
                 scanResult.Status = ImageScanStatus.Failed;
+                scanResult.Description = TrivyScanDescriptionNormalizer.ToHumanReadable(auditMetadata.FailureDescription);
             }
             else
             {
