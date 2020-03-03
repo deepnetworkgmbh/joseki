@@ -2,6 +2,7 @@ import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import { ChartService } from "@/services/ChartService"
 import Spinner from "@/components/spinner/Spinner.vue";
 import StatusBar from "@/components/statusbar/StatusBar.vue";
+import Score from "@/components/score/Score.vue";
 import { DataService } from '@/services/DataService';
 import { InfrastructureOverview, InfrastructureComponentSummary, InfrastructureComponent, CountersSummary, CheckSeverity } from '@/models/InfrastructureOverview';
 import { ScoreService } from '@/services/ScoreService';
@@ -9,7 +10,7 @@ import router from '@/router';
 import { MappingService } from '@/services/MappingService';
 
 @Component({
-    components: { Spinner, StatusBar }
+    components: { Spinner, StatusBar, Score }
 })
 export default class ComponentDetail extends Vue {
 
@@ -54,18 +55,18 @@ export default class ComponentDetail extends Vue {
         google.charts.setOnLoadCallback(this.drawCharts);
     }
 
-
     drawCharts() {
         this.selectedDate = this.date ?
             new Date(decodeURIComponent(this.date))
             : this.data.scoreHistory[0].recordedAt;
-        ChartService.drawPieChart(this.data.current, "overall_pie", 300)
-        ChartService.drawBarChart(this.data.scoreHistory, "overall_bar", this.selectedDate, this.dayClicked)
+        ChartService.drawPieChart(this.data.current, "overall_pie", 300);
+        ChartService.drawBarChart(this.data.scoreHistory, "overall_bar", this.selectedDate, this.dayClicked, 100, undefined, 4);
     }
 
     dayClicked(date: Date) {
         //console.log(`[] clicked ${date.toISOString()}`)
-        router.push('/overview/' + encodeURIComponent(date.toISOString()));
+        let params = this.id + '/' + this.selectedDate;
+        router.push('/component-detail/' + encodeURIComponent(params));
     }
 
     goComponentHistory() {
@@ -121,6 +122,7 @@ export default class ComponentDetail extends Vue {
 
     @Watch('id', { immediate: true })
     private onDateChanged(newValue: Date) {
+        console.log(`[] id changed, loading data`);
         this.loadData();
     }
 
