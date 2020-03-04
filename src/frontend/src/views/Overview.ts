@@ -60,7 +60,7 @@ export default class Overview extends Vue {
         ChartService.drawPieChart(this.data.overall.current, "overall_pie", 300)
         ChartService.drawBarChart(this.data.overall.scoreHistory, "overall_bar", _date, this.dayClicked, 100, undefined, 4)
         for (let i = 0; i < this.data.components.length; i++) {
-            ChartService.drawBarChart(this.data.components[i].scoreHistory, 'bar' + i, _date, undefined, 52);
+            ChartService.drawBarChart(this.data.components[i].scoreHistory, 'bar' + i, _date, this.goComponentDetail, 52, '', 0, this.data.components[i].component.id);
         }
     }
 
@@ -69,6 +69,10 @@ export default class Overview extends Vue {
         router.push('/overview/' + encodeURIComponent(date.toISOString()));
     }
 
+    goComponentDetail(date: Date, componentId: string) {
+        console.log(`[] go component detail`, componentId, date);
+        router.push('/component-detail/' + componentId + '/' + encodeURIComponent(date.toISOString()));
+    }
 
     goComponentHistory(component: InfrastructureComponent) {
         if (component) {
@@ -77,8 +81,6 @@ export default class Overview extends Vue {
             router.push('/component-history/');
         }
     }
-
-
 
     getArrowHtml(i: number) {
         const scans = this.data.overall.scoreHistory;
@@ -129,14 +131,6 @@ export default class Overview extends Vue {
     @Watch('date', { immediate: true })
     private onDateChanged(newValue: Date) {
         this.loadData();
-    }
-
-    @Watch('panelOpen', { immediate: true })
-    private onPanelToggled(newValue: boolean) {
-        if (newValue === false) {
-            this.checkedScans = [];
-        }
-        setTimeout(() => this.setupCharts(), 500);
     }
 
     getScoreIconClass(score: number) { return ScoreService.getScoreIconClass(score); }

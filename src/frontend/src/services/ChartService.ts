@@ -133,7 +133,8 @@ export class ChartService {
 		cb?: Function,
 		height: number = 100,
 		selected2: string = '',
-		gridlines: number = 0) {
+		gridlines: number = 0,
+		componentId: string = '') {
 
 		let element = document.getElementById(key) as any;
 
@@ -194,7 +195,8 @@ export class ChartService {
 			if (selectedItem && cb) {
 				let row = selectedItem.row as number;
 				var selectedDate = chart_data.getValue(row, 0);
-				cb(selectedDate);
+				cb(selectedDate, componentId);
+				console.log('[] callback called with params', selectedDate, componentId);
 			}
 		}
 
