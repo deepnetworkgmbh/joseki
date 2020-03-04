@@ -6,7 +6,6 @@ ul {
 label {
 	padding: 3px;
 	color: black;
-	width: 100%;
 	cursor: pointer;
 }
 li {
@@ -50,4 +49,15 @@ input[type="checkbox"]:checked + label:before {
 	content: "\f107";
 	font-family: "Font Awesome 5 Free";
 	font-weight: 900;
+}
+
+.limited-label {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	max-width: calc(100% - 220px);
+	display: block;
+	position: relative;
+	margin-top: -20px;
+	padding-left: 20px;
 }

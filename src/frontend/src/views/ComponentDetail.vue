@@ -85,26 +85,28 @@
     <div v-if="loaded" class="segment shadow" style="flex-direction:column">
       <h1 class="mb-2">Results by Resources</h1>
       <hr class='mb-2' />
+
       <ul v-for="(collection,i) in ResultsByCollection" :key="`collection${i}`">
-          <li style="margin-left:0;">
+          <li style="margin-left:10px;">
             <input type="checkbox" :id="`target${i}`" checked />
-            <label :for="`target${i}`" class="target">
-               <strong>{{ collection.type }}</strong> : {{ collection.name }}
+            <label :for="`target${i}`">
+               <strong>{{ collection.type }} :</strong>
                <Score :label='`Score`' :score='collection.score' />             
+                {{ collection.name }}
             </label>
             <StatusBar :counters="collection.counters" />
-            <ul v-for="(obj, g) in collection.objects" :key="`obj${i}-${g}`" style="border-bottom: dashed 1px #eee;">
-              <li style="margin-top:5px;margin-left:15px;">
+            <ul v-for="(obj, g) in collection.objects" :key="`obj${i}-${g}`">
+              <li style="margin-left:15px;">
                 <input type="checkbox" :id="`obj${i}-${g}`" />
-                <label :for="`obj${i}-${g}`" class="text-base">
-                   <strong>{{ obj.type }} : </strong>
+                <label :for="`obj${i}-${g}`" class="limited-label">
+                   <strong>{{ obj.type }} :</strong>
+                   <Score :label='`Score`' :score='obj.score' />         
                    {{ obj.name }}
                 </label>
-                <Score :label='`Score`' :score='obj.score' />         
-                <StatusBar :mini='false' :counters="obj.counters" style="margin-right:-5px;" />
+                <StatusBar :mini='false' :counters="obj.counters" style="margin-right:-5px;margin-top:-27px;" />
                 <ul v-for="(control, c) in obj.controls" 
-                   :key="`control${i}-${g}-${c}`" style="border:dashed 1px #eee">
-                  <li style="margin-left:5px;padding:4px;">
+                   :key="`control${i}-${g}-${c}`" style="border:dashed 1px #eee;margin-left:10px;">
+                  <li style="padding:2px;padding-left:0;margin-left:5px;margin-top:0px;margin-bottom:2px;">
                     <label :for="`control${i}-${g}-${c}`" class="text-sm">
                       <i :class="control.icon"></i>
                       <strong>{{ control.id }}</strong>
