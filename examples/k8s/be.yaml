@@ -5,7 +5,7 @@ metadata:
   namespace: joseki
   labels:
     app: joseki-backend
-    version: 0.2.5
+    version: 0.2.6
 data:
   config.yaml: |-
     database:
@@ -99,7 +99,7 @@ metadata:
   namespace: joseki
   labels:
     app: joseki-backend 
-    version: 0.2.5
+    version: 0.2.6
 spec:
   replicas: 1
   selector:
@@ -112,7 +112,7 @@ spec:
     spec:
       containers:
       - name: joseki-be
-        image: 'deepnetwork/joseki-backend:0.2.5'
+        image: 'deepnetwork/joseki-backend:0.2.6'
         imagePullPolicy: 'Always'
         name: joseki-be
         ports:

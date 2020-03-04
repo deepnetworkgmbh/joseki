@@ -79,6 +79,7 @@ namespace webapp.Handlers
                     i.Check.CheckId,
                     i.Check.Severity,
                     i.Check.Category,
+                    i.Check.Description,
                     i.Value,
                     i.Message,
                 })
@@ -109,6 +110,7 @@ namespace webapp.Handlers
                         break;
                 }
 
+                var message = entity.Message ?? entity.Description;
                 var (collection, resource) = ParseCollectionAndResource(entity.ComponentId);
                 checks.Add(new Check(
                     componentDetails.Component,
@@ -116,7 +118,7 @@ namespace webapp.Handlers
                     collection,
                     resource,
                     entity.Category,
-                    new CheckControl(entity.Category, entity.CheckId, entity.Message),
+                    new CheckControl(entity.Category, entity.CheckId, message),
                     checkResult));
             }
 
