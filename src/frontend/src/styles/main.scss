@@ -14,6 +14,7 @@ body {
 @import "expand.scss";
 @import url("https://use.fontawesome.com/releases/v5.8.1/css/all.css");
 @import url("https://fonts.googleapis.com/css?family=Noto+Sans&display=swap");
+@import 'balloon-css';
 
 .segment {
 	@apply flex flex-row justify-around border rounded-lg p-2 mb-3;
