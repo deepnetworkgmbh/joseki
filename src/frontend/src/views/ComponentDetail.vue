@@ -1,7 +1,7 @@
 <template>
   <div>
     <Spinner v-if="!loaded" />
-    <div v-if="loaded" class="segment shadow" style="min-height:300px">
+    <div v-show="loaded" class="segment shadow" style="min-height:300px">
       <div
         class="w-1/4 border-r border-gray-300 flex flex-col justify-center content-center"
         style="overflow:hidden;"
@@ -10,9 +10,7 @@
           <i :class="getScoreIconClass(data.current.score)"></i>
         </div>
         <div class="status-text">
-          <div
-            class="p-1 m-auto rounded-sm text-lg text-center -mt-8 mb-2 pb-4"
-          >{{ selectedDate | formatDate }}</div>
+          <div class="p-1 m-auto rounded-sm text-lg text-center -mt-8 mb-2 pb-4">{{ selectedDate | formatDate }}</div>
 
           <div class="flex flex-row xl:text-xl lg:text-lg md:text-sm">
             <div class="w-4/12 font-thin text-right mr-1 text-gray-600">Type:</div>
@@ -63,7 +61,7 @@
         </div>
       </div>
     </div>
-    <div v-if="loaded" class="segment shadow" style="flex-direction:column">
+    <div v-show="loaded" class="segment shadow" style="flex-direction:column">
       <h1 class="mb-2">Results By Category</h1>
       <hr class='mb-2' />
       <div v-for="(category,i) in ResultsByCategory" :key="`category${i}`">
@@ -82,7 +80,7 @@
         </ul>
       </div>      
     </div>
-    <div v-if="loaded" class="segment shadow" style="flex-direction:column">
+    <div v-show="loaded" class="segment shadow" style="flex-direction:column">
       <h1 class="mb-2">Results by Resources</h1>
       <hr class='mb-2' />
 

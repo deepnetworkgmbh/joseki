@@ -28,23 +28,23 @@ export default class ComponentDetail extends Vue {
     panelOpen: boolean = false;
     checkedScans: any[] = [];
 
-
     created() {
         window.addEventListener("resize", this.setupCharts);
     }
 
     loadData() {
+        console.log(`[] id = `, this.id);
         let dateString = (this.date === null) ? '' : this.date;
-        this.service.getComponentDetailData(this.id, dateString)
+        this.service.getComponentDetailData(decodeURIComponent(this.id), dateString)
             .then(response => {
-                this.data = response;
-                console.log(`[] data is`, this.data);
-                this.data.scoreHistory = this.data.scoreHistory.reverse();
-                this.loaded = true;
-                this.setupCharts();
+                if (response) {
+                    this.data = response;
+                    console.log(`[] data is`, this.data);
+                    this.setupCharts();
+                    this.loaded = true;
+                }
             });
     }
-
 
     destroyed() {
         window.removeEventListener("resize", this.setupCharts);
@@ -56,17 +56,14 @@ export default class ComponentDetail extends Vue {
     }
 
     drawCharts() {
-        this.selectedDate = this.date ?
-            new Date(decodeURIComponent(this.date))
-            : this.data.scoreHistory[0].recordedAt;
+        this.selectedDate = this.date ? new Date(decodeURIComponent(this.date)) : this.data.scoreHistory[0].recordedAt;
         ChartService.drawPieChart(this.data.current, "overall_pie", 300);
-        ChartService.drawBarChart(this.data.scoreHistory, "overall_bar", this.selectedDate, this.dayClicked, 100, undefined, 4);
+        ChartService.drawBarChart(this.data.scoreHistory, "overall_bar", this.selectedDate, this.dayClicked, 100, undefined, 4, this.data.component.id);
     }
 
-    dayClicked(date: Date) {
-        //console.log(`[] clicked ${date.toISOString()}`)
-        let params = this.id + '/' + this.selectedDate;
-        router.push('/component-detail/' + encodeURIComponent(params));
+    dayClicked(date: Date, component: string) {
+        router.push('/component-detail/' + encodeURIComponent(component) + '/' + encodeURIComponent(date.toISOString()));
+        //router.push({ name: 'ComponentDetail', params: { id: this.id, date: date.toISOString() } });
     }
 
     goComponentHistory() {
@@ -101,30 +98,16 @@ export default class ComponentDetail extends Vue {
         router.push('/overview-history/');
     }
 
-    getPanelClass() {
-        this.$emit(this.panelOpen ? 'sideWindowOpened' : 'sideWindowClosed');
-        return this.panelOpen ? 'right-menu-open' : 'right-menu';
-    }
-
-    canCompare(): boolean {
-        return this.checkedScans.length !== 2;
-    }
-
-    checkDisabled(i: number, val: string) {
-        return this.checkedScans.length > 1 && this.checkedScans.indexOf(val) === -1
-    }
-
-    CompareScans() {
-        console.log(`[] comparing ${this.checkedScans}`);
-        const params = encodeURIComponent(this.checkedScans[1]) + '/' + encodeURIComponent(this.checkedScans[0]);
-        router.push('/overview-diff/' + params);
-    }
-
     @Watch('id', { immediate: true })
-    private onDateChanged(newValue: Date) {
-        console.log(`[] id changed, loading data`);
+    private onIdChanged(newValue: string) {
         this.loadData();
     }
+
+    @Watch('date', { immediate: true })
+    private onDateChanged(newValue: Date) {
+        this.loadData();
+    }
+
 
     getScoreIconClass(score: number) { return ScoreService.getScoreIconClass(score); }
     getGrade(score: number) { return ScoreService.getGrade(score); }
