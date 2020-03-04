@@ -21,6 +21,10 @@ export default class InfComponent extends Vue {
   @Prop()
   private index: any;
 
+  @Prop()
+  private date: any;
+
+
   private showButtons: boolean = true;
 
 
@@ -33,11 +37,11 @@ export default class InfComponent extends Vue {
     }
   }
 
-  goComponentDetail(component: InfrastructureComponent, date: string) {
+  goComponentDetail(component: InfrastructureComponent) {
     console.log(`going component detail: ${component.id}`);
-    let params = component.id;
-    if (date) {
-      params += '/' + date;
+    let params = encodeURIComponent(component.id);
+    if (this.date) {
+      params += '/' + encodeURIComponent(this.date);
     }
     router.push('/component-detail/' + params);
   }

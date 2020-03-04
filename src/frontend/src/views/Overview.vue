@@ -68,6 +68,7 @@
           :sections="c.sections"
           :score="c.current.score"
           :total="c.current.total"
+          :date="date"
           :index="i"
         ></InfComponent>        
       </div>

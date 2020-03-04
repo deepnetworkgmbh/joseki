@@ -216,17 +216,38 @@ export class DataService {
       .finally(() => console.log("component history request finished."));
   }
 
-  public async getComponentDetailData(id: string, date: string) {
+  public async getComponentDetailData(id: string, date: string = ''): Promise<void | InfrastructureComponentSummary> {
     let suffix = '?id=' + encodeURIComponent(id);
-    if (date != undefined) {
-      suffix += '&date=' + date;
+    if (date === '') {
+      suffix += '&date=' + encodeURIComponent(date);
     }
+
     console.log(`[] calling api/audits/component/detail` + suffix);
     return axios
       .get(this.baseUrl + "/api/audits/component/detail" + suffix)
       .then((response) => response.data)
+      .then((data) => processData(data))
       .catch((error) => console.log(error))
       .finally(() => console.log("component history detail finished."));
+
+    // TODO: move this method to InfrastructureComponentSummary() 
+    function processData(data): InfrastructureComponentSummary {
+      let result = <InfrastructureComponentSummary>data;
+      if (result.component.category === 'Subscription') {
+        result.component.category = 'Azure Subscription';
+      }
+      result.sections = InfrastructureComponentSummary.getSections(result.current);
+      result.scoreHistory = result.scoreHistory.reverse().slice(0, 14);
+
+      // truncate scan times from component history
+      for (let j = 0; j < result.scoreHistory.length; j++) {
+        let inputDate = result.scoreHistory[j].recordedAt.toString();
+        let dateReplacement = new Date(inputDate.split('T')[0] + 'T00:00:00');
+        result.scoreHistory[j].recordedAt = dateReplacement;
+      }
+      return result;
+    }
+
   }
 
   public async getComponentDiffData(id: string, date1: string, date2: string) {
