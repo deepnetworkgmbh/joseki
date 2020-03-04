@@ -86,7 +86,7 @@
       <h1 class="mb-2">Results by Resources</h1>
       <hr class='mb-2' />
       <ul v-for="(collection,i) in ResultsByCollection" :key="`collection${i}`">
-          <li>
+          <li style="margin-left:0;">
             <input type="checkbox" :id="`target${i}`" checked />
             <label :for="`target${i}`" class="target">
                <strong>{{ collection.type }}</strong> : {{ collection.name }}
@@ -94,7 +94,7 @@
             </label>
             <StatusBar :counters="collection.counters" />
             <ul v-for="(obj, g) in collection.objects" :key="`obj${i}-${g}`" style="border-bottom: dashed 1px #eee;">
-              <li style="margin-top:5px;margin-left:5px;">
+              <li style="margin-top:5px;margin-left:15px;">
                 <input type="checkbox" :id="`obj${i}-${g}`" />
                 <label :for="`obj${i}-${g}`" class="text-base">
                    <strong>{{ obj.type }} : </strong>
@@ -103,12 +103,12 @@
                 <Score :label='`Score`' :score='obj.score' />         
                 <StatusBar :mini='false' :counters="obj.counters" style="margin-right:-5px;" />
                 <ul v-for="(control, c) in obj.controls" 
-                   :key="`control${i}-${g}-${c}`" style="border-bottom: dashed 1px #eee;">
-                  <li style="margin-left:5px;">
+                   :key="`control${i}-${g}-${c}`" style="border:dashed 1px #eee">
+                  <li style="margin-left:5px;padding:4px;">
                     <label :for="`control${i}-${g}-${c}`" class="text-sm">
-                       <i :class="control.icon"></i>
-                      <i>{{ control.id }}</i> : {{ control.text }}
-                       <span class="tool" :data-tip="control.text">
+                      <i :class="control.icon"></i>
+                      <strong>{{ control.id }}</strong>
+                      <span class="ml-1" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="control.text">
                         <i class="far fa-question-circle tip-icon"></i>
                       </span>
                     </label>
