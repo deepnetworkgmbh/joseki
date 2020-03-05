@@ -74,33 +74,33 @@ export class MappingService {
 
         // walk over all checks and group them by collections.
         for (let i = 0; i < checks.length; i++) {
-            let row = checks[i]
+            let check = checks[i]
 
-            if (results.findIndex(x => x.name === row.collection.name) === -1) {
+            if (results.findIndex(x => x.name === check.collection.name) === -1) {
                 results.push({
-                    name: row.collection.name,
-                    type: row.collection.type,
+                    name: check.collection.name,
+                    type: check.collection.type,
                     counters: new CountersSummary(),
                     score: 0,
                     objects: [],
                 })
             }
 
-            const collectionIndex = results.findIndex(x => x.name === row.collection.name)
+            const collectionIndex = results.findIndex(x => x.name === check.collection.name)
 
-            if (results[collectionIndex].objects.findIndex(x => x.id === row.resource.id) === -1) {
+            if (results[collectionIndex].objects.findIndex(x => x.id === check.resource.id) === -1) {
                 results[collectionIndex].objects.push({
-                    id: row.resource.id,
-                    type: row.resource.type,
-                    name: row.resource.name,
+                    id: check.resource.id,
+                    type: check.resource.type,
+                    name: check.resource.name,
                     controls: [],
                     counters: new CountersSummary(),
                 })
             }
 
-            const objectIndex = results[collectionIndex].objects.findIndex(x => x.id == row.resource.id)
+            const objectIndex = results[collectionIndex].objects.findIndex(x => x.id == check.resource.id)
 
-            switch (row.result.toString()) {
+            switch (check.result.toString()) {
                 case 'Failed':
                     results[collectionIndex].counters.failed += 1
                     results[collectionIndex].objects[objectIndex].counters.failed += 1
@@ -122,13 +122,15 @@ export class MappingService {
             results[collectionIndex].counters.total += 1
             results[collectionIndex].objects[objectIndex].counters.total += 1
 
-            results[collectionIndex].objects[objectIndex].controls.push({
-                id: row.control.id,
-                text: row.control.message,
-                result: row.result,
-                icon: this.getControlIcon(row.result),
-                order: this.getSeverityScore(row.result),
-            })
+            let control = {
+                id: check.control.id,
+                text: check.control.message,
+                result: check.result,
+                icon: this.getControlIcon(check.result),
+                order: this.getSeverityScore(check.result),
+                tags: check.tags
+            };
+            results[collectionIndex].objects[objectIndex].controls.push(control);
         }
 
         // sort objects by severity

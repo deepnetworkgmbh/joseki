@@ -74,6 +74,10 @@ export default class ComponentDetail extends Vue {
         }
     }
 
+    goToImageScan(imageTag:string) {
+        console.log(`[] current date`, this.selectedDate);       
+        router.push('/image-detail/' + encodeURIComponent(imageTag) + '/' + encodeURIComponent(this.selectedDate.toDateString()));
+    }
 
     getArrowHtml(i: number) {
         const scans = this.data.scoreHistory;

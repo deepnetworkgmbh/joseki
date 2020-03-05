@@ -17,6 +17,9 @@ export default class Overview extends Vue {
     @Prop({ default: null })
     date!: string;
 
+    selectedDate?: Date = new Date();
+
+    selectedDat
     loaded: boolean = false;
     service: DataService = new DataService();
     data: InfrastructureOverview = new InfrastructureOverview();
@@ -53,14 +56,14 @@ export default class Overview extends Vue {
 
 
     drawCharts() {
-        let _date = this.date ?
+        this.selectedDate = this.date ?
             new Date(decodeURIComponent(this.date))
             : this.data.overall.scoreHistory[0].recordedAt;
 
         ChartService.drawPieChart(this.data.overall.current, "overall_pie", 300)
-        ChartService.drawBarChart(this.data.overall.scoreHistory, "overall_bar", _date, this.dayClicked, 100, undefined, 4)
+        ChartService.drawBarChart(this.data.overall.scoreHistory, "overall_bar", this.selectedDate, this.dayClicked, 100, undefined, 4)
         for (let i = 0; i < this.data.components.length; i++) {
-            ChartService.drawBarChart(this.data.components[i].scoreHistory, 'bar' + i, _date, this.goComponentDetail, 52, '', 0, this.data.components[i].component.id);
+            ChartService.drawBarChart(this.data.components[i].scoreHistory, 'bar' + i, this.selectedDate, this.goComponentDetail, 52, '', 0, this.data.components[i].component.id);
         }
     }
 
