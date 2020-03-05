@@ -112,14 +112,24 @@ namespace webapp.Handlers
 
                 var message = entity.Message ?? entity.Description;
                 var (collection, resource) = ParseCollectionAndResource(entity.ComponentId);
-                checks.Add(new Check(
-                    componentDetails.Component,
+                var check = new Check(
                     date,
                     collection,
                     resource,
                     entity.Category,
-                    new CheckControl(entity.Category, entity.CheckId, message),
-                    checkResult));
+                    new CheckControl(entity.CheckId, message),
+                    checkResult);
+
+                const string imageToken = "/image/";
+                var imageTagIndex = entity.ComponentId.IndexOf(imageToken, StringComparison.InvariantCultureIgnoreCase);
+
+                if (imageTagIndex > 0)
+                {
+                    var imageTag = entity.ComponentId.Substring(imageTagIndex + imageToken.Length);
+                    check.Tags.Add("imageTag", imageTag);
+                }
+
+                checks.Add(check);
             }
 
             componentDetails.Checks = checks.ToArray();

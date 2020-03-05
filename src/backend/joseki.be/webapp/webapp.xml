@@ -1956,11 +1956,6 @@
             Check against a component.
             </summary>
         </member>
-        <member name="P:webapp.Models.Check.Id">
-            <summary>
-            unique id of the check.
-            </summary>
-        </member>
         <member name="P:webapp.Models.Check.Date">
             <summary>
             the date of the check.
@@ -1978,12 +1973,6 @@
             category of the check
             kubernetes: polaris/trivy category.
             azks: feature name.
-            </summary>
-        </member>
-        <member name="P:webapp.Models.Check.Component">
-            <summary>
-            The parent infrastructure component.
-            k8s cluster or az subscription.
             </summary>
         </member>
         <member name="P:webapp.Models.Check.Resource">
@@ -2005,7 +1994,12 @@
             Result of the check.
             </summary>
         </member>
-        <member name="M:webapp.Models.Check.#ctor(webapp.Models.InfrastructureComponent,System.DateTime,webapp.Models.Collection,webapp.Models.Resource,System.String,webapp.Models.CheckControl,webapp.Models.CheckResult)">
+        <member name="P:webapp.Models.Check.Tags">
+            <summary>
+            Key-value pairs with custom labels/tags/attributes.
+            </summary>
+        </member>
+        <member name="M:webapp.Models.Check.#ctor(System.DateTime,webapp.Models.Collection,webapp.Models.Resource,System.String,webapp.Models.CheckControl,webapp.Models.CheckResult)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Models.Check"/> class.
             create unique id on constructor.
@@ -2027,18 +2021,12 @@
             Message of the control.
             </summary>
         </member>
-        <member name="P:webapp.Models.CheckControl.Category">
-            <summary>
-            Category of the control.
-            </summary>
-        </member>
-        <member name="M:webapp.Models.CheckControl.#ctor(System.String,System.String,System.String)">
+        <member name="M:webapp.Models.CheckControl.#ctor(System.String,System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Models.CheckControl"/> class.
             control constructor.
             </summary>
             <param name="id">id of control.</param>
-            <param name="category">category of control.</param>
             <param name="message">message of control.</param>
         </member>
         <member name="T:webapp.Models.CheckResult">
@@ -2376,11 +2364,6 @@
             If no data for a day - places 0.
             </summary>
         </member>
-        <member name="P:webapp.Models.InfrastructureComponentSummaryWithHistory.ScoreTrend">
-            <summary>
-            Pre-calculated parameters for drawing trend line.
-            </summary>
-        </member>
         <member name="T:webapp.Models.InfrastructureOverview">
             <summary>
             Returns infrastructure summary: scores by category, counters, etc.
@@ -2476,30 +2459,6 @@
             <summary>
             Score value.
             </summary>
-        </member>
-        <member name="T:webapp.Models.Trend">
-            <summary>
-            Holds properties to draw a straight trend line.
-            Current version is based on https://math.stackexchange.com/a/204021
-            TODO: figure out the right trend formula. (base on diffs, moving-averages?).
-            </summary>
-        </member>
-        <member name="P:webapp.Models.Trend.Slope">
-            <summary>
-            The slope of the trend line.
-            </summary>
-        </member>
-        <member name="P:webapp.Models.Trend.Offset">
-            <summary>
-            The offset of the trend line.
-            </summary>
-        </member>
-        <member name="M:webapp.Models.Trend.GetTrend(webapp.Models.ScoreHistoryItem[])">
-            <summary>
-            Calculates Trend parameters for subset of score values.
-            </summary>
-            <param name="values">The score values.</param>
-            <returns>Trend object.</returns>
         </member>
         <member name="T:webapp.Program">
             <summary>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace webapp.Models
 {
@@ -7,11 +8,6 @@ namespace webapp.Models
     /// </summary>
     public class Check
     {
-        /// <summary>
-        /// unique id of the check.
-        /// </summary>
-        public string Id { get; }
-
         /// <summary>
         /// the date of the check.
         /// </summary>
@@ -30,12 +26,6 @@ namespace webapp.Models
         /// azks: feature name.
         /// </summary>
         public string Category { get; set; }
-
-        /// <summary>
-        /// The parent infrastructure component.
-        /// k8s cluster or az subscription.
-        /// </summary>
-        public InfrastructureComponent Component { get; set; }
 
         /// <summary>
         /// the resource of check made against.
@@ -57,19 +47,23 @@ namespace webapp.Models
         public CheckResult Result { get; set; }
 
         /// <summary>
+        /// Key-value pairs with custom labels/tags/attributes.
+        /// </summary>
+        public Dictionary<string, string> Tags { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Check"/> class.
         /// create unique id on constructor.
         /// </summary>
-        public Check(InfrastructureComponent component, DateTime date, Collection collection, Resource resource, string category, CheckControl control, CheckResult result)
+        public Check(DateTime date, Collection collection, Resource resource, string category, CheckControl control, CheckResult result)
         {
-            this.Id = Guid.NewGuid().ToString();
-            this.Component = component;
             this.Date = date;
             this.Category = category;
             this.Collection = collection;
             this.Control = control;
             this.Result = result;
             this.Resource = resource;
+            this.Tags = new Dictionary<string, string>();
         }
     }
 }

@@ -38,10 +38,5 @@ namespace webapp.Models
         /// If no data for a day - places 0.
         /// </summary>
         public ScoreHistoryItem[] ScoreHistory { get; set; }
-
-        /// <summary>
-        /// Pre-calculated parameters for drawing trend line.
-        /// </summary>
-        public Trend ScoreTrend { get; set; }
     }
 }
