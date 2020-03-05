@@ -218,17 +218,17 @@ export class DataService {
 
   public async getComponentDetailData(id: string, date: string = ''): Promise<void | InfrastructureComponentSummary> {
     let suffix = '?id=' + encodeURIComponent(id);
-    if (date === '') {
+    if (date !== '' && date.indexOf('1970') === -1) {
       suffix += '&date=' + encodeURIComponent(date);
     }
-
-    console.log(`[] calling api/audits/component/detail` + suffix);
+    let url = this.baseUrl + "/api/audits/component/detail" + suffix;
+    console.log(`[] url`, url);
     return axios
-      .get(this.baseUrl + "/api/audits/component/detail" + suffix)
+      .get(url)
       .then((response) => response.data)
       .then((data) => processData(data))
       .catch((error) => console.log(error))
-      .finally(() => console.log("component history detail finished."));
+      .finally(() => console.log("[] returning InfrastructureComponentSummary."));
 
     // TODO: move this method to InfrastructureComponentSummary() 
     function processData(data): InfrastructureComponentSummary {

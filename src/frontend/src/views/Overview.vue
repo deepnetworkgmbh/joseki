@@ -36,7 +36,7 @@
       <div class="w-1/4 border-l border-gray-300" style="z-index:10;">
         <div class="w-auto p-2 ml-1 mb-2">
           <div class='text-center text-xs font-bold'>Scan History</div>
-          <div id="overall_bar" style="width:100%;border-bottom:solid 1px #ccc;padding-bottom:0px;"></div>
+          <div id="overall_bar" style="width:100%;"></div>
         </div>
         <div class="m-3 mt-0">
           <div class='text-center text-xs font-bold border-b border-gray-500'>Last 5 scans</div>
@@ -48,16 +48,12 @@
                 <td class="w-1" v-html="getArrowHtml(i)"></td>
               </tr>
             </tbody>
-            <tfoot class='border-t border-gray-500'>
-              <tr>
-                <td colspan="3" class="text-right">
-                  <button class="btn mt-2" @click="goComponentHistory()">
-                    <span class="px-4"><i class="fas fa-history pr-2"></i>See Scan History</span>
-                  </button>
-                </td>
-              </tr>
-            </tfoot>
           </table>
+          <div class="text-right">
+            <button class="btn mt-2" @click="goComponentHistory()">
+              <span class="px-4"><i class="fas fa-history pr-2"></i>See Scan History</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
