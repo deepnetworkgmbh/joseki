@@ -157,53 +157,33 @@ export class CountersSummary {
 }
 
 export class Check {
-    /// <summary>
-    /// unique id of the check.
-    /// </summary>
-    public id: string = '';
 
-    /// <summary>
     /// the date of the check.
-    /// </summary>
     public date: Date = new Date();
 
-    /// <summary>
     /// Name of the collection.
     /// kubernetes: namespace.
     /// azks: resource-group.
-    /// </summary>
     public collection: Collection = new Collection();
 
-    /// <summary>
     /// category of the check
     /// kubernetes: polaris/trivy category.
     /// azks: feature name.
-    /// </summary>
     public category: string = '';
 
-    /// <summary>
-    /// The object to be checked.
-    /// k8s: object (deployment, pod, service etc).
-    /// azks: resource (keyvault etc).
-    /// </summary>
-    public object: InfrastructureComponent = new InfrastructureComponent();
-
-    /// <summary>
     /// The control name of the check.
     /// k8s: polaris `check` name.
     /// azks: azks `control` name.
-    /// </summary>
     public control: CheckControl = new CheckControl();
 
-    /// <summary>
     /// Result of the check.
-    /// </summary>
     public result: CheckSeverity = CheckSeverity.NoData;
 
-    /// <summary>
     /// Resource of the check.
-    /// </summary>
     public resource: Resource = new Resource()
+
+    /// Tag for check
+    public tags: any;
 }
 
 /// <summary>

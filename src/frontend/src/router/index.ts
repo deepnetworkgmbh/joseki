@@ -57,7 +57,7 @@ const routes = [
     component: ImageOverview
   },
   {
-    path: "/image-detail/:imageid",
+    path: "/image-detail/:imageid/:date",
     name: "ImageDetail",
     component: ImageDetail,
     props: true

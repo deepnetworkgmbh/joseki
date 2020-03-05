@@ -7,16 +7,21 @@ import { ImageScanDetailModel } from '@/models/InfrastructureOverview';
   components: { Spinner }
 })
 export default class ImageDetail extends Vue {
-  @Prop({ default: "" })
+  @Prop()
   imageid!: string;
+
+  @Prop({ default: null })
+  date!: string;
+
   loaded: boolean = false;
   service: DataService = new DataService();
   data: ImageScanDetailModel = new ImageScanDetailModel();
 
   created() {
-    this.imageid = decodeURIComponent(this.$route.params.imageid);
-    console.log(`getting data for image ${this.imageid}`);
-    this.service.getImageScanResultData(this.imageid).then(response => {
+    //this.id = decodeURIComponent(this.$route.params.imageid);
+    const dateString = new Date(this.date).toDateString();
+    console.log(`getting data for image ${this.imageid} with date ${dateString}`);
+    this.service.getImageScanResultData(this.imageid, dateString).then(response => {
       this.data = this.service.regroupDataBySeverities(response);
       this.loaded = true;
       console.log(this.data);
