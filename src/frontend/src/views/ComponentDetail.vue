@@ -48,23 +48,19 @@
                 <td class="w-1" v-html="getArrowHtml(i)"></td>
               </tr>
             </tbody>
-            <tfoot class='border-t border-gray-500'>
-              <tr>
-                <td colspan="3" class="text-right">
-                  <button class="btn mt-2" @click="goComponentHistory()">
-                    <span class="px-4"><i class="fas fa-history pr-2"></i>See Scan History</span>
-                  </button>
-                </td>
-              </tr>
-            </tfoot>
           </table>
+          <div class="text-right">
+            <button class="btn mt-2" @click="goComponentHistory()">
+              <span class="px-4"><i class="fas fa-history pr-2"></i>See Scan History</span>
+            </button>
+          </div>  
         </div>
       </div>
     </div>
     <div v-show="loaded" class="segment shadow" style="flex-direction:column">
       <h1 class="mb-2">Results By Category</h1>
       <hr class='mb-2' />
-      <div v-for="(category,i) in ResultsByCategory" :key="`category${i}`">
+      <div v-for="(category,i) in getResultsByCategory(data)" :key="`category${i}`">
         <ul>
           <li>
             <input type="checkbox" v-bind:id="`cat${i}`" />
@@ -84,7 +80,7 @@
       <h1 class="mb-2">Results by Resources</h1>
       <hr class='mb-2' />
 
-      <ul v-for="(collection,i) in ResultsByCollection" :key="`collection${i}`">
+      <ul v-for="(collection,i) in getResultsByCollection(data)" :key="`collection${i}`">
           <li style="margin-left:10px;">
             <input type="checkbox" :id="`target${i}`" checked />
             <label :for="`target${i}`">

@@ -65,13 +65,12 @@ export default class Overview extends Vue {
     }
 
     dayClicked(date: Date) {
-        //console.log(`[] clicked ${date.toISOString()}`)
-        router.push('/overview/' + encodeURIComponent(date.toISOString()));
+        router.push('/overview/' + encodeURIComponent(date.toDateString()));
     }
 
     goComponentDetail(date: Date, componentId: string) {
         console.log(`[] go component detail`, componentId, date);
-        router.push('/component-detail/' + componentId + '/' + encodeURIComponent(date.toISOString()));
+        router.push('/component-detail/' + componentId + '/' + encodeURIComponent(date.toDateString()));
     }
 
     goComponentHistory(component: InfrastructureComponent) {

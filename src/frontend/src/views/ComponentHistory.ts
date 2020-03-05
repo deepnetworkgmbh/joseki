@@ -41,7 +41,7 @@ export default class ComponentHistory extends Vue {
     }
 
     dayClicked(date: Date) {
-        router.push('/overview/' + encodeURIComponent(date.toISOString()));
+        router.push('/overview/' + encodeURIComponent(date.toDateString()));
     }
 
     getArrowHtml(i: number) {
