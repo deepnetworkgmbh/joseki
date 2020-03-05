@@ -451,6 +451,34 @@
             Reference to Image Scan Result object.
             </summary>
         </member>
+        <member name="T:joseki.db.entities.KnowledgebaseEntity">
+            <summary>
+            The entity represents a single Knowledge-base item.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.KnowledgebaseEntity.Id">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.KnowledgebaseEntity.DateUpdated">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.KnowledgebaseEntity.DateCreated">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.KnowledgebaseEntity.ChangedBy">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.KnowledgebaseEntity.ItemId">
+            <summary>
+            External knowledge-base identifier.
+            the id consist of a several sections separated with '/'.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.KnowledgebaseEntity.Content">
+            <summary>
+            The knowledge-base item content.
+            </summary>
+        </member>
         <member name="T:joseki.db.entities.MetadataAzureEntity">
             <summary>
             Json-serialized azure metadata, actual at a particular audit time.
@@ -576,6 +604,11 @@
         <member name="P:joseki.db.JosekiDbContext.ImageScanResultToCve">
             <summary>
             Image Scan Result to Cve table.
+            </summary>
+        </member>
+        <member name="P:joseki.db.JosekiDbContext.Knowledgebase">
+            <summary>
+            Knowledge-base table.
             </summary>
         </member>
         <member name="M:joseki.db.JosekiDbContext.SaveChangesAsync(System.Threading.CancellationToken)">
