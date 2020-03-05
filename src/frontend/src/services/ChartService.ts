@@ -160,14 +160,13 @@ export class ChartService {
 			hAxis: {
 				title: '',
 				gridlines: { count: 0 },
-				baselineColor: '#fff',
 				//gridlineColor: '#fff',
 			},
 			vAxis: {
-				baselineColor: '#fff',
+				baselineColor: '#ccc',
 				format: '',
-				//gridlineColor: '#fff',
-				textPosition: 'left',
+				gridlineColor: '#eee',
+				textPosition: gridlines === 0 ? 'none' : 'left',
 				viewWindow: {
 					max: 100,
 					min: 0
@@ -181,7 +180,7 @@ export class ChartService {
 			legend: { position: 'none' },
 			orientation: 'horizontal',
 			chartArea: {
-				width: '89%',
+				width: '79%',
 				height: '90%'
 			},
 		};
