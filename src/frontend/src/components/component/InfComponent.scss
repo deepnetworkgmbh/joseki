@@ -1,5 +1,5 @@
 .inf-component {
-	width: 300px;
+	width: 280px;
 	height: 100px;
 	background-color: #eee;
 	border: solid 1px #aaa;
@@ -18,14 +18,14 @@
 	}
 
 	&-right {
-		width: 100px;
+		width: 90px;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 	}
 
 	&-info {
-		max-width: 170px;
+		max-width: 125px;
 		padding-left: 4px;
 	}
 

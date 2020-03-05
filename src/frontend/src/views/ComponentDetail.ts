@@ -20,7 +20,7 @@ export default class ComponentDetail extends Vue {
     @Prop({ default: null })
     date!: string;
 
-    selectedDate: Date = new Date();
+    selectedDate?: Date = new Date(this.date);
 
     loaded: boolean = false;
     service: DataService = new DataService();
@@ -33,8 +33,8 @@ export default class ComponentDetail extends Vue {
     }
 
     loadData() {
-        console.log(`[] id = `, this.id);
-        let dateString = (this.date === null) ? '' : this.date;
+        console.log(`[] id = `, decodeURIComponent(this.id));
+        let dateString = (this.selectedDate === undefined) ? '' : this.selectedDate.toDateString();
         this.service.getComponentDetailData(decodeURIComponent(this.id), dateString)
             .then(response => {
                 if (response) {
@@ -56,14 +56,17 @@ export default class ComponentDetail extends Vue {
     }
 
     drawCharts() {
-        this.selectedDate = this.date ? new Date(decodeURIComponent(this.date)) : this.data.scoreHistory[0].recordedAt;
+        if(this.selectedDate === undefined) {
+            this.selectedDate = this.date ? new Date(decodeURIComponent(this.date)) : this.data.scoreHistory[0].recordedAt;
+        }
         ChartService.drawPieChart(this.data.current, "overall_pie", 300);
         ChartService.drawBarChart(this.data.scoreHistory, "overall_bar", this.selectedDate, this.dayClicked, 100, undefined, 4, this.data.component.id);
     }
 
     dayClicked(date: Date, component: string) {
-        router.push('/component-detail/' + encodeURIComponent(component) + '/' + encodeURIComponent(date.toISOString()));
-        //router.push({ name: 'ComponentDetail', params: { id: this.id, date: date.toISOString() } });
+        console.log(`[] dayClicked ${date}`)
+        this.selectedDate = date;
+        router.push('/component-detail/' + encodeURIComponent(component) + '/' + encodeURIComponent(date.toDateString()));
     }
 
     goComponentHistory() {
@@ -98,11 +101,6 @@ export default class ComponentDetail extends Vue {
         router.push('/overview-history/');
     }
 
-    @Watch('id', { immediate: true })
-    private onIdChanged(newValue: string) {
-        this.loadData();
-    }
-
     @Watch('date', { immediate: true })
     private onDateChanged(newValue: Date) {
         this.loadData();
@@ -111,9 +109,7 @@ export default class ComponentDetail extends Vue {
 
     getScoreIconClass(score: number) { return ScoreService.getScoreIconClass(score); }
     getGrade(score: number) { return ScoreService.getGrade(score); }
-
-    get ResultsByCategory() { return MappingService.getResultsByCategory(this.data.checks); }
-    get ResultsByCollection() { return MappingService.getResultsByCollection(this.data.checks); }
-
+    getResultsByCategory(data: InfrastructureComponentSummary) { return MappingService.getResultsByCategory(data.checks); }
+    getResultsByCollection(data: InfrastructureComponentSummary) { return MappingService.getResultsByCollection(data.checks); }
 
 }
