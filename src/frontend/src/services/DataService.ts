@@ -38,8 +38,8 @@ export class DataService {
   }
 
   public async getImageScanResultData(imageTag: string, date: string) {
-    const suffix = "?imageTag=" + this.fixedEncodeURIComponent(imageTag) + '&date=' +  encodeURIComponent(date);
-    const url = this.baseUrl + "/api/container-image/details/" + suffix;
+    const suffix = this.fixedEncodeURIComponent(imageTag) + '/details/?date=' +  encodeURIComponent(date);
+    const url = this.baseUrl + "/api/audits/container-image/" + suffix;
     console.log(`[] calling ${url}`);
     return axios
       .get(url)
