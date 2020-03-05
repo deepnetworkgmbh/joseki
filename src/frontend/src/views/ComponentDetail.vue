@@ -107,6 +107,9 @@
                       <span class="ml-1" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="control.text">
                         <i class="far fa-question-circle tip-icon"></i>
                       </span>
+                      <span v-if="control.id === 'container_image.CVE_scan'">                        
+                        &nbsp;<a style="font-weight:bold;text-decoration:underline" @click="goToImageScan(control.tags.imageTag)">See Details</a>                       
+                      </span>
                     </label>
                   </li>
                 </ul>

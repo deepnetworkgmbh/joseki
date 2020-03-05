@@ -10,7 +10,7 @@
         </div>
         <div class="status-text">
           <div class="p-1 m-auto rounded-sm text-lg text-center -mt-8 mb-2 pb-4">
-            {{ date | formatDate }}
+            {{ selectedDate | formatDate }}
           </div>
           <div class="flex flex-row big-text xl:text-2xl lg:text-xl">
             <div class="w-7/12 font-thin text-right mr-1 text-gray-600">Score:</div>
@@ -64,7 +64,7 @@
           :sections="c.sections"
           :score="c.current.score"
           :total="c.current.total"
-          :date="date"
+          :date="selectedDate"
           :index="i"
         ></InfComponent>        
       </div>

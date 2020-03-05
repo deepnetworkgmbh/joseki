@@ -37,9 +37,9 @@ export class DataService {
       .finally(() => console.log("container images request finished."));
   }
 
-  public async getImageScanResultData(imageUrl: string) {
-    const url = this.baseUrl + "/api/container-image/" +
-      this.fixedEncodeURIComponent(imageUrl);
+  public async getImageScanResultData(imageTag: string, date: string) {
+    const suffix = this.fixedEncodeURIComponent(imageTag) + '/details/?date=' +  encodeURIComponent(date);
+    const url = this.baseUrl + "/api/audits/container-image/" + suffix;
     console.log(`[] calling ${url}`);
     return axios
       .get(url)
