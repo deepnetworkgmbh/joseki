@@ -8,6 +8,7 @@ using joseki.db.entities;
 
 using Microsoft.EntityFrameworkCore;
 
+using webapp.Audits.Processors.trivy;
 using webapp.Models;
 
 namespace webapp.Handlers
@@ -151,7 +152,7 @@ namespace webapp.Handlers
                                 Remediation = cve.Remediation,
                                 References = string.IsNullOrEmpty(cve.References)
                                     ? new string[0]
-                                    : cve.References.Split("\r\n").ToArray(),
+                                    : cve.References.Split(TrivyAuditProcessor.LineSeparator).Where(i => !string.IsNullOrWhiteSpace(i)).ToArray(),
                             })
                             .ToArray(),
                     }).ToArray();

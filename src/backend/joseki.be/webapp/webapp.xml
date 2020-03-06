@@ -209,6 +209,11 @@
             Trivy audit processor.
             </summary>
         </member>
+        <member name="F:webapp.Audits.Processors.trivy.TrivyAuditProcessor.LineSeparator">
+            <summary>
+            Indicates character used to separate lines.
+            </summary>
+        </member>
         <member name="M:webapp.Audits.Processors.trivy.TrivyAuditProcessor.#ctor(webapp.BlobStorage.IBlobStorageProcessor,webapp.Database.IJosekiDatabase,webapp.Database.CveCache)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Audits.Processors.trivy.TrivyAuditProcessor"/> class.

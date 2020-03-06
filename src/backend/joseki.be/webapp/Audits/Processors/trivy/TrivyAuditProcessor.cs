@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,6 +21,11 @@ namespace webapp.Audits.Processors.trivy
     /// </summary>
     public class TrivyAuditProcessor : IAuditProcessor
     {
+        /// <summary>
+        /// Indicates character used to separate lines.
+        /// </summary>
+        public const char LineSeparator = '\n';
+
         private static readonly ILogger Logger = Log.ForContext<TrivyAuditProcessor>();
 
         private readonly IBlobStorageProcessor blobStorage;
@@ -192,13 +196,10 @@ namespace webapp.Audits.Processors.trivy
             var description = vulnerability["Description"]?.Value<string>();
             var severity = vulnerability["Severity"].Value<string>();
 
-            var references = new StringBuilder();
+            var references = new List<string>();
             if (vulnerability["References"] is JArray referencesJson)
             {
-                foreach (var token in referencesJson)
-                {
-                    references.AppendLine(token.Value<string>());
-                }
+                references.AddRange(referencesJson.Select(token => token.Value<string>()).Where(reference => !string.IsNullOrWhiteSpace(reference)));
             }
 
             return new CVE
@@ -209,7 +210,7 @@ namespace webapp.Audits.Processors.trivy
                 Description = description,
                 Title = title,
                 Remediation = !string.IsNullOrEmpty(fixedVersion) ? $"Update the package to version {fixedVersion}" : null,
-                References = references.ToString(),
+                References = string.Join(LineSeparator, references),
             };
         }
 
