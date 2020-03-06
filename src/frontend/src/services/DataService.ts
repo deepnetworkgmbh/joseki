@@ -2,7 +2,7 @@ import axios from "axios";
 import { ContainerImageScan, VulnerabilityCounter } from "@/models";
 import { ImageScan } from "@/models/ImageScan";
 import { ImageScanGroup } from "@/models/ImageScanGroup";
-import { VulnerabilityGroup, TargetGroup, ImageScanDetailModel, InfrastructureOverview, InfrastructureComponentSummary } from "@/models/InfrastructureOverview";
+import { VulnerabilityGroup, TargetGroup, ImageScanDetailModel, InfrastructureOverview, InfrastructureComponentSummary, InfrastructureComponentDiff } from "@/models/InfrastructureOverview";
 
 import { ScoreService } from './ScoreService';
 
@@ -18,35 +18,94 @@ export class DataService {
     return ''
   }
 
-  public async getOverviewData() {
-    console.log(`[] calling api/kube/overview`);
-
-    return axios
-      .get(this.baseUrl + "/api/kube/overview/")
-      .then((response) => response.data)
-      .catch((error) => console.log(error))
-      .finally(() => console.log("overview request finished."));
+  public fixedEncodeURIComponent(str: string) {
+    return encodeURIComponent(str).replace(/[!*]/g, function (c) {
+      return "%" + c.charCodeAt(0).toString(16);
+    });
   }
 
-  public async getContainerImagesData() {
-    console.log(`[] calling api/container-images/`);
+  public async getGeneralOverviewData(dateString: string = ''): Promise<void | InfrastructureOverview> {
+    let suffix = (dateString === '') ? '' : '?date=' + encodeURIComponent(dateString);
+    let url = this.baseUrl + "/api/audits/overview" + suffix;
+    console.log(`[] calling ${url}`);
+
     return axios
-      .get(this.baseUrl + "/api/container-images/")
-      .then((response) => response.data.images)
-      .catch((error) => console.log(error))
-      .finally(() => console.log("container images request finished."));
+      .get(url)
+      .then((response) => response.data)
+      .then((data) => processData(data))
+      .catch((error) => console.log(error));
+
+    function processData(data): InfrastructureOverview {
+      let result = new InfrastructureOverview();
+      result.overall = data.overall;
+
+      // reverse and slice overall history
+      result.overall.scoreHistory = result.overall.scoreHistory.reverse().slice(0, 14);
+      result.components = data.components;
+
+      // generate sections for components
+      for (let i = 0; i < result.components.length; i++) {
+
+        if (result.components[i].component.category === 'Subscription') {
+          result.components[i].component.category = 'Azure Subscription';
+        }
+        result.components[i].sections = InfrastructureComponentSummary.getSections(result.components[i].current);
+        result.components[i].scoreHistory = result.components[i].scoreHistory.reverse().slice(0, 14);
+
+        // truncate scan times from component history
+        for (let j = 0; j < result.components[i].scoreHistory.length; j++) {
+          let inputDate = result.components[i].scoreHistory[j].recordedAt.toString();
+          let dateReplacement = new Date(inputDate.split('T')[0] + 'T00:00:00');
+          result.components[i].scoreHistory[j].recordedAt = dateReplacement;
+        }
+      }
+      console.log("[] result", result);
+      return result;
+    }
+  }
+
+  public async getComponentDetailData(id: string, date: string = ''): Promise<void | InfrastructureComponentSummary> {
+    let suffix = '?id=' + encodeURIComponent(id);
+    if (date !== '' && date.indexOf('1970') === -1) { suffix += '&date=' + encodeURIComponent(date); }
+    let url = this.baseUrl + "/api/audits/component/detail" + suffix;
+    console.log(`[] calling ${url}`);
+    return axios
+      .get(url)
+      .then((response) => response.data)
+      .then((data) => processData(data))
+      .catch((error) => console.log(error));
+
+    // TODO: move this method to InfrastructureComponentSummary() 
+    function processData(data): InfrastructureComponentSummary {
+      let result = <InfrastructureComponentSummary>data;
+      if (result.component.category === 'Subscription') {
+        result.component.category = 'Azure Subscription';
+      }
+      result.sections = InfrastructureComponentSummary.getSections(result.current);
+      result.scoreHistory = result.scoreHistory.reverse().slice(0, 14);
+
+      // truncate scan times from component history
+      for (let j = 0; j < result.scoreHistory.length; j++) {
+        let inputDate = result.scoreHistory[j].recordedAt.toString();
+        let dateReplacement = new Date(inputDate.split('T')[0] + 'T00:00:00');
+        result.scoreHistory[j].recordedAt = dateReplacement;
+      }
+      console.log(`[] result`, result);
+      return result;
+    }
+
   }
 
   public async getImageScanResultData(imageTag: string, date: string) : Promise<void | ImageScanDetailModel> {
     const suffix = this.fixedEncodeURIComponent(imageTag) + '/details/?date=' +  encodeURIComponent(date);
     const url = this.baseUrl + "/api/audits/container-image/" + suffix;
     console.log(`[] calling ${url}`);
+
     return axios
       .get(url)
       .then((response) => response.data)
       .then((data) => processData(data))
-      .catch((error) => console.log(error))
-      .finally(() => console.log("container images scan request finished."));
+      .catch((error) => console.log(error));
 
     function processData(data: any): ImageScanDetailModel {
       console.log(`[] processing`, data);
@@ -96,180 +155,53 @@ export class DataService {
       return result;
     }
   }
- 
-  public calculateImageSummaries(data: ContainerImageScan[]): ImageScan {
-    let result = new ImageScan();
-    result.scans = data;
-    result.groups = [];
-
-    let counters = [0, 0, 0, 0];
-
-    for (let i = 0; i < data.length; i++) {
-      const scan = data[i];
-      if (scan.scanResult === "Succeeded") {
-        if (scan.counters.length > 0) {
-          let isCritical = false;
-          for (let j = 0; j < scan.counters.length; j++) {
-            const counter = scan.counters[j];
-            if (
-              counter.severity === "CRITICAL" ||
-              counter.severity === "HIGH"
-            ) {
-              isCritical = true;
-              break;
-            }
-          }
-          if (isCritical) {
-            counters[0] += 1;
-          } else {
-            counters[1] += 1;
-          }
-        } else {
-          counters[2] += 1;
-        }
-      } else {
-        counters[3] += 1;
-      }
-    }
-
-    if (counters[0] > 0) {
-      result.groups.push(
-        new ImageScanGroup(
-          counters[0],
-          "CRITICAL",
-          "with critical/high severity issues"
-        )
-      );
-    }
-    if (counters[1] > 0) {
-      result.groups.push(
-        new ImageScanGroup(
-          counters[1],
-          "MEDIUM",
-          "with medium/low severity issues"
-        )
-      );
-    }
-    if (counters[2] > 0) {
-      result.groups.push(
-        new ImageScanGroup(counters[2], "NOISSUES", "without issues")
-      );
-    }
-    if (counters[3] > 0) {
-      result.groups.push(new ImageScanGroup(counters[3], "NODATA", "no data"));
-    }
-    return result;
-  }
-
-  public fixedEncodeURIComponent(str: string) {
-    return encodeURIComponent(str).replace(/[!*]/g, function (c) {
-      return "%" + c.charCodeAt(0).toString(16);
-    });
-  }
-
-  public async getGeneralOverviewData(dateString: string = ''): Promise<void | InfrastructureOverview> {
-    console.log(`[] calling api/audits/overview (${dateString})`);
-    let suffix = (dateString === '') ? '' : '?date=' + encodeURIComponent(dateString);
-
-    return axios
-      .get(this.baseUrl + "/api/audits/overview" + suffix)
-      .then((response) => response.data)
-      .then((data) => processOverviewData(data))
-      .catch((error) => console.log(error))
-      .finally(() => console.log("overview request finished."));
-
-    function processOverviewData(data): InfrastructureOverview {
-      let result = new InfrastructureOverview();
-      result.overall = data.overall;
-
-      // reverse and slice overall history
-      result.overall.scoreHistory = result.overall.scoreHistory.reverse().slice(0, 14);
-      result.components = data.components;
-
-      // generate sections for components
-      for (let i = 0; i < result.components.length; i++) {
-
-        if (result.components[i].component.category === 'Subscription') {
-          result.components[i].component.category = 'Azure Subscription';
-        }
-        result.components[i].sections = InfrastructureComponentSummary.getSections(result.components[i].current);
-        result.components[i].scoreHistory = result.components[i].scoreHistory.reverse().slice(0, 14);
-
-        // truncate scan times from component history
-        for (let j = 0; j < result.components[i].scoreHistory.length; j++) {
-          let inputDate = result.components[i].scoreHistory[j].recordedAt.toString();
-          let dateReplacement = new Date(inputDate.split('T')[0] + 'T00:00:00');
-          result.components[i].scoreHistory[j].recordedAt = dateReplacement;
-        }
-      }
-
-
-      return result;
-    }
-  }
 
   public async getGeneralOverviewDiffData(date1: string, date2: string) {
-    console.log(`[] calling api/audits/overview/diff/`);
     let suffix = '?date1=' + encodeURIComponent(date1) + '&date2=' + encodeURIComponent(date2);
+    let url = this.baseUrl + "/api/audits/overview/diff" + suffix;
+    console.log(`[] calling ${url}`);
+
     return axios
-      .get(this.baseUrl + "/api/audits/overview/diff" + suffix)
+      .get(url)
       .then((response) => response.data)
-      .catch((error) => console.log(error))
-      .finally(() => console.log("overview diff request finished."));
+      .catch((error) => console.log(error));
   }
 
-  public async getComponentHistoryData(id: string) {
+  public async getComponentHistoryData(id: string): Promise<void | InfrastructureComponentSummary[]> {
     let suffix = '?id=' + encodeURIComponent(id);
-    console.log(`[] calling api/audits/component/history` + suffix);
-    return axios
-      .get(this.baseUrl + "/api/audits/component/history" + suffix)
-      .then((response) => response.data)
-      .catch((error) => console.log(error))
-      .finally(() => console.log("component history request finished."));
-  }
-
-  public async getComponentDetailData(id: string, date: string = ''): Promise<void | InfrastructureComponentSummary> {
-    let suffix = '?id=' + encodeURIComponent(id);
-    if (date !== '' && date.indexOf('1970') === -1) {
-      suffix += '&date=' + encodeURIComponent(date);
-    }
-    let url = this.baseUrl + "/api/audits/component/detail" + suffix;
-    console.log(`[] url`, url);
+    let url = this.baseUrl + "/api/audits/component/history" + suffix;
+    console.log(`[] calling ${url}`);
     return axios
       .get(url)
       .then((response) => response.data)
       .then((data) => processData(data))
       .catch((error) => console.log(error))
-      .finally(() => console.log("[] returning InfrastructureComponentSummary."));
+      .finally(() => console.log("component history request finished."));
 
-    // TODO: move this method to InfrastructureComponentSummary() 
-    function processData(data): InfrastructureComponentSummary {
-      let result = <InfrastructureComponentSummary>data;
-      if (result.component.category === 'Subscription') {
-        result.component.category = 'Azure Subscription';
-      }
-      result.sections = InfrastructureComponentSummary.getSections(result.current);
-      result.scoreHistory = result.scoreHistory.reverse().slice(0, 14);
+    function processData(data): InfrastructureComponentSummary[] {
+      return data.reverse();
+    }
+  }
 
-      // truncate scan times from component history
-      for (let j = 0; j < result.scoreHistory.length; j++) {
-        let inputDate = result.scoreHistory[j].recordedAt.toString();
-        let dateReplacement = new Date(inputDate.split('T')[0] + 'T00:00:00');
-        result.scoreHistory[j].recordedAt = dateReplacement;
-      }
+  public async getComponentDiffData(id: string, date1: string, date2: string) : Promise<void | InfrastructureComponentDiff> {
+    let suffix = '?id=' + id + '&date1=' + encodeURIComponent(date1) + '&date2=' + encodeURIComponent(date2);
+    let url = this.baseUrl + "/api/audits/component/diff" + suffix;
+    console.log(`[] calling ${url}`)
+    
+    return axios
+      .get(url)
+      .then((response) => response.data)
+      .then((data) => processData(data))
+      .catch((error) => console.log(error));
+
+    function processData(data): InfrastructureComponentDiff {
+      let result = <InfrastructureComponentDiff>data;
+      result.summary1.sections = InfrastructureComponentSummary.getSections(result.summary1.current);
+      result.summary2.sections = InfrastructureComponentSummary.getSections(result.summary2.current);
+      console.log(`[] result`, result);
       return result;
     }
-
   }
 
-  public async getComponentDiffData(id: string, date1: string, date2: string) {
-    console.log(`[] calling api/audits/component/diff/`);
-    let suffix = '?id=' + id + '&date1=' + encodeURIComponent(date1) + '&date2=' + encodeURIComponent(date2);
-    return axios
-      .get(this.baseUrl + "/api/audits/component/diff" + suffix)
-      .then((response) => response.data)
-      .catch((error) => console.log(error))
-      .finally(() => console.log("component diff request finished."));
-  }
 
 }

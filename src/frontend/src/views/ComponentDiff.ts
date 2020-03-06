@@ -23,8 +23,19 @@ export default class ComponentDiff extends Vue {
     loaded: boolean = false;
     service: DataService = new DataService();
     data: InfrastructureComponentDiff = new InfrastructureComponentDiff();
-
     checkedScans: any[] = [];
+
+    loadData() {
+        this.service
+            .getComponentDiffData(this.id, this.date, this.date2)
+            .then(response => {
+                if(response) {
+                    this.data = response;
+                    this.setupCharts();
+                    this.loaded = true;    
+                }
+            });
+    }
 
     created() {
         console.log(`[] id: ${this.id} dates: ${this.date} vs ${this.date2}`)
@@ -32,30 +43,14 @@ export default class ComponentDiff extends Vue {
         this.loadData();
     }
 
-    loadData() {
-        this.service.getComponentDiffData(this.id, this.date, this.date2)
-            .then(response => {
-                this.data = response;
-                console.log(`[] data is`, this.data);
-                this.loaded = true;
-                this.setupCharts();
-            }).catch(error => {
-                console.log(error);
-            });
-    }
-
     destroyed() {
         window.removeEventListener("resize", this.setupCharts);
     }
 
     setupCharts() {
-        // TODO: ugly fix, getter does not work
-        this.data.summary1.sections = InfrastructureComponentSummary.getSections(this.data.summary1.current);
-        this.data.summary2.sections = InfrastructureComponentSummary.getSections(this.data.summary2.current);
         google.charts.load('current', { 'packages': ['corechart'] });
         google.charts.setOnLoadCallback(this.drawCharts);
         console.log(`[] results diff`, this.ResultsByDiff);
-
     }
 
 
@@ -67,7 +62,6 @@ export default class ComponentDiff extends Vue {
     dayClicked(date: string) {
         console.log(`[] date clicked ${date}`);
     }
-
 
     getScoreIconClass(score: number) { return ScoreService.getScoreIconClass(score); }
     getGrade(score: number) { return ScoreService.getGrade(score); }

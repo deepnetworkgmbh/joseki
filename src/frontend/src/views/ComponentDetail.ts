@@ -28,22 +28,21 @@ export default class ComponentDetail extends Vue {
     panelOpen: boolean = false;
     checkedScans: any[] = [];
 
-    created() {
-        window.addEventListener("resize", this.setupCharts);
-    }
-
     loadData() {
-        console.log(`[] id = `, decodeURIComponent(this.id));
         let dateString = (this.selectedDate === undefined) ? '' : this.selectedDate.toDateString();
-        this.service.getComponentDetailData(decodeURIComponent(this.id), dateString)
+        this.service
+            .getComponentDetailData(decodeURIComponent(this.id), dateString)
             .then(response => {
                 if (response) {
                     this.data = response;
-                    console.log(`[] data is`, this.data);
                     this.setupCharts();
                     this.loaded = true;
                 }
             });
+    }
+
+    created() {
+        window.addEventListener("resize", this.setupCharts);
     }
 
     destroyed() {

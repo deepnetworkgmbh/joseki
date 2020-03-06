@@ -188,9 +188,6 @@ export class ChartService {
 
 		function selectHandler() {
 			var selectedItem = chart.getSelection()[0];
-
-			console.log('[] selectedItem ', selectedItem);
-
 			if (selectedItem && cb) {
 				let row = selectedItem.row as number;
 				var selectedDate = chart_data.getValue(row, 0);

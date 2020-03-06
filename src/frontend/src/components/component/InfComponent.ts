@@ -38,7 +38,6 @@ export default class InfComponent extends Vue {
   }
 
   goComponentDetail(component: InfrastructureComponent) {
-    console.log(`going component detail: ${component.id}`);
     let params = encodeURIComponent(component.id);
     if (this.date) {
       params += '/' + encodeURIComponent(this.date);

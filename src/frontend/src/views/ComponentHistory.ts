@@ -27,14 +27,16 @@ export default class ComponentHistory extends Vue {
 
     loadData() {
         console.log(`[] calling history for component ${this.id}`)
-        this.service.getComponentHistoryData(this.id)
+        this.service
+            .getComponentHistoryData(this.id)
             .then(response => {
-                this.data = response.reverse();
-                this.component = response[0].component;
-                this.loaded = true;
+                if(response) {
+                    this.data = response;
+                    this.component = response[0].component;
+                    this.loaded = true;    
+                }
             });
     }
-
 
     destroyed() {
         //window.removeEventListener("resize", this.setupCharts);

@@ -1,8 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Overview from "@/views/Overview.vue";
-import ClusterOverview from "@/views/ClusterOverview.vue";
-import ImageOverview from "@/views/ImageOverview.vue";
 import ImageDetail from "@/views/ImageDetail.vue";
 import OverviewDiff from '@/views/OverviewDiff.vue';
 import ComponentHistory from '@/views/ComponentHistory.vue';
@@ -45,17 +43,7 @@ const routes = [
     name: "OverviewDiff",
     component: OverviewDiff,
     props: true
-  },
-  {
-    path: "/cluster-overview",
-    name: "ClusterOverview",
-    component: ClusterOverview
-  },
-  {
-    path: "/image-overview",
-    name: "ImageOverview",
-    component: ImageOverview
-  },
+  },  
   {
     path: "/image-detail/:imageid/:date",
     name: "ImageDetail",

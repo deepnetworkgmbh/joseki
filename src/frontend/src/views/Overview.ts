@@ -26,24 +26,23 @@ export default class Overview extends Vue {
     panelOpen: boolean = false;
     checkedScans: any[] = [];
 
-
-    created() {
-        window.addEventListener("resize", this.setupCharts);
-    }
-
     loadData() {
         let dateString = (this.date === null) ? '' : this.date;
-        this.service.getGeneralOverviewData(dateString)
+
+        this.service
+            .getGeneralOverviewData(dateString)
             .then(response => {
                 if (response && this.data.components && this.data.overall) {
                     this.data = response;
                     this.loaded = true;
                     this.setupCharts();
-                    console.log(`[] data is`, this.data);
                 }
             });
     }
 
+    created() {
+        window.addEventListener("resize", this.setupCharts);
+    }
 
     destroyed() {
         window.removeEventListener("resize", this.setupCharts);
