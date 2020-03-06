@@ -37,54 +37,66 @@ export class DataService {
       .finally(() => console.log("container images request finished."));
   }
 
-  public async getImageScanResultData(imageTag: string, date: string) {
+  public async getImageScanResultData(imageTag: string, date: string) : Promise<void | ImageScanDetailModel> {
     const suffix = this.fixedEncodeURIComponent(imageTag) + '/details/?date=' +  encodeURIComponent(date);
     const url = this.baseUrl + "/api/audits/container-image/" + suffix;
     console.log(`[] calling ${url}`);
     return axios
       .get(url)
       .then((response) => response.data)
+      .then((data) => processData(data))
       .catch((error) => console.log(error))
       .finally(() => console.log("container images scan request finished."));
-  }
 
-  public regroupDataBySeverities(data: any): ImageScanDetailModel {
+    function processData(data: any): ImageScanDetailModel {
+      console.log(`[] processing`, data);
+      let result = new ImageScanDetailModel();
+      result.description = data.description
+      result.scanResult = data.scanResult
+      result.image = data.image
 
-    let result = new ImageScanDetailModel();
-    result.description = data.description
-    result.scanResult = data.scanResult
-    result.image = data.image
+      try {
 
-    try {
+        for (let i = 0; i < data.targets.length; i++) {
+          let target = new TargetGroup(data.targets[i].target);
 
-      for (let i = 0; i < data.targets.length; i++) {
-        let target = new TargetGroup(data.targets[i].Target);
+          for (let j = 0; j < data.targets[i].vulnerabilities.length; j++) {
+            let vulnerability = data.targets[i].vulnerabilities[j];
 
-        for (let j = 0; j < data.targets[i].Vulnerabilities.length; j++) {
-          let vulnerability = data.targets[i].Vulnerabilities[j];
-          let index = target.vulgroups.findIndex((v) => v.Severity === vulnerability.Severity);
-          if (index < 0) {
-            let vulgroup = new VulnerabilityGroup(vulnerability.Severity);
-            vulgroup.Count = 1;
-            vulgroup.Order = ScoreService.getOrderBySeverity(vulnerability.Severity);
-            vulgroup.CVEs.push(vulnerability);
-            target.vulgroups.push(vulgroup);
-          } else {
-            target.vulgroups[index].CVEs.push(vulnerability);
-            target.vulgroups[index].Count += 1;
+            // split the references if it is not splitted correctly
+            if(vulnerability.references.length === 1) {
+              let newReferencesArray = vulnerability.references.slice()[0].split('\n');
+              vulnerability.references = [];
+              for(let r = 0; r < newReferencesArray.length-1;r++) {
+                vulnerability.references.push(newReferencesArray[r])
+              }
+            }
+
+            let index = target.vulnerabilities.findIndex((v) => v.Severity === vulnerability.severity);
+            if (index < 0) {
+              let vulgroup = new VulnerabilityGroup(vulnerability.severity);
+              vulgroup.Count = 1;
+              vulgroup.Order = ScoreService.getOrderBySeverity(vulnerability.severity);
+              vulgroup.CVEs.push(vulnerability);
+              target.vulnerabilities.push(vulgroup);
+            } else {
+              target.vulnerabilities[index].CVEs.push(vulnerability);
+              target.vulnerabilities[index].Count += 1;
+            }
           }
+          target.vulnerabilities.sort((a, b) => a.Order > b.Order ? -1 : a.Order < b.Order ? 1 : 0);
+          result.targets.push(target);
         }
-        target.vulgroups.sort((a, b) => a.Order > b.Order ? -1 : a.Order < b.Order ? 1 : 0);
-        result.targets.push(target);
+
+      } catch (e) {
+        console.log(`error parsing image scan detail data ${e}`)
       }
+      console.log(`[] result`, result);
 
-    } catch (e) {
-      console.log(`error parsing image scan detail data ${e}`)
+      return result;
     }
-
-    return result;
   }
-
+ 
   public calculateImageSummaries(data: ContainerImageScan[]): ImageScan {
     let result = new ImageScan();
     result.scans = data;

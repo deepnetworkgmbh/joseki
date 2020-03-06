@@ -280,8 +280,8 @@ export class VulnerabilityGroup {
 }
 
 export class TargetGroup {
-    vulgroups: VulnerabilityGroup[] = [];
-    constructor(public name: string) { }
+    vulnerabilities: VulnerabilityGroup[] = [];
+    constructor(public target: string) { }
 }
 
 export class ImageScanDetailModel {
