@@ -98,8 +98,9 @@
                    {{ obj.name }}
                 </label>
                 <StatusBar :mini='false' :counters="obj.counters" style="margin-right:-5px;margin-top:-27px;" />
+                <!-- list with subgroup -->
                 <ul v-for="(control, c) in obj.controlGroups" 
-                   :key="`control${i}-${g}-${c}`" style="border:dashed 1px #eee;margin-left:10px;">
+                  :key="`control${i}-${g}-${c}`" style="border:dashed 1px #eee;margin-left:10px;">
                   <li style="padding:2px;padding-left:0;margin-left:5px;margin-top:0px;margin-bottom:2px;">
 
                     <b>{{control.name}} ({{ control.items.length }})</b>
@@ -111,11 +112,26 @@
                           <i class="far fa-question-circle tip-icon"></i>
                         </span>
                         <span v-if="cg.id === 'container_image.CVE_scan' && cg.text !== 'No issues'">                        
-                         <a class='small-link' @click="goToImageScan(cg.tags.imageTag)">see details</a>                                               
+                        <a class='small-link' @click="goToImageScan(cg.tags.imageTag)">see details</a>                                               
                         </span>
                       </label>
                     </div>
-
+                  </li>
+                </ul>
+                <!-- list with no subgroup -->
+                <ul v-for="(control, c) in obj.controls" 
+                  :key="`control${i}-${g}-${c}`" style="border:dashed 1px #eee;margin-left:10px;">
+                  <li style="padding:2px;padding-left:0;margin-left:5px;margin-top:0px;margin-bottom:2px;">
+                      <label :for="`control${i}-${g}-${c}`" class="text-sm">
+                        <i :class="control.icon"></i>
+                        {{ control.id }}
+                        <span class="ml-1 mr-1" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="control.text">
+                          <i class="far fa-question-circle tip-icon"></i>
+                        </span>
+                        <span v-if="control.id === 'container_image.CVE_scan' && control.text !== 'No issues'">                        
+                        <a class='small-link' @click="goToImageScan(control.tags.imageTag)">see details</a>                                               
+                        </span>
+                      </label>
                   </li>
                 </ul>
               </li>
