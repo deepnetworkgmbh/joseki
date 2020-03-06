@@ -35,11 +35,11 @@
       </div>
       <div class="w-1/4 border-l border-gray-300" style="z-index:10;">
         <div class="w-auto p-2 ml-1 mb-2">
-          <div class='text-center text-xs font-bold'>Scan History</div>
+          <div class='text-center text-sm font-bold'>Scan History</div>
           <div id="overall_bar" style="width:100%"></div>
         </div>
         <div class="m-3 mt-0">
-          <div class='text-center text-xs font-bold border-b border-gray-500'>Last 5 scans</div>
+          <div class='text-center text-sm font-bold border-b border-gray-500'>Last 5 scans</div>
           <table class="w-full text-xs p-4">
             <tbody>
               <tr v-for="(scan,i) in shortHistory" :key="`scan${i}`">
@@ -98,19 +98,24 @@
                    {{ obj.name }}
                 </label>
                 <StatusBar :mini='false' :counters="obj.counters" style="margin-right:-5px;margin-top:-27px;" />
-                <ul v-for="(control, c) in obj.controls" 
+                <ul v-for="(control, c) in obj.controlGroups" 
                    :key="`control${i}-${g}-${c}`" style="border:dashed 1px #eee;margin-left:10px;">
                   <li style="padding:2px;padding-left:0;margin-left:5px;margin-top:0px;margin-bottom:2px;">
-                    <label :for="`control${i}-${g}-${c}`" class="text-sm">
-                      <i :class="control.icon"></i>
-                      <strong>{{ control.id }}</strong>
-                      <span class="ml-1" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="control.text">
-                        <i class="far fa-question-circle tip-icon"></i>
-                      </span>
-                      <span v-if="control.id === 'container_image.CVE_scan'">                        
-                        &nbsp;<a style="font-weight:bold;text-decoration:underline" @click="goToImageScan(control.tags.imageTag)">See Details</a>                       
-                      </span>
-                    </label>
+
+                    <b>{{control.name}} ({{ control.items.length }})</b>
+                    <div v-for="(cg, cgi) in control.items" :key='`cgi${i}-${g}-${c}-${cgi}`'>
+                      <label :for="`control${i}-${g}-${c}`" class="text-sm">
+                        <i :class="cg.icon"></i>
+                        {{ cg.id }}
+                        <span class="ml-1 mr-1" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="cg.text">
+                          <i class="far fa-question-circle tip-icon"></i>
+                        </span>
+                        <span v-if="cg.id === 'container_image.CVE_scan' && cg.text !== 'No issues'">                        
+                         <a class='small-link' @click="goToImageScan(cg.tags.imageTag)">see details</a>                                               
+                        </span>
+                      </label>
+                    </div>
+
                   </li>
                 </ul>
               </li>

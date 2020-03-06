@@ -21,12 +21,14 @@ export default class ImageDetail extends Vue {
     //this.id = decodeURIComponent(this.$route.params.imageid);
     const dateString = new Date(this.date).toDateString();
     console.log(`getting data for image ${this.imageid} with date ${dateString}`);
-    this.service.getImageScanResultData(this.imageid, dateString).then(response => {
-      this.data = this.service.regroupDataBySeverities(response);
-      this.loaded = true;
-      console.log(this.data);
-      this.setupPage();
-    });
+    this.service.getImageScanResultData(this.imageid, dateString)
+        .then(response => { 
+          if(response) {
+            this.data = response;
+            this.loaded = true;
+            this.setupPage();
+          }
+        });
   }
 
   setupPage() { }

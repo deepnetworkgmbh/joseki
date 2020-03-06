@@ -2,11 +2,11 @@ export class ScoreService {
 
   public static getOrderBySeverity(severity: string): number {
     switch (severity) {
-      case 'CRITICAL': return 10;
-      case 'HIGH': return 9;
-      case 'MEDIUM': return 8;
-      case 'LOW': return 7;
-      case 'UNKNOWN': return 0;
+      case 'Critical': return 10;
+      case 'High': return 9;
+      case 'Medium': return 8;
+      case 'Low': return 7;
+      case 'Unknown': return 0;
     }
     return 0;
   }
