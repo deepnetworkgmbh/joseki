@@ -4,7 +4,7 @@ import Spinner from "@/components/spinner/Spinner.vue";
 import StatusBar from "@/components/statusbar/StatusBar.vue";
 import Score from "@/components/score/Score.vue";
 import { DataService } from '@/services/DataService';
-import { InfrastructureOverview, InfrastructureComponentSummary, InfrastructureComponent, CountersSummary, CheckSeverity } from '@/models/InfrastructureOverview';
+import { InfrastructureComponentSummary } from '@/models/InfrastructureOverview';
 import { ScoreService } from '@/services/ScoreService';
 import router from '@/router';
 import { MappingService } from '@/services/MappingService';
@@ -78,8 +78,10 @@ export default class ComponentDetail extends Vue {
     }
 
     goToImageScan(imageTag:string) {
-        console.log(`[] current date`, this.selectedDate);       
-        router.push('/image-detail/' + encodeURIComponent(imageTag) + '/' + encodeURIComponent(this.selectedDate.toDateString()));
+        console.log(`[] current date`, this.selectedDate);   
+        if(this.selectedDate) {
+            router.push('/image-detail/' + encodeURIComponent(imageTag) + '/' + encodeURIComponent(this.selectedDate.toDateString()));
+        }    
     }
 
     getArrowHtml(i: number) {

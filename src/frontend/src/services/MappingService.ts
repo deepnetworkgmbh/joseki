@@ -66,6 +66,9 @@ export class MappingService {
             results[i].score = results[i].counters.calculateScore()
         }
 
+        results.sort((a, b) => (a.score < b.score ? 1 : a.score > b.score ? -1 : 0))
+
+
         return results
     }
 
@@ -74,7 +77,7 @@ export class MappingService {
 
         // walk over all checks and group them by collections.
         for (let i = 0; i < checks.length; i++) {
-            let check = checks[i]
+            let check = checks[i];
 
             if (results.findIndex(x => x.name === check.collection.name) === -1) {
                 results.push({
@@ -93,12 +96,13 @@ export class MappingService {
                     id: check.resource.id,
                     type: check.resource.type,
                     name: check.resource.name,
-                    controls: [],
+                    controls: [],           // for flat control list
+                    controlGroups: [],      // for grouped control list
                     counters: new CountersSummary(),
                 })
             }
 
-            const objectIndex = results[collectionIndex].objects.findIndex(x => x.id == check.resource.id)
+            const objectIndex = results[collectionIndex].objects.findIndex(x => x.id == check.resource.id);
 
             switch (check.result.toString()) {
                 case 'Failed':
@@ -130,7 +134,20 @@ export class MappingService {
                 order: this.getSeverityScore(check.result),
                 tags: check.tags
             };
-            results[collectionIndex].objects[objectIndex].controls.push(control);
+
+            if (check.tags.subGroup) {
+                let groupIndex = results[collectionIndex].objects[objectIndex].controlGroups.findIndex(x=>x.name === check.tags.subGroup)
+                if (groupIndex === -1) {
+                    results[collectionIndex].objects[objectIndex].controlGroups.push({
+                        name: check.tags.subGroup,
+                        items: [control]
+                    })
+                }else{
+                    results[collectionIndex].objects[objectIndex].controlGroups[groupIndex].items.push(control);
+                }
+            } else {
+                results[collectionIndex].objects[objectIndex].controls.push(control);
+            }
         }
 
         // sort objects by severity
@@ -140,11 +157,17 @@ export class MappingService {
             for (let j = 0; j < results[i].objects.length; j++) {
                 results[i].objects[j].controls.sort((a, b) => (a.order < b.order ? -1 : a.order > b.order ? 1 : 0));
                 results[i].objects[j].score = results[i].objects[j].counters.calculateScore();
+
+                for (let k = 0; k < results[i].objects[j].controlGroups.length; k++) {
+                    results[i].objects[j].controlGroups[k].items.sort((a, b) => (a.order < b.order ? -1 : a.order > b.order ? 1 : 0))
+                }
             }
+            results[i].objects.sort((a, b) => (a.score < b.score ? 1 : a.score > b.score ? -1 : 0))
+
         }
 
         // sort groups by name
-        results.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
+        results.sort((a, b) => (a.score < b.score ? 1 : a.score > b.score ? -1 : 0))
 
         console.log(`[] collections result `, results)
         return results

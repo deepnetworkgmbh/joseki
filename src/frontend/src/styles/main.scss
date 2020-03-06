@@ -3,10 +3,12 @@
 @tailwind utilities;
 
 body {
-	font-family: "Noto Sans", Helvetica, Arial, sans-serif;
-	-webkit-font-smoothing: antialiased;
+	font-family: "Source Sans Pro", Helvetica, Arial, sans-serif;
+	// -webkit-font-smoothing: subpixel-antialiased;
+	// -webkit-font-smoothing: antialiased;
+	// -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	-webkit-font-smoothing: subpixel-antialiased;
 	padding-left: 10px;
 	padding-right: 10px;
 }
@@ -15,7 +17,7 @@ body {
 @import "charts.scss";
 @import "expand.scss";
 @import url("https://use.fontawesome.com/releases/v5.8.1/css/all.css");
-@import url("https://fonts.googleapis.com/css?family=Noto+Sans&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap");
 @import 'balloon-css';
 
 .segment {
@@ -37,6 +39,11 @@ body {
 	&-selected {
 		@apply text-center bg-green-300 text-white p-1 border border-gray-600 rounded text-xs ml-1;
 	}
+}
+
+.small-link {
+	color:#0066aa;
+	border-bottom:dashed 1px #0066aa
 }
 
 button:disabled,
