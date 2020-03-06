@@ -111,24 +111,17 @@ namespace webapp.Handlers
                 }
 
                 var message = entity.Message ?? entity.Description;
-                var (collection, resource) = ParseCollectionAndResource(entity.ComponentId);
+                var (collection, resource, tags) = ParseCollectionAndResource(entity.ComponentId);
                 var check = new Check(
                     date,
                     collection,
                     resource,
                     entity.Category,
                     new CheckControl(entity.CheckId, message),
-                    checkResult);
-
-                const string imageToken = "/image/";
-                var imageTagIndex = entity.ComponentId.IndexOf(imageToken, StringComparison.InvariantCultureIgnoreCase);
-
-                if (imageTagIndex > 0)
+                    checkResult)
                 {
-                    var imageTag = entity.ComponentId.Substring(imageTagIndex + imageToken.Length);
-                    check.Tags.Add("imageTag", imageTag);
-                }
-
+                    Tags = tags,
+                };
                 checks.Add(check);
             }
 
@@ -137,11 +130,16 @@ namespace webapp.Handlers
             return componentDetails;
         }
 
-        private static (Collection collection, Resource resource) ParseCollectionAndResource(string componentId)
+        private static (Collection collection, Resource resource, Dictionary<string, string> tags) ParseCollectionAndResource(string componentId)
         {
             const string subscriptionsToken = "/subscriptions/";
             const string resourceGroupToken = "/resource_group/";
             const string nsToken = "/ns/";
+            const string imageToken = "/image/";
+            const string podToken = "pod";
+            const string containerToken = "container";
+
+            var tags = new Dictionary<string, string>();
 
             // sample component-id:
             // - /k8s/123a4567-abcd-1234-5678-1122334455ef/ns/joseki/CronJobs/scanner-azsk/container/scanner-azsk/image/deepnetwork/joseki-scanner-azsk:0.1.0
@@ -153,7 +151,7 @@ namespace webapp.Handlers
                 if (indexOfRg == -1)
                 {
                     var subscriptionId = componentId.Substring(subscriptionsToken.Length);
-                    return (new Collection("subscription", subscriptionId), new Resource("subscription", subscriptionId, componentId));
+                    return (new Collection("subscription", subscriptionId), new Resource("subscription", subscriptionId, componentId), tags);
                 }
 
                 var rgStartsAt = indexOfRg + resourceGroupToken.Length;
@@ -164,7 +162,7 @@ namespace webapp.Handlers
 
                 var collection = new Collection("resource group", rgName);
                 var resource = new Resource(resourceType, resourceName, componentId.Substring(0, rgStartsAt + rgName.Length + resourceType.Length + resourceName.Length + 2));
-                return (collection, resource);
+                return (collection, resource, tags);
             }
             else
             {
@@ -176,7 +174,28 @@ namespace webapp.Handlers
 
                 var collection = new Collection("namespace", nsName);
                 var resource = new Resource(resourceType, resourceName, componentId.Substring(0, nsStartsAt + nsName.Length + resourceType.Length + resourceName.Length + 2));
-                return (collection, resource);
+
+                // parse image-tag
+                var imageTagIndex = componentId.IndexOf(imageToken, StringComparison.InvariantCultureIgnoreCase);
+                if (imageTagIndex > 0)
+                {
+                    var imageTag = componentId.Substring(imageTagIndex + imageToken.Length);
+                    tags.Add("imageTag", imageTag);
+                }
+
+                // parse component-group: "pod spec" or "container container-name"
+                var group = componentId.Substring(resource.Id.Length + 1);
+                if (group == podToken)
+                {
+                    tags.Add("subGroup", "Pod spec");
+                }
+                else if (group.StartsWith(containerToken))
+                {
+                    var parts = group.Split('/');
+                    tags.Add("subGroup", $"Container {parts[1]}");
+                }
+
+                return (collection, resource, tags);
             }
         }
 
