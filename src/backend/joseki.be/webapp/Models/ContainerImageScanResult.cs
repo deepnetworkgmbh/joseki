@@ -138,6 +138,12 @@ namespace webapp.Models
         public string VulnerabilityID { get; set; }
 
         /// <summary>
+        /// Packages that have CVE or depend on a package with CVE.
+        /// </summary>
+        [JsonProperty(PropertyName = "DependenciesWithCVE")]
+        public string[] DependenciesWithCVE { get; set; }
+
+        /// <summary>
         /// Package name, where CVE was discovered.
         /// </summary>
         [JsonProperty(PropertyName = "PkgName")]

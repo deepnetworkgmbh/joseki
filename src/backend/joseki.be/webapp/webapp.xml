@@ -1620,6 +1620,11 @@
             Where the CVE was discovered: container image name or application dependencies file.
             </summary>
         </member>
+        <member name="P:webapp.Database.Models.ImageScanToCve.UsedPackage">
+            <summary>
+            The package that have CVE or depends on a package with CVE.
+            </summary>
+        </member>
         <member name="P:webapp.Database.Models.ImageScanToCve.UsedPackageVersion">
             <summary>
             States which exact version of vulnerable package `ScanId` discovered.
@@ -2192,6 +2197,11 @@
         <member name="P:webapp.Models.VulnerabilityDescription.VulnerabilityID">
             <summary>
             CVE identifier.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.VulnerabilityDescription.DependenciesWithCVE">
+            <summary>
+            Packages that have CVE or depend on a package with CVE.
             </summary>
         </member>
         <member name="P:webapp.Models.VulnerabilityDescription.PkgName">

@@ -132,37 +132,45 @@ namespace webapp.Handlers
                 .Include("CVE")
                 .AsNoTracking()
                 .Where(i => i.ScanId == scan.Id)
-                .Select(i => new { i.Target, i.UsedPackageVersion, i.CVE.CveId, i.CVE.Severity, i.CVE.PackageName, i.CVE.Description, i.CVE.Title, i.CVE.References, i.CVE.Remediation })
+                .Select(i => new { i.Target, i.UsedPackage, i.UsedPackageVersion, i.CVE.CveId, i.CVE.Severity, i.CVE.PackageName, i.CVE.Description, i.CVE.Title, i.CVE.References, i.CVE.Remediation })
                 .ToArrayAsync();
 
-            var targets = cves
-                .GroupBy(i => i.Target)
-                .Select(target =>
-                    new ImageScanTarget
+            var targets = new List<ImageScanTarget>();
+            foreach (var target in cves.GroupBy(i => i.Target))
+            {
+                var vulnerabilities = new List<VulnerabilityDescription>();
+                foreach (var groupedByCve in target.GroupBy(i => i.CveId))
+                {
+                    var cve = groupedByCve.First();
+                    vulnerabilities.Add(new VulnerabilityDescription
                     {
-                        Target = target.Key,
-                        Vulnerabilities = target.Select(cve => new VulnerabilityDescription
-                            {
-                                VulnerabilityID = cve.CveId,
-                                PkgName = cve.PackageName,
-                                Title = cve.Title,
-                                Severity = cve.Severity.ToString(),
-                                Description = cve.Description,
-                                InstalledVersion = cve.UsedPackageVersion,
-                                Remediation = cve.Remediation,
-                                References = string.IsNullOrEmpty(cve.References)
-                                    ? new string[0]
-                                    : cve.References.Split(TrivyAuditProcessor.LineSeparator).Where(i => !string.IsNullOrWhiteSpace(i)).ToArray(),
-                            })
-                            .ToArray(),
-                    }).ToArray();
+                        VulnerabilityID = cve.CveId,
+                        PkgName = cve.PackageName,
+                        Title = cve.Title,
+                        Severity = cve.Severity.ToString(),
+                        Description = cve.Description,
+                        DependenciesWithCVE = groupedByCve.Select(i => i.UsedPackage).ToArray(),
+                        InstalledVersion = cve.UsedPackageVersion,
+                        Remediation = cve.Remediation,
+                        References = string.IsNullOrEmpty(cve.References)
+                            ? new string[0]
+                            : cve.References.Split(TrivyAuditProcessor.LineSeparator).Where(i => !string.IsNullOrWhiteSpace(i)).ToArray(),
+                    });
+                }
+
+                targets.Add(new ImageScanTarget
+                {
+                    Target = target.Key,
+                    Vulnerabilities = vulnerabilities.ToArray(),
+                });
+            }
 
             return new ContainerImageScanResult
             {
                 Image = scan.ImageTag,
                 ScanResult = ScanResult.Succeeded,
                 Counters = new VulnerabilityCounters[0],
-                Targets = targets,
+                Targets = targets.ToArray(),
                 Date = scan.Date,
             };
         }

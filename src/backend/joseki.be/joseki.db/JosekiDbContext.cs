@@ -178,6 +178,7 @@ namespace joseki.db
 
             modelBuilder.Entity<ImageScanToCveEntity>().HasKey(scan2cve => scan2cve.Id);
             modelBuilder.Entity<ImageScanToCveEntity>().Property(scan2cve => scan2cve.Target).IsRequired();
+            modelBuilder.Entity<ImageScanToCveEntity>().Property(scan2cve => scan2cve.UsedPackage).IsRequired();
             modelBuilder.Entity<ImageScanToCveEntity>().Property(scan2cve => scan2cve.UsedPackageVersion).IsRequired();
             modelBuilder.Entity<ImageScanToCveEntity>()
                 .HasOne(scan2cve => scan2cve.ImageScan)
