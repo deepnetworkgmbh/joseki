@@ -431,6 +431,11 @@
             Where the CVE was discovered: container image name or application dependencies file.
             </summary>
         </member>
+        <member name="P:joseki.db.entities.ImageScanToCveEntity.UsedPackage">
+            <summary>
+            The package that have CVE or depends on a package with CVE.
+            </summary>
+        </member>
         <member name="P:joseki.db.entities.ImageScanToCveEntity.UsedPackageVersion">
             <summary>
             States which exact version of vulnerable package `ScanId` discovered.

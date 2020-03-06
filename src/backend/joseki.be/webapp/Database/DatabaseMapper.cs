@@ -140,6 +140,7 @@ namespace webapp.Database
             {
                 CveId = scanToCve.InternalCveId,
                 Target = scanToCve.Target,
+                UsedPackage = scanToCve.UsedPackage,
                 UsedPackageVersion = scanToCve.UsedPackageVersion,
             };
         }
