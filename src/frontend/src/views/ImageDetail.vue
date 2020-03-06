@@ -28,37 +28,37 @@
         <ul v-for="(target,i) in data.targets" :key="target.target">
           <li>
             <input type="checkbox" :id="`target${i}`" checked />
-            <label :for="`target${i}`" class="target">Target: {{ target.name }}</label>
-            <ul v-for="(vul, g) in target.vulgroups" :key="`${vul.Severity}${i}`">
+            <label :for="`target${i}`" class="target">Target: {{ target.target }}</label>
+            <ul v-for="(vul, g) in target.vulnerabilities" :key="`${vul.Severity}${i}`">
               <li>
                 <input type="checkbox" :id="`t${i}g${g}`" checked />
                 <label :for="`t${i}g${g}`" class="text-base">
                   {{ vul.Count }} issues with
-                  <strong :class="`severity-${vul.Severity}`">{{ vul.Severity }}</strong>severity
+                  <strong :class="`severity-${vul.Severity}`">{{ vul.Severity }}</strong> severity
                 </label>
                 <ul v-for="(cve, c) in vul.CVEs" :key="`${vul.Severity}${i}-${c}`">
                   <li>
                     <input type="checkbox" :id="`t${i}g${g}${c}`" checked />
                     <label :for="`t${i}g${g}${c}`" class="text-sm">
-                      <i>{{ cve.VulnerabilityID }}</i> in
-                      <strong>{{ cve.PackageName }}</strong>
-                      version {{ cve.InstalledVersion }}
+                      <i>{{ cve.vulnerabilityID }}</i> in
+                      <strong>{{ cve.pkgName }}</strong>
+                      version {{ cve.installedVersion }}
                     </label>
                     <ul>
                       <li>
                         <div class="text-sm">
-                          <p v-if="cve.Title" class="cve-title">{{ cve.Title }}</p>
-                          <p v-if="cve.FixedVersion">
+                          <p v-if="cve.title" class="cve-title">{{ cve.Title }}</p>
+                          <p class="cve-desc">{{ cve.description }}</p>
+                          <p v-if="cve.remediation">
                             <strong>Remediation:</strong>
-                            Update package to {{ cve.FixedVersion }}
+                            {{ cve.remediation }}
                           </p>
-                          <p class="cve-desc">{{ cve.Description }}</p>
-                          <div v-if="cve.References" style="margin-top:5px;">
+                          <div v-if="cve.references.length>0" style="margin-top:5px;">
                             <input type="checkbox" :id="`t${i}g${g}${c}ref`" />
-                            <label :for="`t${i}g${g}${c}ref`" class="references-title">References</label>
+                            <label :for="`t${i}g${g}${c}ref`" class="references-title">References ({{cve.references.length}})</label>
                             <ul>
                               <li
-                                v-for="(ref, ri) in cve.References"
+                                v-for="(ref, ri) in cve.references"
                                 :key="`ref${ri}`"
                                 class="text-xs"
                               >
