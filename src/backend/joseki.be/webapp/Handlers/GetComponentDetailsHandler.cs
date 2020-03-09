@@ -127,6 +127,23 @@ namespace webapp.Handlers
 
             componentDetails.Checks = checks.ToArray();
 
+            // 5. enrich with category descriptions
+            var scannerType = audit.ScannerId.Split('/').First();
+            var categories = checks
+                .Select(i => i.Category)
+                .Distinct()
+                .Select(i => new { Id = $"{scannerType}.{i.Replace(" ", string.Empty)}".ToLowerInvariant(), Category = i })
+                .ToDictionary(i => i.Id, j => j.Category);
+            var ids = categories.Keys.ToArray();
+
+            var entities = await this.db.Set<KnowledgebaseEntity>()
+                .Where(i => ids.Contains(i.ItemId))
+                .ToArrayAsync();
+
+            componentDetails.CategorySummaries = entities
+                .Select(i => new CheckCategorySummary { Description = i.Content, Category = categories[i.ItemId] })
+                .ToArray();
+
             return componentDetails;
         }
 
