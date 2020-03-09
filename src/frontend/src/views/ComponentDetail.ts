@@ -56,7 +56,7 @@ export default class ComponentDetail extends Vue {
     }
 
     drawCharts() {
-        if(this.selectedDate === undefined) {
+        if (this.selectedDate === undefined) {
             this.selectedDate = this.date ? new Date(decodeURIComponent(this.date)) : this.data.scoreHistory[0].recordedAt;
         }
         ChartService.drawPieChart(this.data.current, "overall_pie", 300);
@@ -77,11 +77,11 @@ export default class ComponentDetail extends Vue {
         }
     }
 
-    goToImageScan(imageTag:string) {
-        console.log(`[] current date`, this.selectedDate);   
-        if(this.selectedDate) {
+    goToImageScan(imageTag: string) {
+        console.log(`[] current date`, this.selectedDate);
+        if (this.selectedDate) {
             router.push('/image-detail/' + encodeURIComponent(imageTag) + '/' + encodeURIComponent(this.selectedDate.toDateString()));
-        }    
+        }
     }
 
     getArrowHtml(i: number) {
@@ -112,10 +112,17 @@ export default class ComponentDetail extends Vue {
         this.loadData();
     }
 
-
     getScoreIconClass(score: number) { return ScoreService.getScoreIconClass(score); }
     getGrade(score: number) { return ScoreService.getGrade(score); }
     getResultsByCategory(data: InfrastructureComponentSummary) { return MappingService.getResultsByCategory(data.checks); }
     getResultsByCollection(data: InfrastructureComponentSummary) { return MappingService.getResultsByCollection(data.checks); }
+
+    getCategoryMeta(category: string) {
+        let index = this.data.categorySummaries.findIndex(x => x.category === category);
+        if (index > -1) {
+            return this.data.categorySummaries[index].description;
+        }
+        return '???'
+    }
 
 }

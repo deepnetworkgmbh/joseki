@@ -70,7 +70,7 @@
             </label>
             <StatusBar :counters="category.counters" />
             <ul>
-             ???
+               <div style="padding:4px;padding-left:10px;">{{ getCategoryMeta(category.category)}}</div>
             </ul>
           </li>
         </ul>
