@@ -38,7 +38,7 @@ namespace webapp.Database
         /// <inheritdoc />
         public async Task SaveAuditResult(Audit audit)
         {
-            Logger.Information("Saving audit {AuditId} with {CheckResults} Check Results", audit.Id, audit.CheckResults.Count);
+            Logger.Information("Saving audit {AuditId} with {CheckResults} Check Results", audit.Id, audit.CheckResults?.Count ?? 0);
 
             this.db.Set<AuditEntity>().Add(audit.ToEntity());
             await this.db.SaveChangesAsync();
@@ -74,6 +74,7 @@ namespace webapp.Database
                 existingScanResult.Date = newEntity.Date;
                 existingScanResult.FoundCVEs = newEntity.FoundCVEs;
                 existingScanResult.Status = newEntity.Status;
+                existingScanResult.Description = newEntity.Description;
 
                 this.db.Set<ImageScanResultEntity>().Update(existingScanResult);
             }
@@ -111,22 +112,19 @@ namespace webapp.Database
         }
 
         /// <inheritdoc />
-        public async Task<Audit[]> GetAuditedComponents(DateTime date)
+        public async Task<Audit[]> GetAuditedComponentsWithHistory(DateTime date)
         {
-            // find audits-for a particular date;
+            // find unique component-ids for this date;
             var theDay = date.Date;
             var theNextDay = theDay.AddDays(1);
-            var audits = await this.db.Set<AuditEntity>().Where(i => i.Date >= theDay && i.Date < theNextDay).ToArrayAsync();
-
-            // find unique component-ids for this date;
-            var componentIds = audits
-                .GroupBy(i => i.ComponentId)
-                .Select(i => i.OrderByDescending(scan => scan.Date).First())
+            var componentIds = await this.db.Set<AuditEntity>()
+                .Where(i => i.Date >= theDay && i.Date < theNextDay)
                 .Select(i => i.ComponentId)
-                .ToArray();
+                .Distinct()
+                .ToArrayAsync();
 
             // find all audits for these components during the 31 days (~month)
-            var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-31);
+            var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-30);
             var oneMonthAudits = await this.db.Set<AuditEntity>()
                 .Where(i => i.Date > oneMonthAgo && componentIds.Contains(i.ComponentId))
                 .ToArrayAsync();

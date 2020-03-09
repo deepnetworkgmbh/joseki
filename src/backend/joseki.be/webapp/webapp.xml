@@ -988,6 +988,11 @@
             The cache is expected to be used in Singleton mode.
             </summary>
         </member>
+        <member name="F:webapp.Database.ChecksCache.ImageScanCheck">
+            <summary>
+            Pre-defined image-scan check.
+            </summary>
+        </member>
         <member name="M:webapp.Database.ChecksCache.#ctor(webapp.Configuration.ConfigurationParser,joseki.db.JosekiDbContext)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Database.ChecksCache"/> class.
@@ -1199,19 +1204,88 @@
             <param name="imageTags">Array of unique image-tags.</param>
             <returns>Not expired image scans.</returns>
         </member>
-        <member name="M:webapp.Database.IJosekiDatabase.GetAuditedComponents(System.DateTime)">
+        <member name="M:webapp.Database.IJosekiDatabase.GetAuditedComponentsWithHistory(System.DateTime)">
             <summary>
             Gets latest audits for each component at particular date.
             </summary>
             <param name="date">The date.</param>
             <returns>Latest audits.</returns>
         </member>
+        <member name="T:webapp.Database.InfraScoreDbWrapper">
+            <summary>
+            Takes care of database related operations used by InfrastructureScoreCache.
+            </summary>
+        </member>
+        <member name="M:webapp.Database.InfraScoreDbWrapper.#ctor(joseki.db.JosekiDbContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Database.InfraScoreDbWrapper"/> class.
+            </summary>
+            <param name="db">Joseki database.</param>
+        </member>
+        <member name="M:webapp.Database.InfraScoreDbWrapper.GetAllComponentsIds">
+            <inheritdoc />
+        </member>
+        <member name="M:webapp.Database.InfraScoreDbWrapper.GetLastMonthAudits(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:webapp.Database.InfraScoreDbWrapper.GetAudit(System.String,System.DateTime)">
+            <inheritdoc />
+        </member>
+        <member name="M:webapp.Database.InfraScoreDbWrapper.GetAudits(System.DateTime)">
+            <inheritdoc />
+        </member>
+        <member name="M:webapp.Database.InfraScoreDbWrapper.GetCounterSummariesForAudit(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="T:webapp.Database.IInfraScoreDbWrapper">
+            <summary>
+            Interface is extracted to embrace infra-score-cache layer testing.
+            </summary>
+        </member>
+        <member name="M:webapp.Database.IInfraScoreDbWrapper.GetAllComponentsIds">
+            <summary>
+            Returns all scanner-ids used during last month.
+            </summary>
+            <returns>Array of unique scanner identifiers.</returns>
+        </member>
+        <member name="M:webapp.Database.IInfraScoreDbWrapper.GetLastMonthAudits(System.String)">
+            <summary>
+            Returns latest audit entities for each day during the last month.
+            If there is several audits for the same day - methods returns only the last one.
+            </summary>
+            <param name="componentId">Scanner identifier to get audits for.</param>
+            <returns>Array of latest audits per day.</returns>
+        </member>
+        <member name="M:webapp.Database.IInfraScoreDbWrapper.GetAudit(System.String,System.DateTime)">
+            <summary>
+            Returns latest audit entity for requested day.
+            If there is several audits for the same day - methods returns only the last one.
+            </summary>
+            <param name="componentId">Scanner identifier to get audits for.</param>
+            <param name="date">Audit date.</param>
+            <returns>Latest audits for the day.</returns>
+        </member>
+        <member name="M:webapp.Database.IInfraScoreDbWrapper.GetAudits(System.DateTime)">
+            <summary>
+            Returns latest audits for each scanner for requested day.
+            If there is several audits for the same day - methods returns only the latest one per scanner.
+            </summary>
+            <param name="date">Audits date.</param>
+            <returns>Latest audits for each scanner for the day.</returns>
+        </member>
+        <member name="M:webapp.Database.IInfraScoreDbWrapper.GetCounterSummariesForAudit(System.Int32)">
+            <summary>
+            Calculate Counter Summary for requested audits.
+            </summary>
+            <param name="auditId">Audit identifier to calculate summaries.</param>
+            <returns>counters-summary for requested audit-id.</returns>
+        </member>
         <member name="T:webapp.Database.InfrastructureScoreCache">
             <summary>
             Takes care of keeping pre-calculated counter-summaries.
             </summary>
         </member>
-        <member name="M:webapp.Database.InfrastructureScoreCache.#ctor(joseki.db.JosekiDbContext)">
+        <member name="M:webapp.Database.InfrastructureScoreCache.#ctor(webapp.Database.IInfraScoreDbWrapper)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Database.InfrastructureScoreCache"/> class.
             </summary>
@@ -1232,44 +1306,6 @@
             <param name="componentId">Infrastructure component identifier.</param>
             <param name="date">Audit date.</param>
             <returns>Counters Summary for requested component and date.</returns>
-        </member>
-        <member name="M:webapp.Database.InfrastructureScoreCache.GetAllComponentsIds">
-            <summary>
-            Returns all scanner-ids used during last month.
-            </summary>
-            <returns>Array of unique scanner identifiers.</returns>
-        </member>
-        <member name="M:webapp.Database.InfrastructureScoreCache.GetLastMonthAudits(System.String)">
-            <summary>
-            Returns latest audit entities for each day during the last month.
-            If there is several audits for the same day - methods returns only the last one.
-            </summary>
-            <param name="componentId">Scanner identifier to get audits for.</param>
-            <returns>Array of latest audits per day.</returns>
-        </member>
-        <member name="M:webapp.Database.InfrastructureScoreCache.GetAudit(System.String,System.DateTime)">
-            <summary>
-            Returns latest audit entity for requested day.
-            If there is several audits for the same day - methods returns only the last one.
-            </summary>
-            <param name="componentId">Scanner identifier to get audits for.</param>
-            <param name="date">Audit date.</param>
-            <returns>Latest audits for the day.</returns>
-        </member>
-        <member name="M:webapp.Database.InfrastructureScoreCache.GetAudits(System.DateTime)">
-            <summary>
-            Returns latest audits for each scanner for requested day.
-            If there is several audits for the same day - methods returns only the latest one per scanner.
-            </summary>
-            <param name="date">Audits date.</param>
-            <returns>Latest audits for each scanner for the day.</returns>
-        </member>
-        <member name="M:webapp.Database.InfrastructureScoreCache.GetCounterSummariesForAudit(System.Int32)">
-            <summary>
-            Calculate Counter Summary for requested audits.
-            </summary>
-            <param name="auditId">Audit identifier to calculate summaries.</param>
-            <returns>counters-summary for requested audit-id.</returns>
         </member>
         <member name="T:webapp.Database.Models.Audit">
             <summary>
@@ -1727,7 +1763,7 @@
         <member name="M:webapp.Database.MssqlJosekiDatabase.GetNotExpiredImageScans(System.String[])">
             <inheritdoc />
         </member>
-        <member name="M:webapp.Database.MssqlJosekiDatabase.GetAuditedComponents(System.DateTime)">
+        <member name="M:webapp.Database.MssqlJosekiDatabase.GetAuditedComponentsWithHistory(System.DateTime)">
             <inheritdoc />
         </member>
         <member name="T:webapp.Handlers.GetComponentDetailsHandler">
@@ -2324,6 +2360,12 @@
             NoData checks are excluded, Passed and Failed has doubled weight.
             The final formula is Passed*2/(Failed*2 + Passed*2 + Warning).
             </summary>
+        </member>
+        <member name="M:webapp.Models.CountersSummary.Add(webapp.Models.CountersSummary)">
+            <summary>
+            Adds counters from another Summary to the current one.
+            </summary>
+            <param name="another">counters to add.</param>
         </member>
         <member name="T:webapp.Models.InfrastructureCategory">
             <summary>

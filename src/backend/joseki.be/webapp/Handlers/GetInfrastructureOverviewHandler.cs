@@ -32,7 +32,7 @@ namespace webapp.Handlers
         /// <returns>Infrastructure overview.</returns>
         public async Task<InfrastructureOverview> GetOverview(DateTime date)
         {
-            var audits = await this.db.GetAuditedComponents(date);
+            var audits = await this.db.GetAuditedComponentsWithHistory(date);
 
             return await this.cache.GetInfrastructureOverview(date, audits);
         }
