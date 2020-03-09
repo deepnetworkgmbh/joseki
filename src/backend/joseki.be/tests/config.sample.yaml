@@ -4,10 +4,11 @@ database:
   password: t3st
 
 cache:
-  polarisCheckTtl: 1
-  azureCheckTtl: 1
-  cveTtl: 1
-  defaultTtl: 1
+  polarisCheckTtl: 2
+  azureCheckTtl: 4
+  cveTtl: 8
+  defaultTtl: 10
+  imageScanTtl: 12
 
 watchmen:
   scannerContainersPeriodicitySeconds: 1800

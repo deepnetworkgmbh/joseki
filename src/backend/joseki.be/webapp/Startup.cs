@@ -132,6 +132,7 @@ namespace webapp
             services.AddScoped<IJosekiDatabase, MssqlJosekiDatabase>();
             services.AddTransient<ChecksCache>();
             services.AddTransient<CveCache>();
+            services.AddScoped<IInfraScoreDbWrapper, InfraScoreDbWrapper>();
             services.AddTransient<InfrastructureScoreCache>();
 
             services.AddTransient<AzskAuditProcessor>();

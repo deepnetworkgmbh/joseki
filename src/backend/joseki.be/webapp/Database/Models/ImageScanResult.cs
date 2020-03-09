@@ -48,7 +48,7 @@ namespace webapp.Database.Models
                     return CheckValue.NoData;
                 case ImageScanStatus.Succeeded:
                     // consider Low and Unknown priorities issues as not-an-issue;
-                    var anyImportant = this.Counters.Any(i => i.Count > 0 && i.Severity >= CveSeverity.Medium);
+                    var anyImportant = this.Counters?.Any(i => i.Count > 0 && i.Severity >= CveSeverity.Medium) ?? false;
                     return anyImportant
                         ? CheckValue.Failed
                         : CheckValue.Succeeded;
