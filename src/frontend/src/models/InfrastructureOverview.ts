@@ -7,6 +7,11 @@ export class InfrastructureOverview {
     components: InfrastructureComponentSummary[] = [];
 }
 
+export class CategoryMeta {
+    category: string = ''
+    description: string = ''
+}
+
 export class InfrastructureComponentSummary {
 
     // date of the summary
@@ -28,6 +33,8 @@ export class InfrastructureComponentSummary {
     sections: any[] = [];
 
     checks: Check[] = [];
+
+    categorySummaries: CategoryMeta[] = []
 
     public static getSections(c: CountersSummary): any[] {
         let result: any[] = [];
