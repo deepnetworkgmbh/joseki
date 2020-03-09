@@ -26,6 +26,11 @@ namespace webapp.Models
         /// List of every check in component.
         /// </summary>
         public Check[] Checks { get; set; }
+
+        /// <summary>
+        /// Summaries of all categories mentioned in Checks array.
+        /// </summary>
+        public CheckCategorySummary[] CategorySummaries { get; set; }
     }
 
     /// <summary>
@@ -38,5 +43,21 @@ namespace webapp.Models
         /// If no data for a day - places 0.
         /// </summary>
         public ScoreHistoryItem[] ScoreHistory { get; set; }
+    }
+
+    /// <summary>
+    /// Describes Check category: polaris-networking, azure-storage-accounts, etc.
+    /// </summary>
+    public class CheckCategorySummary
+    {
+        /// <summary>
+        /// Human-readable category name.
+        /// </summary>
+        public string Category { get; set; }
+
+        /// <summary>
+        /// Detailed category description.
+        /// </summary>
+        public string Description { get; set; }
     }
 }
