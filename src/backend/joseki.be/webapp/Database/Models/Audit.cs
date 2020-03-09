@@ -25,11 +25,13 @@ namespace webapp.Database.Models
 
         /// <summary>
         /// Which scanner did the audit.
+        /// TODO: Maybe create a ScannerId type to automatically check scanner types.
         /// </summary>
         public string ScannerId { get; set; }
 
         /// <summary>
         /// Which infrastructure component was audited: k8s-cluster id or azure-subscription-id.
+        /// TODO: Maybe create a ComponentId type to automatically split it to parts and do all the checks.
         /// </summary>
         public string ComponentId { get; set; }
 
