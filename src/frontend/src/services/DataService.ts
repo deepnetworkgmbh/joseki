@@ -1,9 +1,5 @@
 import axios from "axios";
-import { ContainerImageScan, VulnerabilityCounter } from "@/models";
-import { ImageScan } from "@/models/ImageScan";
-import { ImageScanGroup } from "@/models/ImageScanGroup";
-import { VulnerabilityGroup, TargetGroup, ImageScanDetailModel, InfrastructureOverview, InfrastructureComponentSummary, InfrastructureComponentDiff } from "@/models/InfrastructureOverview";
-
+import { VulnerabilityGroup, TargetGroup, ImageScanDetailModel, InfrastructureOverview, InfrastructureComponentSummary, InfrastructureComponentDiff } from "@/models/";
 import { ScoreService } from './ScoreService';
 
 export class DataService {
@@ -96,8 +92,8 @@ export class DataService {
 
   }
 
-  public async getImageScanResultData(imageTag: string, date: string) : Promise<void | ImageScanDetailModel> {
-    const suffix = this.fixedEncodeURIComponent(imageTag) + '/details/?date=' +  encodeURIComponent(date);
+  public async getImageScanResultData(imageTag: string, date: string): Promise<void | ImageScanDetailModel> {
+    const suffix = this.fixedEncodeURIComponent(imageTag) + '/details/?date=' + encodeURIComponent(date);
     const url = this.baseUrl + "/api/audits/container-image/" + suffix;
     console.log(`[] calling ${url}`);
 
@@ -123,10 +119,10 @@ export class DataService {
             let vulnerability = data.targets[i].vulnerabilities[j];
 
             // split the references if it is not splitted correctly
-            if(vulnerability.references.length === 1) {
+            if (vulnerability.references.length === 1) {
               let newReferencesArray = vulnerability.references.slice()[0].split('\n');
               vulnerability.references = [];
-              for(let r = 0; r < newReferencesArray.length-1;r++) {
+              for (let r = 0; r < newReferencesArray.length - 1; r++) {
                 vulnerability.references.push(newReferencesArray[r])
               }
             }
@@ -183,11 +179,11 @@ export class DataService {
     }
   }
 
-  public async getComponentDiffData(id: string, date1: string, date2: string) : Promise<void | InfrastructureComponentDiff> {
+  public async getComponentDiffData(id: string, date1: string, date2: string): Promise<void | InfrastructureComponentDiff> {
     let suffix = '?id=' + id + '&date1=' + encodeURIComponent(date1) + '&date2=' + encodeURIComponent(date2);
     let url = this.baseUrl + "/api/audits/component/diff" + suffix;
     console.log(`[] calling ${url}`)
-    
+
     return axios
       .get(url)
       .then((response) => response.data)

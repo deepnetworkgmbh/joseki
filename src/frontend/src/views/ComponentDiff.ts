@@ -3,7 +3,7 @@ import { ChartService } from "@/services/ChartService"
 import Spinner from "@/components/spinner/Spinner.vue";
 import StatusBar from "@/components/statusbar/StatusBar.vue";
 import { DataService } from '@/services/DataService';
-import { InfrastructureComponentSummary, InfrastructureComponentDiff } from '@/models/InfrastructureOverview';
+import { InfrastructureComponentDiff } from '@/models/';
 import { ScoreService } from '@/services/ScoreService';
 import router from '@/router';
 import { MappingService } from '@/services/MappingService';
@@ -29,10 +29,10 @@ export default class ComponentDiff extends Vue {
         this.service
             .getComponentDiffData(this.id, this.date, this.date2)
             .then(response => {
-                if(response) {
+                if (response) {
                     this.data = response;
                     this.setupCharts();
-                    this.loaded = true;    
+                    this.loaded = true;
                 }
             });
     }

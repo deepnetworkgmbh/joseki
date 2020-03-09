@@ -5,7 +5,7 @@ import StatusBar from "@/components/statusbar/StatusBar.vue";
 import { DataService } from '@/services/DataService';
 import InfComponent from '@/components/component/InfComponent.vue';
 
-import { InfrastructureOverview, InfrastructureComponentSummary, InfrastructureComponent } from '@/models/InfrastructureOverview';
+import { InfrastructureOverview, InfrastructureComponent } from '@/models/';
 import { ScoreService } from '@/services/ScoreService';
 import router from '@/router';
 

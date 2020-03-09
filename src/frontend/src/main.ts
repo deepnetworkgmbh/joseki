@@ -22,7 +22,7 @@ Vue.use(Donut);
 
 import moment from 'moment';
 
-Vue.filter('formatDate', function(value) {
+Vue.filter('formatDate', function (value) {
   if (value) {
     return moment(String(value)).format('YYYY/MM/DD hh:mm')
   }

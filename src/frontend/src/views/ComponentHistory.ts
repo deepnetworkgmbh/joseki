@@ -1,8 +1,7 @@
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
-import { ChartService } from "@/services/ChartService"
 import Spinner from "@/components/spinner/Spinner.vue";
 import { DataService } from '@/services/DataService';
-import { InfrastructureComponentSummary, InfrastructureComponent } from '@/models/InfrastructureOverview';
+import { InfrastructureComponentSummary, InfrastructureComponent } from '@/models/';
 import { ScoreService } from '@/services/ScoreService';
 import router from '@/router';
 
@@ -30,10 +29,10 @@ export default class ComponentHistory extends Vue {
         this.service
             .getComponentHistoryData(this.id)
             .then(response => {
-                if(response) {
+                if (response) {
                     this.data = response;
                     this.component = response[0].component;
-                    this.loaded = true;    
+                    this.loaded = true;
                 }
             });
     }

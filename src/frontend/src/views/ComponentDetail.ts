@@ -4,7 +4,7 @@ import Spinner from "@/components/spinner/Spinner.vue";
 import StatusBar from "@/components/statusbar/StatusBar.vue";
 import Score from "@/components/score/Score.vue";
 import { DataService } from '@/services/DataService';
-import { InfrastructureComponentSummary } from '@/models/InfrastructureOverview';
+import { InfrastructureComponentSummary } from '@/models/';
 import { ScoreService } from '@/services/ScoreService';
 import router from '@/router';
 import { MappingService } from '@/services/MappingService';
@@ -55,7 +55,7 @@ export default class ComponentDetail extends Vue {
     }
 
     drawCharts() {
-        if(this.selectedDate === undefined) {
+        if (this.selectedDate === undefined) {
             this.selectedDate = this.date ? new Date(decodeURIComponent(this.date)) : this.data.scoreHistory[0].recordedAt;
         }
         ChartService.drawPieChart(this.data.current, "overall_pie", 300);
@@ -76,11 +76,11 @@ export default class ComponentDetail extends Vue {
         }
     }
 
-    goToImageScan(imageTag:string) {
-        console.log(`[] current date`, this.selectedDate);   
-        if(this.selectedDate) {
+    goToImageScan(imageTag: string) {
+        console.log(`[] current date`, this.selectedDate);
+        if (this.selectedDate) {
             router.push('/image-detail/' + encodeURIComponent(imageTag) + '/' + encodeURIComponent(this.selectedDate.toDateString()));
-        }    
+        }
     }
 
     getArrowHtml(i: number) {

@@ -1,5 +1,5 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { InfrastructureComponent } from '@/models/InfrastructureOverview';
+import { InfrastructureComponent } from '@/models/';
 import router from '@/router';
 import { ChartService } from '@/services/ChartService';
 

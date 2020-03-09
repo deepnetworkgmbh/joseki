@@ -1,4 +1,4 @@
-import { Check, CountersSummary, CheckSeverity } from '@/models/InfrastructureOverview'
+import { Check, CountersSummary, CheckSeverity } from '@/models/'
 
 export class DiffResult {
     name: string = ''
@@ -136,13 +136,13 @@ export class MappingService {
             };
 
             if (check.tags.subGroup) {
-                let groupIndex = results[collectionIndex].objects[objectIndex].controlGroups.findIndex(x=>x.name === check.tags.subGroup)
+                let groupIndex = results[collectionIndex].objects[objectIndex].controlGroups.findIndex(x => x.name === check.tags.subGroup)
                 if (groupIndex === -1) {
                     results[collectionIndex].objects[objectIndex].controlGroups.push({
                         name: check.tags.subGroup,
                         items: [control]
                     })
-                }else{
+                } else {
                     results[collectionIndex].objects[objectIndex].controlGroups[groupIndex].items.push(control);
                 }
             } else {
