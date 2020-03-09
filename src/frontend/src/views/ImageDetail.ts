@@ -1,7 +1,7 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { DataService } from "@/services/DataService";
 import Spinner from "@/components/spinner/Spinner.vue";
-import { ImageScanDetailModel } from '@/models/';
+import { ImageScanDetailModel } from '@/models';
 
 @Component({
   components: { Spinner }

@@ -1,7 +1,7 @@
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import Spinner from "@/components/spinner/Spinner.vue";
 import { DataService } from '@/services/DataService';
-import { InfrastructureComponentSummary, InfrastructureComponent } from '@/models/';
+import { InfrastructureComponentSummary, InfrastructureComponent } from '@/models';
 import { ScoreService } from '@/services/ScoreService';
 import router from '@/router';
 

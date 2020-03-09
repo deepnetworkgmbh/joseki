@@ -1,4 +1,4 @@
-import { VulnerabilityGroup } from '@/models/';
+import { VulnerabilityGroup } from '@/models';
 
 export class TargetGroup {
   vulnerabilities: VulnerabilityGroup[] = [];

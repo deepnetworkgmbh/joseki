@@ -1,5 +1,5 @@
 import { BarChartOptions, PieChartOptions, AreaChartOptions } from '@/types/';
-import { CountersSummary, ScoreHistoryItem } from '@/models/';
+import { CountersSummary, ScoreHistoryItem } from '@/models';
 
 export class ChartService {
 	public static groupColors = ['#B7B8A8', '#E33035', '#F8A462', '#41C6B9'];

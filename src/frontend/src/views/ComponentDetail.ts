@@ -4,7 +4,7 @@ import Spinner from "@/components/spinner/Spinner.vue";
 import StatusBar from "@/components/statusbar/StatusBar.vue";
 import Score from "@/components/score/Score.vue";
 import { DataService } from '@/services/DataService';
-import { InfrastructureComponentSummary } from '@/models/';
+import { InfrastructureComponentSummary } from '@/models';
 import { ScoreService } from '@/services/ScoreService';
 import router from '@/router';
 import { MappingService } from '@/services/MappingService';

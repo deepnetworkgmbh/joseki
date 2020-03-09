@@ -45,7 +45,7 @@
                  <span class="px-2"><i class="fas fa-external-link-alt pr-2"></i>Scan Detail</span>
               </a>
             </div>
-              <ul v-for="(collection,i) in ResultsByDiff" :key="`collection1${i}`">
+              <ul v-for="(collection,i) in data.results" :key="`collection1${i}`">
                 <li>
                   <input type="checkbox" :id="`target1${i}`" checked />
                   <label :for="`target1${i}`" class="target">
@@ -87,7 +87,7 @@
                 <span class="px-2"><i class="fas fa-external-link-alt pr-2"></i>Scan Detail</span>
               </a>
             </div>
-             <ul v-for="(collection,i) in ResultsByDiff" :key="`collection2${i}`">
+             <ul v-for="(collection,i) in data.results" :key="`collection2${i}`">
                 <li>
                   <input type="checkbox" :id="`target2${i}`" checked />
                   <label :for="`target2${i}`" class="target">

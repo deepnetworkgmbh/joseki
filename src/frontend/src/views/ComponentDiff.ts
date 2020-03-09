@@ -3,7 +3,7 @@ import { ChartService } from "@/services/ChartService"
 import Spinner from "@/components/spinner/Spinner.vue";
 import StatusBar from "@/components/statusbar/StatusBar.vue";
 import { DataService } from '@/services/DataService';
-import { InfrastructureComponentDiff } from '@/models/';
+import { InfrastructureComponentDiff } from '@/models';
 import { ScoreService } from '@/services/ScoreService';
 import router from '@/router';
 import { MappingService } from '@/services/MappingService';
@@ -50,7 +50,7 @@ export default class ComponentDiff extends Vue {
     setupCharts() {
         google.charts.load('current', { 'packages': ['corechart'] });
         google.charts.setOnLoadCallback(this.drawCharts);
-        console.log(`[] results diff`, this.ResultsByDiff);
+        //console.log(`[] results diff`, this.data.results);
     }
 
 
@@ -65,10 +65,6 @@ export default class ComponentDiff extends Vue {
 
     getScoreIconClass(score: number) { return ScoreService.getScoreIconClass(score); }
     getGrade(score: number) { return ScoreService.getGrade(score); }
-
-    get ResultsByCollection1() { return MappingService.getResultsByCollection(this.data.summary1.checks) }
-    get ResultsByCollection2() { return MappingService.getResultsByCollection(this.data.summary2.checks) }
-    get ResultsByDiff() { return MappingService.getResultsDiff(this.data.summary1.checks, this.data.summary2.checks) }
     get scanDetail1url() { return '/component-detail/' + this.data.summary1.component.id + '/' + this.date }
     get scanDetail2url() { return '/component-detail/' + this.data.summary2.component.id + '/' + this.date2 }
 }

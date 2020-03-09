@@ -1,5 +1,5 @@
 import axios from "axios";
-import { VulnerabilityGroup, TargetGroup, ImageScanDetailModel, InfrastructureOverview, InfrastructureComponentSummary, InfrastructureComponentDiff } from "@/models/";
+import { VulnerabilityGroup, TargetGroup, ImageScanDetailModel, InfrastructureOverview, InfrastructureComponentSummary, InfrastructureComponentDiff } from "@/models";
 import { ScoreService } from './ScoreService';
 
 export class DataService {
@@ -191,9 +191,7 @@ export class DataService {
       .catch((error) => console.log(error));
 
     function processData(data): InfrastructureComponentDiff {
-      let result = <InfrastructureComponentDiff>data;
-      result.summary1.sections = InfrastructureComponentSummary.getSections(result.summary1.current);
-      result.summary2.sections = InfrastructureComponentSummary.getSections(result.summary2.current);
+      let result = InfrastructureComponentDiff.CreateFromData(data);
       console.log(`[] result`, result);
       return result;
     }

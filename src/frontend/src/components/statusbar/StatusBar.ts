@@ -1,5 +1,5 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { CountersSummary } from '@/models/';
+import { CountersSummary } from '@/models';
 
 @Component
 export default class StatusBar extends Vue {

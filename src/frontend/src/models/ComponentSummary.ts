@@ -1,22 +1,16 @@
-import { InfrastructureComponent, CountersSummary, ScoreHistoryItem, Check } from '@/models/';
+import { InfrastructureComponent, CountersSummary, ScoreHistoryItem, Check } from '@/models';
 
 export class InfrastructureComponentSummary {
-
   // date of the summary
   date: string = '';
-
   // the component of the summary
   component: InfrastructureComponent = new InfrastructureComponent()
-
   /// Latest known check-result counters.
   current: CountersSummary = new CountersSummary()
-
   /// Holds Scores per last 30 days.
   /// If no data for a day - places 0.
   scoreHistory: ScoreHistoryItem[] = []
-
   sections: any[] = [];
-
   checks: Check[] = [];
 
   public static getSections(c: CountersSummary): any[] {
@@ -36,4 +30,6 @@ export class InfrastructureComponentSummary {
     //console.log(`[] ${name}`, result);
     return result;
   }
+
+
 }

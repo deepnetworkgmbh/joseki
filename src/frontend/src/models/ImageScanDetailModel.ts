@@ -1,4 +1,4 @@
-import { TargetGroup } from '@/models/';
+import { TargetGroup } from '@/models';
 
 export class ImageScanDetailModel {
   image: string = "";

@@ -1,4 +1,4 @@
-import { Collection, CheckControl, CheckSeverity, Resource } from '@/models/';
+import { Collection, CheckControl, CheckSeverity, Resource } from '@/models';
 
 export class Check {
 
