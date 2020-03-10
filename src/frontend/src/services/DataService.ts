@@ -191,9 +191,7 @@ export class DataService {
       .catch((error) => console.log(error));
 
     function processData(data): InfrastructureComponentDiff {
-      let result = InfrastructureComponentDiff.CreateFromData(data);
-      console.log(`[] result`, result);
-      return result;
+      return InfrastructureComponentDiff.CreateFromData(data);      
     }
   }
 

@@ -7,9 +7,10 @@ export class InfrastructureComponentDiff {
   /// Components of second summary.
   summary2: InfrastructureComponentSummary = new InfrastructureComponentSummary();
   /// Computed diff result
-  results: CheckCollection[] = [];
+  results: DiffCollection[] = [];
 
   public static CreateFromData(data): InfrastructureComponentDiff {
+
     let diff = new InfrastructureComponentDiff();
     diff.summary1 = data.summary1;
     diff.summary2 = data.summary2;
@@ -17,14 +18,14 @@ export class InfrastructureComponentDiff {
     diff.summary2.sections = InfrastructureComponentSummary.getSections(diff.summary2.current);
 
     let r: DiffCollection[] = [];
-    let left = MappingService.getResultsByCollection(diff.summary1.checks)
-    let right = MappingService.getResultsByCollection(diff.summary2.checks)
+    let left: CheckCollection[] = MappingService.getResultsByCollection(diff.summary1.checks)
+    let right: CheckCollection[] = MappingService.getResultsByCollection(diff.summary2.checks)
 
     // traverse first collections list
     for (let i = 0; i < left.length; i++) {
       let left1 = left[i];    //  left collection
       let key = left1.type + '---' + left1.name;
-      let row = new DiffCollection(key);
+      let row = new DiffCollection(key, left1.name, left1.type);
       row.left = left1;
       r.push(row);
 
@@ -36,10 +37,11 @@ export class InfrastructureComponentDiff {
         continue;
       }
       let right1 = right[rightIndex]; // right collection;
-      if (left1.score !== right1.score) {
-        r[rowIndex].operation = DiffOperation.Changed;
-      }
+      let [operation, changes] = right1.Compare(left1);
+      r[rowIndex].operation = operation;
+      r[rowIndex].changes = changes;  
     }
+
 
     // traverse second collections list
     for (let i = 0; i < right.length; i++) {
@@ -48,25 +50,38 @@ export class InfrastructureComponentDiff {
 
       let rowIndex = r.findIndex(x => x.key === key);
       if (rowIndex === -1) {
-        r.push({
-          key: key,
-          left: undefined,
-          right: right1,
-          operation: DiffOperation.Added
-        })
+        let row = new DiffCollection(key, right1.name, right1.type);
+        row.left = undefined;
+        row.right = right1;
+        row.operation = DiffOperation.Added;
+        r.push(row);
         continue;
       }
 
       r[rowIndex].right = right1;
-      let left1 = r[rowIndex].left;
-      if (left1 !== undefined && left1.score !== right1.score) {
-        r[rowIndex].operation = DiffOperation.Changed
+      let [operation, changes] = r[rowIndex].left!.Compare(right1);
+      r[rowIndex].operation = operation;
+      r[rowIndex].changes = changes; 
+    }
+
+
+    for(let i=0; i< r.length; i++) {
+      let row = r[i];
+      let left = row.left;
+      let right = row.right;
+      if(left && left.objects.length>0) {
+        left.objects.sort((a, b) => a.id > b.id ? -1 : a.id < b.id ? 1 : 0).reverse();
+      }
+      if(right && right.objects.length>0) {
+        right.objects.sort((a, b) => a.id > b.id ? -1 : a.id < b.id ? 1 : 0).reverse();
       }
     }
 
+
+    // sort changed to top
     r.sort((a, b) => a.operation > b.operation ? -1 : a.operation < b.operation ? 1 : 0).reverse();
 
-    console.log(r);
+    diff.results = r;
     return diff;
 
   }
@@ -76,87 +91,37 @@ export class DiffCollection {
   operation: DiffOperation = DiffOperation.Same;
   left: undefined | CheckCollection;
   right: undefined | CheckCollection;
-  constructor(public key: string) { }
+  changes: DiffCounters = new DiffCounters();  
+  constructor(public key: string, public name: string, public type:string) { }
 }
 
-// let row = results1[i];
+export class DiffCounters {
+  added: number = 0;
+  removed: number = 0;
+  changed: number = 0;
 
-// let coll2Index = results2.findIndex(x => x.name === row.name)
-// if (coll2Index === -1) {
-//   row.operation = DiffOperation.Removed;
-//   r.push(row);
-//   continue;    // collection does not exist (removed), skip
-// }
+  public tick(operation:DiffOperation) {
+    switch(operation) {
+      case DiffOperation.Added: this.added+=1; break;
+      case DiffOperation.Removed: this.removed+=1; break;
+      case DiffOperation.Changed: this.changed+=1; break;
+      case DiffOperation.Same: break;
+    }
+  }
 
-// let row2 = results2[coll2Index];
+  public merge(changes: DiffCounters) {
+    this.added += changes.added;
+    this.removed += changes.removed;
+    this.changed += changes.changed;
+  }
 
-// // traverse collection objects
-// for (let j = 0; j < row.objects.length; j++) {
-//   let obj1 = row.objects[j];
-//   let obj2Index = results2[coll2Index].objects.findIndex(x => x.id === obj1.id && x.type === obj1.type);
-//   if (obj2Index === -1) {
-//     row.operation = DiffOperation.Changed;
-//     obj1.operation = DiffOperation.Removed;
-//     row.objects.push(obj1);
-//     continue;  // object does not exist (removed), skip
-//   }
-//   let obj2 = results2[coll2Index].objects[obj2Index];
+  public toString(): string {
+    let out: string[] = [];
+    if(this.added > 0) out.push(`${this.added} added`);
+    if(this.removed > 0) out.push(`${this.removed} removed`);
+    if(this.changed > 0) out.push(`${this.changed} changed`);
+    return out.join(', ');
+  }
 
-//   // traverse thru object controls
-//   for (let k = 0; k < obj1.controls.length; k++) {
-//     let control1 = obj1.controls[k];
-//     let control2Index = results2[coll2Index].objects[obj2Index].controls.findIndex(x => x.id === control1.id)
-//     if (control2Index === -1) {
-//       row.operation = DiffOperation.Changed;
-//       obj1.operation = DiffOperation.Changed;
-//       control1.operation = DiffOperation.Removed;
-//       obj1.controls.push(control1);
-//       continue; // control does not exist (removed), skip
-//     }
-//     let control2 = obj2.controls[control2Index];
-//     if (control1.result === control2.result) {
-//       row.operation = DiffOperation.Changed;
-//       obj1.operation = DiffOperation.Changed;
-//       control1.operation = DiffOperation.Changed;
-//       obj1.controls.push(control1);
-//       continue;  // results are the same, skip
-//     }
-
-//     // let colIndex = r.findIndex(x => x.name === row.name);
-//     // if (colIndex === -1) {
-//     //   r.push({
-//     //     name: row.name,
-//     //     type: row.type,
-//     //     objects: [],
-//     //     score1: row.score,
-//     //     score2: row2.score,
-//     //   })
-//     //   colIndex = r.findIndex(x => x.name === row.name);
-//     // }
-
-//     // let objIndex = r[colIndex].objects.findIndex(x => x.id === obj1.id);
-//     // if (objIndex === -1) {
-//     //   r[colIndex].objects.push({
-//     //     id: obj1.id,
-//     //     type: obj1.type,
-//     //     name: obj1.name,
-//     //     controls: [],
-//     //     score1: obj1.score,
-//     //     score2: obj2.score
-//     //   });
-//     //   objIndex = r[colIndex].objects.findIndex(x => x.id === obj1.id);
-//     // }
-
-//     // r[colIndex].objects[objIndex].controls.push({
-//     //   id: control1.id,
-//     //   text: control1.text,
-//     //   icon1: MappingService.getControlIcon(control1.result),
-//     //   icon2: MappingService.getControlIcon(control2.result),
-//     //   result1: control1.result,
-//     //   result2: control2.result
-//     // });
-//   }
-// }
-// }
-
-// diff.results = r;
+  public get total(): number { return this.added + this.removed + this.changed}
+}

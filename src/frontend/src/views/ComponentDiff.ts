@@ -2,14 +2,16 @@ import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import { ChartService } from "@/services/ChartService"
 import Spinner from "@/components/spinner/Spinner.vue";
 import StatusBar from "@/components/statusbar/StatusBar.vue";
+import Score from "@/components/score/Score.vue";
 import { DataService } from '@/services/DataService';
 import { InfrastructureComponentDiff } from '@/models';
 import { ScoreService } from '@/services/ScoreService';
-import router from '@/router';
-import { MappingService } from '@/services/MappingService';
+import ControlList from "@/components/controllist/ControlList.vue";
+import ControlGroup from "@/components/controlgroup/ControlGroup.vue";
+import { DiffCounters } from '@/models/ComponentDiff';
 
 @Component({
-    components: { Spinner, StatusBar }
+    components: { Spinner, StatusBar, Score, ControlList, ControlGroup }
 })
 export default class ComponentDiff extends Vue {
 
@@ -31,6 +33,7 @@ export default class ComponentDiff extends Vue {
             .then(response => {
                 if (response) {
                     this.data = response;
+                    console.info(JSON.parse(JSON.stringify(this.data.results)));
                     this.setupCharts();
                     this.loaded = true;
                 }
@@ -43,6 +46,20 @@ export default class ComponentDiff extends Vue {
         this.loadData();
     }
 
+    toggleOther(id:string, rowkey: string, objid: string) {
+        let element:HTMLInputElement | null = <HTMLInputElement>document.getElementById(id);
+        let rowIndex = this.data.results.findIndex(x=>x.key === rowkey);
+        if(rowIndex !== -1) {
+            let target = id.startsWith('left') ? this.data.results[rowIndex].right : this.data.results[rowIndex].left;
+            if(target) {
+                let objIndex = target.objects.findIndex(x=>x.id === objid);
+                if(objIndex !== -1) {
+                    target.objects[objIndex].checked = element.checked;
+                }
+            }                
+        }
+
+    }
     destroyed() {
         window.removeEventListener("resize", this.setupCharts);
     }
@@ -67,4 +84,22 @@ export default class ComponentDiff extends Vue {
     getGrade(score: number) { return ScoreService.getGrade(score); }
     get scanDetail1url() { return '/component-detail/' + this.data.summary1.component.id + '/' + this.date }
     get scanDetail2url() { return '/component-detail/' + this.data.summary2.component.id + '/' + this.date2 }
+
+    getWrapperClass(operation:string): string { return `diff-wrapper diff-wrapper-${operation}`; }
+    getRowClass(operation:string): string { return `diff-row diff-${operation}`; }
+    getObjectClass(operation:string): string { return `diff-${operation}`; }
+    getRowTitle(operation:string, changes: DiffCounters): string {
+        switch(operation) {
+            case 'SAME'     : return 'No changes';
+            case 'ADDED'    : return 'Object added';
+            case 'REMOVED'  : return 'Object removed';
+            case 'CHANGED'  : 
+                if(changes.total === 1) {
+                    return '1 change occured within object'
+                }else {
+                    return `${changes.total} changes occured within object (${changes.toString()})`
+                }
+        }
+        return ''
+    }
 }

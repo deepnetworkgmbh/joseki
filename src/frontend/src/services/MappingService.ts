@@ -1,4 +1,5 @@
-import { Check, CountersSummary, CheckSeverity } from '@/models'
+import { Check, CountersSummary, CheckSeverity, Collection } from '@/models'
+import { DiffCounters } from '@/models/ComponentDiff'
 
 export enum DiffOperation {
     Added = 'ADDED',
@@ -8,15 +9,59 @@ export enum DiffOperation {
 }
 
 export class CheckCollection {
-    name: string = ''
-    type: string = ''
     score: number = 0
     counters: CountersSummary = new CountersSummary()
     objects: CheckObject[] = []
     operation?: DiffOperation
 
-    Compare(): DiffOperation {
+    constructor(public name: string, public type: string, public date: Date) {}
 
+    // compare objects
+    Compare(other: CheckCollection): [DiffOperation, DiffCounters] {
+
+        // parent Diff State
+        let result = DiffOperation.Same;
+        let changes = new DiffCounters();
+
+        if(this.score !== other.score) {
+            result = DiffOperation.Changed;
+        }
+
+        // compare this object array for removals
+        for(let i=0; i<this.objects.length;i++) {
+            let myObject = this.objects[i];
+            let otherIndex = other.objects.findIndex(x=>x.id === myObject.id);
+            if (otherIndex === -1) {
+                // this object is removed on other scan
+                result = DiffOperation.Changed;                
+                myObject.operation = DiffOperation.Removed;
+                changes.tick(myObject.operation)
+                continue;
+            }
+            // TODO: check object children
+
+            // if no change, mark it as same
+            myObject.operation = DiffOperation.Same;
+        }
+
+        // compare other object array for addition
+        for(let i=0; i<other.objects.length;i++) {
+            let otherObject = other.objects[i];
+            let myIndex = this.objects.findIndex(x=>x.id === otherObject.id);
+            if (myIndex === -1) {
+                // other obhect is removed from my scan
+                otherObject.operation = DiffOperation.Added
+                changes.tick(otherObject.operation)
+                result = DiffOperation.Changed;
+                continue;
+            }
+            // TODO: check object children
+            
+                  // if no change, mark it as same
+            otherObject.operation = DiffOperation.Same;
+        }  
+        
+        return [result, changes];
     }
 }
 
@@ -29,6 +74,7 @@ export class CheckObject {
     controls: CheckControl[] = []
     controlGroups: CheckControlGroup[] = []
     operation?: DiffOperation
+    checked: boolean = false;
 }
 
 export class CheckControl {
@@ -101,13 +147,8 @@ export class MappingService {
             let check = checks[i];
 
             if (results.findIndex(x => x.name === check.collection.name) === -1) {
-                results.push({
-                    name: check.collection.name,
-                    type: check.collection.type,
-                    counters: new CountersSummary(),
-                    score: 0,
-                    objects: [],
-                })
+                let collection = new CheckCollection(check.collection.name, check.collection.type, check.date);
+                results.push(collection)
             }
 
             const collectionIndex = results.findIndex(x => x.name === check.collection.name)
@@ -121,6 +162,7 @@ export class MappingService {
                     controls: [],           // for flat control list
                     controlGroups: [],      // for grouped control list
                     counters: new CountersSummary(),
+                    checked: false
                 })
             }
 
