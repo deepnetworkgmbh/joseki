@@ -175,7 +175,9 @@ export class DataService {
       .finally(() => console.log("component history request finished."));
 
     function processData(data): InfrastructureComponentSummary[] {
-      return data.reverse();
+      let result = data.reverse();
+      console.log(`[] result`, result);
+      return result;
     }
   }
 

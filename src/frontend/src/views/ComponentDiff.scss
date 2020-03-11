@@ -78,6 +78,19 @@ $border: dashed 2px #aaa;
 	padding-bottom:5px;
 	background-color: #f0f0f0;
 }
+.diff-object-wrapper {
+	margin-left: -10px;
+	margin-right: -10px;
+	padding-bottom: 0;
+}
+
+.diff-object {
+	padding:5px;
+	border-radius: 5px;
+	margin-bottom: 5px;	
+	background-color: #e0e0e0;
+	padding-bottom: 0;
+}
 
 .diff-SAME {
 	opacity: .8;

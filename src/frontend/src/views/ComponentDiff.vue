@@ -76,8 +76,8 @@
               <span class='diff-row-change-text'>{{ getRowTitle(row.operation, row.changes) }}</span>
               <div :class="getRowClass(row.operation)">
                 <div class="diff-cell">
-                  <ul v-for="(obj, g) in row.left.objects" :key="`left${i}-${g}`">
-                    <li style="margin-left:15px;">
+                  <ul v-for="(obj, g) in row.left.objects" :key="`left${i}-${g}`" class="diff-object-wrapper">
+                    <li style="margin-left:15px;"  class='diff-object'>
                       <input type="checkbox"  :id="`left-obj-${obj.id}`" v-model="obj.checked" 
                            @click="toggleOther(`left-obj-${obj.id}`, row.key, obj.id)" />
                       <label :for='`left-obj-${obj.id}`' :class='getObjectClass(obj.operation)'>
@@ -96,8 +96,8 @@
                   </ul>
                 </div>
                 <div class="diff-cell ml-1">
-                  <ul v-for="(obj, g) in row.right.objects" :key="`right${i}-${g}`">
-                    <li style="margin-left:15px;">
+                  <ul v-for="(obj, g) in row.right.objects" :key="`right${i}-${g}`"  class="diff-object-wrapper">
+                    <li class='diff-object'>
                       <input type="checkbox" :id="`right-obj-${obj.id}`" v-model="obj.checked" 
                            @click="toggleOther(`right-obj-${obj.id}`, row.key, obj.id)" />
                       <label :for='`right-obj-${obj.id}`' :class='getObjectClass(obj.operation)'>

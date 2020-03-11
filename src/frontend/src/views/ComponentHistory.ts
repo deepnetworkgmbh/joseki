@@ -31,7 +31,7 @@ export default class ComponentHistory extends Vue {
             .then(response => {
                 if (response) {
                     this.data = response;
-                    this.component = response[0].component;
+                    this.component = response[0].component;                    
                     this.loaded = true;
                 }
             });
