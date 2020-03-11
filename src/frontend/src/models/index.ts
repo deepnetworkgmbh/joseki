@@ -1,17 +1,27 @@
-import { ClusterSummary } from "./ClusterSummary";
-import { ResultSummary } from "./ResultSummary";
-import { Check } from "./Check";
-import { KubeOverview } from "./KubeOverview";
-import { VulnerabilityCounter } from "./VulnerabilityCounter";
-import { ContainerImageScan } from "./ContainerImageScan";
-import { NamespaceCounters } from "./NamespaceCounters";
+import { Check } from './Check';
+import { CheckControl } from './CheckControl';
+import { CheckSeverity } from './CheckSeverity';
+import { Collection } from './Collection';
+import { InfrastructureComponent } from './InfrastructureComponent';
+import { InfrastructureComponentDiff } from './ComponentDiff';
+import { InfrastructureComponentSummary } from './ComponentSummary';
+import { InfrastructureOverview } from './InfrastructureOverview';
+import { InfrastructureOverviewDiff } from './InfrastructureOverviewDiff';
+import { CountersSummary } from './CounterSummary';
+import { ImageScanDetailModel } from './ImageScanDetailModel';
+import { Resource } from './Resource';
+import { ScoreHistoryItem } from './ScoreHistory';
+import { TargetGroup } from './TargetGroup';
+import { Vulnerability } from './Vulnerability';
+import { VulnerabilityGroup } from './VulnerabilityGroup';
 
 export {
-  KubeOverview,
-  ClusterSummary,
-  ResultSummary,
-  Check,
-  VulnerabilityCounter,
-  ContainerImageScan,
-  NamespaceCounters
-};
+  Check, CheckControl, CheckSeverity,
+  Collection,
+  InfrastructureComponentDiff, InfrastructureComponentSummary, InfrastructureComponent,
+  CountersSummary,
+  ImageScanDetailModel,
+  InfrastructureOverview, InfrastructureOverviewDiff,
+  Resource, ScoreHistoryItem,
+  TargetGroup, Vulnerability, VulnerabilityGroup
+}

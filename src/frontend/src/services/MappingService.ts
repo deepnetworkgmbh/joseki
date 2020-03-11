@@ -1,29 +1,96 @@
-import { Check, CountersSummary, CheckSeverity } from '@/models/InfrastructureOverview'
+import { Check, CountersSummary, CheckSeverity, Collection } from '@/models'
+import { DiffCounters } from '@/models/ComponentDiff'
 
-export class DiffResult {
-    name: string = ''
-    type: string = ''
-    objects: DiffObject[] = []
-    score1: number = 0;
-    score2: number = 0;
+export enum DiffOperation {
+    Added = 'ADDED',
+    Removed = 'REMOVED',
+    Changed = 'CHANGED',
+    Same = 'SAME'
 }
 
-export class DiffObject {
+export class CheckCollection {
+    score: number = 0
+    counters: CountersSummary = new CountersSummary()
+    objects: CheckObject[] = []
+    operation?: DiffOperation
+
+    constructor(public name: string, public type: string, public date: Date) {}
+
+    // compare objects
+    Compare(other: CheckCollection): [DiffOperation, DiffCounters] {
+
+        // parent Diff State
+        let result = DiffOperation.Same;
+        let changes = new DiffCounters();
+
+        if(this.score !== other.score) {
+            result = DiffOperation.Changed;
+        }
+
+        // compare this object array for removals
+        for(let i=0; i<this.objects.length;i++) {
+            let myObject = this.objects[i];
+            let otherIndex = other.objects.findIndex(x=>x.id === myObject.id);
+            if (otherIndex === -1) {
+                // this object is removed on other scan
+                result = DiffOperation.Changed;                
+                myObject.operation = DiffOperation.Removed;
+                changes.tick(myObject.operation)
+                continue;
+            }
+            // TODO: check object children
+
+            // if no change, mark it as same
+            myObject.operation = DiffOperation.Same;
+        }
+
+        // compare other object array for addition
+        for(let i=0; i<other.objects.length;i++) {
+            let otherObject = other.objects[i];
+            let myIndex = this.objects.findIndex(x=>x.id === otherObject.id);
+            if (myIndex === -1) {
+                // other obhect is removed from my scan
+                otherObject.operation = DiffOperation.Added
+                changes.tick(otherObject.operation)
+                result = DiffOperation.Changed;
+                continue;
+            }
+            // TODO: check object children
+            
+                  // if no change, mark it as same
+            otherObject.operation = DiffOperation.Same;
+        }  
+        
+        return [result, changes];
+    }
+}
+
+export class CheckObject {
     id: string = ''
     type: string = ''
     name: string = ''
-    controls: DiffControl[] = []
-    score1: number = 0;
-    score2: number = 0;
+    score: number = 0
+    counters: CountersSummary = new CountersSummary()
+    controls: CheckControl[] = []
+    controlGroups: CheckControlGroup[] = []
+    operation?: DiffOperation
+    checked: boolean = false;
 }
 
-export class DiffControl {
+export class CheckControl {
     id: string = ''
     text: string = ''
-    icon1?: string = ''
-    icon2?: string = ''
-    result1: string = ''
-    result2: string = ''
+    result: string = ''
+    icon: string = ''
+    order: number = 0
+    tags: string[] = []
+    operation?: DiffOperation
+}
+
+export class CheckControlGroup {
+    name: string = ''
+    items: CheckControl[] = []
+    operation?: DiffOperation
 }
 
 export class MappingService {
@@ -72,21 +139,16 @@ export class MappingService {
         return results
     }
 
-    public static getResultsByCollection(checks: Check[]): any[] {
-        var results: any[] = []
+    public static getResultsByCollection(checks: Check[]): CheckCollection[] {
+        var results: CheckCollection[] = []
 
         // walk over all checks and group them by collections.
         for (let i = 0; i < checks.length; i++) {
             let check = checks[i];
 
             if (results.findIndex(x => x.name === check.collection.name) === -1) {
-                results.push({
-                    name: check.collection.name,
-                    type: check.collection.type,
-                    counters: new CountersSummary(),
-                    score: 0,
-                    objects: [],
-                })
+                let collection = new CheckCollection(check.collection.name, check.collection.type, check.date);
+                results.push(collection)
             }
 
             const collectionIndex = results.findIndex(x => x.name === check.collection.name)
@@ -96,9 +158,11 @@ export class MappingService {
                     id: check.resource.id,
                     type: check.resource.type,
                     name: check.resource.name,
+                    score: 0,
                     controls: [],           // for flat control list
                     controlGroups: [],      // for grouped control list
                     counters: new CountersSummary(),
+                    checked: false
                 })
             }
 
@@ -126,23 +190,22 @@ export class MappingService {
             results[collectionIndex].counters.total += 1
             results[collectionIndex].objects[objectIndex].counters.total += 1
 
-            let control = {
-                id: check.control.id,
-                text: check.control.message,
-                result: check.result,
-                icon: this.getControlIcon(check.result),
-                order: this.getSeverityScore(check.result),
-                tags: check.tags
-            };
+            let control = new CheckControl();
+            control.id = check.control.id;
+            control.text = check.control.message;
+            control.result = check.result;
+            control.icon = this.getControlIcon(check.result);
+            control.order = this.getSeverityScore(check.result);
+            control.tags = check.tags;
 
             if (check.tags.subGroup) {
-                let groupIndex = results[collectionIndex].objects[objectIndex].controlGroups.findIndex(x=>x.name === check.tags.subGroup)
+                let groupIndex = results[collectionIndex].objects[objectIndex].controlGroups.findIndex(x => x.name === check.tags.subGroup)
                 if (groupIndex === -1) {
                     results[collectionIndex].objects[objectIndex].controlGroups.push({
                         name: check.tags.subGroup,
                         items: [control]
                     })
-                }else{
+                } else {
                     results[collectionIndex].objects[objectIndex].controlGroups[groupIndex].items.push(control);
                 }
             } else {
@@ -173,80 +236,7 @@ export class MappingService {
         return results
     }
 
-    public static getResultsDiff(checks1: Check[], checks2: Check[]): DiffResult[] {
-        // added // removed // changed
-
-        let results: DiffResult[] = []
-        let results1 = this.getResultsByCollection(checks1)
-        let results2 = this.getResultsByCollection(checks2)
-
-        // traverse first collections list
-        for (let i = 0; i < results1.length; i++) {
-            let row = results1[i];
-
-            let coll2Index = results2.findIndex(x => x.name === row.name)
-            if (coll2Index === -1) continue;    // collection does not exist (removed), skip
-
-            let row2 = results2[coll2Index];
-
-            // traverse collection objects
-            for (let j = 0; j < row.objects.length; j++) {
-                let obj1 = row.objects[j];
-                let obj2Index = results2[coll2Index].objects.findIndex(x => x.id === obj1.id);
-                if (obj2Index === -1) continue;  // object does not exist (removed), skip
-                let obj2 = results2[coll2Index].objects[obj2Index];
-
-                // traverse thru object controls
-                for (let k = 0; k < obj1.controls.length; k++) {
-                    let control1 = obj1.controls[k];
-                    let control2Index = results2[coll2Index].objects[obj2Index].controls.findIndex(x => x.id === control1.id)
-                    if (control2Index === -1) continue; // control does not exist (removed), skip
-                    let control2 = obj2.controls[control2Index];
-
-                    if (control1.result === control2.result) {
-                        continue;  // results are the same, skip
-                    }
-
-                    let colIndex = results.findIndex(x => x.name === row.name);
-                    if (colIndex === -1) {
-                        results.push({
-                            name: row.name,
-                            type: row.type,
-                            objects: [],
-                            score1: row.score,
-                            score2: row2.score
-                        })
-                        colIndex = results.findIndex(x => x.name === row.name);
-                    }
-
-                    let objIndex = results[colIndex].objects.findIndex(x => x.id === obj1.id);
-                    if (objIndex === -1) {
-                        results[colIndex].objects.push({
-                            id: obj1.id,
-                            type: obj1.type,
-                            name: obj1.name,
-                            controls: [],
-                            score1: obj1.score,
-                            score2: obj2.score
-                        });
-                        objIndex = results[colIndex].objects.findIndex(x => x.id === obj1.id);
-                    }
-
-                    results[colIndex].objects[objIndex].controls.push({
-                        id: control1.id,
-                        text: control1.text,
-                        icon1: this.getControlIcon(control1.result),
-                        icon2: this.getControlIcon(control2.result),
-                        result1: control1.result,
-                        result2: control2.result
-                    });
-                }
-            }
-        }
-        return results
-    }
-
-    public static getControlIcon(severity: CheckSeverity) {
+    public static getControlIcon(severity: CheckSeverity): string {
         switch (severity.toString()) {
             case 'NoData':
                 return 'fas fa-times nodata-icon'
@@ -256,9 +246,10 @@ export class MappingService {
             case 'Success':
                 return 'fas fa-check noissues-icon'
         }
+        return ''
     }
 
-    public static getSeverityScore(severity: CheckSeverity) {
+    public static getSeverityScore(severity: CheckSeverity): number {
         switch (severity.toString()) {
             case 'NoData':
                 return 10
@@ -268,6 +259,7 @@ export class MappingService {
             case 'Success':
                 return 1
         }
+        return 0;
     }
 }
 

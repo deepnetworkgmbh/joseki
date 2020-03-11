@@ -23,3 +23,84 @@ $border: dashed 2px #aaa;
 .bottom-seperator {
 	border-left: $border;
 }
+
+.diff-wrapper {
+	border: solid 1px #eee;
+	border-radius: 5px;
+	margin:0;
+	margin-bottom: 8px;
+	background-color: #f8f8f8;
+	padding-top: 5px;
+}
+
+.diff-wrapper-SAME {
+	border: solid 1px #eee;
+}
+
+.diff-wrapper-ADDED {
+	border: solid 1px green;
+}
+
+.diff-wrapper-REMOVED {
+	border: solid 1px red;
+}
+
+.diff-wrapper-CHANGED {
+	border: solid 1px #ffcccc;
+	background-color: #ffccaa;
+}
+
+.diff-row {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+}
+
+.diff-row-change-text {
+	padding-top: 2px;
+	float: right;
+	margin-right: 15px;
+	font-size: 13px;
+	color:#222;
+}
+
+
+.diff-row-label {	
+	padding-left:10px;
+}
+
+.diff-cell {
+	margin-top:5px;
+	width: 49%;	
+	border: solid 1px #eee;
+	border-radius: 8px;
+	padding-top:5px;
+	padding-bottom:5px;
+	background-color: #f0f0f0;
+}
+.diff-object-wrapper {
+	margin-left: -10px;
+	margin-right: -10px;
+	padding-bottom: 0;
+}
+
+.diff-object {
+	padding:5px;
+	border-radius: 5px;
+	margin-bottom: 5px;	
+	background-color: #e0e0e0;
+	padding-bottom: 0;
+}
+
+.diff-SAME {
+	opacity: .8;
+	color:#888;
+}
+
+.diff-ADDED {
+	color:green;
+}
+
+.diff-REMOVED {
+	color:red;
+}

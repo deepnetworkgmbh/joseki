@@ -1,7 +1,7 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { DataService } from "@/services/DataService";
 import Spinner from "@/components/spinner/Spinner.vue";
-import { ImageScanDetailModel } from '@/models/InfrastructureOverview';
+import { ImageScanDetailModel } from '@/models';
 
 @Component({
   components: { Spinner }
@@ -22,13 +22,13 @@ export default class ImageDetail extends Vue {
     const dateString = new Date(this.date).toDateString();
     console.log(`getting data for image ${this.imageid} with date ${dateString}`);
     this.service.getImageScanResultData(this.imageid, dateString)
-        .then(response => { 
-          if(response) {
-            this.data = response;
-            this.loaded = true;
-            this.setupPage();
-          }
-        });
+      .then(response => {
+        if (response) {
+          this.data = response;
+          this.loaded = true;
+          this.setupPage();
+        }
+      });
   }
 
   setupPage() { }
