@@ -17,7 +17,7 @@
             <div class="w-6/12 font-hairline text-left">{{ data.component.category }}</div>
           </div>
           <div class="flex flex-row xl:text-xl lg:text-lg md:text-sm">
-            <div class="w-4/12 font-thin text-right mr-1 text-gray-600">Id:</div>
+            <div class="w-4/12 font-thin text-right mr-1 text-gray-600">Name:</div>
             <div class="w-6/12 font-hairline text-left">{{ data.component.name }}</div>
           </div>
           <div class="flex flex-row xl:text-xl lg:text-lg md:text-sm">
