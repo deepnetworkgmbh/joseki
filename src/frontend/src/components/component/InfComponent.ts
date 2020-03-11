@@ -1,5 +1,5 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { InfrastructureComponent } from '@/models/InfrastructureOverview';
+import { InfrastructureComponent } from '@/models';
 import router from '@/router';
 import { ChartService } from '@/services/ChartService';
 
@@ -38,7 +38,6 @@ export default class InfComponent extends Vue {
   }
 
   goComponentDetail(component: InfrastructureComponent) {
-    console.log(`going component detail: ${component.id}`);
     let params = encodeURIComponent(component.id);
     if (this.date) {
       params += '/' + encodeURIComponent(this.date);

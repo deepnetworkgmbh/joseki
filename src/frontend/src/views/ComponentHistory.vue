@@ -4,8 +4,8 @@
     <div v-if="loaded" class="segment shadow" style="min-height:300px">  
       <div style="display:flex;flex-direction:column;width:100%">
         <div class='subscription-history-header'>
-          <h1>Select Scans to Compare</h1>
-          <h1 class="font-bold">for {{ component.category }}</h1>
+          <h1>{{ component.category }} : <b>{{ decodeURIComponent(component.id) }}</b></h1>
+          <div style='font-size:15px;color:#666;'>Select Scans to Compare</div>
         </div>
         <div class='subscription-history-list'>
           <table style="width:100%">
@@ -21,9 +21,11 @@
             </thead>
             <tr v-for="(scan,i) in data" :key="`scan${i}1`">
               <td colspan="2">
+               <label :for="`scan${i}1`">
                <input type="checkbox" class='chk' :id="`scan${i}1`" :value="`${scan.date}`" v-model="checkedScans" 
                :disabled="checkDisabled(i, `${scan.date}`)">
                <span class="pl-2">{{ scan.date | formatDate }}</span>
+               </label>
               </td>
               <td class='w-1 text-xs text-right' v-html="getErrorArrowHtml('nodata', i)"></td>
               <td class='text-sm text-left'>{{ scan.current.nodata || '0' }}</td>

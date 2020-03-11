@@ -4,7 +4,7 @@ import Spinner from "@/components/spinner/Spinner.vue";
 import StatusBar from "@/components/statusbar/StatusBar.vue";
 import Score from "@/components/score/Score.vue";
 import { DataService } from '@/services/DataService';
-import { InfrastructureComponentSummary } from '@/models/InfrastructureOverview';
+import { InfrastructureComponentSummary } from '@/models';
 import { ScoreService } from '@/services/ScoreService';
 import router from '@/router';
 import { MappingService } from '@/services/MappingService';
@@ -28,22 +28,21 @@ export default class ComponentDetail extends Vue {
     panelOpen: boolean = false;
     checkedScans: any[] = [];
 
-    created() {
-        window.addEventListener("resize", this.setupCharts);
-    }
-
     loadData() {
-        console.log(`[] id = `, decodeURIComponent(this.id));
         let dateString = (this.selectedDate === undefined) ? '' : this.selectedDate.toDateString();
-        this.service.getComponentDetailData(decodeURIComponent(this.id), dateString)
+        this.service
+            .getComponentDetailData(decodeURIComponent(this.id), dateString)
             .then(response => {
                 if (response) {
                     this.data = response;
-                    console.log(`[] data is`, this.data);
                     this.setupCharts();
                     this.loaded = true;
                 }
             });
+    }
+
+    created() {
+        window.addEventListener("resize", this.setupCharts);
     }
 
     destroyed() {
