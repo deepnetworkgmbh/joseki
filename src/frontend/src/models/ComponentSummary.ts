@@ -12,6 +12,7 @@ export class InfrastructureComponentSummary {
   scoreHistory: ScoreHistoryItem[] = []
   sections: any[] = [];
   checks: Check[] = [];
+  categorySummaries: any[] = []
 
   public static getSections(c: CountersSummary): any[] {
     let result: any[] = [];
