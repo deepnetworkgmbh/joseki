@@ -65,7 +65,7 @@ export default class ComponentHistory extends Vue {
                 data = { class: 'down', color: reverseColor ? 'red' : 'green' };
             }
         }
-        if (data.class === '-') return '-'
+        if (data.class === '-') return ''
         return `<i class="fas fa-arrow-${data.class}" style="color:${data.color};"></i>`
     }
 
