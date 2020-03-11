@@ -26,6 +26,9 @@ Vue.filter('formatDate', function (value) {
   if (value) { return moment(String(value)).format('YYYY/MM/DD') }
 });
 
+import linkify from 'vue-linkify'
+Vue.directive('linkified', linkify)
+
 new Vue({
   router,
   render: h => h(App)

@@ -63,7 +63,7 @@
                                 class="text-xs"
                               >
                                 &bull;&nbsp;
-                                <a :href="ref" target="_blank">{{ ref }}</a>
+                                <a :href="ref" class='external-link' target="_blank">{{ ref }}</a>
                               </li>
                             </ul>
                           </div>
