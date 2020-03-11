@@ -957,6 +957,29 @@
             <param name="date2">The second date to compare.</param>
             <returns>The Image Scan diff.</returns>
         </member>
+        <member name="T:webapp.Controllers.v0._2.KnowledgebaseController">
+            <summary>
+            Audit data endpoints.
+            </summary>
+        </member>
+        <member name="M:webapp.Controllers.v0._2.KnowledgebaseController.#ctor(System.IServiceProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Controllers.v0._2.KnowledgebaseController"/> class.
+            </summary>
+            <param name="services">DI container.</param>
+        </member>
+        <member name="M:webapp.Controllers.v0._2.KnowledgebaseController.GetKnowledgebaseItemById(System.String)">
+            <summary>
+            Returns the knowledgebase item content.
+            </summary>
+            <returns>The knowledgebase item content.</returns>
+        </member>
+        <member name="M:webapp.Controllers.v0._2.KnowledgebaseController.GetComponentCategoriesDescriptions">
+            <summary>
+            Returns all knowledgebase items.
+            </summary>
+            <returns>Knowledgebase items.</returns>
+        </member>
         <member name="T:webapp.Database.ChecksCache">
             <summary>
             Keeps track of Check items to reduce amount of interactions with real database.
@@ -1271,11 +1294,13 @@
         <member name="P:webapp.Database.Models.Audit.ScannerId">
             <summary>
             Which scanner did the audit.
+            TODO: Maybe create a ScannerId type to automatically check scanner types.
             </summary>
         </member>
         <member name="P:webapp.Database.Models.Audit.ComponentId">
             <summary>
             Which infrastructure component was audited: k8s-cluster id or azure-subscription-id.
+            TODO: Maybe create a ComponentId type to automatically split it to parts and do all the checks.
             </summary>
         </member>
         <member name="P:webapp.Database.Models.Audit.ComponentName">
@@ -1620,6 +1645,11 @@
             Where the CVE was discovered: container image name or application dependencies file.
             </summary>
         </member>
+        <member name="P:webapp.Database.Models.ImageScanToCve.UsedPackage">
+            <summary>
+            The package that have CVE or depends on a package with CVE.
+            </summary>
+        </member>
         <member name="P:webapp.Database.Models.ImageScanToCve.UsedPackageVersion">
             <summary>
             States which exact version of vulnerable package `ScanId` discovered.
@@ -1810,6 +1840,30 @@
             </summary>
             <param name="date">date to calculate overview.</param>
             <returns>Infrastructure overview.</returns>
+        </member>
+        <member name="T:webapp.Handlers.GetKnowledgebaseItemsHandler">
+            <summary>
+            Encapsulates GET operations for Knowledgebase item.
+            </summary>
+        </member>
+        <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.#ctor(joseki.db.JosekiDbContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Handlers.GetKnowledgebaseItemsHandler"/> class.
+            </summary>
+            <param name="db">Joseki database object.</param>
+        </member>
+        <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.GetItemById(System.String)">
+            <summary>
+            Tries to get item from the database by identifier.
+            </summary>
+            <param name="id">Knowledgebase item identifier.</param>
+            <returns>Knowledgebase item content or default NotFound entity.</returns>
+        </member>
+        <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.GetAll">
+            <summary>
+            Returns all knowledgebase items from DB.
+            </summary>
+            <returns>All Knowledgebase items.</returns>
         </member>
         <member name="T:webapp.Handlers.InfraScoreExtensions">
             <summary>
@@ -2194,6 +2248,11 @@
             CVE identifier.
             </summary>
         </member>
+        <member name="P:webapp.Models.VulnerabilityDescription.DependenciesWithCVE">
+            <summary>
+            Packages that have CVE or depend on a package with CVE.
+            </summary>
+        </member>
         <member name="P:webapp.Models.VulnerabilityDescription.PkgName">
             <summary>
             Package name, where CVE was discovered.
@@ -2358,6 +2417,11 @@
             List of every check in component.
             </summary>
         </member>
+        <member name="P:webapp.Models.InfrastructureComponentSummary.CategorySummaries">
+            <summary>
+            Summaries of all categories mentioned in Checks array.
+            </summary>
+        </member>
         <member name="T:webapp.Models.InfrastructureComponentSummaryWithHistory">
             <summary>
             Summarizes a single infrastructure unit stats: score, trends, name.
@@ -2367,6 +2431,21 @@
             <summary>
             Holds Scores per last 30 days.
             If no data for a day - places 0.
+            </summary>
+        </member>
+        <member name="T:webapp.Models.CheckCategorySummary">
+            <summary>
+            Describes Check category: polaris-networking, azure-storage-accounts, etc.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.CheckCategorySummary.Category">
+            <summary>
+            Human-readable category name.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.CheckCategorySummary.Description">
+            <summary>
+            Detailed category description.
             </summary>
         </member>
         <member name="T:webapp.Models.InfrastructureOverview">
@@ -2407,6 +2486,26 @@
         <member name="P:webapp.Models.InfrastructureOverviewDiff.Components2">
             <summary>
             Components of second summary.
+            </summary>
+        </member>
+        <member name="T:webapp.Models.KnowledgebaseItem">
+            <summary>
+            Represents content of Knowledgebase entry.
+            </summary>
+        </member>
+        <member name="F:webapp.Models.KnowledgebaseItem.NotFound">
+            <summary>
+            Represents not found entity.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.KnowledgebaseItem.Id">
+            <summary>
+            Knowledgebase entry identifier.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.KnowledgebaseItem.Content">
+            <summary>
+            Knowledgebase entry content.
             </summary>
         </member>
         <member name="T:webapp.Models.Resource">

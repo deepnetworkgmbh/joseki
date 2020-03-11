@@ -431,6 +431,11 @@
             Where the CVE was discovered: container image name or application dependencies file.
             </summary>
         </member>
+        <member name="P:joseki.db.entities.ImageScanToCveEntity.UsedPackage">
+            <summary>
+            The package that have CVE or depends on a package with CVE.
+            </summary>
+        </member>
         <member name="P:joseki.db.entities.ImageScanToCveEntity.UsedPackageVersion">
             <summary>
             States which exact version of vulnerable package `ScanId` discovered.
@@ -444,6 +449,34 @@
         <member name="P:joseki.db.entities.ImageScanToCveEntity.ImageScan">
             <summary>
             Reference to Image Scan Result object.
+            </summary>
+        </member>
+        <member name="T:joseki.db.entities.KnowledgebaseEntity">
+            <summary>
+            The entity represents a single Knowledge-base item.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.KnowledgebaseEntity.Id">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.KnowledgebaseEntity.DateUpdated">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.KnowledgebaseEntity.DateCreated">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.KnowledgebaseEntity.ChangedBy">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.KnowledgebaseEntity.ItemId">
+            <summary>
+            External knowledge-base identifier.
+            the id consist of a several sections separated with '/'.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.KnowledgebaseEntity.Content">
+            <summary>
+            The knowledge-base item content.
             </summary>
         </member>
         <member name="T:joseki.db.entities.MetadataAzureEntity">
@@ -571,6 +604,11 @@
         <member name="P:joseki.db.JosekiDbContext.ImageScanResultToCve">
             <summary>
             Image Scan Result to Cve table.
+            </summary>
+        </member>
+        <member name="P:joseki.db.JosekiDbContext.Knowledgebase">
+            <summary>
+            Knowledge-base table.
             </summary>
         </member>
         <member name="M:joseki.db.JosekiDbContext.SaveChangesAsync(System.Threading.CancellationToken)">

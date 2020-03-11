@@ -158,6 +158,7 @@ namespace webapp.Audits.Processors.trivy
                     foreach (var vulnerability in vulnerabilities)
                     {
                         var id = vulnerability["VulnerabilityID"].Value<string>();
+                        var pkgName = vulnerability["PkgName"].Value<string>();
                         var installedVersion = vulnerability["InstalledVersion"].Value<string>();
 
                         var internalCveId = await this.cache.GetOrAddItem(id, () => this.ParseSingleCVE(vulnerability, id));
@@ -167,6 +168,7 @@ namespace webapp.Audits.Processors.trivy
                         {
                             InternalCveId = internalCveId,
                             Target = targetName,
+                            UsedPackage = pkgName,
                             UsedPackageVersion = installedVersion,
                         });
 

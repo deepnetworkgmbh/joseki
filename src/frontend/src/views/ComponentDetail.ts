@@ -111,10 +111,17 @@ export default class ComponentDetail extends Vue {
         this.loadData();
     }
 
-
     getScoreIconClass(score: number) { return ScoreService.getScoreIconClass(score); }
     getGrade(score: number) { return ScoreService.getGrade(score); }
     getResultsByCategory(data: InfrastructureComponentSummary) { return MappingService.getResultsByCategory(data.checks); }
     getResultsByCollection(data: InfrastructureComponentSummary) { return MappingService.getResultsByCollection(data.checks); }
+
+    getCategoryMeta(category: string) {
+        let index = this.data.categorySummaries.findIndex(x => x.category === category);
+        if (index > -1) {
+            return this.data.categorySummaries[index].description;
+        }
+        return '???'
+    }
 
 }
