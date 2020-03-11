@@ -129,6 +129,8 @@ namespace webapp
                         .MigrationsAssembly(typeof(JosekiDbContext).Assembly.GetName().Name)
                         .EnableRetryOnFailure());
             });
+
+            // TODO: consider switching cache objects to IMemoryCache
             services.AddScoped<IJosekiDatabase, MssqlJosekiDatabase>();
             services.AddTransient<ChecksCache>();
             services.AddTransient<CveCache>();

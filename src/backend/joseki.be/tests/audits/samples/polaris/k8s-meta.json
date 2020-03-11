@@ -1,0 +1,2294 @@
+{
+	"ServerVersion": "1.15",
+	"CreationTime": "2020-03-11T02:00:04.546198601Z",
+	"SourceName": "https://10.0.0.1:443",
+	"SourceType": "Cluster",
+	"Nodes": [
+	],
+	"Deployments": [
+		{
+			"metadata": {
+				"name": "joseki-be",
+				"namespace": "joseki",
+				"selfLink": "/apis/apps/v1/namespaces/joseki/deployments/joseki-be",
+				"uid": "11303d61-6960-44b2-a97d-0e771ac80a4d",
+				"resourceVersion": "6727904",
+				"generation": 31,
+				"creationTimestamp": "2020-02-04T13:06:04Z",
+				"labels": {
+					"app": "joseki-backend",
+					"version": "0.2.10"
+				},
+				"annotations": {
+					"deployment.kubernetes.io/revision": "21",
+					"kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"apps/v1\",\"kind\":\"Deployment\",\"metadata\":{\"annotations\":{},\"labels\":{\"app\":\"joseki-backend\",\"version\":\"0.2.10\"},\"name\":\"joseki-be\",\"namespace\":\"joseki\"},\"spec\":{\"replicas\":1,\"selector\":{\"matchLabels\":{\"app\":\"joseki-backend\"}},\"template\":{\"metadata\":{\"labels\":{\"app\":\"joseki-backend\"}},\"spec\":{\"containers\":[{\"env\":[{\"name\":\"JOSEKI_CONFIG_FILE_PATH\",\"value\":\"/app/config.yaml\"}],\"image\":\"deepnetwork/joseki-backend:0.2.10\",\"imagePullPolicy\":\"Always\",\"livenessProbe\":{\"failureThreshold\":3,\"httpGet\":{\"path\":\"/health/liveness\",\"port\":8080},\"initialDelaySeconds\":60,\"periodSeconds\":10,\"successThreshold\":1,\"timeoutSeconds\":1},\"name\":\"joseki-be\",\"ports\":[{\"containerPort\":8080,\"name\":\"main-http\"}],\"readinessProbe\":{\"failureThreshold\":5,\"httpGet\":{\"path\":\"/health/readiness\",\"port\":8080},\"initialDelaySeconds\":20,\"periodSeconds\":10,\"successThreshold\":1,\"timeoutSeconds\":1},\"resources\":{\"limits\":{\"cpu\":\"1000m\",\"memory\":\"500M\"},\"requests\":{\"cpu\":\"500m\",\"memory\":\"200M\"}},\"securityContext\":{\"allowPrivilegeEscalation\":false,\"readOnlyRootFilesystem\":false,\"runAsGroup\":10001,\"runAsNonRoot\":true,\"runAsUser\":10001},\"volumeMounts\":[{\"mountPath\":\"/app/config.yaml\",\"name\":\"backend-config-volume\",\"subPath\":\"config.yaml\"}]}],\"securityContext\":{\"fsGroup\":10001},\"serviceAccountName\":\"joseki-be\",\"volumes\":[{\"configMap\":{\"defaultMode\":511,\"items\":[{\"key\":\"config.yaml\",\"path\":\"config.yaml\"}],\"name\":\"backend-config\"},\"name\":\"backend-config-volume\"}]}}}}\n"
+				}
+			},
+			"spec": {
+				"replicas": 1,
+				"selector": {
+					"matchLabels": {
+						"app": "joseki-backend"
+					}
+				},
+				"template": {
+					"metadata": {
+						"creationTimestamp": null,
+						"labels": {
+							"app": "joseki-backend"
+						}
+					},
+					"spec": {
+						"volumes": [
+							{
+								"name": "backend-config-volume",
+								"configMap": {
+									"name": "backend-config",
+									"items": [
+										{
+											"key": "config.yaml",
+											"path": "config.yaml"
+										}
+									],
+									"defaultMode": 511
+								}
+							}
+						],
+						"containers": [
+							{
+								"name": "joseki-be",
+								"image": "deepnetwork/joseki-backend:0.2.10",
+								"ports": [
+									{
+										"name": "main-http",
+										"containerPort": 8080,
+										"protocol": "TCP"
+									}
+								],
+								"env": [
+									{
+										"name": "JOSEKI_CONFIG_FILE_PATH",
+										"value": "/app/config.yaml"
+									}
+								],
+								"resources": {
+									"limits": {
+										"cpu": "1",
+										"memory": "500M"
+									},
+									"requests": {
+										"cpu": "500m",
+										"memory": "200M"
+									}
+								},
+								"volumeMounts": [
+									{
+										"name": "backend-config-volume",
+										"mountPath": "/app/config.yaml",
+										"subPath": "config.yaml"
+									}
+								],
+								"livenessProbe": {
+									"httpGet": {
+										"path": "/health/liveness",
+										"port": 8080,
+										"scheme": "HTTP"
+									},
+									"initialDelaySeconds": 60,
+									"timeoutSeconds": 1,
+									"periodSeconds": 10,
+									"successThreshold": 1,
+									"failureThreshold": 3
+								},
+								"readinessProbe": {
+									"httpGet": {
+										"path": "/health/readiness",
+										"port": 8080,
+										"scheme": "HTTP"
+									},
+									"initialDelaySeconds": 20,
+									"timeoutSeconds": 1,
+									"periodSeconds": 10,
+									"successThreshold": 1,
+									"failureThreshold": 5
+								},
+								"terminationMessagePath": "/dev/termination-log",
+								"terminationMessagePolicy": "File",
+								"imagePullPolicy": "Always",
+								"securityContext": {
+									"runAsUser": 10001,
+									"runAsGroup": 10001,
+									"runAsNonRoot": true,
+									"readOnlyRootFilesystem": false,
+									"allowPrivilegeEscalation": false
+								}
+							}
+						],
+						"restartPolicy": "Always",
+						"terminationGracePeriodSeconds": 30,
+						"dnsPolicy": "ClusterFirst",
+						"serviceAccountName": "joseki-be",
+						"serviceAccount": "joseki-be",
+						"securityContext": {
+							"fsGroup": 10001
+						},
+						"schedulerName": "default-scheduler"
+					}
+				},
+				"strategy": {
+					"type": "RollingUpdate",
+					"rollingUpdate": {
+						"maxUnavailable": "25%",
+						"maxSurge": "25%"
+					}
+				},
+				"revisionHistoryLimit": 10,
+				"progressDeadlineSeconds": 600
+			},
+			"status": {
+				"observedGeneration": 31,
+				"replicas": 1,
+				"updatedReplicas": 1,
+				"readyReplicas": 1,
+				"availableReplicas": 1,
+				"conditions": [
+					{
+						"type": "Progressing",
+						"status": "True",
+						"lastUpdateTime": "2020-03-09T13:12:18Z",
+						"lastTransitionTime": "2020-02-21T07:01:57Z",
+						"reason": "NewReplicaSetAvailable",
+						"message": "ReplicaSet \"joseki-be-5fcd477ccd\" has successfully progressed."
+					},
+					{
+						"type": "Available",
+						"status": "True",
+						"lastUpdateTime": "2020-03-09T13:45:30Z",
+						"lastTransitionTime": "2020-03-09T13:45:30Z",
+						"reason": "MinimumReplicasAvailable",
+						"message": "Deployment has minimum availability."
+					}
+				]
+			}
+		},
+		{
+			"metadata": {
+				"name": "kubernetes-dashboard",
+				"namespace": "kube-system",
+				"selfLink": "/apis/apps/v1/namespaces/kube-system/deployments/kubernetes-dashboard",
+				"uid": "1ab6a292-1576-42ab-9f8a-324d9a006a37",
+				"resourceVersion": "1149834",
+				"generation": 4,
+				"creationTimestamp": "2020-01-13T14:39:15Z",
+				"labels": {
+					"addonmanager.kubernetes.io/mode": "Reconcile",
+					"k8s-app": "kubernetes-dashboard",
+					"kubernetes.io/cluster-service": "true"
+				},
+				"annotations": {
+					"deployment.kubernetes.io/revision": "4",
+					"kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"extensions/v1beta1\",\"kind\":\"Deployment\",\"metadata\":{\"annotations\":{},\"labels\":{\"addonmanager.kubernetes.io/mode\":\"Reconcile\",\"k8s-app\":\"kubernetes-dashboard\",\"kubernetes.io/cluster-service\":\"true\"},\"name\":\"kubernetes-dashboard\",\"namespace\":\"kube-system\"},\"spec\":{\"replicas\":1,\"selector\":{\"matchLabels\":{\"k8s-app\":\"kubernetes-dashboard\",\"kubernetes.io/cluster-service\":\"true\"}},\"strategy\":{\"rollingUpdate\":{\"maxSurge\":0,\"maxUnavailable\":1},\"type\":\"RollingUpdate\"},\"template\":{\"metadata\":{\"labels\":{\"k8s-app\":\"kubernetes-dashboard\",\"kubernetes.io/cluster-service\":\"true\"}},\"spec\":{\"affinity\":{\"nodeAffinity\":{\"requiredDuringSchedulingIgnoredDuringExecution\":{\"nodeSelectorTerms\":[{\"labelSelector\":null,\"matchExpressions\":[{\"key\":\"kubernetes.azure.com/cluster\",\"operator\":\"Exists\"}]}]}}},\"containers\":[{\"image\":\"kubernetes/kubernetes-dashboard:v1.10.1\",\"livenessProbe\":{\"failureThreshold\":3,\"httpGet\":{\"path\":\"/\",\"port\":9090,\"scheme\":\"HTTP\"},\"initialDelaySeconds\":30,\"periodSeconds\":10,\"successThreshold\":1,\"timeoutSeconds\":30},\"name\":\"main\",\"ports\":[{\"containerPort\":9090,\"name\":\"http\",\"protocol\":\"TCP\"}],\"resources\":{\"limits\":{\"cpu\":\"100m\",\"memory\":\"500Mi\"},\"requests\":{\"cpu\":\"100m\",\"memory\":\"50Mi\"}}}],\"nodeSelector\":{\"beta.kubernetes.io/os\":\"linux\"},\"priorityClassName\":\"system-node-critical\",\"serviceAccountName\":\"kubernetes-dashboard\",\"tolerations\":[{\"key\":\"CriticalAddonsOnly\",\"operator\":\"Exists\"}]}}}}\n"
+				}
+			},
+			"spec": {
+				"replicas": 1,
+				"selector": {
+					"matchLabels": {
+						"k8s-app": "kubernetes-dashboard",
+						"kubernetes.io/cluster-service": "true"
+					}
+				},
+				"template": {
+					"metadata": {
+						"creationTimestamp": null,
+						"labels": {
+							"k8s-app": "kubernetes-dashboard",
+							"kubernetes.io/cluster-service": "true"
+						}
+					},
+					"spec": {
+						"containers": [
+							{
+								"name": "main",
+								"image": "kubernetes/kubernetes-dashboard:v1.10.1",
+								"ports": [
+									{
+										"name": "http",
+										"containerPort": 9090,
+										"protocol": "TCP"
+									}
+								],
+								"resources": {
+									"limits": {
+										"cpu": "100m",
+										"memory": "500Mi"
+									},
+									"requests": {
+										"cpu": "100m",
+										"memory": "50Mi"
+									}
+								},
+								"livenessProbe": {
+									"httpGet": {
+										"path": "/",
+										"port": 9090,
+										"scheme": "HTTP"
+									},
+									"initialDelaySeconds": 30,
+									"timeoutSeconds": 30,
+									"periodSeconds": 10,
+									"successThreshold": 1,
+									"failureThreshold": 3
+								},
+								"terminationMessagePath": "/dev/termination-log",
+								"terminationMessagePolicy": "File",
+								"imagePullPolicy": "IfNotPresent"
+							}
+						],
+						"restartPolicy": "Always",
+						"terminationGracePeriodSeconds": 30,
+						"dnsPolicy": "ClusterFirst",
+						"nodeSelector": {
+							"beta.kubernetes.io/os": "linux"
+						},
+						"serviceAccountName": "kubernetes-dashboard",
+						"serviceAccount": "kubernetes-dashboard",
+						"securityContext": {},
+						"affinity": {
+							"nodeAffinity": {
+								"requiredDuringSchedulingIgnoredDuringExecution": {
+									"nodeSelectorTerms": [
+										{
+											"matchExpressions": [
+												{
+													"key": "kubernetes.azure.com/cluster",
+													"operator": "Exists"
+												}
+											]
+										}
+									]
+								}
+							}
+						},
+						"schedulerName": "default-scheduler",
+						"tolerations": [
+							{
+								"key": "CriticalAddonsOnly",
+								"operator": "Exists"
+							}
+						],
+						"priorityClassName": "system-node-critical"
+					}
+				},
+				"strategy": {
+					"type": "RollingUpdate",
+					"rollingUpdate": {
+						"maxUnavailable": 1,
+						"maxSurge": 0
+					}
+				},
+				"revisionHistoryLimit": 2147483647,
+				"progressDeadlineSeconds": 2147483647
+			},
+			"status": {
+				"observedGeneration": 4,
+				"replicas": 1,
+				"updatedReplicas": 1,
+				"readyReplicas": 1,
+				"availableReplicas": 1,
+				"conditions": [
+					{
+						"type": "Available",
+						"status": "True",
+						"lastUpdateTime": "2020-01-13T14:39:15Z",
+						"lastTransitionTime": "2020-01-13T14:39:15Z",
+						"reason": "MinimumReplicasAvailable",
+						"message": "Deployment has minimum availability."
+					}
+				]
+			}
+		}
+	],
+	"StatefulSets": [
+		{
+			"metadata": {
+				"name": "es-cluster",
+				"namespace": "operations",
+				"selfLink": "/apis/apps/v1/namespaces/operations/statefulsets/es-cluster",
+				"uid": "37f07ce9-7e62-45ad-87c0-3e8cc0a575b8",
+				"resourceVersion": "5463149",
+				"generation": 1,
+				"creationTimestamp": "2020-02-03T12:10:33Z"
+			},
+			"spec": {
+				"replicas": 1,
+				"selector": {
+					"matchLabels": {
+						"app": "elasticsearch"
+					}
+				},
+				"template": {
+					"metadata": {
+						"creationTimestamp": null,
+						"labels": {
+							"app": "elasticsearch"
+						}
+					},
+					"spec": {
+						"initContainers": [
+							{
+								"name": "fix-permissions",
+								"image": "busybox",
+								"command": [
+									"sh",
+									"-c",
+									"chown -R 1000:1000 /usr/share/elasticsearch/data"
+								],
+								"resources": {},
+								"volumeMounts": [
+									{
+										"name": "data",
+										"mountPath": "/usr/share/elasticsearch/data"
+									}
+								],
+								"terminationMessagePath": "/dev/termination-log",
+								"terminationMessagePolicy": "File",
+								"imagePullPolicy": "Always",
+								"securityContext": {
+									"privileged": true
+								}
+							},
+							{
+								"name": "increase-vm-max-map",
+								"image": "busybox",
+								"command": [
+									"sysctl",
+									"-w",
+									"vm.max_map_count=262144"
+								],
+								"resources": {},
+								"terminationMessagePath": "/dev/termination-log",
+								"terminationMessagePolicy": "File",
+								"imagePullPolicy": "Always",
+								"securityContext": {
+									"privileged": true
+								}
+							},
+							{
+								"name": "increase-fd-ulimit",
+								"image": "busybox",
+								"command": [
+									"sh",
+									"-c",
+									"ulimit -n 65536"
+								],
+								"resources": {},
+								"terminationMessagePath": "/dev/termination-log",
+								"terminationMessagePolicy": "File",
+								"imagePullPolicy": "Always",
+								"securityContext": {
+									"privileged": true
+								}
+							}
+						],
+						"containers": [
+							{
+								"name": "elasticsearch",
+								"image": "quay.io/fluentd_elasticsearch/elasticsearch:7.4.2",
+								"ports": [
+									{
+										"name": "rest",
+										"containerPort": 9200,
+										"protocol": "TCP"
+									},
+									{
+										"name": "inter-node",
+										"containerPort": 9300,
+										"protocol": "TCP"
+									}
+								],
+								"env": [
+									{
+										"name": "cluster.name",
+										"value": "k8s-logs"
+									},
+									{
+										"name": "node.name",
+										"valueFrom": {
+											"fieldRef": {
+												"apiVersion": "v1",
+												"fieldPath": "metadata.name"
+											}
+										}
+									},
+									{
+										"name": "discovery.type",
+										"value": "single-node"
+									},
+									{
+										"name": "ES_JAVA_OPTS",
+										"value": "-Xms1g -Xmx1g"
+									}
+								],
+								"resources": {
+									"limits": {
+										"cpu": "1",
+										"memory": "2Gi"
+									},
+									"requests": {
+										"cpu": "100m",
+										"memory": "2Gi"
+									}
+								},
+								"volumeMounts": [
+									{
+										"name": "data",
+										"mountPath": "/usr/share/elasticsearch/data"
+									}
+								],
+								"terminationMessagePath": "/dev/termination-log",
+								"terminationMessagePolicy": "File",
+								"imagePullPolicy": "IfNotPresent"
+							}
+						],
+						"restartPolicy": "Always",
+						"terminationGracePeriodSeconds": 30,
+						"dnsPolicy": "ClusterFirst",
+						"securityContext": {},
+						"schedulerName": "default-scheduler"
+					}
+				},
+				"volumeClaimTemplates": [
+					{
+						"metadata": {
+							"name": "data",
+							"creationTimestamp": null,
+							"labels": {
+								"app": "elasticsearch"
+							}
+						},
+						"spec": {
+							"accessModes": [
+								"ReadWriteOnce"
+							],
+							"resources": {
+								"requests": {
+									"storage": "100Gi"
+								}
+							},
+							"storageClassName": "default",
+							"volumeMode": "Filesystem",
+							"dataSource": null
+						},
+						"status": {
+							"phase": "Pending"
+						}
+					}
+				],
+				"serviceName": "elasticsearch",
+				"podManagementPolicy": "OrderedReady",
+				"updateStrategy": {
+					"type": "RollingUpdate",
+					"rollingUpdate": {
+						"partition": 0
+					}
+				},
+				"revisionHistoryLimit": 10
+			},
+			"status": {
+				"observedGeneration": 1,
+				"replicas": 1,
+				"readyReplicas": 1,
+				"currentReplicas": 1,
+				"updatedReplicas": 1,
+				"currentRevision": "es-cluster-85d7b5b475",
+				"updateRevision": "es-cluster-85d7b5b475",
+				"collisionCount": 0
+			}
+		}
+	],
+	"DaemonSets": [
+		{
+			"metadata": {
+				"name": "filebeat",
+				"namespace": "operations",
+				"selfLink": "/apis/apps/v1/namespaces/operations/daemonsets/filebeat",
+				"uid": "5b2786c1-8d29-4cae-aab9-675a07b85708",
+				"resourceVersion": "5462876",
+				"generation": 1,
+				"creationTimestamp": "2020-02-06T13:57:59Z",
+				"labels": {
+					"k8s-app": "filebeat"
+				},
+				"annotations": {
+					"deprecated.daemonset.template.generation": "1"
+				}
+			},
+			"spec": {
+				"selector": {
+					"matchLabels": {
+						"k8s-app": "filebeat"
+					}
+				},
+				"template": {
+					"metadata": {
+						"creationTimestamp": null,
+						"labels": {
+							"k8s-app": "filebeat"
+						}
+					},
+					"spec": {
+						"volumes": [
+							{
+								"name": "config",
+								"configMap": {
+									"name": "filebeat-config",
+									"defaultMode": 384
+								}
+							},
+							{
+								"name": "varlibdockercontainers",
+								"hostPath": {
+									"path": "/var/lib/docker/containers",
+									"type": ""
+								}
+							},
+							{
+								"name": "varlog",
+								"hostPath": {
+									"path": "/var/log",
+									"type": ""
+								}
+							},
+							{
+								"name": "data",
+								"hostPath": {
+									"path": "/var/lib/filebeat-data",
+									"type": "DirectoryOrCreate"
+								}
+							}
+						],
+						"containers": [
+							{
+								"name": "filebeat",
+								"image": "elastic/filebeat:7.5.0",
+								"args": [
+									"-c",
+									"/etc/filebeat.yml",
+									"-e"
+								],
+								"env": [
+									{
+										"name": "NODE_NAME",
+										"valueFrom": {
+											"fieldRef": {
+												"apiVersion": "v1",
+												"fieldPath": "spec.nodeName"
+											}
+										}
+									}
+								],
+								"resources": {
+									"limits": {
+										"memory": "200Mi"
+									},
+									"requests": {
+										"cpu": "500m",
+										"memory": "100Mi"
+									}
+								},
+								"volumeMounts": [
+									{
+										"name": "config",
+										"readOnly": true,
+										"mountPath": "/etc/filebeat.yml",
+										"subPath": "filebeat.yml"
+									},
+									{
+										"name": "data",
+										"mountPath": "/usr/share/filebeat/data"
+									},
+									{
+										"name": "varlibdockercontainers",
+										"readOnly": true,
+										"mountPath": "/var/lib/docker/containers"
+									},
+									{
+										"name": "varlog",
+										"readOnly": true,
+										"mountPath": "/var/log"
+									}
+								],
+								"terminationMessagePath": "/dev/termination-log",
+								"terminationMessagePolicy": "File",
+								"imagePullPolicy": "IfNotPresent",
+								"securityContext": {
+									"runAsUser": 0
+								}
+							}
+						],
+						"restartPolicy": "Always",
+						"terminationGracePeriodSeconds": 30,
+						"dnsPolicy": "ClusterFirstWithHostNet",
+						"serviceAccountName": "filebeat",
+						"serviceAccount": "filebeat",
+						"hostNetwork": true,
+						"securityContext": {},
+						"schedulerName": "default-scheduler"
+					}
+				},
+				"updateStrategy": {
+					"type": "RollingUpdate",
+					"rollingUpdate": {
+						"maxUnavailable": 1
+					}
+				},
+				"revisionHistoryLimit": 10
+			},
+			"status": {
+				"currentNumberScheduled": 3,
+				"numberMisscheduled": 0,
+				"desiredNumberScheduled": 3,
+				"numberReady": 3,
+				"observedGeneration": 1,
+				"updatedNumberScheduled": 3,
+				"numberAvailable": 3
+			}
+		}
+	],
+	"Jobs": [
+		{
+			"metadata": {
+				"name": "scanner-azsk-1583892000",
+				"namespace": "joseki",
+				"selfLink": "/apis/batch/v1/namespaces/joseki/jobs/scanner-azsk-1583892000",
+				"uid": "6a64ea1f-8cc9-4aa6-a83b-443be72b4f19",
+				"resourceVersion": "6917790",
+				"creationTimestamp": "2020-03-11T02:00:00Z",
+				"labels": {
+					"controller-uid": "6a64ea1f-8cc9-4aa6-a83b-443be72b4f19",
+					"job-name": "scanner-azsk-1583892000"
+				},
+				"ownerReferences": [
+					{
+						"apiVersion": "batch/v1beta1",
+						"kind": "CronJob",
+						"name": "scanner-azsk",
+						"uid": "05b8613c-ae7d-413b-8c75-3744d93c512d",
+						"controller": true,
+						"blockOwnerDeletion": true
+					}
+				]
+			},
+			"spec": {
+				"parallelism": 1,
+				"completions": 1,
+				"backoffLimit": 6,
+				"selector": {
+					"matchLabels": {
+						"controller-uid": "6a64ea1f-8cc9-4aa6-a83b-443be72b4f19"
+					}
+				},
+				"template": {
+					"metadata": {
+						"creationTimestamp": null,
+						"labels": {
+							"controller-uid": "6a64ea1f-8cc9-4aa6-a83b-443be72b4f19",
+							"job-name": "scanner-azsk-1583892000"
+						}
+					},
+					"spec": {
+						"volumes": [
+							{
+								"name": "config",
+								"configMap": {
+									"name": "scanner-azsk-cfg",
+									"defaultMode": 420
+								}
+							}
+						],
+						"containers": [
+							{
+								"name": "scanner-azsk",
+								"image": "deepnetwork/joseki-scanner-azsk:0.2.0",
+								"args": [
+									"--config",
+									"/app/config.az.yaml",
+									"--subscriptions",
+									"2a0f8d96-c767-4a44-b1ee-fdad830ee700",
+									"dcb8e26b-6a96-49fb-86f3-1b21cd52aab2",
+									"e540aeee-0354-4ce6-ae66-0a009cf1c064"
+								],
+								"resources": {},
+								"volumeMounts": [
+									{
+										"name": "config",
+										"readOnly": true,
+										"mountPath": "/app/config.az.yaml",
+										"subPath": "scanner-azsk-config.yaml"
+									}
+								],
+								"terminationMessagePath": "/dev/termination-log",
+								"terminationMessagePolicy": "File",
+								"imagePullPolicy": "Always"
+							}
+						],
+						"restartPolicy": "Never",
+						"terminationGracePeriodSeconds": 30,
+						"dnsPolicy": "ClusterFirst",
+						"serviceAccountName": "scanner-azsk",
+						"serviceAccount": "scanner-azsk",
+						"securityContext": {},
+						"schedulerName": "default-scheduler"
+					}
+				}
+			},
+			"status": {
+				"startTime": "2020-03-11T02:00:01Z",
+				"active": 1
+			}
+		},
+		{
+			"metadata": {
+				"name": "scanner-polaris",
+				"namespace": "joseki",
+				"selfLink": "/apis/batch/v1/namespaces/joseki/jobs/scanner-polaris",
+				"uid": "5bb9def5-9f67-472e-8a7c-e767ee484470",
+				"resourceVersion": "5072214",
+				"creationTimestamp": "2020-02-25T13:26:45Z",
+				"labels": {
+					"app": "scanner-polaris",
+					"module": "scanners",
+					"version": "0.2.0"
+				},
+				"annotations": {
+					"kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1\",\"kind\":\"Job\",\"metadata\":{\"annotations\":{},\"labels\":{\"app\":\"scanner-polaris\",\"module\":\"scanners\",\"version\":\"0.2.0\"},\"name\":\"scanner-polaris\",\"namespace\":\"joseki\"},\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"args\":[\"--config\",\"/app/scanner-polaris-config.yaml\"],\"image\":\"deepnetwork/joseki-scanner-polaris:0.2-beta\",\"imagePullPolicy\":\"Always\",\"name\":\"scanner-polaris\",\"volumeMounts\":[{\"mountPath\":\"/app/scanner-polaris-config.yaml\",\"name\":\"config\",\"readOnly\":true,\"subPath\":\"scanner-polaris-config.yaml\"},{\"mountPath\":\"/app/polaris-config.yaml\",\"name\":\"config\",\"readOnly\":true,\"subPath\":\"polaris-config.yaml\"}]}],\"restartPolicy\":\"Never\",\"serviceAccountName\":\"scanner-polaris\",\"volumes\":[{\"configMap\":{\"name\":\"scanner-polaris-cfg\"},\"name\":\"config\"}]}}}}\n"
+				}
+			},
+			"spec": {
+				"parallelism": 1,
+				"completions": 1,
+				"backoffLimit": 6,
+				"selector": {
+					"matchLabels": {
+						"controller-uid": "5bb9def5-9f67-472e-8a7c-e767ee484470"
+					}
+				},
+				"template": {
+					"metadata": {
+						"creationTimestamp": null,
+						"labels": {
+							"controller-uid": "5bb9def5-9f67-472e-8a7c-e767ee484470",
+							"job-name": "scanner-polaris"
+						}
+					},
+					"spec": {
+						"volumes": [
+							{
+								"name": "config",
+								"configMap": {
+									"name": "scanner-polaris-cfg",
+									"defaultMode": 420
+								}
+							}
+						],
+						"containers": [
+							{
+								"name": "scanner-polaris",
+								"image": "deepnetwork/joseki-scanner-polaris:0.2-beta",
+								"args": [
+									"--config",
+									"/app/scanner-polaris-config.yaml"
+								],
+								"resources": {},
+								"volumeMounts": [
+									{
+										"name": "config",
+										"readOnly": true,
+										"mountPath": "/app/scanner-polaris-config.yaml",
+										"subPath": "scanner-polaris-config.yaml"
+									},
+									{
+										"name": "config",
+										"readOnly": true,
+										"mountPath": "/app/polaris-config.yaml",
+										"subPath": "polaris-config.yaml"
+									}
+								],
+								"terminationMessagePath": "/dev/termination-log",
+								"terminationMessagePolicy": "File",
+								"imagePullPolicy": "Always"
+							}
+						],
+						"restartPolicy": "Never",
+						"terminationGracePeriodSeconds": 30,
+						"dnsPolicy": "ClusterFirst",
+						"serviceAccountName": "scanner-polaris",
+						"serviceAccount": "scanner-polaris",
+						"securityContext": {},
+						"schedulerName": "default-scheduler"
+					}
+				}
+			},
+			"status": {
+				"conditions": [
+					{
+						"type": "Complete",
+						"status": "True",
+						"lastProbeTime": "2020-02-25T13:27:31Z",
+						"lastTransitionTime": "2020-02-25T13:27:31Z"
+					}
+				],
+				"startTime": "2020-02-25T13:26:45Z",
+				"completionTime": "2020-02-25T13:27:31Z",
+				"succeeded": 1
+			}
+		}
+	],
+	"CronJobs": [
+		{
+			"metadata": {
+				"name": "scanner-azsk",
+				"namespace": "joseki",
+				"selfLink": "/apis/batch/v1beta1/namespaces/joseki/cronjobs/scanner-azsk",
+				"uid": "05b8613c-ae7d-413b-8c75-3744d93c512d",
+				"resourceVersion": "6917778",
+				"creationTimestamp": "2020-02-13T12:58:08Z",
+				"labels": {
+					"app": "scanner-azsk",
+					"module": "scanners",
+					"version": "0.2.0"
+				},
+				"annotations": {
+					"kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1beta1\",\"kind\":\"CronJob\",\"metadata\":{\"annotations\":{},\"labels\":{\"app\":\"scanner-azsk\",\"module\":\"scanners\",\"version\":\"0.2.0\"},\"name\":\"scanner-azsk\",\"namespace\":\"joseki\"},\"spec\":{\"jobTemplate\":{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"args\":[\"--config\",\"/app/config.az.yaml\",\"--subscriptions\",\"2a0f8d96-c767-4a44-b1ee-fdad830ee700\",\"dcb8e26b-6a96-49fb-86f3-1b21cd52aab2\",\"e540aeee-0354-4ce6-ae66-0a009cf1c064\"],\"image\":\"deepnetwork/joseki-scanner-azsk:0.2.0\",\"imagePullPolicy\":\"Always\",\"name\":\"scanner-azsk\",\"volumeMounts\":[{\"mountPath\":\"/app/config.az.yaml\",\"name\":\"config\",\"readOnly\":true,\"subPath\":\"scanner-azsk-config.yaml\"}]}],\"restartPolicy\":\"Never\",\"serviceAccountName\":\"scanner-azsk\",\"volumes\":[{\"configMap\":{\"name\":\"scanner-azsk-cfg\"},\"name\":\"config\"}]}}}},\"schedule\":\"0 2 * * *\"}}\n"
+				}
+			},
+			"spec": {
+				"schedule": "0 2 * * *",
+				"concurrencyPolicy": "Allow",
+				"suspend": false,
+				"jobTemplate": {
+					"metadata": {
+						"creationTimestamp": null
+					},
+					"spec": {
+						"template": {
+							"metadata": {
+								"creationTimestamp": null
+							},
+							"spec": {
+								"volumes": [
+									{
+										"name": "config",
+										"configMap": {
+											"name": "scanner-azsk-cfg",
+											"defaultMode": 420
+										}
+									}
+								],
+								"containers": [
+									{
+										"name": "scanner-azsk",
+										"image": "deepnetwork/joseki-scanner-azsk:0.2.0",
+										"args": [
+											"--config",
+											"/app/config.az.yaml",
+											"--subscriptions",
+											"2a0f8d96-c767-4a44-b1ee-fdad830ee700",
+											"dcb8e26b-6a96-49fb-86f3-1b21cd52aab2",
+											"e540aeee-0354-4ce6-ae66-0a009cf1c064"
+										],
+										"resources": {},
+										"volumeMounts": [
+											{
+												"name": "config",
+												"readOnly": true,
+												"mountPath": "/app/config.az.yaml",
+												"subPath": "scanner-azsk-config.yaml"
+											}
+										],
+										"terminationMessagePath": "/dev/termination-log",
+										"terminationMessagePolicy": "File",
+										"imagePullPolicy": "Always"
+									}
+								],
+								"restartPolicy": "Never",
+								"terminationGracePeriodSeconds": 30,
+								"dnsPolicy": "ClusterFirst",
+								"serviceAccountName": "scanner-azsk",
+								"serviceAccount": "scanner-azsk",
+								"securityContext": {},
+								"schedulerName": "default-scheduler"
+							}
+						}
+					}
+				},
+				"successfulJobsHistoryLimit": 3,
+				"failedJobsHistoryLimit": 1
+			},
+			"status": {
+				"active": [
+					{
+						"kind": "Job",
+						"namespace": "joseki",
+						"name": "scanner-azsk-1583892000",
+						"uid": "6a64ea1f-8cc9-4aa6-a83b-443be72b4f19",
+						"apiVersion": "batch/v1",
+						"resourceVersion": "6917777"
+					}
+				],
+				"lastScheduleTime": "2020-03-11T02:00:00Z"
+			}
+		}
+	],
+	"ReplicationControllers": [],
+	"Namespaces": [
+		{
+			"metadata": {
+				"name": "default",
+				"selfLink": "/api/v1/namespaces/default",
+				"uid": "9b6bdbb8-04f8-4527-9f9e-020106983fb0",
+				"resourceVersion": "144",
+				"creationTimestamp": "2020-01-13T14:38:50Z"
+			},
+			"spec": {
+				"finalizers": [
+					"kubernetes"
+				]
+			},
+			"status": {
+				"phase": "Active"
+			}
+		},
+		{
+			"metadata": {
+				"name": "joseki",
+				"selfLink": "/api/v1/namespaces/joseki",
+				"uid": "a17422d4-cf39-4252-82ae-92ff0a1b3cf8",
+				"resourceVersion": "2452937",
+				"creationTimestamp": "2020-02-04T13:05:53Z",
+				"annotations": {
+					"kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"kind\":\"Namespace\",\"metadata\":{\"annotations\":{},\"name\":\"joseki\",\"namespace\":\"\"}}\n"
+				}
+			},
+			"spec": {
+				"finalizers": [
+					"kubernetes"
+				]
+			},
+			"status": {
+				"phase": "Active"
+			}
+		},
+		{
+			"metadata": {
+				"name": "kube-system",
+				"selfLink": "/api/v1/namespaces/kube-system",
+				"uid": "57b91e01-e7db-498d-aa6b-3660d68d04a6",
+				"resourceVersion": "338",
+				"creationTimestamp": "2020-01-13T14:38:46Z",
+				"labels": {
+					"addonmanager.kubernetes.io/mode": "Reconcile",
+					"control-plane": "true",
+					"kubernetes.io/cluster-service": "true"
+				},
+				"annotations": {
+					"kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"kind\":\"Namespace\",\"metadata\":{\"annotations\":{},\"labels\":{\"addonmanager.kubernetes.io/mode\":\"Reconcile\",\"control-plane\":\"true\",\"kubernetes.io/cluster-service\":\"true\"},\"name\":\"kube-system\"}}\n"
+				}
+			},
+			"spec": {
+				"finalizers": [
+					"kubernetes"
+				]
+			},
+			"status": {
+				"phase": "Active"
+			}
+		},
+		{
+			"metadata": {
+				"name": "operations",
+				"selfLink": "/api/v1/namespaces/operations",
+				"uid": "00daacc1-1d79-44d7-b1f9-a43849f419d7",
+				"resourceVersion": "2324319",
+				"creationTimestamp": "2020-02-03T11:29:50Z"
+			},
+			"spec": {
+				"finalizers": [
+					"kubernetes"
+				]
+			},
+			"status": {
+				"phase": "Active"
+			}
+		}
+	],
+	"Pods": [
+		{
+			"metadata": {
+				"name": "joseki-be-5fcd477ccd-8jjcz",
+				"generateName": "joseki-be-5fcd477ccd-",
+				"namespace": "joseki",
+				"selfLink": "/api/v1/namespaces/joseki/pods/joseki-be-5fcd477ccd-8jjcz",
+				"uid": "3ec066b6-67a7-4929-b6ce-07bcf2bc2539",
+				"resourceVersion": "6727901",
+				"creationTimestamp": "2020-03-09T13:44:58Z",
+				"labels": {
+					"app": "joseki-backend",
+					"pod-template-hash": "5fcd477ccd"
+				},
+				"ownerReferences": [
+					{
+						"apiVersion": "apps/v1",
+						"kind": "ReplicaSet",
+						"name": "joseki-be-5fcd477ccd",
+						"uid": "339af2ad-a564-4d15-ad78-954bbaef4baf",
+						"controller": true,
+						"blockOwnerDeletion": true
+					}
+				]
+			},
+			"spec": {
+				"volumes": [
+					{
+						"name": "backend-config-volume",
+						"configMap": {
+							"name": "backend-config",
+							"items": [
+								{
+									"key": "config.yaml",
+									"path": "config.yaml"
+								}
+							],
+							"defaultMode": 511
+						}
+					},
+					{
+						"name": "joseki-be-token-afrcu",
+						"secret": {
+							"secretName": "joseki-be-token-afrcu",
+							"defaultMode": 420
+						}
+					}
+				],
+				"containers": [
+					{
+						"name": "joseki-be",
+						"image": "deepnetwork/joseki-backend:0.2.10",
+						"ports": [
+							{
+								"name": "main-http",
+								"containerPort": 8080,
+								"protocol": "TCP"
+							}
+						],
+						"env": [
+							{
+								"name": "JOSEKI_CONFIG_FILE_PATH",
+								"value": "/app/config.yaml"
+							}
+						],
+						"resources": {
+							"limits": {
+								"cpu": "1",
+								"memory": "500M"
+							},
+							"requests": {
+								"cpu": "500m",
+								"memory": "200M"
+							}
+						},
+						"volumeMounts": [
+							{
+								"name": "backend-config-volume",
+								"mountPath": "/app/config.yaml",
+								"subPath": "config.yaml"
+							},
+							{
+								"name": "joseki-be-token-afrcu",
+								"readOnly": true,
+								"mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+							}
+						],
+						"livenessProbe": {
+							"httpGet": {
+								"path": "/health/liveness",
+								"port": 8080,
+								"scheme": "HTTP"
+							},
+							"initialDelaySeconds": 60,
+							"timeoutSeconds": 1,
+							"periodSeconds": 10,
+							"successThreshold": 1,
+							"failureThreshold": 3
+						},
+						"readinessProbe": {
+							"httpGet": {
+								"path": "/health/readiness",
+								"port": 8080,
+								"scheme": "HTTP"
+							},
+							"initialDelaySeconds": 20,
+							"timeoutSeconds": 1,
+							"periodSeconds": 10,
+							"successThreshold": 1,
+							"failureThreshold": 5
+						},
+						"terminationMessagePath": "/dev/termination-log",
+						"terminationMessagePolicy": "File",
+						"imagePullPolicy": "Always",
+						"securityContext": {
+							"runAsUser": 10001,
+							"runAsGroup": 10001,
+							"runAsNonRoot": true,
+							"readOnlyRootFilesystem": false,
+							"allowPrivilegeEscalation": false
+						}
+					}
+				],
+				"restartPolicy": "Always",
+				"terminationGracePeriodSeconds": 30,
+				"dnsPolicy": "ClusterFirst",
+				"serviceAccountName": "joseki-be",
+				"serviceAccount": "joseki-be",
+				"nodeName": "aks-agentpool2-12345678-vmss000000",
+				"securityContext": {
+					"fsGroup": 10001
+				},
+				"schedulerName": "default-scheduler",
+				"tolerations": [
+					{
+						"key": "node.kubernetes.io/not-ready",
+						"operator": "Exists",
+						"effect": "NoExecute",
+						"tolerationSeconds": 300
+					},
+					{
+						"key": "node.kubernetes.io/unreachable",
+						"operator": "Exists",
+						"effect": "NoExecute",
+						"tolerationSeconds": 300
+					}
+				],
+				"priority": 0,
+				"enableServiceLinks": true
+			},
+			"status": {
+				"phase": "Running",
+				"conditions": [
+					{
+						"type": "Initialized",
+						"status": "True",
+						"lastProbeTime": null,
+						"lastTransitionTime": "2020-03-09T13:44:58Z"
+					},
+					{
+						"type": "Ready",
+						"status": "True",
+						"lastProbeTime": null,
+						"lastTransitionTime": "2020-03-09T13:45:30Z"
+					},
+					{
+						"type": "ContainersReady",
+						"status": "True",
+						"lastProbeTime": null,
+						"lastTransitionTime": "2020-03-09T13:45:30Z"
+					},
+					{
+						"type": "PodScheduled",
+						"status": "True",
+						"lastProbeTime": null,
+						"lastTransitionTime": "2020-03-09T13:44:58Z"
+					}
+				],
+				"hostIP": "10.240.0.5",
+				"podIP": "10.244.4.30",
+				"startTime": "2020-03-09T13:44:58Z",
+				"containerStatuses": [
+					{
+						"name": "joseki-be",
+						"state": {
+							"running": {
+								"startedAt": "2020-03-09T13:45:06Z"
+							}
+						},
+						"lastState": {},
+						"ready": true,
+						"restartCount": 0,
+						"image": "deepnetwork/joseki-backend:0.2.10",
+						"imageID": "docker-pullable://deepnetwork/joseki-backend@...",
+						"containerID": "..."
+					}
+				],
+				"qosClass": "Burstable"
+			}
+		},
+		{
+			"metadata": {
+				"name": "scanner-azsk-1583892000-lpf4s",
+				"generateName": "scanner-azsk-1583892000-",
+				"namespace": "joseki",
+				"selfLink": "/api/v1/namespaces/joseki/pods/scanner-azsk-1583892000-lpf4s",
+				"uid": "80ad0646-9c4b-4e1a-9efd-062d42923f92",
+				"resourceVersion": "6917808",
+				"creationTimestamp": "2020-03-11T02:00:01Z",
+				"labels": {
+					"controller-uid": "6a64ea1f-8cc9-4aa6-a83b-443be72b4f19",
+					"job-name": "scanner-azsk-1583892000"
+				},
+				"ownerReferences": [
+					{
+						"apiVersion": "batch/v1",
+						"kind": "Job",
+						"name": "scanner-azsk-1583892000",
+						"uid": "6a64ea1f-8cc9-4aa6-a83b-443be72b4f19",
+						"controller": true,
+						"blockOwnerDeletion": true
+					}
+				]
+			},
+			"spec": {
+				"volumes": [
+					{
+						"name": "config",
+						"configMap": {
+							"name": "scanner-azsk-cfg",
+							"defaultMode": 420
+						}
+					},
+					{
+						"name": "scanner-azsk-token-qas11",
+						"secret": {
+							"secretName": "scanner-azsk-token-qas11",
+							"defaultMode": 420
+						}
+					}
+				],
+				"containers": [
+					{
+						"name": "scanner-azsk",
+						"image": "deepnetwork/joseki-scanner-azsk:0.2.0",
+						"args": [
+							"--config",
+							"/app/config.az.yaml",
+							"--subscriptions",
+							"2a0f8d96-c767-4a44-b1ee-fdad830ee700",
+							"dcb8e26b-6a96-49fb-86f3-1b21cd52aab2",
+							"e540aeee-0354-4ce6-ae66-0a009cf1c064"
+						],
+						"resources": {},
+						"volumeMounts": [
+							{
+								"name": "config",
+								"readOnly": true,
+								"mountPath": "/app/config.az.yaml",
+								"subPath": "scanner-azsk-config.yaml"
+							},
+							{
+								"name": "scanner-azsk-token-qas11",
+								"readOnly": true,
+								"mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+							}
+						],
+						"terminationMessagePath": "/dev/termination-log",
+						"terminationMessagePolicy": "File",
+						"imagePullPolicy": "Always"
+					}
+				],
+				"restartPolicy": "Never",
+				"terminationGracePeriodSeconds": 30,
+				"dnsPolicy": "ClusterFirst",
+				"serviceAccountName": "scanner-azsk",
+				"serviceAccount": "scanner-azsk",
+				"nodeName": "aks-agentpool2-12345678-vmss000000",
+				"securityContext": {},
+				"schedulerName": "default-scheduler",
+				"tolerations": [
+					{
+						"key": "node.kubernetes.io/not-ready",
+						"operator": "Exists",
+						"effect": "NoExecute",
+						"tolerationSeconds": 300
+					},
+					{
+						"key": "node.kubernetes.io/unreachable",
+						"operator": "Exists",
+						"effect": "NoExecute",
+						"tolerationSeconds": 300
+					}
+				],
+				"priority": 0,
+				"enableServiceLinks": true
+			},
+			"status": {
+				"phase": "Running",
+				"conditions": [
+					{
+						"type": "Initialized",
+						"status": "True",
+						"lastProbeTime": null,
+						"lastTransitionTime": "2020-03-11T02:00:01Z"
+					},
+					{
+						"type": "Ready",
+						"status": "True",
+						"lastProbeTime": null,
+						"lastTransitionTime": "2020-03-11T02:00:04Z"
+					},
+					{
+						"type": "ContainersReady",
+						"status": "True",
+						"lastProbeTime": null,
+						"lastTransitionTime": "2020-03-11T02:00:04Z"
+					},
+					{
+						"type": "PodScheduled",
+						"status": "True",
+						"lastProbeTime": null,
+						"lastTransitionTime": "2020-03-11T02:00:01Z"
+					}
+				],
+				"hostIP": "10.240.0.4",
+				"podIP": "10.244.0.244",
+				"startTime": "2020-03-11T02:00:01Z",
+				"containerStatuses": [
+					{
+						"name": "scanner-azsk",
+						"state": {
+							"running": {
+								"startedAt": "2020-03-11T02:00:04Z"
+							}
+						},
+						"lastState": {},
+						"ready": true,
+						"restartCount": 0,
+						"image": "deepnetwork/joseki-scanner-azsk:0.2.0",
+						"imageID": "docker-pullable://deepnetwork/joseki-scanner-azsk@...",
+						"containerID": "..."
+					}
+				],
+				"qosClass": "BestEffort"
+			}
+		},
+		{
+			"metadata": {
+				"name": "scanner-polaris-kn6l2",
+				"generateName": "scanner-polaris-",
+				"namespace": "joseki",
+				"selfLink": "/api/v1/namespaces/joseki/pods/scanner-polaris-kn6l2",
+				"uid": "45016737-c736-41d8-bcea-75f2eadb8fd2",
+				"resourceVersion": "5072213",
+				"creationTimestamp": "2020-02-25T13:26:45Z",
+				"labels": {
+					"controller-uid": "5bb9def5-9f67-472e-8a7c-e767ee484470",
+					"job-name": "scanner-polaris"
+				},
+				"ownerReferences": [
+					{
+						"apiVersion": "batch/v1",
+						"kind": "Job",
+						"name": "scanner-polaris",
+						"uid": "5bb9def5-9f67-472e-8a7c-e767ee484470",
+						"controller": true,
+						"blockOwnerDeletion": true
+					}
+				]
+			},
+			"spec": {
+				"volumes": [
+					{
+						"name": "config",
+						"configMap": {
+							"name": "scanner-polaris-cfg",
+							"defaultMode": 420
+						}
+					},
+					{
+						"name": "scanner-polaris-token-zf63a",
+						"secret": {
+							"secretName": "scanner-polaris-token-zf63a",
+							"defaultMode": 420
+						}
+					}
+				],
+				"containers": [
+					{
+						"name": "scanner-polaris",
+						"image": "deepnetwork/joseki-scanner-polaris:0.2-beta",
+						"args": [
+							"--config",
+							"/app/scanner-polaris-config.yaml"
+						],
+						"resources": {},
+						"volumeMounts": [
+							{
+								"name": "config",
+								"readOnly": true,
+								"mountPath": "/app/scanner-polaris-config.yaml",
+								"subPath": "scanner-polaris-config.yaml"
+							},
+							{
+								"name": "config",
+								"readOnly": true,
+								"mountPath": "/app/polaris-config.yaml",
+								"subPath": "polaris-config.yaml"
+							},
+							{
+								"name": "scanner-polaris-token-zf63a",
+								"readOnly": true,
+								"mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+							}
+						],
+						"terminationMessagePath": "/dev/termination-log",
+						"terminationMessagePolicy": "File",
+						"imagePullPolicy": "Always"
+					}
+				],
+				"restartPolicy": "Never",
+				"terminationGracePeriodSeconds": 30,
+				"dnsPolicy": "ClusterFirst",
+				"serviceAccountName": "scanner-polaris",
+				"serviceAccount": "scanner-polaris",
+				"nodeName": "aks-agentpool2-12345678-vmss000000",
+				"securityContext": {},
+				"schedulerName": "default-scheduler",
+				"tolerations": [
+					{
+						"key": "node.kubernetes.io/not-ready",
+						"operator": "Exists",
+						"effect": "NoExecute",
+						"tolerationSeconds": 300
+					},
+					{
+						"key": "node.kubernetes.io/unreachable",
+						"operator": "Exists",
+						"effect": "NoExecute",
+						"tolerationSeconds": 300
+					}
+				],
+				"priority": 0,
+				"enableServiceLinks": true
+			},
+			"status": {
+				"phase": "Succeeded",
+				"conditions": [
+					{
+						"type": "Initialized",
+						"status": "True",
+						"lastProbeTime": null,
+						"lastTransitionTime": "2020-02-25T13:26:45Z",
+						"reason": "PodCompleted"
+					},
+					{
+						"type": "Ready",
+						"status": "False",
+						"lastProbeTime": null,
+						"lastTransitionTime": "2020-02-25T13:27:31Z",
+						"reason": "PodCompleted"
+					},
+					{
+						"type": "ContainersReady",
+						"status": "False",
+						"lastProbeTime": null,
+						"lastTransitionTime": "2020-02-25T13:27:31Z",
+						"reason": "PodCompleted"
+					},
+					{
+						"type": "PodScheduled",
+						"status": "True",
+						"lastProbeTime": null,
+						"lastTransitionTime": "2020-02-25T13:26:45Z"
+					}
+				],
+				"hostIP": "10.240.0.5",
+				"podIP": "10.244.4.64",
+				"startTime": "2020-02-25T13:26:45Z",
+				"containerStatuses": [
+					{
+						"name": "scanner-polaris",
+						"state": {
+							"terminated": {
+								"exitCode": 0,
+								"reason": "Completed",
+								"startedAt": "2020-02-25T13:27:30Z",
+								"finishedAt": "2020-02-25T13:27:30Z",
+								"containerID": "..."
+							}
+						},
+						"lastState": {},
+						"ready": false,
+						"restartCount": 0,
+						"image": "deepnetwork/joseki-scanner-polaris:0.2-beta",
+						"imageID": "docker-pullable://deepnetwork/joseki-scanner-polaris@...",
+						"containerID": "..."
+					}
+				],
+				"qosClass": "BestEffort"
+			}
+		},
+		{
+			"metadata": {
+				"name": "kubernetes-dashboard-74d8c675bc-zhl62",
+				"generateName": "kubernetes-dashboard-74d8c675bc-",
+				"namespace": "kube-system",
+				"selfLink": "/api/v1/namespaces/kube-system/pods/kubernetes-dashboard-74d8c675bc-zhl62",
+				"uid": "f4bd6a83-28ad-4681-93fa-15644bb1ff90",
+				"resourceVersion": "1149831",
+				"creationTimestamp": "2020-01-24T02:24:04Z",
+				"labels": {
+					"k8s-app": "kubernetes-dashboard",
+					"kubernetes.io/cluster-service": "true",
+					"pod-template-hash": "74d8c675bc"
+				},
+				"ownerReferences": [
+					{
+						"apiVersion": "apps/v1",
+						"kind": "ReplicaSet",
+						"name": "kubernetes-dashboard-74d8c675bc",
+						"uid": "38e24502-b511-44fc-851b-fb39d4dc58ec",
+						"controller": true,
+						"blockOwnerDeletion": true
+					}
+				]
+			},
+			"spec": {
+				"volumes": [
+					{
+						"name": "kubernetes-dashboard-token-a34ew",
+						"secret": {
+							"secretName": "kubernetes-dashboard-token-a34ew",
+							"defaultMode": 420
+						}
+					}
+				],
+				"containers": [
+					{
+						"name": "main",
+						"image": "kubernetes/kubernetes-dashboard:v1.10.1",
+						"ports": [
+							{
+								"name": "http",
+								"containerPort": 9090,
+								"protocol": "TCP"
+							}
+						],
+						"env": [
+							{
+								"name": "KUBERNETES_PORT_443_TCP_ADDR",
+								"value": "joseki.io"
+							},
+							{
+								"name": "KUBERNETES_PORT",
+								"value": "tcp://joseki.io:443"
+							},
+							{
+								"name": "KUBERNETES_PORT_443_TCP",
+								"value": "tcp://joseki.io:443"
+							},
+							{
+								"name": "KUBERNETES_SERVICE_HOST",
+								"value": "joseki.io"
+							}
+						],
+						"resources": {
+							"limits": {
+								"cpu": "100m",
+								"memory": "500Mi"
+							},
+							"requests": {
+								"cpu": "100m",
+								"memory": "50Mi"
+							}
+						},
+						"volumeMounts": [
+							{
+								"name": "kubernetes-dashboard-token-a34ew",
+								"readOnly": true,
+								"mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+							}
+						],
+						"livenessProbe": {
+							"httpGet": {
+								"path": "/",
+								"port": 9090,
+								"scheme": "HTTP"
+							},
+							"initialDelaySeconds": 30,
+							"timeoutSeconds": 30,
+							"periodSeconds": 10,
+							"successThreshold": 1,
+							"failureThreshold": 3
+						},
+						"terminationMessagePath": "/dev/termination-log",
+						"terminationMessagePolicy": "File",
+						"imagePullPolicy": "IfNotPresent"
+					}
+				],
+				"restartPolicy": "Always",
+				"terminationGracePeriodSeconds": 30,
+				"dnsPolicy": "ClusterFirst",
+				"nodeSelector": {
+					"beta.kubernetes.io/os": "linux"
+				},
+				"serviceAccountName": "kubernetes-dashboard",
+				"serviceAccount": "kubernetes-dashboard",
+				"nodeName": "aks-agentpool2-12345678-vmss000000",
+				"securityContext": {},
+				"affinity": {
+					"nodeAffinity": {
+						"requiredDuringSchedulingIgnoredDuringExecution": {
+							"nodeSelectorTerms": [
+								{
+									"matchExpressions": [
+										{
+											"key": "kubernetes.azure.com/cluster",
+											"operator": "Exists"
+										}
+									]
+								}
+							]
+						}
+					}
+				},
+				"schedulerName": "default-scheduler",
+				"tolerations": [
+					{
+						"key": "CriticalAddonsOnly",
+						"operator": "Exists"
+					},
+					{
+						"key": "node.kubernetes.io/not-ready",
+						"operator": "Exists",
+						"effect": "NoExecute",
+						"tolerationSeconds": 300
+					},
+					{
+						"key": "node.kubernetes.io/unreachable",
+						"operator": "Exists",
+						"effect": "NoExecute",
+						"tolerationSeconds": 300
+					}
+				],
+				"priorityClassName": "system-node-critical",
+				"priority": 2000001000,
+				"enableServiceLinks": true
+			},
+			"status": {
+				"phase": "Running",
+				"conditions": [
+					{
+						"type": "Initialized",
+						"status": "True",
+						"lastProbeTime": null,
+						"lastTransitionTime": "2020-01-24T02:24:04Z"
+					},
+					{
+						"type": "Ready",
+						"status": "True",
+						"lastProbeTime": null,
+						"lastTransitionTime": "2020-01-24T02:24:09Z"
+					},
+					{
+						"type": "ContainersReady",
+						"status": "True",
+						"lastProbeTime": null,
+						"lastTransitionTime": "2020-01-24T02:24:09Z"
+					},
+					{
+						"type": "PodScheduled",
+						"status": "True",
+						"lastProbeTime": null,
+						"lastTransitionTime": "2020-01-24T02:24:04Z"
+					}
+				],
+				"hostIP": "10.240.0.4",
+				"podIP": "10.244.0.111",
+				"startTime": "2020-01-24T02:24:04Z",
+				"containerStatuses": [
+					{
+						"name": "main",
+						"state": {
+							"running": {
+								"startedAt": "2020-01-24T02:24:09Z"
+							}
+						},
+						"lastState": {},
+						"ready": true,
+						"restartCount": 0,
+						"image": "...",
+						"imageID": "...",
+						"containerID": "..."
+					}
+				],
+				"qosClass": "Burstable"
+			}
+		},
+		{
+			"metadata": {
+				"name": "es-cluster-0",
+				"generateName": "es-cluster-",
+				"namespace": "operations",
+				"selfLink": "/api/v1/namespaces/operations/pods/es-cluster-0",
+				"uid": "89a90bf4-fade-4a35-b2bb-bf93c77495cd",
+				"resourceVersion": "5463147",
+				"creationTimestamp": "2020-02-03T12:10:33Z",
+				"labels": {
+					"app": "elasticsearch",
+					"controller-revision-hash": "es-cluster-85d7b5b475",
+					"statefulset.kubernetes.io/pod-name": "es-cluster-0"
+				},
+				"ownerReferences": [
+					{
+						"apiVersion": "apps/v1",
+						"kind": "StatefulSet",
+						"name": "es-cluster",
+						"uid": "af7676b8-44ef-4bb4-b28a-3c8fe5d86166",
+						"controller": true,
+						"blockOwnerDeletion": true
+					}
+				]
+			},
+			"spec": {
+				"volumes": [
+					{
+						"name": "data",
+						"persistentVolumeClaim": {
+							"claimName": "data-es-cluster-0"
+						}
+					},
+					{
+						"name": "default-token-td8wd",
+						"secret": {
+							"secretName": "default-token-td8wd",
+							"defaultMode": 420
+						}
+					}
+				],
+				"initContainers": [
+					{
+						"name": "fix-permissions",
+						"image": "busybox",
+						"command": [
+							"sh",
+							"-c",
+							"chown -R 1000:1000 /usr/share/elasticsearch/data"
+						],
+						"resources": {},
+						"volumeMounts": [
+							{
+								"name": "data",
+								"mountPath": "/usr/share/elasticsearch/data"
+							},
+							{
+								"name": "default-token-td8wd",
+								"readOnly": true,
+								"mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+							}
+						],
+						"terminationMessagePath": "/dev/termination-log",
+						"terminationMessagePolicy": "File",
+						"imagePullPolicy": "Always",
+						"securityContext": {
+							"privileged": true
+						}
+					},
+					{
+						"name": "increase-vm-max-map",
+						"image": "busybox",
+						"command": [
+							"sysctl",
+							"-w",
+							"vm.max_map_count=262144"
+						],
+						"resources": {},
+						"volumeMounts": [
+							{
+								"name": "default-token-td8wd",
+								"readOnly": true,
+								"mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+							}
+						],
+						"terminationMessagePath": "/dev/termination-log",
+						"terminationMessagePolicy": "File",
+						"imagePullPolicy": "Always",
+						"securityContext": {
+							"privileged": true
+						}
+					},
+					{
+						"name": "increase-fd-ulimit",
+						"image": "busybox",
+						"command": [
+							"sh",
+							"-c",
+							"ulimit -n 65536"
+						],
+						"resources": {},
+						"volumeMounts": [
+							{
+								"name": "default-token-td8wd",
+								"readOnly": true,
+								"mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+							}
+						],
+						"terminationMessagePath": "/dev/termination-log",
+						"terminationMessagePolicy": "File",
+						"imagePullPolicy": "Always",
+						"securityContext": {
+							"privileged": true
+						}
+					}
+				],
+				"containers": [
+					{
+						"name": "elasticsearch",
+						"image": "quay.io/fluentd_elasticsearch/elasticsearch:7.4.2",
+						"ports": [
+							{
+								"name": "rest",
+								"containerPort": 9200,
+								"protocol": "TCP"
+							},
+							{
+								"name": "inter-node",
+								"containerPort": 9300,
+								"protocol": "TCP"
+							}
+						],
+						"env": [
+							{
+								"name": "cluster.name",
+								"value": "k8s-logs"
+							},
+							{
+								"name": "node.name",
+								"valueFrom": {
+									"fieldRef": {
+										"apiVersion": "v1",
+										"fieldPath": "metadata.name"
+									}
+								}
+							},
+							{
+								"name": "discovery.type",
+								"value": "single-node"
+							},
+							{
+								"name": "ES_JAVA_OPTS",
+								"value": "-Xms1g -Xmx1g"
+							}
+						],
+						"resources": {
+							"limits": {
+								"cpu": "1",
+								"memory": "2Gi"
+							},
+							"requests": {
+								"cpu": "100m",
+								"memory": "2Gi"
+							}
+						},
+						"volumeMounts": [
+							{
+								"name": "data",
+								"mountPath": "/usr/share/elasticsearch/data"
+							},
+							{
+								"name": "default-token-td8wd",
+								"readOnly": true,
+								"mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+							}
+						],
+						"terminationMessagePath": "/dev/termination-log",
+						"terminationMessagePolicy": "File",
+						"imagePullPolicy": "IfNotPresent"
+					}
+				],
+				"restartPolicy": "Always",
+				"terminationGracePeriodSeconds": 30,
+				"dnsPolicy": "ClusterFirst",
+				"serviceAccountName": "default",
+				"serviceAccount": "default",
+				"nodeName": "aks-agentpool2-12345678-vmss000000",
+				"securityContext": {},
+				"hostname": "es-cluster-0",
+				"subdomain": "elasticsearch",
+				"schedulerName": "default-scheduler",
+				"tolerations": [
+					{
+						"key": "node.kubernetes.io/not-ready",
+						"operator": "Exists",
+						"effect": "NoExecute",
+						"tolerationSeconds": 300
+					},
+					{
+						"key": "node.kubernetes.io/unreachable",
+						"operator": "Exists",
+						"effect": "NoExecute",
+						"tolerationSeconds": 300
+					}
+				],
+				"priority": 0,
+				"enableServiceLinks": true
+			},
+			"status": {
+				"phase": "Running",
+				"conditions": [
+					{
+						"type": "Initialized",
+						"status": "True",
+						"lastProbeTime": null,
+						"lastTransitionTime": "2020-02-28T15:39:03Z"
+					},
+					{
+						"type": "Ready",
+						"status": "True",
+						"lastProbeTime": null,
+						"lastTransitionTime": "2020-02-28T15:39:40Z"
+					},
+					{
+						"type": "ContainersReady",
+						"status": "True",
+						"lastProbeTime": null,
+						"lastTransitionTime": "2020-02-28T15:39:40Z"
+					},
+					{
+						"type": "PodScheduled",
+						"status": "True",
+						"lastProbeTime": null,
+						"lastTransitionTime": "2020-02-03T12:10:34Z"
+					}
+				],
+				"hostIP": "10.240.0.5",
+				"podIP": "10.244.4.7",
+				"startTime": "2020-02-03T12:10:34Z",
+				"initContainerStatuses": [
+					{
+						"name": "fix-permissions",
+						"state": {
+							"terminated": {
+								"exitCode": 0,
+								"reason": "Completed",
+								"startedAt": "2020-02-28T15:39:01Z",
+								"finishedAt": "2020-02-28T15:39:02Z",
+								"containerID": "..."
+							}
+						},
+						"lastState": {},
+						"ready": true,
+						"restartCount": 0,
+						"image": "busybox:latest",
+						"imageID": "...",
+						"containerID": "..."
+					},
+					{
+						"name": "increase-vm-max-map",
+						"state": {
+							"terminated": {
+								"exitCode": 0,
+								"reason": "Completed",
+								"startedAt": "2020-02-28T15:39:05Z",
+								"finishedAt": "2020-02-28T15:39:05Z",
+								"containerID": "..."
+							}
+						},
+						"lastState": {},
+						"ready": true,
+						"restartCount": 0,
+						"image": "busybox:latest",
+						"imageID": "...",
+						"containerID": "..."
+					},
+					{
+						"name": "increase-fd-ulimit",
+						"state": {
+							"terminated": {
+								"exitCode": 0,
+								"reason": "Completed",
+								"startedAt": "2020-02-28T15:39:07Z",
+								"finishedAt": "2020-02-28T15:39:07Z",
+								"containerID": "..."
+							}
+						},
+						"lastState": {},
+						"ready": true,
+						"restartCount": 0,
+						"image": "busybox:latest",
+						"imageID": "...",
+						"containerID": "..."
+					}
+				],
+				"containerStatuses": [
+					{
+						"name": "elasticsearch",
+						"state": {
+							"running": {
+								"startedAt": "2020-02-28T15:39:39Z"
+							}
+						},
+						"lastState": {},
+						"ready": true,
+						"restartCount": 0,
+						"image": "quay.io/fluentd_elasticsearch/elasticsearch:7.4.2",
+						"imageID": "...",
+						"containerID": "..."
+					}
+				],
+				"qosClass": "Burstable"
+			}
+		},
+		{
+			"metadata": {
+				"name": "filebeat-fwq66",
+				"generateName": "filebeat-",
+				"namespace": "operations",
+				"selfLink": "/api/v1/namespaces/operations/pods/filebeat-fwq66",
+				"uid": "c6606f70-1f45-4d34-a3f0-3f87def76953",
+				"resourceVersion": "3607916",
+				"creationTimestamp": "2020-02-06T13:57:59Z",
+				"labels": {
+					"controller-revision-hash": "5cb88b846d",
+					"k8s-app": "filebeat",
+					"pod-template-generation": "1"
+				},
+				"ownerReferences": [
+					{
+						"apiVersion": "apps/v1",
+						"kind": "DaemonSet",
+						"name": "filebeat",
+						"uid": "b1b80616-3dd3-4829-9206-68a6ed6cea29",
+						"controller": true,
+						"blockOwnerDeletion": true
+					}
+				]
+			},
+			"spec": {
+				"volumes": [
+					{
+						"name": "config",
+						"configMap": {
+							"name": "filebeat-config",
+							"defaultMode": 384
+						}
+					},
+					{
+						"name": "varlibdockercontainers",
+						"hostPath": {
+							"path": "/var/lib/docker/containers",
+							"type": ""
+						}
+					},
+					{
+						"name": "varlog",
+						"hostPath": {
+							"path": "/var/log",
+							"type": ""
+						}
+					},
+					{
+						"name": "data",
+						"hostPath": {
+							"path": "/var/lib/filebeat-data",
+							"type": "DirectoryOrCreate"
+						}
+					},
+					{
+						"name": "filebeat-token-xm4gd",
+						"secret": {
+							"secretName": "filebeat-token-xm4gd",
+							"defaultMode": 420
+						}
+					}
+				],
+				"containers": [
+					{
+						"name": "filebeat",
+						"image": "elastic/filebeat:7.5.0",
+						"args": [
+							"-c",
+							"/etc/filebeat.yml",
+							"-e"
+						],
+						"env": [
+							{
+								"name": "NODE_NAME",
+								"valueFrom": {
+									"fieldRef": {
+										"apiVersion": "v1",
+										"fieldPath": "spec.nodeName"
+									}
+								}
+							}
+						],
+						"resources": {
+							"limits": {
+								"memory": "200Mi"
+							},
+							"requests": {
+								"cpu": "500m",
+								"memory": "100Mi"
+							}
+						},
+						"volumeMounts": [
+							{
+								"name": "config",
+								"readOnly": true,
+								"mountPath": "/etc/filebeat.yml",
+								"subPath": "filebeat.yml"
+							},
+							{
+								"name": "data",
+								"mountPath": "/usr/share/filebeat/data"
+							},
+							{
+								"name": "varlibdockercontainers",
+								"readOnly": true,
+								"mountPath": "/var/lib/docker/containers"
+							},
+							{
+								"name": "varlog",
+								"readOnly": true,
+								"mountPath": "/var/log"
+							},
+							{
+								"name": "filebeat-token-xm4gd",
+								"readOnly": true,
+								"mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+							}
+						],
+						"terminationMessagePath": "/dev/termination-log",
+						"terminationMessagePolicy": "File",
+						"imagePullPolicy": "IfNotPresent",
+						"securityContext": {
+							"runAsUser": 0
+						}
+					}
+				],
+				"restartPolicy": "Always",
+				"terminationGracePeriodSeconds": 30,
+				"dnsPolicy": "ClusterFirstWithHostNet",
+				"serviceAccountName": "filebeat",
+				"serviceAccount": "filebeat",
+				"nodeName": "aks-agentpool2-12345678-vmss000000",
+				"hostNetwork": true,
+				"securityContext": {},
+				"affinity": {
+					"nodeAffinity": {
+						"requiredDuringSchedulingIgnoredDuringExecution": {
+							"nodeSelectorTerms": [
+								{
+									"matchFields": [
+										{
+											"key": "metadata.name",
+											"operator": "In",
+											"values": [
+												"aks-agentpool2-12345678-vmss000000"
+											]
+										}
+									]
+								}
+							]
+						}
+					}
+				},
+				"schedulerName": "default-scheduler",
+				"tolerations": [
+					{
+						"key": "node.kubernetes.io/not-ready",
+						"operator": "Exists",
+						"effect": "NoExecute"
+					},
+					{
+						"key": "node.kubernetes.io/unreachable",
+						"operator": "Exists",
+						"effect": "NoExecute"
+					},
+					{
+						"key": "node.kubernetes.io/disk-pressure",
+						"operator": "Exists",
+						"effect": "NoSchedule"
+					},
+					{
+						"key": "node.kubernetes.io/memory-pressure",
+						"operator": "Exists",
+						"effect": "NoSchedule"
+					},
+					{
+						"key": "node.kubernetes.io/pid-pressure",
+						"operator": "Exists",
+						"effect": "NoSchedule"
+					},
+					{
+						"key": "node.kubernetes.io/unschedulable",
+						"operator": "Exists",
+						"effect": "NoSchedule"
+					},
+					{
+						"key": "node.kubernetes.io/network-unavailable",
+						"operator": "Exists",
+						"effect": "NoSchedule"
+					}
+				],
+				"priority": 0,
+				"enableServiceLinks": true
+			},
+			"status": {
+				"phase": "Running",
+				"conditions": [
+					{
+						"type": "Initialized",
+						"status": "True",
+						"lastProbeTime": null,
+						"lastTransitionTime": "2020-02-06T13:57:59Z"
+					},
+					{
+						"type": "Ready",
+						"status": "True",
+						"lastProbeTime": null,
+						"lastTransitionTime": "2020-02-13T19:43:04Z"
+					},
+					{
+						"type": "ContainersReady",
+						"status": "True",
+						"lastProbeTime": null,
+						"lastTransitionTime": "2020-02-13T19:43:04Z"
+					},
+					{
+						"type": "PodScheduled",
+						"status": "True",
+						"lastProbeTime": null,
+						"lastTransitionTime": "2020-02-06T13:57:59Z"
+					}
+				],
+				"hostIP": "10.240.0.6",
+				"podIP": "10.240.0.6",
+				"startTime": "2020-02-06T13:57:59Z",
+				"containerStatuses": [
+					{
+						"name": "filebeat",
+						"state": {
+							"running": {
+								"startedAt": "2020-02-13T19:43:03Z"
+							}
+						},
+						"lastState": {
+							"terminated": {
+								"exitCode": 137,
+								"reason": "OOMKilled",
+								"startedAt": "2020-02-13T14:27:51Z",
+								"finishedAt": "2020-02-13T19:42:55Z",
+								"containerID": "..."
+							}
+						},
+						"ready": true,
+						"restartCount": 29,
+						"image": "elastic/filebeat:7.5.0",
+						"imageID": "...",
+						"containerID": "..."
+					}
+				],
+				"qosClass": "Burstable"
+			}
+		}
+	]
+}

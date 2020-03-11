@@ -1,0 +1,10 @@
+{
+  "audit-id": "44440604-22b6-4a8b-b1f7-0faddd20c37d",
+  "image-tag": "registry.com/repository/no-cve-image:v0.2",
+  "scanner-version": "0.2.0",
+  "timestamp": 1583894783,
+  "audit-result": "succeeded",
+  "failure-description": null,
+  "trivy-version": "0.4.3",
+  "trivy-audit-path": "result_no_cves.json"
+}

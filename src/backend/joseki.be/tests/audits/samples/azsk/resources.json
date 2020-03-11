@@ -1,0 +1,1041 @@
+[
+  {
+    "ControlItem": {
+      "AttestationExpiryPeriodInDays": 0,
+      "AttestationPeriodInDays": 0,
+      "Automated": "Yes",
+      "ControlID": "Azure_VirtualMachine_Deploy_Latest_OS_Version",
+      "ControlSeverity": "Medium",
+      "Description": "Virtual Machine should have latest OS version installed",
+      "Enabled": true,
+      "GraceExpiryDate": "0001-01-01T00:00:00.0000000",
+      "Id": "VirtualMachine110",
+      "IsBaselineControl": false,
+      "IsPreviewBaselineControl": false,
+      "NewControlGracePeriodInDays": 0,
+      "PolicyDefinitionGuid": null,
+      "policyDefinitionId": null,
+      "PolicyDefnResourceIdSuffix": null,
+      "Rationale": "Being on the latest OS version significantly reduces risks from security design issues and security bugs that may be present in older versions.",
+      "Recommendation": "Run command 'Update-AzVM -ResourceGroupName {resourceGroupName} -VM (Get-AzVM -ResourceGroupName {resourceGroupName} -Name {vmName})' . Run 'Get-Help Update-AzVM -full' for more help.",
+      "Tags": [
+        "SDL",
+        "TCP",
+        "Automated",
+        "Deploy",
+        "Windows",
+        "Linux",
+        "ERvNet",
+        "VirtualMachine",
+        "ExcludeKubernetes",
+        "ExcludeDatabricks"
+      ],
+      "ValidAttestationStates": null
+    },
+    "ControlResults": [
+      {
+        "ActualVerificationResult": "Verify",
+        "AttestationStatus": "None",
+        "ChildResourceName": "",
+        "CurrentSessionContext": {
+          "IsLatestPSModule": false,
+          "Permissions": {
+            "HasAttestationReadPermissions": false,
+            "HasAttestationWritePermissions": false,
+            "HasRequiredAccess": true
+          }
+        },
+        "FirstFailedOn": "1900-01-01T00:00:00.0000000",
+        "FirstScannedOn": "1900-01-01T00:00:00.0000000",
+        "IsControlInGrace": false,
+        "MaximumAllowedGraceDays": 0,
+        "Messages": [
+          {
+            "DataObject": {
+              "Offer": "jenkins",
+              "OSType": "Linux",
+              "Sku": "jenkins-ubuntu1804"
+            },
+            "Message": "Verify if you are using recommended OS Sku as per Org security policy",
+            "MessageType": "Info"
+          }
+        ],
+        "StateManagement": {
+          "AttestedStateData": null,
+          "CurrentStateData": null
+        },
+        "UserComments": null,
+        "VerificationResult": "Verify"
+      }
+    ],
+    "FeatureName": "VirtualMachine",
+    "Messages": [],
+    "Metadata": {
+      "Reference": "aka.ms/azsktcp/virtualmachine"
+    },
+    "PartialScanIdentifier": "",
+    "ResourceContext": {
+      "ResourceDetails": {
+        "ChangedTime": null,
+        "CreatedTime": null,
+        "ETag": null,
+        "ExtensionResourceName": null,
+        "ExtensionResourceType": null,
+        "Id": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a/resourceGroups/rg-jenkins/providers/Microsoft.Compute/virtualMachines/vm-jenkins",
+        "Identity": null,
+        "Kind": null,
+        "Location": "westeurope",
+        "ManagedBy": null,
+        "Name": "vm-jenkins",
+        "ParentResource": null,
+        "Plan": {
+          "Name": "jenkins-ubuntu1804",
+          "Product": "jenkins",
+          "PromotionCode": null,
+          "Publisher": "publisher",
+          "Version": null
+        },
+        "Properties": null,
+        "ResourceGroupName": "rg-jenkins",
+        "ResourceId": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a/resourceGroups/rg-jenkins/providers/Microsoft.Compute/virtualMachines/vm-jenkins",
+        "ResourceName": "vm-jenkins",
+        "ResourceType": "Microsoft.Compute/virtualMachines",
+        "Sku": null,
+        "SubscriptionId": null,
+        "Tags": {
+          "owner": "blah@blah.com"
+        },
+        "Type": "Microsoft.Compute/virtualMachines"
+      },
+      "ResourceGroupDetails": null,
+      "ResourceGroupName": "rg-jenkins",
+      "ResourceGroupTags": {},
+      "ResourceId": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a/resourceGroups/rg-jenkins/providers/Microsoft.Compute/virtualMachines/vm-jenkins",
+      "ResourceMetadata": {
+        "VMDetails": {
+          "IsVMConnectedToERvNet": false,
+          "IsVMDeallocated": true,
+          "Offer": "jenkins",
+          "OSType": "Linux",
+          "PrivateIPs": "1.2.3.4;",
+          "PublicIPs": "Not Assigned;",
+          "Sku": "jenkins-ubuntu1804"
+        }
+      },
+      "ResourceName": "vm-jenkins",
+      "ResourceType": "Microsoft.Compute/virtualMachines",
+      "ResourceTypeName": "VirtualMachine"
+    },
+    "SubscriptionContext": {
+      "Scope": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+      "SubscriptionId": "bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+      "SubscriptionName": "Test Subscription"
+    }
+  },
+  {
+    "ControlItem": {
+      "AttestationExpiryPeriodInDays": 0,
+      "AttestationPeriodInDays": 0,
+      "Automated": "Yes",
+      "ControlID": "Azure_Storage_AuthN_Dont_Allow_Anonymous",
+      "ControlSeverity": "High",
+      "Description": "The Access Type for containers must not be set to 'Anonymous'",
+      "Enabled": true,
+      "GraceExpiryDate": "0001-01-01T00:00:00.0000000",
+      "Id": "AzureStorage110",
+      "IsBaselineControl": true,
+      "IsPreviewBaselineControl": false,
+      "NewControlGracePeriodInDays": 0,
+      "PolicyDefinitionGuid": null,
+      "policyDefinitionId": null,
+      "PolicyDefnResourceIdSuffix": null,
+      "Rationale": "Data in containers that have anonymous access can be downloaded by anyone on the internet without authentication. This can lead to a compromise of corporate data.",
+      "Recommendation": "Run command 'Set-AzStorageContainerAcl -Name '<ContainerName>' -Permission 'Off' -Context (New-AzStorageContext -StorageAccountName '<StorageAccountName>' -StorageAccountKey '<StorageAccountKey>')'. Run 'Get-Help Set-AzStorageContainerAcl -full' for more help.",
+      "Tags": [
+        "SDL",
+        "TCP",
+        "Automated",
+        "AuthN",
+        "StandardSku",
+        "PremiumSku",
+        "GeneralPurposeStorage",
+        "BlobStorage",
+        "HNSDisabled",
+        "ResourceLocked"
+      ],
+      "ValidAttestationStates": null
+    },
+    "ControlResults": [
+      {
+        "ActualVerificationResult": "Passed",
+        "AttestationStatus": "None",
+        "ChildResourceName": "",
+        "CurrentSessionContext": {
+          "IsLatestPSModule": false,
+          "Permissions": {
+            "HasAttestationReadPermissions": false,
+            "HasAttestationWritePermissions": false,
+            "HasRequiredAccess": true
+          }
+        },
+        "FirstFailedOn": "1900-01-01T00:00:00.0000000",
+        "FirstScannedOn": "1900-01-01T00:00:00.0000000",
+        "IsControlInGrace": false,
+        "MaximumAllowedGraceDays": 0,
+        "Messages": [
+          {
+            "DataObject": null,
+            "Message": "No containers were found that have public (anonymous) access in this storage account.",
+            "MessageType": "Info"
+          }
+        ],
+        "StateManagement": {
+          "AttestedStateData": null,
+          "CurrentStateData": null
+        },
+        "UserComments": null,
+        "VerificationResult": "Passed"
+      }
+    ],
+    "FeatureName": "Storage",
+    "Messages": [],
+    "Metadata": {
+      "Reference": "aka.ms/azsktcp/storage"
+    },
+    "PartialScanIdentifier": "",
+    "ResourceContext": {
+      "ResourceDetails": {
+        "ChangedTime": null,
+        "CreatedTime": null,
+        "ETag": null,
+        "ExtensionResourceName": null,
+        "ExtensionResourceType": null,
+        "Id": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a/resourceGroups/rg-jenkins/providers/Microsoft.Storage/storageAccounts/vmjenkinsdiag",
+        "Identity": null,
+        "Kind": "Storage",
+        "Location": "westeurope",
+        "ManagedBy": null,
+        "Name": "vmjenkinsdiag",
+        "ParentResource": null,
+        "Plan": null,
+        "Properties": null,
+        "ResourceGroupName": "rg-jenkins",
+        "ResourceId": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a/resourceGroups/rg-jenkins/providers/Microsoft.Storage/storageAccounts/vmjenkinsdiag",
+        "ResourceName": "vmjenkinsdiag",
+        "ResourceType": "Microsoft.Storage/storageAccounts",
+        "Sku": {
+          "Capacity": null,
+          "Family": null,
+          "Model": null,
+          "Name": "Standard_LRS",
+          "Size": null,
+          "Tier": "Standard"
+        },
+        "SubscriptionId": null,
+        "Tags": {
+          "owner": "blah@blah.com"
+        },
+        "Type": "Microsoft.Storage/storageAccounts"
+      },
+      "ResourceGroupDetails": null,
+      "ResourceGroupName": "rg-jenkins",
+      "ResourceGroupTags": {},
+      "ResourceId": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a/resourceGroups/rg-jenkins/providers/Microsoft.Storage/storageAccounts/vmjenkinsdiag",
+      "ResourceMetadata": {},
+      "ResourceName": "vmjenkinsdiag",
+      "ResourceType": "Microsoft.Storage/storageAccounts",
+      "ResourceTypeName": "Storage"
+    },
+    "SubscriptionContext": {
+      "Scope": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+      "SubscriptionId": "bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+      "SubscriptionName": "Test Subscription"
+    }
+  },
+  {
+    "ControlItem": {
+      "AttestationExpiryPeriodInDays": 0,
+      "AttestationPeriodInDays": 0,
+      "Automated": "Yes",
+      "ControlID": "Azure_LogAnalytics_AuthZ_Grant_Min_RBAC_Access",
+      "ControlSeverity": "Medium",
+      "Description": "All users/identities must be granted minimum required permissions using Role Based Access Control (RBAC)",
+      "Enabled": true,
+      "GraceExpiryDate": "0001-01-01T00:00:00.0000000",
+      "Id": "LogAnalytics110",
+      "IsBaselineControl": false,
+      "IsPreviewBaselineControl": false,
+      "NewControlGracePeriodInDays": 0,
+      "PolicyDefinitionGuid": null,
+      "policyDefinitionId": null,
+      "PolicyDefnResourceIdSuffix": null,
+      "Rationale": "Granting minimum access by leveraging RBAC feature ensures that users are granted just enough permissions to perform their tasks. This minimizes exposure of the resources in case of user/service account compromise.",
+      "Recommendation": "1. Configure the workspace access control mode to 'Use resource or workspace permissions'. 2. Use Table level and Resource centric RBAC model to regulate access to monitoring data and settings. Refer: https://docs.microsoft.com/en-us/azure/azure-monitor/platform/manage-access 3. Review control plane access (see detailed log file)",
+      "Tags": [
+        "SDL",
+        "TCP",
+        "Automated",
+        "AuthZ",
+        "RBAC",
+        "LogAnalytics"
+      ],
+      "ValidAttestationStates": null
+    },
+    "ControlResults": [
+      {
+        "ActualVerificationResult": "Failed",
+        "AttestationStatus": "None",
+        "ChildResourceName": "",
+        "CurrentSessionContext": {
+          "IsLatestPSModule": false,
+          "Permissions": {
+            "HasAttestationReadPermissions": false,
+            "HasAttestationWritePermissions": false,
+            "HasRequiredAccess": true
+          }
+        },
+        "FirstFailedOn": "1900-01-01T00:00:00.0000000",
+        "FirstScannedOn": "1900-01-01T00:00:00.0000000",
+        "IsControlInGrace": false,
+        "MaximumAllowedGraceDays": 0,
+        "Messages": [
+          {
+            "DataObject": null,
+            "Message": "No identities have been explicitly provided with RBAC access to resource - [DefaultWorkspace-764f2e9d-fc0e-4cc5-a741-3db622af16f7]",
+            "MessageType": "Info"
+          },
+          {
+            "DataObject": null,
+            "Message": "Note: 12 identities (NOGRAPHACCESS: 11, ServiceAdministrator;AccountAdministrator: 1) have inherited RBAC access to resource. It's good practice to keep the RBAC access to minimum.",
+            "MessageType": "Info"
+          },
+          {
+            "DataObject": null,
+            "Message": "The currently configured access control mode is 'Require workspace permissions'. Switch to Resource-specific mode for granular RBAC management.",
+            "MessageType": "Info"
+          }
+        ],
+        "StateManagement": {
+          "AttestedStateData": null,
+          "CurrentStateData": null
+        },
+        "UserComments": null,
+        "VerificationResult": "Failed"
+      }
+    ],
+    "FeatureName": "LogAnalytics",
+    "Messages": [],
+    "Metadata": {
+      "Reference": "aka.ms/azsktcp/LogAnalytics"
+    },
+    "PartialScanIdentifier": "",
+    "ResourceContext": {
+      "ResourceDetails": {
+        "ChangedTime": null,
+        "CreatedTime": null,
+        "ETag": null,
+        "ExtensionResourceName": null,
+        "ExtensionResourceType": null,
+        "Id": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a/resourceGroups/DefaultResourceGroup/providers/Microsoft.OperationalInsights/workspaces/DefaultWorkspace-764f2e9d-fc0e-4cc5-a741-3db622af16f7",
+        "Identity": null,
+        "Kind": null,
+        "Location": "westeurope",
+        "ManagedBy": null,
+        "Name": "DefaultWorkspace-764f2e9d-fc0e-4cc5-a741-3db622af16f7",
+        "ParentResource": null,
+        "Plan": null,
+        "Properties": null,
+        "ResourceGroupName": "DefaultResourceGroup",
+        "ResourceId": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a/resourceGroups/DefaultResourceGroup/providers/Microsoft.OperationalInsights/workspaces/DefaultWorkspace-764f2e9d-fc0e-4cc5-a741-3db622af16f7",
+        "ResourceName": "DefaultWorkspace-764f2e9d-fc0e-4cc5-a741-3db622af16f7",
+        "ResourceType": "Microsoft.OperationalInsights/workspaces",
+        "Sku": null,
+        "SubscriptionId": null,
+        "Tags": null,
+        "Type": "Microsoft.OperationalInsights/workspaces"
+      },
+      "ResourceGroupDetails": null,
+      "ResourceGroupName": "DefaultResourceGroup",
+      "ResourceGroupTags": {},
+      "ResourceId": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a/resourceGroups/DefaultResourceGroup/providers/Microsoft.OperationalInsights/workspaces/DefaultWorkspace-764f2e9d-fc0e-4cc5-a741-3db622af16f7",
+      "ResourceMetadata": {},
+      "ResourceName": "DefaultWorkspace-764f2e9d-fc0e-4cc5-a741-3db622af16f7",
+      "ResourceType": "Microsoft.OperationalInsights/workspaces",
+      "ResourceTypeName": "LogAnalytics"
+    },
+    "SubscriptionContext": {
+      "Scope": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+      "SubscriptionId": "bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+      "SubscriptionName": "Test Subscription"
+    }
+  },
+  {
+    "ControlItem": {
+      "AttestationExpiryPeriodInDays": 0,
+      "AttestationPeriodInDays": 0,
+      "Automated": "Yes",
+      "ControlID": "Azure_ContainerRegistry_AuthZ_Disable_Admin_Account",
+      "ControlSeverity": "High",
+      "Description": "The Admin account in Container Registry should be disabled",
+      "Enabled": true,
+      "GraceExpiryDate": "0001-01-01T00:00:00.0000000",
+      "Id": "ContainerRegistry110",
+      "IsBaselineControl": true,
+      "IsPreviewBaselineControl": false,
+      "NewControlGracePeriodInDays": 0,
+      "PolicyDefinitionGuid": null,
+      "policyDefinitionId": null,
+      "PolicyDefnResourceIdSuffix": null,
+      "Rationale": "The Admin user account is designed for a single user to access the registry. Multiple users authenticating with the admin account appear as just one user to the registry. This leads to loss of auditability. Using AAD-based identity ensures that there is a built-in high level of assurance in the user identity established for subsequent access control.",
+      "Recommendation": "Run command 'Update-AzContainerRegistry -DisableAdminUser -Name '<ContainerRegistryName>' -ResourceGroupName '<RGName>'. Run 'Get-Help Update-AzContainerRegistry -full' for more help. You can add AAD-based SPNs or user accounts to the appropriate RBAC role instead.",
+      "Tags": [
+        "SDL",
+        "TCP",
+        "Automated",
+        "AuthZ",
+        "ContainerRegistry"
+      ],
+      "ValidAttestationStates": null
+    },
+    "ControlResults": [
+      {
+        "ActualVerificationResult": "Passed",
+        "AttestationStatus": "None",
+        "ChildResourceName": "",
+        "CurrentSessionContext": {
+          "IsLatestPSModule": false,
+          "Permissions": {
+            "HasAttestationReadPermissions": false,
+            "HasAttestationWritePermissions": false,
+            "HasRequiredAccess": true
+          }
+        },
+        "FirstFailedOn": "1900-01-01T00:00:00.0000000",
+        "FirstScannedOn": "1900-01-01T00:00:00.0000000",
+        "IsControlInGrace": false,
+        "MaximumAllowedGraceDays": 0,
+        "Messages": [],
+        "StateManagement": {
+          "AttestedStateData": null,
+          "CurrentStateData": null
+        },
+        "UserComments": null,
+        "VerificationResult": "Passed"
+      }
+    ],
+    "FeatureName": "ContainerRegistry",
+    "Messages": [],
+    "Metadata": {
+      "Reference": "aka.ms/azsktcp/containerregistry"
+    },
+    "PartialScanIdentifier": "",
+    "ResourceContext": {
+      "ResourceDetails": {
+        "ChangedTime": null,
+        "CreatedTime": null,
+        "ETag": null,
+        "ExtensionResourceName": null,
+        "ExtensionResourceType": null,
+        "Id": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a/resourceGroups/rg-mytestacr/providers/Microsoft.ContainerRegistry/registries/mytestacr",
+        "Identity": null,
+        "Kind": null,
+        "Location": "westeurope",
+        "ManagedBy": null,
+        "Name": "mytestacr",
+        "ParentResource": null,
+        "Plan": null,
+        "Properties": null,
+        "ResourceGroupName": "rg-mytestacr",
+        "ResourceId": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a/resourceGroups/rg-mytestacr/providers/Microsoft.ContainerRegistry/registries/mytestacr",
+        "ResourceName": "mytestacr",
+        "ResourceType": "Microsoft.ContainerRegistry/registries",
+        "Sku": {
+          "Capacity": null,
+          "Family": null,
+          "Model": null,
+          "Name": "Basic",
+          "Size": null,
+          "Tier": "Basic"
+        },
+        "SubscriptionId": null,
+        "Tags": {},
+        "Type": "Microsoft.ContainerRegistry/registries"
+      },
+      "ResourceGroupDetails": null,
+      "ResourceGroupName": "rg-mytestacr",
+      "ResourceGroupTags": {},
+      "ResourceId": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a/resourceGroups/rg-mytestacr/providers/Microsoft.ContainerRegistry/registries/mytestacr",
+      "ResourceMetadata": {},
+      "ResourceName": "mytestacr",
+      "ResourceType": "Microsoft.ContainerRegistry/registries",
+      "ResourceTypeName": "ContainerRegistry"
+    },
+    "SubscriptionContext": {
+      "Scope": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+      "SubscriptionId": "bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+      "SubscriptionName": "Test Subscription"
+    }
+  },
+  {
+    "ControlItem": {
+      "AttestationExpiryPeriodInDays": 0,
+      "AttestationPeriodInDays": 0,
+      "Automated": "Yes",
+      "ControlID": "Azure_KeyVault_AuthN_Use_Cert_Auth_for_Apps",
+      "ControlSeverity": "High",
+      "Description": "Azure Active Directory applications, which have access to Key Vault, must use certificate to authenticate to Key Vault",
+      "Enabled": true,
+      "GraceExpiryDate": "0001-01-01T00:00:00.0000000",
+      "Id": "KeyVault110",
+      "IsBaselineControl": false,
+      "IsPreviewBaselineControl": false,
+      "NewControlGracePeriodInDays": 0,
+      "PolicyDefinitionGuid": null,
+      "policyDefinitionId": null,
+      "PolicyDefnResourceIdSuffix": null,
+      "Rationale": "Password/shared secret credentials can be easily shared and hence can be easily compromised. Certificate credentials offer better security.",
+      "Recommendation": "Remove any password credentials from Azure AD Applications and use certificate credentials instead. Run command Remove-AzureADApplicationPasswordCredential -InformationAction '{ActionPreference}' -InformationVariable '{InformationVariable}' -KeyId '{KeyId}' -ObjectId '{ObjectId}'. Refer: https://docs.microsoft.com/en-us/powershell/module/azuread/remove-azureadapplicationpasswordcredential?view=azureadps-2.0, https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-certificate-credentials#register-your-certificate-with-azure-ad",
+      "Tags": [
+        "SDL",
+        "TCP",
+        "Automated",
+        "AuthN",
+        "OwnerAccess",
+        "KeyVault"
+      ],
+      "ValidAttestationStates": null
+    },
+    "ControlResults": [
+      {
+        "ActualVerificationResult": "Passed",
+        "AttestationStatus": "None",
+        "ChildResourceName": "",
+        "CurrentSessionContext": {
+          "IsLatestPSModule": false,
+          "Permissions": {
+            "HasAttestationReadPermissions": false,
+            "HasAttestationWritePermissions": false,
+            "HasRequiredAccess": true
+          }
+        },
+        "FirstFailedOn": "1900-01-01T00:00:00.0000000",
+        "FirstScannedOn": "1900-01-01T00:00:00.0000000",
+        "IsControlInGrace": false,
+        "MaximumAllowedGraceDays": 0,
+        "Messages": [
+          {
+            "DataObject": null,
+            "Message": "No Azure AD Applications have access to Key Vault.",
+            "MessageType": "Info"
+          }
+        ],
+        "StateManagement": {
+          "AttestedStateData": null,
+          "CurrentStateData": null
+        },
+        "UserComments": null,
+        "VerificationResult": "Passed"
+      }
+    ],
+    "FeatureName": "KeyVault",
+    "Messages": [],
+    "Metadata": {
+      "Reference": "aka.ms/azsktcp/keyvault"
+    },
+    "PartialScanIdentifier": "",
+    "ResourceContext": {
+      "ResourceDetails": {
+        "ChangedTime": null,
+        "CreatedTime": null,
+        "ETag": null,
+        "ExtensionResourceName": null,
+        "ExtensionResourceType": null,
+        "Id": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a/resourceGroups/rg-test/providers/Microsoft.KeyVault/vaults/kv-test",
+        "Identity": null,
+        "Kind": null,
+        "Location": "westeurope",
+        "ManagedBy": null,
+        "Name": "kv-test",
+        "ParentResource": null,
+        "Plan": null,
+        "Properties": null,
+        "ResourceGroupName": "rg-test",
+        "ResourceId": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a/resourceGroups/rg-test/providers/Microsoft.KeyVault/vaults/kv-test",
+        "ResourceName": "kv-test",
+        "ResourceType": "Microsoft.KeyVault/vaults",
+        "Sku": null,
+        "SubscriptionId": null,
+        "Tags": {
+          "owner": "blah@blah.com"
+        },
+        "Type": "Microsoft.KeyVault/vaults"
+      },
+      "ResourceGroupDetails": null,
+      "ResourceGroupName": "rg-test",
+      "ResourceGroupTags": {},
+      "ResourceId": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a/resourceGroups/rg-test/providers/Microsoft.KeyVault/vaults/kv-test",
+      "ResourceMetadata": {},
+      "ResourceName": "kv-test",
+      "ResourceType": "Microsoft.KeyVault/vaults",
+      "ResourceTypeName": "KeyVault"
+    },
+    "SubscriptionContext": {
+      "Scope": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+      "SubscriptionId": "bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+      "SubscriptionName": "Test Subscription"
+    }
+  },
+  {
+    "ControlItem": {
+      "AttestationExpiryPeriodInDays": 0,
+      "AttestationPeriodInDays": 0,
+      "Automated": "Yes",
+      "ControlID": "Azure_SQLDatabase_AuthZ_Use_AAD_Admin",
+      "ControlSeverity": "High",
+      "Description": "Enable Azure AD admin for the SQL Database",
+      "Enabled": true,
+      "GraceExpiryDate": "0001-01-01T00:00:00.0000000",
+      "Id": "SQLDatabase120",
+      "IsBaselineControl": true,
+      "IsPreviewBaselineControl": false,
+      "NewControlGracePeriodInDays": 0,
+      "PolicyDefinitionGuid": null,
+      "policyDefinitionId": null,
+      "PolicyDefnResourceIdSuffix": null,
+      "Rationale": "Using the native enterprise directory for authentication ensures that there is a built-in high level of assurance in the user identity established for subsequent access control. All Enterprise subscriptions are automatically associated with their enterprise directory (xxx.onmicrosoft.com) and users in the native directory are trusted for authentication to enterprise subscriptions.",
+      "Recommendation": "Run command Set-AzSqlServerActiveDirectoryAdministrator -ResourceGroupName '{ResourceGroupName}' -ServerName '{ServerName}' -DisplayName '{AzureAdAdmin Display Name}' Refer: https://docs.microsoft.com/en-us/powershell/module/az.sql/set-azsqlserveractivedirectoryadministrator",
+      "Tags": [
+        "SDL",
+        "TCP",
+        "Automated",
+        "AuthZ"
+      ],
+      "ValidAttestationStates": null
+    },
+    "ControlResults": [
+      {
+        "ActualVerificationResult": "Failed",
+        "AttestationStatus": "None",
+        "ChildResourceName": "",
+        "CurrentSessionContext": {
+          "IsLatestPSModule": false,
+          "Permissions": {
+            "HasAttestationReadPermissions": false,
+            "HasAttestationWritePermissions": false,
+            "HasRequiredAccess": true
+          }
+        },
+        "FirstFailedOn": "1900-01-01T00:00:00.0000000",
+        "FirstScannedOn": "1900-01-01T00:00:00.0000000",
+        "IsControlInGrace": false,
+        "MaximumAllowedGraceDays": 0,
+        "Messages": [
+          {
+            "DataObject": null,
+            "Message": "Current status of Active Directory Admin for [sql-test] is",
+            "MessageType": "Info"
+          },
+          {
+            "DataObject": null,
+            "Message": "No Active Directory admin is assigned on SQL Server - [sql-test]",
+            "MessageType": "Info"
+          }
+        ],
+        "StateManagement": {
+          "AttestedStateData": null,
+          "CurrentStateData": null
+        },
+        "UserComments": null,
+        "VerificationResult": "Failed"
+      }
+    ],
+    "FeatureName": "SQLDatabase",
+    "Messages": [],
+    "Metadata": {
+      "Reference": "aka.ms/azsktcp/sqldatabase"
+    },
+    "PartialScanIdentifier": "",
+    "ResourceContext": {
+      "ResourceDetails": {
+        "ChangedTime": null,
+        "CreatedTime": null,
+        "ETag": null,
+        "ExtensionResourceName": null,
+        "ExtensionResourceType": null,
+        "Id": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a/resourceGroups/rg-test/providers/Microsoft.Sql/servers/sql-test",
+        "Identity": null,
+        "Kind": "v12.0",
+        "Location": "westeurope",
+        "ManagedBy": null,
+        "Name": "sql-test",
+        "ParentResource": null,
+        "Plan": null,
+        "Properties": null,
+        "ResourceGroupName": "rg-test",
+        "ResourceId": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a/resourceGroups/rg-test/providers/Microsoft.Sql/servers/sql-test",
+        "ResourceName": "sql-test",
+        "ResourceType": "Microsoft.Sql/servers",
+        "Sku": null,
+        "SubscriptionId": null,
+        "Tags": {
+          "owner": "blah@blah.com"
+        },
+        "Type": "Microsoft.Sql/servers"
+      },
+      "ResourceGroupDetails": null,
+      "ResourceGroupName": "rg-test",
+      "ResourceGroupTags": {},
+      "ResourceId": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a/resourceGroups/rg-test/providers/Microsoft.Sql/servers/sql-test",
+      "ResourceMetadata": {},
+      "ResourceName": "sql-test",
+      "ResourceType": "Microsoft.Sql/servers",
+      "ResourceTypeName": "SQLDatabase"
+    },
+    "SubscriptionContext": {
+      "Scope": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+      "SubscriptionId": "bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+      "SubscriptionName": "Test Subscription"
+    }
+  },
+  {
+    "ControlItem": {
+      "AttestationExpiryPeriodInDays": 0,
+      "AttestationPeriodInDays": 0,
+      "Automated": "Yes",
+      "ControlID": "Azure_AppService_AuthZ_Grant_Min_RBAC_Access",
+      "ControlSeverity": "Medium",
+      "Description": "All users/identities must be granted minimum required permissions using Role Based Access Control (RBAC)",
+      "Enabled": true,
+      "GraceExpiryDate": "0001-01-01T00:00:00.0000000",
+      "Id": "AppService110",
+      "IsBaselineControl": false,
+      "IsPreviewBaselineControl": false,
+      "NewControlGracePeriodInDays": 0,
+      "PolicyDefinitionGuid": null,
+      "policyDefinitionId": null,
+      "PolicyDefnResourceIdSuffix": null,
+      "Rationale": "Granting minimum access by leveraging RBAC feature ensures that users are granted just enough permissions to perform their tasks. This minimizes exposure of the resources in case of user/service account compromise.",
+      "Recommendation": "Remove any excessive privileges granted on the App Service. Run command: Remove-AzRoleAssignment -SignInName '<SignInName>' -Scope '<Scope>' RoleDefinitionName '<RoleDefinitionName>'. Run 'Get-Help Remove-AzRoleAssignment -full' for more help.",
+      "Tags": [
+        "SDL",
+        "TCP",
+        "Automated",
+        "AuthZ",
+        "RBAC",
+        "AppService",
+        "FunctionApp",
+        "Windows",
+        "Linux"
+      ],
+      "ValidAttestationStates": null
+    },
+    "ControlResults": [
+      {
+        "ActualVerificationResult": "Verify",
+        "AttestationStatus": "None",
+        "ChildResourceName": "",
+        "CurrentSessionContext": {
+          "IsLatestPSModule": false,
+          "Permissions": {
+            "HasAttestationReadPermissions": false,
+            "HasAttestationWritePermissions": false,
+            "HasRequiredAccess": true
+          }
+        },
+        "FirstFailedOn": "1900-01-01T00:00:00.0000000",
+        "FirstScannedOn": "1900-01-01T00:00:00.0000000",
+        "IsControlInGrace": false,
+        "MaximumAllowedGraceDays": 0,
+        "Messages": [
+          {
+            "DataObject": null,
+            "Message": "No identities have been explicitly provided with RBAC access to resource - [testmywebapp]",
+            "MessageType": "Info"
+          },
+          {
+            "DataObject": null,
+            "Message": "Note: 12 identities (NOGRAPHACCESS: 11, ServiceAdministrator;AccountAdministrator: 1) have inherited RBAC access to resource. It's good practice to keep the RBAC access to minimum.",
+            "MessageType": "Info"
+          }
+        ],
+        "StateManagement": {
+          "AttestedStateData": null,
+          "CurrentStateData": null
+        },
+        "UserComments": null,
+        "VerificationResult": "Verify"
+      }
+    ],
+    "FeatureName": "AppService",
+    "Messages": [],
+    "Metadata": {
+      "Reference": "aka.ms/azsktcp/appservice"
+    },
+    "PartialScanIdentifier": "",
+    "ResourceContext": {
+      "ResourceDetails": {
+        "ChangedTime": null,
+        "CreatedTime": null,
+        "ETag": null,
+        "ExtensionResourceName": null,
+        "ExtensionResourceType": null,
+        "Id": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a/resourceGroups/randomviceapp/providers/Microsoft.Web/sites/testmywebapp",
+        "Identity": null,
+        "Kind": "app",
+        "Location": "westeurope",
+        "ManagedBy": null,
+        "Name": "testmywebapp",
+        "ParentResource": null,
+        "Plan": null,
+        "Properties": null,
+        "ResourceGroupName": "webserviceapp",
+        "ResourceId": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a/resourceGroups/randomviceapp/providers/Microsoft.Web/sites/testmywebapp",
+        "ResourceName": "testmywebapp",
+        "ResourceType": "Microsoft.Web/sites",
+        "Sku": null,
+        "SubscriptionId": null,
+        "Tags": {
+          "owner": "blah@blah.com"
+        },
+        "Type": "Microsoft.Web/sites"
+      },
+      "ResourceGroupDetails": null,
+      "ResourceGroupName": "webserviceapp",
+      "ResourceGroupTags": {},
+      "ResourceId": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a/resourceGroups/randomviceapp/providers/Microsoft.Web/sites/testmywebapp",
+      "ResourceMetadata": {
+        "cloningInfo": null,
+        "hostNamesDisabled": false,
+        "hostingEnvironmentId": null,
+        "webSpace": "webserviceapp-WestEuropewebspace",
+        "state": "Stopped",
+        "defaultHostName": "...",
+        "clientCertEnabled": false,
+        "owner": null,
+        "hostNames": [
+          "..."
+        ],
+        "name": "testmywebapp",
+        "hostingEnvironment": null,
+        "domainVerificationIdentifiers": null,
+        "sslCertificates": null,
+        "enabledHostNames": [
+          "...",
+          "..."
+        ],
+        "sku": "Free",
+        "inboundIpAddress": "1.2.3.4",
+        "storageRecoveryDefaultState": "Running",
+        "enabled": true,
+        "possibleInboundIpAddresses": "1.2.3.4",
+        "buildVersion": null,
+        "possibleOutboundIpAddresses": "1.2.3.4,1.2.3.5",
+        "runtimeAvailabilityState": "Normal",
+        "dailyMemoryTimeQuota": 0,
+        "suspendedTill": null,
+        "selfLink": "...",
+        "siteMode": null,
+        "functionExecutionUnitsCache": null,
+        "repositorySiteName": "testmywebapp",
+        "homeStamp": "...",
+        "siteConfig": {
+          "alwaysOn": false,
+          "apiDefinition": null,
+          "apiManagementConfig": null,
+          "appCommandLine": "",
+          "appSettings": null,
+          "autoHealEnabled": false,
+          "autoHealRules": null,
+          "autoSwapSlotName": null,
+          "azureMonitorLogCategories": null,
+          "connectionStrings": null,
+          "cors": null,
+          "customAppPoolIdentityAdminState": false,
+          "customAppPoolIdentityTenantState": false,
+          "defaultDocuments": [
+            "Default.htm",
+            "Default.html",
+            "Default.asp",
+            "index.htm",
+            "index.html",
+            "iisstart.htm",
+            "default.aspx",
+            "index.php",
+            "hostingstart.html"
+          ],
+          "detailedErrorLoggingEnabled": false,
+          "documentRoot": null,
+          "experiments": {
+            "rampUpRules": []
+          },
+          "fileChangeAuditEnabled": false,
+          "ftpsState": "AllAllowed",
+          "functionsRuntimeScaleMonitoringEnabled": false,
+          "handlerMappings": null,
+          "healthCheckPath": null,
+          "http20Enabled": true,
+          "httpLoggingEnabled": false,
+          "ipSecurityRestrictions": null,
+          "javaContainer": "TOMCAT",
+          "javaContainerVersion": "8.5",
+          "javaVersion": "1.8.0_172",
+          "limits": null,
+          "linuxFxVersion": "",
+          "loadBalancing": "LeastRequests",
+          "localMySqlEnabled": false,
+          "logsDirectorySizeLimit": 35,
+          "machineKey": null,
+          "managedPipelineMode": "Integrated",
+          "managedServiceIdentityId": null,
+          "metadata": null,
+          "minTlsVersion": "1.2",
+          "netFrameworkVersion": "v4.0",
+          "nodeVersion": "",
+          "numberOfWorkers": 1,
+          "phpVersion": "5.6",
+          "preWarmedInstanceCount": null,
+          "publishingPassword": null,
+          "publishingUsername": "$testmywebapp",
+          "push": null,
+          "pythonVersion": "",
+          "remoteDebuggingEnabled": false,
+          "remoteDebuggingVersion": null,
+          "requestTracingEnabled": false,
+          "reservedInstanceCount": 0,
+          "routingRules": [],
+          "runtimeADUser": null,
+          "runtimeADUserPassword": null,
+          "scmIpSecurityRestrictions": null,
+          "scmIpSecurityRestrictionsUseMain": false,
+          "scmType": "None",
+          "siteAuthEnabled": false,
+          "siteAuthSettings": {
+            "additionalLoginParams": null,
+            "allowedAudiences": null,
+            "allowedExternalRedirectUrls": null,
+            "clientId": null,
+            "clientSecret": null,
+            "clientSecretCertificateThumbprint": null,
+            "defaultProvider": null,
+            "enabled": null,
+            "facebookAppId": null,
+            "facebookAppSecret": null,
+            "facebookOAuthScopes": null,
+            "googleClientId": null,
+            "googleClientSecret": null,
+            "googleOAuthScopes": null,
+            "isAadAutoProvisioned": false,
+            "issuer": null,
+            "microsoftAccountClientId": null,
+            "microsoftAccountClientSecret": null,
+            "microsoftAccountOAuthScopes": null,
+            "tokenStoreEnabled": null,
+            "twitterConsumerKey": null,
+            "twitterConsumerSecret": null,
+            "unauthenticatedClientAction": null
+          },
+          "tracingOptions": null,
+          "use32BitWorkerProcess": true,
+          "virtualApplications": [
+            {
+              "physicalPath": "site\\wwwroot",
+              "preloadEnabled": false,
+              "virtualDirectories": null,
+              "virtualPath": "/"
+            }
+          ],
+          "vnetName": "",
+          "websiteTimeZone": null,
+          "webSocketsEnabled": false,
+          "winAuthAdminState": 0,
+          "winAuthTenantState": 0,
+          "windowsFxVersion": null,
+          "xManagedServiceIdentityId": null
+        },
+        "csrs": [],
+        "tags": {
+          "owner": "blah@blah.com"
+        },
+        "usageState": "Normal",
+        "kind": "app",
+        "serverFarm": null,
+        "targetSwapSlot": null,
+        "siteDisabledReason": 0,
+        "clientCertExclusionPaths": null,
+        "deploymentId": "testmywebapp",
+        "cers": null,
+        "isXenon": false,
+        "clientAffinityEnabled": true,
+        "containerSize": 0,
+        "serverFarmId": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a/resourceGroups/randomapp/providers/Microsoft.Web/serverfarms/junkplan",
+        "contentAvailabilityState": "Normal",
+        "httpsOnly": false,
+        "slotSwapStatus": null,
+        "geoDistributions": null,
+        "privateEndpointConnections": [],
+        "computeMode": null,
+        "hyperV": false,
+        "inProgressOperationId": null,
+        "availabilityState": "Normal",
+        "outboundIpAddresses": "1.2.3.4,1.2.3.5",
+        "redundancyMode": "None",
+        "adminEnabled": true,
+        "trafficManagerHostNames": null,
+        "lastModifiedTimeUtc": "2020-03-10T02:44:33.7433333Z",
+        "customDomainVerificationId": "...",
+        "scmSiteAlsoStopped": false,
+        "reserved": false,
+        "maxNumberOfWorkers": null,
+        "siteProperties": {
+          "appSettings": null,
+          "metadata": null,
+          "properties": [
+            {
+              "name": "LinuxFxVersion",
+              "value": ""
+            },
+            {
+              "name": "WindowsFxVersion",
+              "value": null
+            }
+          ]
+        },
+        "hostingEnvironmentProfile": null,
+        "targetBuildVersion": null,
+        "resourceGroup": "webserviceapp",
+        "hostNameSslStates": [
+          {
+            "hostType": "Standard",
+            "ipBasedSslResult": null,
+            "ipBasedSslState": "NotConfigured",
+            "name": "...",
+            "sslState": "Disabled",
+            "thumbprint": null,
+            "toUpdate": null,
+            "toUpdateIpBasedSsl": null,
+            "virtualIP": null
+          },
+          {
+            "hostType": "Repository",
+            "ipBasedSslResult": null,
+            "ipBasedSslState": "NotConfigured",
+            "name": "...",
+            "sslState": "Disabled",
+            "thumbprint": null,
+            "toUpdate": null,
+            "toUpdateIpBasedSsl": null,
+            "virtualIP": null
+          }
+        ]
+      },
+      "ResourceName": "testmywebapp",
+      "ResourceType": "Microsoft.Web/sites",
+      "ResourceTypeName": "AppService"
+    },
+    "SubscriptionContext": {
+      "Scope": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+      "SubscriptionId": "bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+      "SubscriptionName": "Test Subscription"
+    }
+  }
+]

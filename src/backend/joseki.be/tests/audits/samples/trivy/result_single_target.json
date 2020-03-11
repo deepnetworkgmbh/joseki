@@ -1,0 +1,106 @@
+[
+  {
+    "Target": "registry.com/repository/single-target-image:v0.2 (ubuntu 18.04)",
+    "Vulnerabilities": [
+      {
+        "VulnerabilityID": "CVE-2019-18276",
+        "PkgName": "bash",
+        "InstalledVersion": "4.4.18-2ubuntu1.2",
+        "Title": "bash: when effective UID is not equal to its real UID the saved UID is not dropped",
+        "Description": "An issue was discovered in disable_priv_mode in shell.c in GNU Bash through 5.0 patch 11. By default, if Bash is run with its effective UID not equal to its real UID, it will drop privileges by setting its effective UID to its real UID. However, it does so incorrectly. On Linux and other systems that support \"saved UID\" functionality, the saved UID is not dropped. An attacker with command execution in the shell can use \"enable -f\" for runtime loading of a new builtin, which can be a shared object that calls setuid() and therefore regains privileges. However, binaries running with an effective UID of 0 are unaffected.",
+        "Severity": "HIGH",
+        "References": [
+          "http://packetstormsecurity.com/files/155498/Bash-5.0-Patch-11-Privilege-Escalation.html",
+          "https://github.com/bminor/bash/commit/951bdaad7a18cc0dc1036bba86b18b90874d39ff",
+          "https://www.youtube.com/watch?v=-wGtxJ8opa8"
+        ]
+      },
+      {
+        "VulnerabilityID": "CVE-2019-6477",
+        "PkgName": "bind9-host",
+        "InstalledVersion": "1:9.11.3+dfsg-1ubuntu1.9",
+        "FixedVersion": "1:9.11.3+dfsg-1ubuntu1.11",
+        "Title": "bind: TCP Pipelining doesn't limit TCP clients on a single connection",
+        "Description": "With pipelining enabled each incoming query on a TCP connection requires a similar resource allocation to a query received via UDP or via TCP without pipelining enabled. A client using a TCP-pipelined connection to a server could consume more resources than the server has been provisioned to handle. When a TCP connection with a large number of pipelined queries is closed, the load on the server releasing these multiple resources can cause it to become unresponsive, even for queries that can be answered authoritatively or from cache. (This is most likely to be perceived as an intermittent server problem).",
+        "Severity": "MEDIUM",
+        "References": [
+          "https://kb.isc.org/docs/cve-2019-6477",
+          "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/L3DEMNZMKR57VQJCG5ZN55ZGTQRL2TFQ/",
+          "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/XGURMGQHX45KR4QDRCSUQHODUFOGNGAN/",
+          "https://support.f5.com/csp/article/K15840535?utm_source=f5support&amp;utm_medium=RSS",
+          "https://www.synology.com/security/advisory/Synology_SA_19_39"
+        ]
+      },
+      {
+        "VulnerabilityID": "CVE-2019-18224",
+        "PkgName": "libidn2-0",
+        "InstalledVersion": "2.0.4-1.1build2",
+        "FixedVersion": "2.0.4-1.1ubuntu0.2",
+        "Title": "libidn2: heap-based buffer overflow in idn2_to_ascii_4i in lib/lookup.c",
+        "Description": "idn2_to_ascii_4i in lib/lookup.c in GNU libidn2 before 2.1.1 has a heap-based buffer overflow via a long domain string.",
+        "Severity": "HIGH",
+        "References": [
+          "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=12420",
+          "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-18224",
+          "https://github.com/libidn/libidn2/commit/e4d1558aa2c1c04a05066ee8600f37603890ba8c",
+          "https://github.com/libidn/libidn2/compare/libidn2-2.1.0...libidn2-2.1.1",
+          "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/JDQVQ2XPV5BTZUFINT7AFJSKNNBVURNJ/",
+          "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/MINU5RKDFE6TKAFY5DRFN3WSFDS4DYVS/",
+          "https://usn.ubuntu.com/4168-1/"
+        ]
+      },
+      {
+        "VulnerabilityID": "CVE-2016-2781",
+        "PkgName": "coreutils",
+        "InstalledVersion": "8.28-1ubuntu1",
+        "Title": "coreutils: Non-privileged session can escape to the parent session in chroot",
+        "Description": "chroot in GNU coreutils, when used with --userspec, allows local users to escape to the parent session via a crafted TIOCSTI ioctl call, which pushes characters to the terminal's input buffer.",
+        "Severity": "LOW",
+        "References": [
+          "http://www.openwall.com/lists/oss-security/2016/02/28/2",
+          "http://www.openwall.com/lists/oss-security/2016/02/28/3"
+        ]
+      },
+      {
+        "VulnerabilityID": "CVE-2019-14855",
+        "PkgName": "gnupg",
+        "InstalledVersion": "2.2.4-1ubuntu1.2",
+        "Severity": "LOW"
+      },
+      {
+        "VulnerabilityID": "CVE-2019-14855",
+        "PkgName": "gnupg-l10n",
+        "InstalledVersion": "2.2.4-1ubuntu1.2",
+        "Severity": "LOW"
+      },
+      {
+        "VulnerabilityID": "CVE-2019-13050",
+        "PkgName": "gnupg",
+        "InstalledVersion": "2.2.4-1ubuntu1.2",
+        "Title": "GnuPG: interaction between the sks-keyserver code and GnuPG allows for a Certificate Spamming Attack which leads to persistent DoS",
+        "Description": "Interaction between the sks-keyserver code through 1.2.0 of the SKS keyserver network, and GnuPG through 2.2.16, makes it risky to have a GnuPG keyserver configuration line referring to a host on the SKS keyserver network. Retrieving data from this network may cause a persistent denial of service, because of a Certificate Spamming Attack.",
+        "Severity": "MEDIUM",
+        "References": [
+          "https://access.redhat.com/articles/4264021",
+          "https://gist.github.com/rjhansen/67ab921ffb4084c865b3618d6955275f",
+          "https://lists.gnupg.org/pipermail/gnupg-announce/2019q3/000439.html",
+          "https://twitter.com/lambdafu/status/1147162583969009664"
+        ]
+      },
+      {
+        "VulnerabilityID": "CVE-2019-13050",
+        "PkgName": "gnupg-l10n",
+        "InstalledVersion": "2.2.4-1ubuntu1.2",
+        "Title": "GnuPG: interaction between the sks-keyserver code and GnuPG allows for a Certificate Spamming Attack which leads to persistent DoS",
+        "Description": "Interaction between the sks-keyserver code through 1.2.0 of the SKS keyserver network, and GnuPG through 2.2.16, makes it risky to have a GnuPG keyserver configuration line referring to a host on the SKS keyserver network. Retrieving data from this network may cause a persistent denial of service, because of a Certificate Spamming Attack.",
+        "Severity": "MEDIUM",
+        "References": [
+          "https://access.redhat.com/articles/4264021",
+          "https://gist.github.com/rjhansen/67ab921ffb4084c865b3618d6955275f",
+          "https://lists.gnupg.org/pipermail/gnupg-announce/2019q3/000439.html",
+          "https://twitter.com/lambdafu/status/1147162583969009664"
+        ]
+      }
+    ]
+  }
+]
