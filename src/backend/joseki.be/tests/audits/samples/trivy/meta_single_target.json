@@ -1,0 +1,10 @@
+{
+  "audit-id": "33340604-22b6-4a8b-b1f7-0faddd20c37a",
+  "image-tag": "registry.com/repository/single-target-image:v0.2",
+  "scanner-version": "0.2.0",
+  "timestamp": 1583894784,
+  "audit-result": "succeeded",
+  "failure-description": null,
+  "trivy-version": "0.4.3",
+  "trivy-audit-path": "result_single_target.json"
+}

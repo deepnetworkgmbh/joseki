@@ -1,0 +1,459 @@
+[
+  {
+    "ControlItem": {
+      "AttestationExpiryPeriodInDays": 0,
+      "AttestationPeriodInDays": 0,
+      "Automated": "Yes",
+      "ControlID": "Azure_Subscription_AuthZ_Limit_Admin_Owner_Count",
+      "ControlSeverity": "Medium",
+      "Description": "Minimize the number of admins/owners",
+      "Enabled": true,
+      "GraceExpiryDate": "0001-01-01T00:00:00.0000000",
+      "Id": "SubscriptionCore110",
+      "IsBaselineControl": false,
+      "IsPreviewBaselineControl": false,
+      "NewControlGracePeriodInDays": 0,
+      "PolicyDefinitionGuid": null,
+      "policyDefinitionId": null,
+      "PolicyDefnResourceIdSuffix": null,
+      "Rationale": "Each additional person in the Owner/Contributor role increases the attack surface for the entire subscription. The number of members in these roles should be kept to as low as possible.",
+      "Recommendation": "There are 2 steps involved. (1) You need to remove any 'Classic Administrators/Co-Administrators' who should not be in the role. Please follow these steps: (a) Logon to https://portal.azure.com/ (b) Navigate to Subscriptions (c) Select the subscription (d) Go to 'Access Control (IAM)' (e) Select the co-administrator account that has to be removed and click on the 'Remove' button. (f) Perform this operation for all the co-administrators that need to be removed from the subscription. (2) You need to remove any unwanted members from the Owners group. To do this simply run the command 'Remove-AzRoleAssignment -SignInName '{signInName}' -Scope '/subscriptions/{subscriptionid}' -RoleDefinitionName Owner'.",
+      "Tags": [
+        "SDL",
+        "Best Practice",
+        "Automated",
+        "AuthZ",
+        "SubscriptionCore"
+      ],
+      "ValidAttestationStates": null
+    },
+    "ControlResults": [
+      {
+        "ActualVerificationResult": "Passed",
+        "AttestationStatus": "None",
+        "ChildResourceName": "",
+        "CurrentSessionContext": {
+          "IsLatestPSModule": false,
+          "Permissions": {
+            "HasAttestationReadPermissions": false,
+            "HasAttestationWritePermissions": false,
+            "HasRequiredAccess": true
+          }
+        },
+        "FirstFailedOn": "1900-01-01T00:00:00.0000000",
+        "FirstScannedOn": "1900-01-01T00:00:00.0000000",
+        "IsControlInGrace": false,
+        "MaximumAllowedGraceDays": 0,
+        "Messages": [
+          {
+            "DataObject": [
+              {
+                "DisplayName": "NOGRAPHACCESS",
+                "ObjectId": "95e99411-9eb0-4d04-8426-614488dfb5c6",
+                "ObjectType": "NOGRAPHACCESS",
+                "RoleDefinitionName": "Owner",
+                "SignInName": "NOGRAPHACCESS"
+              },
+              {
+                "DisplayName": "NOGRAPHACCESS",
+                "ObjectId": "373bf391-88c8-4027-bdc9-81f510b36e62",
+                "ObjectType": "NOGRAPHACCESS",
+                "RoleDefinitionName": "Owner",
+                "SignInName": "NOGRAPHACCESS"
+              },
+              {
+                "DisplayName": "NOGRAPHACCESS",
+                "ObjectId": "fcb9da80-1638-4642-8ddc-a2a09f27d31f",
+                "ObjectType": "NOGRAPHACCESS",
+                "RoleDefinitionName": "Owner",
+                "SignInName": "NOGRAPHACCESS"
+              },
+              {
+                "DisplayName": "blah@blah.com",
+                "ObjectId": "00000000-0000-0000-0000-000000000000",
+                "ObjectType": "ServiceAdministrator;AccountAdministrator",
+                "RoleDefinitionName": "ServiceAdministrator;AccountAdministrator",
+                "SignInName": "blah@blah.com"
+              }
+            ],
+            "Message": "There are a total of 4 admin/owner accounts in your subscription\r\nOf these, the following 4 admin/owner accounts are not from a central team.",
+            "MessageType": "Info"
+          },
+          {
+            "DataObject": null,
+            "Message": "Note: Approved central team accounts don't count against your limit",
+            "MessageType": "Info"
+          },
+          {
+            "DataObject": null,
+            "Message": "Number of admins/owners configured at subscription scope are with in approved limit: 5. Total: 4",
+            "MessageType": "Info"
+          }
+        ],
+        "StateManagement": {
+          "AttestedStateData": null,
+          "CurrentStateData": null
+        },
+        "UserComments": null,
+        "VerificationResult": "Passed"
+      }
+    ],
+    "FeatureName": "SubscriptionCore",
+    "Messages": [],
+    "Metadata": {
+      "Reference": "aka.ms/azsktcp/sshealth"
+    },
+    "PartialScanIdentifier": "",
+    "ResourceContext": null,
+    "SubscriptionContext": {
+      "Scope": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+      "SubscriptionId": "bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+      "SubscriptionName": "Test Subscription"
+    }
+  },
+  {
+    "ControlItem": {
+      "AttestationExpiryPeriodInDays": 0,
+      "AttestationPeriodInDays": 0,
+      "Automated": "Yes",
+      "ControlID": "Azure_Subscription_AuthZ_Justify_Admins_Owners",
+      "ControlSeverity": "Medium",
+      "Description": "Justify all identities that are granted with admin/owner access on your subscription.",
+      "Enabled": true,
+      "GraceExpiryDate": "0001-01-01T00:00:00.0000000",
+      "Id": "SubscriptionCore111",
+      "IsBaselineControl": false,
+      "IsPreviewBaselineControl": false,
+      "NewControlGracePeriodInDays": 0,
+      "PolicyDefinitionGuid": null,
+      "policyDefinitionId": null,
+      "PolicyDefnResourceIdSuffix": null,
+      "Rationale": "Accounts that are a member of these groups without a legitimate business reason increase the risk for your subscription. By carefully reviewing and removing accounts that shouldn't be there in the first place, you can avoid attacks if those accounts are compromised.",
+      "Recommendation": "There are 2 steps involved. (1) You need to remove any 'Classic Administrators/Co-Administrators/Owners' who should not be in the role. Please follow these steps: (a) Logon to https://portal.azure.com/ (b) Navigate to Subscriptions (c) Select the subscription (d) Go to 'Access Control (IAM)' (e) Right click the co-administrator account that has to be removed and click on the 'Remove co-administrator'. (f) Perform this operation for all the co-administrators that need to be removed from the subscription. (2) You need to remove any unwanted members from the Owners group. To do this simply run the command 'Remove-AzRoleAssignment -SignInName '{signInName}' -Scope '/subscriptions/{subscriptionid}' -RoleDefinitionName Owner'.",
+      "Tags": [
+        "SDL",
+        "Best Practice",
+        "Automated",
+        "AuthZ",
+        "SubscriptionCore"
+      ],
+      "ValidAttestationStates": null
+    },
+    "ControlResults": [
+      {
+        "ActualVerificationResult": "Verify",
+        "AttestationStatus": "None",
+        "ChildResourceName": "",
+        "CurrentSessionContext": {
+          "IsLatestPSModule": false,
+          "Permissions": {
+            "HasAttestationReadPermissions": false,
+            "HasAttestationWritePermissions": false,
+            "HasRequiredAccess": true
+          }
+        },
+        "FirstFailedOn": "1900-01-01T00:00:00.0000000",
+        "FirstScannedOn": "1900-01-01T00:00:00.0000000",
+        "IsControlInGrace": false,
+        "MaximumAllowedGraceDays": 0,
+        "Messages": [
+          {
+            "DataObject": [
+              {
+                "DisplayName": "NOGRAPHACCESS",
+                "ObjectId": "95e99411-9eb0-4d04-8426-614488dfb5c6",
+                "ObjectType": "NOGRAPHACCESS",
+                "SignInName": "NOGRAPHACCESS"
+              },
+              {
+                "DisplayName": "NOGRAPHACCESS",
+                "ObjectId": "373bf391-88c8-4027-bdc9-81f510b36e62",
+                "ObjectType": "NOGRAPHACCESS",
+                "SignInName": "NOGRAPHACCESS"
+              },
+              {
+                "DisplayName": "NOGRAPHACCESS",
+                "ObjectId": "fcb9da80-1638-4642-8ddc-a2a09f27d31f",
+                "ObjectType": "NOGRAPHACCESS",
+                "SignInName": "NOGRAPHACCESS"
+              },
+              {
+                "DisplayName": "blah@blah.com",
+                "ObjectId": "00000000-0000-0000-0000-000000000000",
+                "ObjectType": "ServiceAdministrator;AccountAdministrator",
+                "SignInName": "blah@blah.com"
+              }
+            ],
+            "Message": "Please review the list of Admins and Owners for your subscription. Make sure to remove any that do not require persistent access. (Note: Owners that are part of a central approved list are to be retained. They are not listed above.)",
+            "MessageType": "Info"
+          }
+        ],
+        "StateManagement": {
+          "AttestedStateData": null,
+          "CurrentStateData": {
+            "AttestedBy": "",
+            "AttestedDate": "0001-01-01T00:00:00.0000000",
+            "DataObject": {
+              "CoAdmins": [
+                {
+                  "RoleDefinitionName": "ServiceAdministrator;AccountAdministrator",
+                  "Scope": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+                  "SignInName": "blah@blah.com"
+                }
+              ],
+              "Owners": [
+                {
+                  "ObjectId": "95e99411-9eb0-4d04-8426-614488dfb5c6",
+                  "RoleDefinitionId": "0ddec6ed-54f2-4738-9291-8cbbbee15309",
+                  "RoleDefinitionName": "Owner",
+                  "Scope": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+                  "SignInName": "NOGRAPHACCESS"
+                },
+                {
+                  "ObjectId": "373bf391-88c8-4027-bdc9-81f510b36e62",
+                  "RoleDefinitionId": "0ddec6ed-54f2-4738-9291-8cbbbee15309",
+                  "RoleDefinitionName": "Owner",
+                  "Scope": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+                  "SignInName": "NOGRAPHACCESS"
+                },
+                {
+                  "ObjectId": "fcb9da80-1638-4642-8ddc-a2a09f27d31f",
+                  "RoleDefinitionId": "0ddec6ed-54f2-4738-9291-8cbbbee15309",
+                  "RoleDefinitionName": "Owner",
+                  "Scope": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+                  "SignInName": "NOGRAPHACCESS"
+                }
+              ]
+            },
+            "ExpiryDate": "",
+            "Justification": "",
+            "Message": "All Subscription Owners/CoAdministrators/ServiceAdministrators (excludes accounts from central team)"
+          }
+        },
+        "UserComments": null,
+        "VerificationResult": "Verify"
+      }
+    ],
+    "FeatureName": "SubscriptionCore",
+    "Messages": [],
+    "Metadata": {
+      "Reference": "aka.ms/azsktcp/sshealth"
+    },
+    "PartialScanIdentifier": "",
+    "ResourceContext": null,
+    "SubscriptionContext": {
+      "Scope": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+      "SubscriptionId": "bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+      "SubscriptionName": "Test Subscription"
+    }
+  },
+  {
+    "ControlItem": {
+      "AttestationExpiryPeriodInDays": 0,
+      "AttestationPeriodInDays": 0,
+      "Automated": "Yes",
+      "ControlID": "Azure_Subscription_AuthZ_Add_Required_Central_Accounts",
+      "ControlSeverity": "High",
+      "Description": "Mandatory central accounts must be present on the subscription",
+      "Enabled": true,
+      "GraceExpiryDate": "0001-01-01T00:00:00.0000000",
+      "Id": "SubscriptionCore120",
+      "IsBaselineControl": true,
+      "IsPreviewBaselineControl": false,
+      "NewControlGracePeriodInDays": 0,
+      "PolicyDefinitionGuid": null,
+      "policyDefinitionId": null,
+      "PolicyDefnResourceIdSuffix": null,
+      "Rationale": "Certain central accounts are expected to be present in all subscriptions to support enterprise wide functions (e.g., security scanning, cost optimization, etc.). Certain other accounts may also be required depending on special functionality enabled in a subscription (e.g., Express Route network management). The script checks for presence of such 'mandatory' and 'scenario-specific' accounts. If these are not present per the current baseline, there may be security/functionality impact for your subscription.",
+      "Recommendation": "Run command 'Set-AzSKSubscriptionRBAC'. This command sets up all mandatory accounts on the target subscription. Run 'Get-Help Set-AzSKSubscriptionRBAC -full' for more help. ",
+      "Tags": [
+        "SDL",
+        "TCP",
+        "Automated",
+        "AuthZ",
+        "SubscriptionCore"
+      ],
+      "ValidAttestationStates": null
+    },
+    "ControlResults": [
+      {
+        "ActualVerificationResult": "Passed",
+        "AttestationStatus": "None",
+        "ChildResourceName": "",
+        "CurrentSessionContext": {
+          "IsLatestPSModule": false,
+          "Permissions": {
+            "HasAttestationReadPermissions": false,
+            "HasAttestationWritePermissions": false,
+            "HasRequiredAccess": true
+          }
+        },
+        "FirstFailedOn": "1900-01-01T00:00:00.0000000",
+        "FirstScannedOn": "1900-01-01T00:00:00.0000000",
+        "IsControlInGrace": false,
+        "MaximumAllowedGraceDays": 0,
+        "Messages": [],
+        "StateManagement": {
+          "AttestedStateData": null,
+          "CurrentStateData": null
+        },
+        "UserComments": null,
+        "VerificationResult": "Passed"
+      }
+    ],
+    "FeatureName": "SubscriptionCore",
+    "Messages": [],
+    "Metadata": {
+      "Reference": "aka.ms/azsktcp/sshealth"
+    },
+    "PartialScanIdentifier": "",
+    "ResourceContext": null,
+    "SubscriptionContext": {
+      "Scope": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+      "SubscriptionId": "bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+      "SubscriptionName": "Test Subscription"
+    }
+  },
+  {
+    "ControlItem": {
+      "AttestationExpiryPeriodInDays": 0,
+      "AttestationPeriodInDays": 0,
+      "Automated": "Yes",
+      "ControlID": "Azure_Subscription_AuthZ_Remove_Deprecated_Accounts",
+      "ControlSeverity": "Critical",
+      "Description": "Deprecated/stale accounts must not be present on the subscription",
+      "Enabled": true,
+      "GraceExpiryDate": "0001-01-01T00:00:00.0000000",
+      "Id": "SubscriptionCore130",
+      "IsBaselineControl": true,
+      "IsPreviewBaselineControl": false,
+      "NewControlGracePeriodInDays": 0,
+      "PolicyDefinitionGuid": null,
+      "policyDefinitionId": null,
+      "PolicyDefnResourceIdSuffix": null,
+      "Rationale": "Deprecated accounts are ones that were once deployed to your subscription for some trial/pilot initiative (or some other purpose). These are not required any more and are a standing risk if present in any role on the subscription.",
+      "Recommendation": "Run command 'Remove-AzSKSubscriptionRBAC'. You can remove all the deprecated accounts using this command. Run 'Get-Help Remove-AzSKSubscriptionRBAC -full' for more help.",
+      "Tags": [
+        "SDL",
+        "TCP",
+        "Automated",
+        "AuthZ",
+        "SubscriptionCore"
+      ],
+      "ValidAttestationStates": null
+    },
+    "ControlResults": [
+      {
+        "ActualVerificationResult": "Passed",
+        "AttestationStatus": "None",
+        "ChildResourceName": "",
+        "CurrentSessionContext": {
+          "IsLatestPSModule": false,
+          "Permissions": {
+            "HasAttestationReadPermissions": false,
+            "HasAttestationWritePermissions": false,
+            "HasRequiredAccess": true
+          }
+        },
+        "FirstFailedOn": "1900-01-01T00:00:00.0000000",
+        "FirstScannedOn": "1900-01-01T00:00:00.0000000",
+        "IsControlInGrace": false,
+        "MaximumAllowedGraceDays": 0,
+        "Messages": [],
+        "StateManagement": {
+          "AttestedStateData": null,
+          "CurrentStateData": null
+        },
+        "UserComments": null,
+        "VerificationResult": "Passed"
+      }
+    ],
+    "FeatureName": "SubscriptionCore",
+    "Messages": [],
+    "Metadata": {
+      "Reference": "aka.ms/azsktcp/sshealth"
+    },
+    "PartialScanIdentifier": "",
+    "ResourceContext": null,
+    "SubscriptionContext": {
+      "Scope": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+      "SubscriptionId": "bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+      "SubscriptionName": "Test Subscription"
+    }
+  },
+  {
+    "ControlItem": {
+      "AttestationExpiryPeriodInDays": 0,
+      "AttestationPeriodInDays": 0,
+      "Automated": "Yes",
+      "ControlID": "Azure_Subscription_AuthZ_Dont_Use_NonAD_Identities",
+      "ControlSeverity": "High",
+      "Description": "Do not grant permissions to external accounts (i.e., accounts outside the native directory for the subscription)",
+      "Enabled": true,
+      "GraceExpiryDate": "0001-01-01T00:00:00.0000000",
+      "Id": "SubscriptionCore140",
+      "IsBaselineControl": true,
+      "IsPreviewBaselineControl": false,
+      "NewControlGracePeriodInDays": 0,
+      "PolicyDefinitionGuid": null,
+      "policyDefinitionId": null,
+      "PolicyDefnResourceIdSuffix": null,
+      "Rationale": "Non-AD accounts (such as xyz@hotmail.com, pqr@outlook.com, etc.) present at any scope within a subscription subject your cloud assets to undue risk. These accounts are not managed to the same standards as enterprise tenant identities. They don't have multi-factor authentication enabled. Etc.",
+      "Recommendation": "(The status for this control has been marked as 'Manual' because elevated (Co-Admin/Owner/Contributor, as applicable) permission is required to check security configuration for this resource. You can re-run the control with the appropriate privilege.) Run command Remove-AzRoleAssignment -SignInName '{signInName}' -Scope '{scope}' -RoleDefinitionName '{role definition name}'. Run 'Get-Help Remove-AzRoleAssignment -full' for more help.",
+      "Tags": [
+        "SDL",
+        "TCP",
+        "Automated",
+        "AuthZ",
+        "OwnerAccess",
+        "GraphRead",
+        "SubscriptionCore"
+      ],
+      "ValidAttestationStates": null
+    },
+    "ControlResults": [
+      {
+        "ActualVerificationResult": "Manual",
+        "AttestationStatus": "None",
+        "ChildResourceName": "",
+        "CurrentSessionContext": {
+          "IsLatestPSModule": false,
+          "Permissions": {
+            "HasAttestationReadPermissions": false,
+            "HasAttestationWritePermissions": false,
+            "HasRequiredAccess": false
+          }
+        },
+        "FirstFailedOn": "1900-01-01T00:00:00.0000000",
+        "FirstScannedOn": "1900-01-01T00:00:00.0000000",
+        "IsControlInGrace": false,
+        "MaximumAllowedGraceDays": 0,
+        "Messages": [
+          {
+            "DataObject": null,
+            "Message": "Not able to query Graph API. This has to be manually verified.",
+            "MessageType": "Info"
+          }
+        ],
+        "StateManagement": {
+          "AttestedStateData": null,
+          "CurrentStateData": null
+        },
+        "UserComments": null,
+        "VerificationResult": "Manual"
+      }
+    ],
+    "FeatureName": "SubscriptionCore",
+    "Messages": [],
+    "Metadata": {
+      "Reference": "aka.ms/azsktcp/sshealth"
+    },
+    "PartialScanIdentifier": "",
+    "ResourceContext": null,
+    "SubscriptionContext": {
+      "Scope": "/subscriptions/bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+      "SubscriptionId": "bc76e4b4-bc3e-46f0-b0c1-955c4c5fbe2a",
+      "SubscriptionName": "Test Subscription"
+    }
+  }
+]

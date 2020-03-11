@@ -1,0 +1,6 @@
+[
+  {
+    "Target": "registry.com/repository/no-cve-image:v0.2 (alpine 3.11.3)",
+    "Vulnerabilities": null
+  }
+]
