@@ -12,14 +12,14 @@ namespace webapp.Handlers
     public class GetInfrastructureOverviewHandler
     {
         private readonly IJosekiDatabase db;
-        private readonly InfrastructureScoreCache cache;
+        private readonly IInfrastructureScoreCache cache;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetInfrastructureOverviewHandler"/> class.
         /// </summary>
         /// <param name="db">Joseki database.</param>
         /// <param name="cache">Score cache.</param>
-        public GetInfrastructureOverviewHandler(IJosekiDatabase db, InfrastructureScoreCache cache)
+        public GetInfrastructureOverviewHandler(IJosekiDatabase db, IInfrastructureScoreCache cache)
         {
             this.db = db;
             this.cache = cache;

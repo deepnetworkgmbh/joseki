@@ -15,7 +15,7 @@ namespace webapp.Database
     /// <summary>
     /// Takes care of keeping pre-calculated counter-summaries.
     /// </summary>
-    public class InfrastructureScoreCache
+    public class InfrastructureScoreCache : IInfrastructureScoreCache
     {
         private static readonly ConcurrentDictionary<string, CacheItem> Cache = new ConcurrentDictionary<string, CacheItem>();
         private static readonly ILogger Logger = Log.ForContext<InfrastructureScoreCache>();
@@ -31,10 +31,7 @@ namespace webapp.Database
             this.db = db;
         }
 
-        /// <summary>
-        /// Pre-calculate counters for all available scanners during last month.
-        /// </summary>
-        /// <returns>A task object.</returns>
+        /// <inheritdoc />
         public async Task ReloadEntireCache()
         {
             Logger.Information("Reloading Infrastructure Score cache");
@@ -80,14 +77,7 @@ namespace webapp.Database
             Logger.Information("Reloading Infrastructure Score cache took {Elapsed}", sw.Elapsed);
         }
 
-        /// <summary>
-        /// Returns counters summary for requested component and date.
-        /// First method tries to look inside local cache.
-        /// Only if there is no record in the case - requests it from DB.
-        /// </summary>
-        /// <param name="componentId">Infrastructure component identifier.</param>
-        /// <param name="date">Audit date.</param>
-        /// <returns>Counters Summary for requested component and date.</returns>
+        /// <inheritdoc />
         public async Task<CountersSummary> GetCountersSummary(string componentId, DateTime date)
         {
             var cacheKey = CacheItem.GetKey(componentId, date);
@@ -260,5 +250,27 @@ namespace webapp.Database
                 this.needsUpdate = true;
             }
         }
+    }
+
+    /// <summary>
+    /// Interface to abstract infra-score cache for testing.
+    /// </summary>
+    public interface IInfrastructureScoreCache
+    {
+        /// <summary>
+        /// Pre-calculate counters for all available scanners during last month.
+        /// </summary>
+        /// <returns>A task object.</returns>
+        Task ReloadEntireCache();
+
+        /// <summary>
+        /// Returns counters summary for requested component and date.
+        /// First method tries to look inside local cache.
+        /// Only if there is no record in the case - requests it from DB.
+        /// </summary>
+        /// <param name="componentId">Infrastructure component identifier.</param>
+        /// <param name="date">Audit date.</param>
+        /// <returns>Counters Summary for requested component and date.</returns>
+        Task<CountersSummary> GetCountersSummary(string componentId, DateTime date);
     }
 }
