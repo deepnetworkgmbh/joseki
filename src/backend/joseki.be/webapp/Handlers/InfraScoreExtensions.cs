@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using webapp.Database;
 using webapp.Database.Models;
+using webapp.Exceptions;
 using webapp.Models;
 
 namespace webapp.Handlers
@@ -21,7 +22,7 @@ namespace webapp.Handlers
         /// <param name="date">The date to calculate overview for.</param>
         /// <param name="audits">List of audits to include into overview.</param>
         /// <returns>Complete infrastructure-overview object.</returns>
-        public static async Task<InfrastructureOverview> GetInfrastructureOverview(this InfrastructureScoreCache cache, DateTime date, Audit[] audits)
+        public static async Task<InfrastructureOverview> GetInfrastructureOverview(this IInfrastructureScoreCache cache, DateTime date, Audit[] audits)
         {
             // 0. if no audits - return stub
             if (audits.Length == 0)
@@ -33,7 +34,7 @@ namespace webapp.Handlers
                         Component = new InfrastructureComponent(Audit.OverallId)
                         {
                             Category = InfrastructureCategory.Overall,
-                            Name = "Overall infrastructure",
+                            Name = Audit.OverallName,
                         },
                         Date = date,
                         ScoreHistory = new ScoreHistoryItem[0],
@@ -56,7 +57,7 @@ namespace webapp.Handlers
                 Component = new InfrastructureComponent(Audit.OverallId)
                 {
                     Category = InfrastructureCategory.Overall,
-                    Name = "Overall infrastructure",
+                    Name = Audit.OverallName,
                 },
                 Date = date,
                 ScoreHistory = overallHistory.ToArray(),
@@ -106,8 +107,9 @@ namespace webapp.Handlers
         /// </summary>
         /// <param name="cache">Extended cache object.</param>
         /// <param name="componentId">Component identifier.</param>
+        /// <param name="componentName">Component name.</param>
         /// <returns>Complete component history object.</returns>
-        public static async Task<InfrastructureComponentSummaryWithHistory[]> GetInfrastructureHistory(this InfrastructureScoreCache cache, string componentId)
+        public static async Task<InfrastructureComponentSummaryWithHistory[]> GetInfrastructureHistory(this IInfrastructureScoreCache cache, string componentId, string componentName)
         {
             var today = DateTimeOffset.UtcNow.Date;
             var infrastructureCategory = GetCategory(componentId);
@@ -122,6 +124,7 @@ namespace webapp.Handlers
                     Component = new InfrastructureComponent(componentId)
                     {
                         Category = infrastructureCategory,
+                        Name = componentName,
                     },
                     Current = currentSummary,
                 };
@@ -152,7 +155,7 @@ namespace webapp.Handlers
                 return InfrastructureCategory.Overall;
             }
 
-            throw new NotSupportedException($"Not supported category for {componentId}");
+            throw new JosekiException($"Not supported category for {componentId}");
         }
     }
 }

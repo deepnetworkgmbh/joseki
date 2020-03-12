@@ -17,7 +17,7 @@ namespace webapp.BackgroundJobs
     {
         private static readonly ILogger Logger = Log.ForContext<InfraScoreCacheWatchman>();
 
-        private readonly InfrastructureScoreCache cache;
+        private readonly IInfrastructureScoreCache cache;
         private readonly JosekiConfiguration config;
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace webapp.BackgroundJobs
         /// </summary>
         /// <param name="cache">The cache.</param>
         /// <param name="config">Joseki Backend configuration.</param>
-        public InfraScoreCacheWatchman(InfrastructureScoreCache cache, ConfigurationParser config)
+        public InfraScoreCacheWatchman(IInfrastructureScoreCache cache, ConfigurationParser config)
         {
             this.cache = cache;
             this.config = config.Get();

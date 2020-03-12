@@ -14,6 +14,11 @@ namespace webapp.Database.Models
         public const string OverallId = "/all";
 
         /// <summary>
+        /// Overall infrastructure name.
+        /// </summary>
+        public const string OverallName = "Overall infrastructure";
+
+        /// <summary>
         /// Unique audit identifier.
         /// </summary>
         public string Id { get; set; }
