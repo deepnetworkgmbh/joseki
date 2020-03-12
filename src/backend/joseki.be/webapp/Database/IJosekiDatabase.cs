@@ -50,6 +50,6 @@ namespace webapp.Database
         /// </summary>
         /// <param name="date">The date.</param>
         /// <returns>Latest audits.</returns>
-        Task<Audit[]> GetAuditedComponents(DateTime date);
+        Task<Audit[]> GetAuditedComponentsWithHistory(DateTime date);
     }
 }

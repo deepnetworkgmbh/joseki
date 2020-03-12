@@ -1,0 +1,200 @@
+[
+  {
+    "Target": "registry.com/repository/multi-target-image:v0.2 (debian 10.2)",
+    "Vulnerabilities": [
+      {
+        "VulnerabilityID": "CVE-2011-3374",
+        "PkgName": "apt",
+        "InstalledVersion": "1.8.2",
+        "Description": "It was found that apt-key in apt, all versions, do not correctly validate gpg keys with the master keyring, leading to a potential man-in-the-middle attack.",
+        "Severity": "MEDIUM",
+        "References": [
+          "https://access.redhat.com/security/cve/cve-2011-3374",
+          "https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=642480",
+          "https://people.canonical.com/~ubuntu-security/cve/2011/CVE-2011-3374.html",
+          "https://security-tracker.debian.org/tracker/CVE-2011-3374",
+          "https://snyk.io/vuln/SNYK-LINUX-APT-116518"
+        ]
+      },
+      {
+        "VulnerabilityID": "CVE-2019-18276",
+        "PkgName": "bash",
+        "InstalledVersion": "5.0-4",
+        "Title": "bash: when effective UID is not equal to its real UID the saved UID is not dropped",
+        "Description": "An issue was discovered in disable_priv_mode in shell.c in GNU Bash through 5.0 patch 11. By default, if Bash is run with its effective UID not equal to its real UID, it will drop privileges by setting its effective UID to its real UID. However, it does so incorrectly. On Linux and other systems that support \"saved UID\" functionality, the saved UID is not dropped. An attacker with command execution in the shell can use \"enable -f\" for runtime loading of a new builtin, which can be a shared object that calls setuid() and therefore regains privileges. However, binaries running with an effective UID of 0 are unaffected.",
+        "Severity": "HIGH",
+        "References": [
+          "http://packetstormsecurity.com/files/155498/Bash-5.0-Patch-11-Privilege-Escalation.html",
+          "https://github.com/bminor/bash/commit/951bdaad7a18cc0dc1036bba86b18b90874d39ff",
+          "https://www.youtube.com/watch?v=-wGtxJ8opa8"
+        ]
+      },
+      {
+        "VulnerabilityID": "TEMP-0841856-B18BAF",
+        "PkgName": "bash",
+        "InstalledVersion": "5.0-4",
+        "Severity": "LOW"
+      },
+      {
+        "VulnerabilityID": "CVE-2019-5481",
+        "PkgName": "curl",
+        "InstalledVersion": "7.64.0-4",
+        "FixedVersion": "7.64.0-4+deb10u1",
+        "Title": "curl: double free due to subsequent call of realloc()",
+        "Description": "Double-free vulnerability in the FTP-kerberos code in cURL 7.52.0 to 7.65.3.",
+        "Severity": "HIGH",
+        "References": [
+          "http://lists.opensuse.org/opensuse-security-announce/2019-09/msg00048.html",
+          "http://lists.opensuse.org/opensuse-security-announce/2019-09/msg00055.html",
+          "https://curl.haxx.se/docs/CVE-2019-5481.html",
+          "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-5481",
+          "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/RGDVKSLY5JUNJRLYRUA6CXGQ2LM63XC3/",
+          "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/UA7KDM2WPM5CJDDGOEGFV6SSGD2J7RNT/"
+        ]
+      },
+      {
+        "VulnerabilityID": "CVE-2019-5436",
+        "PkgName": "curl",
+        "InstalledVersion": "7.64.0-4",
+        "FixedVersion": "7.64.0-4+deb10u1",
+        "Title": "curl: TFTP receive heap buffer overflow in tftp_receive_packet() function",
+        "Description": "A heap buffer overflow in the TFTP receiving code allows for DoS or arbitrary code execution in libcurl versions 7.19.4 through 7.64.1.",
+        "Severity": "MEDIUM",
+        "References": [
+          "http://lists.opensuse.org/opensuse-security-announce/2019-06/msg00008.html",
+          "http://lists.opensuse.org/opensuse-security-announce/2019-06/msg00017.html",
+          "https://curl.haxx.se/docs/CVE-2019-5436.html",
+          "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-5436",
+          "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/SMG3V4VTX2SE3EW3HQTN3DDLQBTORQC2/",
+          "https://security.netapp.com/advisory/ntap-20190606-0004/"
+        ]
+      },
+      {
+        "VulnerabilityID": "CVE-2019-14855",
+        "PkgName": "dirmngr",
+        "InstalledVersion": "2.2.12-1+deb10u1",
+        "Severity": "LOW"
+      },
+      {
+        "VulnerabilityID": "CVE-2020-9327",
+        "PkgName": "libsqlite3-0",
+        "InstalledVersion": "3.27.2-3",
+        "Description": "In SQLite 3.31.1, isAuxiliaryVtabOperator allows attackers to trigger a NULL pointer dereference and segmentation fault because of generated column optimizations.",
+        "Severity": "UNKNOWN",
+        "References": [
+          "https://www.sqlite.org/cgi/src/info/4374860b29383380",
+          "https://www.sqlite.org/cgi/src/info/9d0d4ab95dc0c56e",
+          "https://www.sqlite.org/cgi/src/info/abc473fb8fb99900"
+        ]
+      },
+      {
+        "VulnerabilityID": "CVE-2019-5188",
+        "PkgName": "libss2",
+        "InstalledVersion": "1.44.5-1+deb10u2",
+        "FixedVersion": "1.44.5-1+deb10u3",
+        "Title": "e2fsprogs: Out-of-bounds write in  e2fsck/rehash.c",
+        "Description": "A code execution vulnerability exists in the directory rehashing functionality of E2fsprogs e2fsck 1.45.4. A specially crafted ext4 directory can cause an out-of-bounds write on the stack, resulting in code execution. An attacker can corrupt a partition to trigger this vulnerability.",
+        "Severity": "MEDIUM",
+        "References": [
+          "http://lists.opensuse.org/opensuse-security-announce/2020-02/msg00004.html",
+          "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-5188",
+          "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/2AKETJ6BREDUHRWQTV35SPGG5C6H7KSI/",
+          "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/6DOBCYQKCTTWXBLMUPJ5TX3FY7JNCOKY/",
+          "https://talosintelligence.com/vulnerability_reports/TALOS-2019-0973",
+          "https://usn.ubuntu.com/4249-1/"
+        ]
+      },
+      {
+        "VulnerabilityID": "CVE-2019-10220",
+        "PkgName": "linux-libc-dev",
+        "InstalledVersion": "4.19.67-2+deb10u2",
+        "FixedVersion": "4.19.98-1",
+        "Title": "kernel: CIFS: Relative paths injection in directory entry lists",
+        "Description": "Linux kernel CIFS implementation, version 4.9.0 is vulnerable to a relative paths injection in directory entry lists.",
+        "Severity": "CRITICAL",
+        "References": [
+          "https://bugzilla.redhat.com/show_bug.cgi?id=CVE-2019-10220",
+          "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-10220",
+          "https://security.netapp.com/advisory/ntap-20200103-0001/",
+          "https://usn.ubuntu.com/4226-1/"
+        ]
+      }
+    ]
+  },
+  {
+    "Target": "go/pkg/mod/git.apache.org/thrift.git@v0.12.0/lib/js/package-lock.json",
+    "Vulnerabilities": null
+  },
+  {
+    "Target": "go/pkg/mod/git.apache.org/thrift.git@v0.12.0/package-lock.json",
+    "Vulnerabilities": null
+  },
+  {
+    "Target": "go/pkg/mod/github.com/apache/thrift@v0.12.0/lib/js/package-lock.json",
+    "Vulnerabilities": null
+  },
+  {
+    "Target": "go/pkg/mod/github.com/apache/thrift@v0.12.0/package-lock.json",
+    "Vulnerabilities": null
+  },
+  {
+    "Target": "go/pkg/mod/github.com/grpc-ecosystem/grpc-gateway@v1.9.0/docs/Gemfile.lock",
+    "Vulnerabilities": [
+      {
+        "VulnerabilityID": "CVE-2018-1000201",
+        "PkgName": "ffi",
+        "InstalledVersion": "1.9.23",
+        "FixedVersion": ">= 1.9.24",
+        "Title": "ruby-ffi DDL loading issue on Windows OS",
+        "Description": "ruby-ffi version 1.9.23 and earlier has a DLL loading issue which can be hijacked on Windows OS, when a Symbol is used as DLL name instead of a String This vulnerability appears to have been fixed in v1.9.24 and later.",
+        "Severity": "MEDIUM",
+        "References": [
+          "https://github.com/ffi/ffi/commit/09e0c6076466b4383da7fa4e13f714311109945a",
+          "https://github.com/ffi/ffi/commit/e0fe486df0e117ed67b0282b6ada04b7214ca05c",
+          "https://github.com/ffi/ffi/releases/tag/1.9.24"
+        ]
+      },
+      {
+        "VulnerabilityID": "CVE-2019-11068",
+        "PkgName": "nokogiri",
+        "InstalledVersion": "1.8.2",
+        "FixedVersion": ">= 1.10.3",
+        "Title": "libxslt: xsltCheckRead and xsltCheckWrite routines security bypass by crafted URL",
+        "Description": "libxslt through 1.1.33 allows bypass of a protection mechanism because callers of xsltCheckRead and xsltCheckWrite permit access even upon receiving a -1 error code. xsltCheckRead can return -1 for a crafted URL that is not actually invalid and is subsequently loaded.",
+        "Severity": "HIGH",
+        "References": [
+          "http://lists.opensuse.org/opensuse-security-announce/2019-05/msg00048.html",
+          "http://lists.opensuse.org/opensuse-security-announce/2019-05/msg00052.html",
+          "http://lists.opensuse.org/opensuse-security-announce/2019-05/msg00053.html",
+          "http://lists.opensuse.org/opensuse-security-announce/2019-06/msg00025.html",
+          "http://www.openwall.com/lists/oss-security/2019/04/22/1",
+          "http://www.openwall.com/lists/oss-security/2019/04/23/5",
+          "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-11068",
+          "https://github.com/sparklemotion/nokogiri/issues/1892",
+          "https://gitlab.gnome.org/GNOME/libxslt/commit/e03553605b45c88f0b4b2980adfbbb8f6fca2fd6",
+          "https://groups.google.com/forum/#!msg/ruby-security-ann/_y80o1zZlOs/k4SDX6hoAAAJ",
+          "https://lists.debian.org/debian-lts-announce/2019/04/msg00016.html",
+          "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/36TEYN37XCCKN2XUMRTBBW67BPNMSW4K/",
+          "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/SK4YNISS22MJY22YX5I6V2U63QZAUEHA/",
+          "https://usn.ubuntu.com/3947-1/",
+          "https://usn.ubuntu.com/3947-2/"
+        ]
+      },
+      {
+        "VulnerabilityID": "CVE-2019-16892",
+        "PkgName": "rubyzip",
+        "InstalledVersion": "1.2.1",
+        "FixedVersion": ">= 1.3.0",
+        "Title": "cfme: rubygem-rubyzip denial of service via crafted ZIP file",
+        "Description": "In Rubyzip before 1.3.0, a crafted ZIP file can bypass application checks on ZIP entry sizes because data about the uncompressed size can be spoofed. This allows attackers to cause a denial of service (disk consumption).",
+        "Severity": "HIGH",
+        "References": [
+          "https://github.com/rubyzip/rubyzip/pull/403",
+          "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/J45KSFPP6DFVWLC7Z73L7SX735CKZYO6/",
+          "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/MWWPORMSBHZTMP4PGF4DQD22TTKBQMMC/",
+          "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/X255K6ZBAQC462PQN2ND5HOTTQEJ2G2X/"
+        ]
+      }
+    ]
+  }
+]

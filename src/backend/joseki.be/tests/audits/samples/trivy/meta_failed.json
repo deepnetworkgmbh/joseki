@@ -1,0 +1,10 @@
+{
+  "audit-id": "1abcd181-e4ac-43a6-94c0-47f06bb3311e",
+  "image-tag": "registry.com/repository/failed-image:v0.2",
+  "scanner-version": "0.2.0",
+  "timestamp": 1583894802,
+  "audit-result": "audit-failed",
+  "failure-description": "\u001b[0m\terror in image scan: failed to scan the image: failed to analyze OS: Unknown OS",
+  "trivy-version": "0.4.3",
+  "trivy-audit-path": null
+}

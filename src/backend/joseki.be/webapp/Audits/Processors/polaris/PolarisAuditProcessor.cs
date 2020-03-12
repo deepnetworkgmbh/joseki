@@ -192,7 +192,7 @@ namespace webapp.Audits.Processors.polaris
 
                 if (name.StartsWith("https://"))
                 {
-                    starts = 7;
+                    starts = 8;
                 }
 
                 if (name.EndsWith(":443"))
@@ -399,6 +399,23 @@ namespace webapp.Audits.Processors.polaris
                 var nsName = resource["metadata"]["namespace"].Value<string>();
                 var objectName = resource["metadata"]["name"].Value<string>();
 
+                if (resource["spec"]["template"]["spec"]["initContainers"] is JArray initContainers)
+                {
+                    for (var i = 0; i < initContainers.Count; i++)
+                    {
+                        var containerName = initContainers[i]["name"] != null
+                            ? initContainers[i]["name"].Value<string>()
+                            : $"{objectName}-container{i + 1}";
+                        var imageTag = initContainers[i]["image"].Value<string>();
+
+                        var componentId = $"/k8s/{clusterId}/ns/{nsName}/{objectKind}/{objectName}/container/{containerName}/image/{imageTag}";
+                        if (!dict.TryAdd(imageTag, new List<string> { componentId }))
+                        {
+                            dict[imageTag].Add(componentId);
+                        }
+                    }
+                }
+
                 if (resource["spec"]["template"]["spec"]["containers"] is JArray containers)
                 {
                     for (var i = 0; i < containers.Count; i++)
@@ -424,6 +441,23 @@ namespace webapp.Audits.Processors.polaris
             {
                 var nsName = resource["metadata"]["namespace"].Value<string>();
                 var objectName = resource["metadata"]["name"].Value<string>();
+
+                if (resource["spec"]["jobTemplate"]["spec"]["template"]["spec"]["initContainers"] is JArray initContainers)
+                {
+                    for (var i = 0; i < initContainers.Count; i++)
+                    {
+                        var containerName = initContainers[i]["name"] != null
+                            ? initContainers[i]["name"].Value<string>()
+                            : $"{objectName}-container{i + 1}";
+                        var imageTag = initContainers[i]["image"].Value<string>();
+
+                        var componentId = $"/k8s/{clusterId}/ns/{nsName}/cronjob/{objectName}/container/{containerName}/image/{imageTag}";
+                        if (!dict.TryAdd(imageTag, new List<string> { componentId }))
+                        {
+                            dict[imageTag].Add(componentId);
+                        }
+                    }
+                }
 
                 if (resource["spec"]["jobTemplate"]["spec"]["template"]["spec"]["containers"] is JArray containers)
                 {
