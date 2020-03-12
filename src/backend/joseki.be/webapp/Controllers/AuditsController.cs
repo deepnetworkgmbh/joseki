@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
 using webapp.Database.Models;
+using webapp.Exceptions;
 using webapp.Handlers;
 using webapp.Models;
 
@@ -130,6 +131,11 @@ namespace webapp.Controllers
 
                 var history = await handler.GetHistory(componentId);
                 return this.StatusCode(200, history);
+            }
+            catch (AuditNotFoundException ex)
+            {
+                Logger.Error(ex, "No audits found for requested component {ComponentId}", componentId);
+                return this.NotFound($"No audits found for requested component {componentId}");
             }
             catch (Exception ex)
             {

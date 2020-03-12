@@ -19,14 +19,14 @@ namespace webapp.Handlers
     public class GetComponentDetailsHandler
     {
         private readonly JosekiDbContext db;
-        private readonly InfrastructureScoreCache cache;
+        private readonly IInfrastructureScoreCache cache;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetComponentDetailsHandler"/> class.
         /// </summary>
         /// <param name="db">Joseki database object.</param>
         /// <param name="cache">Score cache.</param>
-        public GetComponentDetailsHandler(JosekiDbContext db, InfrastructureScoreCache cache)
+        public GetComponentDetailsHandler(JosekiDbContext db, IInfrastructureScoreCache cache)
         {
             this.db = db;
             this.cache = cache;

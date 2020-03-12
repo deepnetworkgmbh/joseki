@@ -8,10 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
 using webapp.Database.Models;
+using webapp.Exceptions;
 using webapp.Handlers;
 using webapp.Models;
-
-using ImageScanResult = webapp.Database.Models.ImageScanResult;
 
 namespace webapp.Controllers.v0._2
 {
@@ -172,6 +171,11 @@ namespace webapp.Controllers.v0._2
 
                 var history = await handler.GetHistory(unescapedId);
                 return this.StatusCode(200, history);
+            }
+            catch (AuditNotFoundException ex)
+            {
+                Logger.Error(ex, "No audits found for requested component {ComponentId}", unescapedId);
+                return this.NotFound($"No audits found for requested component {unescapedId}");
             }
             catch (Exception ex)
             {
