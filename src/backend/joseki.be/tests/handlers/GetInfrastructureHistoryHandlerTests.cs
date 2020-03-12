@@ -4,10 +4,8 @@ using System.Threading.Tasks;
 
 using FluentAssertions;
 
-using joseki.db;
 using joseki.db.entities;
 
-using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Moq;
@@ -30,10 +28,7 @@ namespace tests.handlers
             const int oneMonthHistoryItemsCount = 31;
             const string componentId = Audit.OverallId;
 
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var cacheMock = new Mock<IInfrastructureScoreCache>();
             var handler = new GetInfrastructureHistoryHandler(context, cacheMock.Object);
 
@@ -56,10 +51,7 @@ namespace tests.handlers
             var componentId = $"{componentPrefix}/{Guid.NewGuid().ToString()}";
             var componentName = Guid.NewGuid().ToString();
 
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var cacheMock = new Mock<IInfrastructureScoreCache>();
             var handler = new GetInfrastructureHistoryHandler(context, cacheMock.Object);
 
@@ -82,10 +74,7 @@ namespace tests.handlers
             var componentId = $"/k8s/{Guid.NewGuid().ToString()}";
             var componentName = Guid.NewGuid().ToString();
 
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var cacheMock = new Mock<IInfrastructureScoreCache>();
             var handler = new GetInfrastructureHistoryHandler(context, cacheMock.Object);
 
@@ -109,10 +98,7 @@ namespace tests.handlers
             // Arrange
             var componentId = Guid.NewGuid().ToString();
 
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var cacheMock = new Mock<IInfrastructureScoreCache>();
             var handler = new GetInfrastructureHistoryHandler(context, cacheMock.Object);
 
