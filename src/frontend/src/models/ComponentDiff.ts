@@ -20,26 +20,28 @@ export class InfrastructureComponentDiff {
     let r: DiffCollection[] = [];
     let left: CheckCollection[] = MappingService.getResultsByCollection(diff.summary1.checks)
     let right: CheckCollection[] = MappingService.getResultsByCollection(diff.summary2.checks)
-
+    
     // traverse first collections list
     for (let i = 0; i < left.length; i++) {
       let left1 = left[i];    //  left collection
       let key = left1.type + '---' + left1.name;
       let row = new DiffCollection(key, left1.name, left1.type);
       row.left = left1;
+      row.right = CheckCollection.GetEmpty();
       r.push(row);
 
       let rowIndex = r.findIndex(x => x.key === key);
-
       let rightIndex = right.findIndex(x => x.name === left1.name && x.type === left1.type);
       if (rightIndex === -1) {
         r[rowIndex].operation = DiffOperation.Removed;
         continue;
-      }
+      }      
       let right1 = right[rightIndex]; // right collection;
-      let [operation, changes] = right1.Compare(left1);
-      r[rowIndex].operation = operation;
-      r[rowIndex].changes = changes;  
+      let [operation, changes] = right1.Compare(left1);      
+      r[rowIndex].changes.merge(changes); 
+      if(operation !== DiffOperation.Same) {
+        r[rowIndex].operation = DiffOperation.Changed;
+      }
     }
 
 
@@ -51,7 +53,7 @@ export class InfrastructureComponentDiff {
       let rowIndex = r.findIndex(x => x.key === key);
       if (rowIndex === -1) {
         let row = new DiffCollection(key, right1.name, right1.type);
-        row.left = undefined;
+        row.left = CheckCollection.GetEmpty();
         row.right = right1;
         row.operation = DiffOperation.Added;
         r.push(row);
@@ -60,8 +62,10 @@ export class InfrastructureComponentDiff {
 
       r[rowIndex].right = right1;
       let [operation, changes] = r[rowIndex].left!.Compare(right1);
-      r[rowIndex].operation = operation;
-      r[rowIndex].changes = changes; 
+      //r[rowIndex].changes.merge(changes); 
+      if(operation !== DiffOperation.Same) {
+        r[rowIndex].operation = DiffOperation.Changed;
+      }
     }
 
 
@@ -85,6 +89,7 @@ export class InfrastructureComponentDiff {
     return diff;
 
   }
+
 }
 
 export class DiffCollection {

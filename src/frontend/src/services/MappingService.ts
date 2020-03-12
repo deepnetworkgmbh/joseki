@@ -13,18 +13,24 @@ export class CheckCollection {
     counters: CountersSummary = new CountersSummary()
     objects: CheckObject[] = []
     operation?: DiffOperation
+    empty: boolean = false;
 
     constructor(public name: string, public type: string, public date: Date) {}
 
+    public static GetEmpty() : CheckCollection {
+        let empty = new CheckCollection("", "", new Date());
+        empty.empty = true;
+        return empty;
+    }
     // compare objects
     Compare(other: CheckCollection): [DiffOperation, DiffCounters] {
 
         // parent Diff State
-        let result = DiffOperation.Same;
+        let operation = DiffOperation.Same;
         let changes = new DiffCounters();
 
         if(this.score !== other.score) {
-            result = DiffOperation.Changed;
+            operation = DiffOperation.Changed;
         }
 
         // compare this object array for removals
@@ -33,15 +39,15 @@ export class CheckCollection {
             let otherIndex = other.objects.findIndex(x=>x.id === myObject.id);
             if (otherIndex === -1) {
                 // this object is removed on other scan
-                result = DiffOperation.Changed;                
+                operation = DiffOperation.Changed;                
                 myObject.operation = DiffOperation.Removed;
+                other.objects.push(CheckObject.GetEmpty(myObject.id))
+
                 changes.tick(myObject.operation)
                 continue;
             }
-            // TODO: check object children
-
-            // if no change, mark it as same
-            myObject.operation = DiffOperation.Same;
+            // check object children
+            other.objects[otherIndex].Compare(myObject);           
         }
 
         // compare other object array for addition
@@ -52,16 +58,16 @@ export class CheckCollection {
                 // other obhect is removed from my scan
                 otherObject.operation = DiffOperation.Added
                 changes.tick(otherObject.operation)
-                result = DiffOperation.Changed;
+                operation = DiffOperation.Changed;
                 continue;
             }
-            // TODO: check object children
+            // check object children
+
+            this.objects[myIndex].Compare(otherObject);           
             
-                  // if no change, mark it as same
-            otherObject.operation = DiffOperation.Same;
         }  
         
-        return [result, changes];
+        return [operation, changes];
     }
 }
 
@@ -75,6 +81,54 @@ export class CheckObject {
     controlGroups: CheckControlGroup[] = []
     operation?: DiffOperation
     checked: boolean = false;
+    empty: boolean = false;
+
+    public static GetEmpty(id:string) : CheckObject {
+        let empty = new CheckObject();
+        empty.id = id;
+        empty.empty = true;
+        return empty;
+    }
+
+    Compare(other: CheckObject): DiffCounters {
+        let changes = new DiffCounters();
+
+        // check controlGroups
+       
+        // check for removals
+        for(let j=0; j<this.controlGroups.length; j++) {
+            let myControlGroup = this.controlGroups[j];
+            let otherControlGroupIndex = other.controlGroups.findIndex(x=>x.name === myControlGroup.name);
+            if(otherControlGroupIndex === -1) {
+                this.operation = DiffOperation.Changed;
+                myControlGroup.operation = DiffOperation.Removed;
+                changes.tick(myControlGroup.operation);
+                continue;
+            }
+            let otherControlGroup = other.controlGroups[otherControlGroupIndex];
+            let [cgOperation, cgChanges] = otherControlGroup.Compare(myControlGroup);
+            myControlGroup.operation = cgOperation;
+            changes.merge(cgChanges);
+        }
+
+        // check for additions
+        for(let j=0; j<other.controlGroups.length; j++) {
+            let otherControlGroup = other.controlGroups[j];
+            let myControlGroupIndex = this.controlGroups.findIndex(x=>x.name === otherControlGroup.name);
+            if(myControlGroupIndex === -1) {
+                this.operation = DiffOperation.Changed;
+                otherControlGroup.operation = DiffOperation.Added;
+                changes.tick(otherControlGroup.operation);
+                continue;               
+            }
+            let myControlGroup = this.controlGroups[myControlGroupIndex];
+            let [cgOperation, cgChanges] = myControlGroup.Compare(otherControlGroup);
+            otherControlGroup.operation = cgOperation;
+            changes.merge(cgChanges);
+        }
+        
+        return changes;
+    }
 }
 
 export class CheckControl {
@@ -91,6 +145,51 @@ export class CheckControlGroup {
     name: string = ''
     items: CheckControl[] = []
     operation?: DiffOperation
+
+    Compare(other: CheckControlGroup): [DiffOperation, DiffCounters] { 
+        let operation = DiffOperation.Same
+        let changes = new DiffCounters()
+
+        for(let i=0;i< this.items.length; i++) {
+            let myControl = this.items[i];
+            let otherControlIndex = other.items.findIndex(x=>x.id === myControl.id);
+            if(otherControlIndex === -1) {
+                myControl.operation = DiffOperation.Removed;
+                this.operation = DiffOperation.Changed;
+                changes.tick(this.operation);
+                continue;
+            }
+            let otherControl = other.items[otherControlIndex];            
+            if(myControl.result !== otherControl.result || myControl.text !== otherControl.text) {
+                myControl.operation = DiffOperation.Changed;
+                this.operation = DiffOperation.Changed;
+                changes.tick(this.operation);
+                continue;
+            }           
+            myControl.operation = DiffOperation.Same;
+        }
+
+        for(let i=0;i< other.items.length; i++) {
+            let otherControl = other.items[i];
+            let myControlIndex = this.items.findIndex(x=>x.id === otherControl.id);
+            if(myControlIndex === -1) {
+                otherControl.operation = DiffOperation.Added;
+                this.operation = DiffOperation.Changed;
+                changes.tick(this.operation);
+                continue;
+            }
+            let myControl = this.items[myControlIndex];            
+            if(myControl.result !== otherControl.result || myControl.text !== otherControl.text) {
+                otherControl.operation = DiffOperation.Changed;
+                this.operation = DiffOperation.Changed;
+                changes.tick(this.operation);
+                continue;
+            }
+            myControl.operation = DiffOperation.Same;
+        }
+
+        return [operation, changes];
+    }
 }
 
 export class MappingService {
@@ -154,16 +253,18 @@ export class MappingService {
             const collectionIndex = results.findIndex(x => x.name === check.collection.name)
 
             if (results[collectionIndex].objects.findIndex(x => x.id === check.resource.id) === -1) {
-                results[collectionIndex].objects.push({
-                    id: check.resource.id,
-                    type: check.resource.type,
-                    name: check.resource.name,
-                    score: 0,
-                    controls: [],           // for flat control list
-                    controlGroups: [],      // for grouped control list
-                    counters: new CountersSummary(),
-                    checked: false
-                })
+
+                let checkObject = new CheckObject();
+                checkObject.id = check.resource.id,
+                checkObject.type = check.resource.type,
+                checkObject.name = check.resource.name,
+                checkObject.score = 0,
+                checkObject.controls = [],           // for flat control list
+                checkObject.controlGroups = [],      // for grouped control list
+                checkObject.counters = new CountersSummary(),
+                checkObject.checked = false
+
+                results[collectionIndex].objects.push(checkObject)
             }
 
             const objectIndex = results[collectionIndex].objects.findIndex(x => x.id == check.resource.id);
@@ -201,10 +302,10 @@ export class MappingService {
             if (check.tags.subGroup) {
                 let groupIndex = results[collectionIndex].objects[objectIndex].controlGroups.findIndex(x => x.name === check.tags.subGroup)
                 if (groupIndex === -1) {
-                    results[collectionIndex].objects[objectIndex].controlGroups.push({
-                        name: check.tags.subGroup,
-                        items: [control]
-                    })
+                    let cg = new CheckControlGroup();
+                    cg.name = check.tags.subGroup;
+                    cg.items = [control];
+                    results[collectionIndex].objects[objectIndex].controlGroups.push(cg);
                 } else {
                     results[collectionIndex].objects[objectIndex].controlGroups[groupIndex].items.push(control);
                 }

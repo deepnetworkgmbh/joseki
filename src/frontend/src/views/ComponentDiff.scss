@@ -25,7 +25,8 @@ $border: dashed 2px #aaa;
 }
 
 .diff-wrapper {
-	border: solid 1px #eee;
+
+	border:solid 1px red;
 	border-radius: 5px;
 	margin:0;
 	margin-bottom: 8px;
@@ -63,7 +64,9 @@ $border: dashed 2px #aaa;
 	font-size: 13px;
 	color:#222;
 }
-
+.diff-spacer {
+	visibility: hidden;
+}
 
 .diff-row-label {	
 	padding-left:10px;
@@ -77,6 +80,7 @@ $border: dashed 2px #aaa;
 	padding-top:5px;
 	padding-bottom:5px;
 	background-color: #f0f0f0;
+	border:solid 1px red;
 }
 .diff-object-wrapper {
 	margin-left: -10px;
@@ -85,6 +89,7 @@ $border: dashed 2px #aaa;
 }
 
 .diff-object {
+	margin-left:15px;
 	padding:5px;
 	border-radius: 5px;
 	margin-bottom: 5px;	

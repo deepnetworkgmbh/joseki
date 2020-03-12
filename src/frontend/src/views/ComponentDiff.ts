@@ -9,6 +9,7 @@ import { ScoreService } from '@/services/ScoreService';
 import ControlList from "@/components/controllist/ControlList.vue";
 import ControlGroup from "@/components/controlgroup/ControlGroup.vue";
 import { DiffCounters } from '@/models/ComponentDiff';
+import { CheckObject } from '@/services/MappingService';
 
 @Component({
     components: { Spinner, StatusBar, Score, ControlList, ControlGroup }
@@ -51,15 +52,41 @@ export default class ComponentDiff extends Vue {
         let rowIndex = this.data.results.findIndex(x=>x.key === rowkey);
         if(rowIndex !== -1) {
             let target = id.startsWith('left') ? this.data.results[rowIndex].right : this.data.results[rowIndex].left;
+            let other = id.startsWith('left') ? this.data.results[rowIndex].right : this.data.results[rowIndex].left;
+            let otherId = id.startsWith('left') ? id.replace('left', 'right') : id.replace('right', 'left')
             if(target) {
                 let objIndex = target.objects.findIndex(x=>x.id === objid);
                 if(objIndex !== -1) {
-                    target.objects[objIndex].checked = element.checked;
+                    target.objects[objIndex].checked = element.checked;      
+                    setTimeout(toggleHeight, 10, id, otherId, other!.empty, element.checked);
                 }
-            }                
+            }    
         }
 
+        function toggleHeight(id, otherId, isOtherEmpty, checked) {
+            console.log(`[]`, id, otherId);
+            let thisHeight = document.getElementById(id)!.parentElement!.clientHeight;
+            console.log(`[] this height ${thisHeight}`)
+            if(isOtherEmpty) {
+                // only set the other
+                let otherElement = document.getElementById(otherId)!.parentElement;         
+                otherElement!.style.height =  thisHeight + 'px';    
+            }else{
+                let otherHeight = document.getElementById(otherId)!.parentElement!.clientHeight;
+                console.log(`[] otherHeight ${otherHeight}`)
+                let max = Math.max(thisHeight, otherHeight);
+                console.log(`[] max height is ${max}`)
+                // set both heights to max or min
+                let htmlElement = document.getElementById(id)!.parentElement;         
+                htmlElement!.style.height =  checked ? max + 'px' : 'inherit';    
+                let otherElement = document.getElementById(otherId)!.parentElement;         
+                otherElement!.style.height =   checked ? max + 'px' : 'inherit';    
+            }
+
+        }
     }
+
+
     destroyed() {
         window.removeEventListener("resize", this.setupCharts);
     }
@@ -70,6 +97,13 @@ export default class ComponentDiff extends Vue {
         //console.log(`[] results diff`, this.data.results);
     }
 
+    sleep(milliseconds) {
+        const date = Date.now();
+        let currentDate;
+        do {
+          currentDate = Date.now();
+        } while (currentDate - date < milliseconds);
+      }
 
     drawCharts() {
         ChartService.drawPieChart(this.data.summary1.current, "overall_pie1", 200)
@@ -87,14 +121,22 @@ export default class ComponentDiff extends Vue {
 
     getWrapperClass(operation:string): string { return `diff-wrapper diff-wrapper-${operation}`; }
     getRowClass(operation:string): string { return `diff-row diff-${operation}`; }
-    getObjectClass(operation:string): string { return `diff-${operation}`; }
+    getObjectClass(obj:CheckObject): string {         
+        return obj.empty ? `diff-spacer` : `diff-${obj.operation}`; 
+    }
+
+    getObjectContainerClass(obj:CheckObject): string {
+        return obj.empty ? `diff-object diff-spacer` : `diff-object`; 
+    }
     getRowTitle(operation:string, changes: DiffCounters): string {
         switch(operation) {
             case 'SAME'     : return 'No changes';
             case 'ADDED'    : return 'Object added';
             case 'REMOVED'  : return 'Object removed';
             case 'CHANGED'  : 
-                if(changes.total === 1) {
+                if(changes.total === 0) {
+                    return 'No Changes'
+                }else if(changes.total === 1) {
                     return '1 change occured within object'
                 }else {
                     return `${changes.total} changes occured within object (${changes.toString()})`
