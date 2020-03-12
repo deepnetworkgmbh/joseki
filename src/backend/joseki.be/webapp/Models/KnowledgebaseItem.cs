@@ -11,6 +11,24 @@
         public static readonly KnowledgebaseItem NotFound = new KnowledgebaseItem();
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="KnowledgebaseItem"/> class.
+        /// </summary>
+        /// <param name="id">Item public identifier.</param>
+        /// <param name="content">The item content.</param>
+        public KnowledgebaseItem(string id, string content)
+        {
+            this.Id = id;
+            this.Content = content;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KnowledgebaseItem"/> class.
+        /// </summary>
+        public KnowledgebaseItem()
+        {
+        }
+
+        /// <summary>
         /// Knowledgebase entry identifier.
         /// </summary>
         public string Id { get; set; }

@@ -824,61 +824,61 @@
             The name of Image Scan Requests queue.
             </summary>
         </member>
-        <member name="T:webapp.Controllers.AuditsController">
+        <member name="T:webapp.Controllers.v0._1.AuditsController">
             <summary>
             .Audit data endpoints.
             </summary>
         </member>
-        <member name="M:webapp.Controllers.AuditsController.#ctor(System.IServiceProvider)">
+        <member name="M:webapp.Controllers.v0._1.AuditsController.#ctor(System.IServiceProvider)">
             <summary>
-            Initializes a new instance of the <see cref="T:webapp.Controllers.AuditsController"/> class.
+            Initializes a new instance of the <see cref="T:webapp.Controllers.v0._1.AuditsController"/> class.
             </summary>
             <param name="services">DI container.</param>
         </member>
-        <member name="M:webapp.Controllers.AuditsController.GetOverview(System.Nullable{System.DateTime})">
+        <member name="M:webapp.Controllers.v0._1.AuditsController.GetOverview(System.Nullable{System.DateTime})">
             <summary>
             Returns the overall infrastructure overview for Joseki landing page.
             </summary>
             <returns>The overall infrastructure overview.</returns>
         </member>
-        <member name="M:webapp.Controllers.AuditsController.GetOverviewDiff(System.DateTime,System.DateTime)">
+        <member name="M:webapp.Controllers.v0._1.AuditsController.GetOverviewDiff(System.DateTime,System.DateTime)">
             <summary>
             Returns the overall infrastructure overview diff.
             </summary>
             <returns>The overall infrastructure overview diff.</returns>
         </member>
-        <member name="M:webapp.Controllers.AuditsController.GetComponentHistory(System.String)">
+        <member name="M:webapp.Controllers.v0._1.AuditsController.GetComponentHistory(System.String)">
             <summary>
             Returns the component scan history.
             </summary>
             <returns>the component scan history.</returns>
         </member>
-        <member name="M:webapp.Controllers.AuditsController.GetComponentDetail(System.String,System.Nullable{System.DateTime})">
+        <member name="M:webapp.Controllers.v0._1.AuditsController.GetComponentDetail(System.String,System.Nullable{System.DateTime})">
             <summary>
             Returns the component summary detail.
             </summary>
             <returns>the component summary detail.</returns>
         </member>
-        <member name="M:webapp.Controllers.AuditsController.GetComponentDiff(System.String,System.DateTime,System.DateTime)">
+        <member name="M:webapp.Controllers.v0._1.AuditsController.GetComponentDiff(System.String,System.DateTime,System.DateTime)">
             <summary>
             Returns the component summary diff.
             </summary>
             <returns>the component summary diff.</returns>
         </member>
-        <member name="M:webapp.Controllers.AuditsController.GetImageScanHistory(System.String)">
+        <member name="M:webapp.Controllers.v0._1.AuditsController.GetImageScanHistory(System.String)">
             <summary>
             Returns the Image scans history.
             </summary>
             <param name="imageTag">Full image tag.</param>
             <returns>The Image scans history.</returns>
         </member>
-        <member name="M:webapp.Controllers.AuditsController.GetImageScanDetail(System.String,System.Nullable{System.DateTime})">
+        <member name="M:webapp.Controllers.v0._1.AuditsController.GetImageScanDetail(System.String,System.Nullable{System.DateTime})">
             <summary>
             Returns the Image Scan detail.
             </summary>
             <returns>the component summary detail.</returns>
         </member>
-        <member name="M:webapp.Controllers.AuditsController.GetImageScanDiff(System.String,System.DateTime,System.DateTime)">
+        <member name="M:webapp.Controllers.v0._1.AuditsController.GetImageScanDiff(System.String,System.DateTime,System.DateTime)">
             <summary>
             Returns the Image Scan diff.
             </summary>
@@ -886,6 +886,37 @@
             <param name="date1">The first date to compare.</param>
             <param name="date2">The second date to compare.</param>
             <returns>The Image Scan diff.</returns>
+        </member>
+        <member name="T:webapp.Controllers.v0._1.KnowledgebaseController">
+            <summary>
+            Audit data endpoints.
+            </summary>
+        </member>
+        <member name="M:webapp.Controllers.v0._1.KnowledgebaseController.#ctor(System.IServiceProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Controllers.v0._1.KnowledgebaseController"/> class.
+            </summary>
+            <param name="services">DI container.</param>
+        </member>
+        <member name="M:webapp.Controllers.v0._1.KnowledgebaseController.GetKnowledgebaseItemById(System.String)">
+            <summary>
+            Returns the knowledgebase item content.
+            </summary>
+            <returns>The knowledgebase item content.</returns>
+        </member>
+        <member name="M:webapp.Controllers.v0._1.KnowledgebaseController.GetKnowledgebaseItemById(System.String[])">
+            <summary>
+            Returns the knowledgebase items content for a subset of Ids.
+            The method returns only items, that exist in the storage.
+            If any id leads to not existing item - it is ignored.
+            </summary>
+            <returns>The knowledgebase items content.</returns>
+        </member>
+        <member name="M:webapp.Controllers.v0._1.KnowledgebaseController.GetComponentCategoriesDescriptions">
+            <summary>
+            Returns all knowledgebase items.
+            </summary>
+            <returns>Knowledgebase items.</returns>
         </member>
         <member name="T:webapp.Controllers.v0._2.AuditsController">
             <summary>
@@ -956,29 +987,6 @@
             <param name="date1">The first date to compare.</param>
             <param name="date2">The second date to compare.</param>
             <returns>The Image Scan diff.</returns>
-        </member>
-        <member name="T:webapp.Controllers.v0._2.KnowledgebaseController">
-            <summary>
-            Audit data endpoints.
-            </summary>
-        </member>
-        <member name="M:webapp.Controllers.v0._2.KnowledgebaseController.#ctor(System.IServiceProvider)">
-            <summary>
-            Initializes a new instance of the <see cref="T:webapp.Controllers.v0._2.KnowledgebaseController"/> class.
-            </summary>
-            <param name="services">DI container.</param>
-        </member>
-        <member name="M:webapp.Controllers.v0._2.KnowledgebaseController.GetKnowledgebaseItemById(System.String)">
-            <summary>
-            Returns the knowledgebase item content.
-            </summary>
-            <returns>The knowledgebase item content.</returns>
-        </member>
-        <member name="M:webapp.Controllers.v0._2.KnowledgebaseController.GetComponentCategoriesDescriptions">
-            <summary>
-            Returns all knowledgebase items.
-            </summary>
-            <returns>Knowledgebase items.</returns>
         </member>
         <member name="T:webapp.Database.ChecksCache">
             <summary>
@@ -1946,6 +1954,13 @@
             <param name="id">Knowledgebase item identifier.</param>
             <returns>Knowledgebase item content or default NotFound entity.</returns>
         </member>
+        <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.GetItemsByIds(System.String[])">
+            <summary>
+            Tries to get items from the database by their public identifiers.
+            </summary>
+            <param name="ids">Knowledgebase item identifiers.</param>
+            <returns>Found knowledgebase items.</returns>
+        </member>
         <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.GetAll">
             <summary>
             Returns all knowledgebase items from DB.
@@ -2590,6 +2605,18 @@
         <member name="F:webapp.Models.KnowledgebaseItem.NotFound">
             <summary>
             Represents not found entity.
+            </summary>
+        </member>
+        <member name="M:webapp.Models.KnowledgebaseItem.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Models.KnowledgebaseItem"/> class.
+            </summary>
+            <param name="id">Item public identifier.</param>
+            <param name="content">The item content.</param>
+        </member>
+        <member name="M:webapp.Models.KnowledgebaseItem.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Models.KnowledgebaseItem"/> class.
             </summary>
         </member>
         <member name="P:webapp.Models.KnowledgebaseItem.Id">

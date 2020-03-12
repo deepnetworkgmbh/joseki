@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -10,13 +11,13 @@ using Serilog;
 using webapp.Handlers;
 using webapp.Models;
 
-namespace webapp.Controllers.v0._2
+namespace webapp.Controllers.v0._1
 {
     /// <summary>
     /// Audit data endpoints.
     /// </summary>
     [ApiController]
-    [ApiVersion("0.2")]
+    [ApiVersion("0.1")]
     [Route("api/knowledgebase")]
     public class KnowledgebaseController : Controller
     {
@@ -58,6 +59,35 @@ namespace webapp.Controllers.v0._2
             {
                 Logger.Error(ex, "Failed to get knowledgebase item {ItemId}", unescapedId);
                 return this.StatusCode(500, $"Failed to get knowledgebase item {unescapedId}");
+            }
+        }
+
+        /// <summary>
+        /// Returns the knowledgebase items content for a subset of Ids.
+        /// The method returns only items, that exist in the storage.
+        /// If any id leads to not existing item - it is ignored.
+        /// </summary>
+        /// <returns>The knowledgebase items content.</returns>
+        [HttpGet]
+        [Route("items", Name = "get-several-knowledgebase-items-by-ids")]
+        [ProducesResponseType(200, Type = typeof(KnowledgebaseItem[]))]
+        [ProducesResponseType(404, Type = typeof(string))]
+        [ProducesResponseType(500, Type = typeof(string))]
+        public async Task<ObjectResult> GetKnowledgebaseItemById([FromQuery]string[] ids)
+        {
+            var unescapedIds = ids.Select(HttpUtility.UrlDecode).ToArray();
+            try
+            {
+                var handler = this.services.GetService<GetKnowledgebaseItemsHandler>();
+
+                var items = await handler.GetItemsByIds(unescapedIds);
+
+                return this.StatusCode(200, items);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Failed to get knowledgebase items {ItemIds}", string.Join(", ", unescapedIds));
+                return this.StatusCode(500, $"Failed to get knowledgebase items {string.Join(", ", unescapedIds)}");
             }
         }
 

@@ -202,7 +202,7 @@ namespace joseki.db
 
             modelBuilder.Entity<KnowledgebaseEntity>().HasKey(item => item.Id);
             modelBuilder.Entity<KnowledgebaseEntity>().HasIndex(item => item.ItemId).IsUnique();
-            var now = DateTime.UtcNow;
+            var now = new DateTime(2020, 3, 9, 12, 56, 38, 559, DateTimeKind.Utc).AddTicks(793);
             modelBuilder.Entity<KnowledgebaseEntity>().HasData(
                 new KnowledgebaseEntity { Id = 1, DateCreated = now, DateUpdated = now, ItemId = "polaris.security", Content = "Kubernetes provides a great deal of configurability when it comes to the security of your workloads. A key principle here involves limiting the level of access any individual workload has. Polaris has validations for a number of best practices, mostly focused on ensuring that unnecessary access has not been granted to an application workload." },
                 new KnowledgebaseEntity { Id = 2, DateCreated = now, DateUpdated = now, ItemId = "polaris.networking", Content = "Networking configuration in Kubernetes can be quite powerful. Polaris validates that pods are not configured to have access to sensitive host networking configuration. There are certain use cases such as a container overlay network like Calico, where this level of access is required, but the majority of workloads running on Kubernetes should not need this." },
@@ -249,6 +249,14 @@ namespace joseki.db
                 new KnowledgebaseEntity { Id = 43, DateCreated = now, DateUpdated = now, ItemId = "azsk.virtualmachine", Content = "Azure VM config: OS, network, disk, policies. The entire list is at https://aka.ms/azsktcp/virtualmachine" },
                 new KnowledgebaseEntity { Id = 44, DateCreated = now, DateUpdated = now, ItemId = "azsk.virtualmachinescaleset", Content = "Azure VM Scale Sets config: version, enabled antimalware, VNet and RBAC, etc. The entire list is at https://aka.ms/azsktcp/virtualmachinescaleset" },
                 new KnowledgebaseEntity { Id = 45, DateCreated = now, DateUpdated = now, ItemId = "azsk.virtualnetwork", Content = "Azure Network configuration: IPs, RBAC, security-groups. The entire list is at https://aka.ms/azsktcp/virtualnetwork" });
+
+            var checksTooltipsInsertTime = new DateTime(2020, 3, 12, 13, 33, 48, 595, DateTimeKind.Utc).AddTicks(7551);
+            modelBuilder.Entity<KnowledgebaseEntity>().HasData(
+                new KnowledgebaseEntity { Id = 46, DateCreated = checksTooltipsInsertTime, DateUpdated = checksTooltipsInsertTime, ItemId = "metadata.checks_nodata_description", Content = "NoData means one of the following: 1. Joseki is not able to perform the Check due to not sufficient permissions; 2. Docker Image scanner was not able to complete a scan; 3. the Check requires a manual step to be performed" },
+                new KnowledgebaseEntity { Id = 47, DateCreated = checksTooltipsInsertTime, DateUpdated = checksTooltipsInsertTime, ItemId = "metadata.checks_warning_description", Content = "Warning indicates when Joseki found, likely, a not critical issue with a particular infrastructure component" },
+                new KnowledgebaseEntity { Id = 48, DateCreated = checksTooltipsInsertTime, DateUpdated = checksTooltipsInsertTime, ItemId = "metadata.checks_failed_description", Content = "Failed check highlights the most critical issues that should be reviewed first" },
+                new KnowledgebaseEntity { Id = 49, DateCreated = checksTooltipsInsertTime, DateUpdated = checksTooltipsInsertTime, ItemId = "metadata.checks_passed_description", Content = "You're good ;) A component satisfies verified rule" },
+                new KnowledgebaseEntity { Id = 50, DateCreated = checksTooltipsInsertTime, DateUpdated = checksTooltipsInsertTime, ItemId = "metadata.checks_score_description", Content = "The audit score. It indicates how close the infrastructure is to known best-practices configuration. The formula excludes NoData checks, gives doubled weight to Passed and Failed results: (Passed*2)/(Failed*2 + Passed*2 + Warning)" });
             #endregion
         }
 
