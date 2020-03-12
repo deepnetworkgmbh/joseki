@@ -149,6 +149,7 @@ namespace webapp.Audits.Processors.trivy
 
             // trivy is able to scan OS Packages and some Application Dependencies, each of which is named "target"
             // each audit could consist of 1..N targets and each target could have 0..M CVEs
+            // TODO: do we have to store information about scanned targets, that does not have any issues?
             foreach (var target in auditJson)
             {
                 var targetName = target["Target"].Value<string>();

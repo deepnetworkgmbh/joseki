@@ -5,17 +5,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-using joseki.db;
-using joseki.db.entities;
-
-using Microsoft.EntityFrameworkCore;
-
 using Serilog;
 
 using webapp.Database.Models;
 using webapp.Models;
-
-using CheckValue = joseki.db.entities.CheckValue;
 
 namespace webapp.Database
 {
@@ -27,13 +20,13 @@ namespace webapp.Database
         private static readonly ConcurrentDictionary<string, CacheItem> Cache = new ConcurrentDictionary<string, CacheItem>();
         private static readonly ILogger Logger = Log.ForContext<InfrastructureScoreCache>();
 
-        private readonly JosekiDbContext db;
+        private readonly IInfraScoreDbWrapper db;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InfrastructureScoreCache"/> class.
         /// </summary>
         /// <param name="db">Joseki database.</param>
-        public InfrastructureScoreCache(JosekiDbContext db)
+        public InfrastructureScoreCache(IInfraScoreDbWrapper db)
         {
             this.db = db;
         }
@@ -48,13 +41,13 @@ namespace webapp.Database
             var sw = new Stopwatch();
             sw.Start();
 
-            var components = await this.GetAllComponentsIds();
+            var components = await this.db.GetAllComponentsIds();
             foreach (var component in components)
             {
-                var audits = await this.GetLastMonthAudits(component);
+                var audits = await this.db.GetLastMonthAudits(component);
                 foreach (var auditEntity in audits)
                 {
-                    var summary = await this.GetCounterSummariesForAudit(auditEntity.Id);
+                    var summary = await this.db.GetCounterSummariesForAudit(auditEntity.Id);
                     var cacheItem = new CacheItem
                     {
                         AuditDate = auditEntity.Date.Date,
@@ -71,10 +64,7 @@ namespace webapp.Database
                 var summary = new CountersSummary();
                 foreach (var item in grouping)
                 {
-                    summary.Failed += item.Summary.Failed;
-                    summary.Warning += item.Summary.Warning;
-                    summary.Passed += item.Summary.Passed;
-                    summary.NoData += item.Summary.NoData;
+                    summary.Add(item.Summary);
                 }
 
                 var cacheItem = new CacheItem
@@ -126,7 +116,7 @@ namespace webapp.Database
                     return await this.ReloadOverallCacheItem(date);
                 }
 
-                var auditEntity = await this.GetAudit(componentId, date);
+                var auditEntity = await this.db.GetAudit(componentId, date);
                 if (auditEntity == null)
                 {
                     var emptyItem = new CacheItem
@@ -140,7 +130,7 @@ namespace webapp.Database
                     return emptyItem.Summary;
                 }
 
-                var summary = await this.GetCounterSummariesForAudit(auditEntity.Id);
+                var summary = await this.db.GetCounterSummariesForAudit(auditEntity.Id);
                 var cacheItem = new CacheItem
                 {
                     AuditDate = auditEntity.Date,
@@ -165,7 +155,7 @@ namespace webapp.Database
 
         private async Task<CountersSummary> ReloadOverallCacheItem(DateTime date)
         {
-            var audits = await this.GetAudits(date);
+            var audits = await this.db.GetAudits(date);
 
             if (audits.Length == 0)
             {
@@ -183,7 +173,7 @@ namespace webapp.Database
             var summaries = new List<CountersSummary>(audits.Length);
             foreach (var auditEntity in audits)
             {
-                var summary = await this.GetCounterSummariesForAudit(auditEntity.Id);
+                var summary = await this.db.GetCounterSummariesForAudit(auditEntity.Id);
                 summaries.Add(summary);
                 var cacheItem = new CacheItem
                 {
@@ -199,10 +189,7 @@ namespace webapp.Database
             var overallSummary = new CountersSummary();
             foreach (var item in summaries)
             {
-                overallSummary.Failed += item.Failed;
-                overallSummary.Warning += item.Warning;
-                overallSummary.Passed += item.Passed;
-                overallSummary.NoData += item.NoData;
+                overallSummary.Add(item);
             }
 
             var overallCacheItem = new CacheItem
@@ -215,127 +202,6 @@ namespace webapp.Database
             Cache.AddOrUpdate(overallCacheItem.Key, key => overallCacheItem, (key, old) => overallCacheItem);
 
             return overallSummary;
-        }
-
-        /// <summary>
-        /// Returns all scanner-ids used during last month.
-        /// </summary>
-        /// <returns>Array of unique scanner identifiers.</returns>
-        private async Task<string[]> GetAllComponentsIds()
-        {
-            var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-31);
-            var ids = await this.db.Set<AuditEntity>()
-                .Where(i => i.Date >= oneMonthAgo)
-                .Select(i => i.ComponentId)
-                .Distinct()
-                .ToArrayAsync();
-
-            return ids;
-        }
-
-        /// <summary>
-        /// Returns latest audit entities for each day during the last month.
-        /// If there is several audits for the same day - methods returns only the last one.
-        /// </summary>
-        /// <param name="componentId">Scanner identifier to get audits for.</param>
-        /// <returns>Array of latest audits per day.</returns>
-        private async Task<AuditEntity[]> GetLastMonthAudits(string componentId)
-        {
-            var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-31);
-            var audits = await this.db.Set<AuditEntity>()
-                .Where(i => i.Date >= oneMonthAgo && i.ComponentId == componentId)
-                .ToArrayAsync();
-
-            return audits
-                .GroupBy(i => i.Date.Date)
-                .Select(i => i.OrderByDescending(a => a.Date).First())
-                .ToArray();
-        }
-
-        /// <summary>
-        /// Returns latest audit entity for requested day.
-        /// If there is several audits for the same day - methods returns only the last one.
-        /// </summary>
-        /// <param name="componentId">Scanner identifier to get audits for.</param>
-        /// <param name="date">Audit date.</param>
-        /// <returns>Latest audits for the day.</returns>
-        private async Task<AuditEntity> GetAudit(string componentId, DateTime date)
-        {
-            var audit = await this.db.Set<AuditEntity>()
-                .Where(i => i.Date.Date == date.Date && i.ComponentId == componentId)
-                .OrderByDescending(i => i.Date)
-                .FirstOrDefaultAsync();
-
-            return audit;
-        }
-
-        /// <summary>
-        /// Returns latest audits for each scanner for requested day.
-        /// If there is several audits for the same day - methods returns only the latest one per scanner.
-        /// </summary>
-        /// <param name="date">Audits date.</param>
-        /// <returns>Latest audits for each scanner for the day.</returns>
-        private async Task<AuditEntity[]> GetAudits(DateTime date)
-        {
-            var theDay = date.Date;
-            var theNextDay = theDay.AddDays(1);
-            var oneDayAudits = await this.db.Set<AuditEntity>().Where(i => i.Date >= theDay && i.Date < theNextDay).ToArrayAsync();
-
-            var audits = oneDayAudits
-                .GroupBy(i => i.ComponentId)
-                .Select(i => i.OrderByDescending(a => a.Date).First())
-                .ToArray();
-
-            return audits;
-        }
-
-        /// <summary>
-        /// Calculate Counter Summary for requested audits.
-        /// </summary>
-        /// <param name="auditId">Audit identifier to calculate summaries.</param>
-        /// <returns>counters-summary for requested audit-id.</returns>
-        private async Task<CountersSummary> GetCounterSummariesForAudit(int auditId)
-        {
-            var checkResults = await this.db.Set<CheckResultEntity>()
-                .Include("Check")
-                .Where(i => i.AuditId == auditId)
-                .Select(i => new
-                {
-                    i.AuditId,
-                    i.ComponentId,
-                    i.Check.CheckId,
-                    i.Check.Severity,
-                    i.Value,
-                })
-                .ToArrayAsync();
-
-            var summary = new CountersSummary();
-            foreach (var checkResult in checkResults)
-            {
-                switch (checkResult.Value)
-                {
-                    case CheckValue.Failed:
-                        if (checkResult.Severity == joseki.db.entities.CheckSeverity.Critical || checkResult.Severity == joseki.db.entities.CheckSeverity.High)
-                        {
-                            summary.Failed++;
-                        }
-                        else
-                        {
-                            summary.Warning++;
-                        }
-
-                        break;
-                    case CheckValue.Succeeded:
-                        summary.Passed++;
-                        break;
-                    case CheckValue.InProgress:
-                    case CheckValue.NoData:
-                        summary.NoData++;
-                        break;
-                }
-            }
-
-            return summary;
         }
 
         private class CacheItem
@@ -366,7 +232,13 @@ namespace webapp.Database
 
                     var now = DateTime.UtcNow;
 
-                    // Update _recent_ items in cache frequently
+                    // Update empty items after 15 minutes
+                    if (this.Summary.Total == 0)
+                    {
+                        return (now - this.CachedAt).TotalMinutes >= 15;
+                    }
+
+                    // Update _recent_ items in cache after 1 hour
                     if ((now - this.AuditDate).TotalDays < 2)
                     {
                         return (now - this.CachedAt).TotalHours >= 1;

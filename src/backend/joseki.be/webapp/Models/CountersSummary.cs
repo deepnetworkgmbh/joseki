@@ -43,5 +43,17 @@ namespace webapp.Models
                 : Convert.ToInt16(Math.Round(
                     100M * this.Passed * 2 / ((this.Failed * 2) + (this.Passed * 2) + this.Warning),
                     MidpointRounding.AwayFromZero));
+
+        /// <summary>
+        /// Adds counters from another Summary to the current one.
+        /// </summary>
+        /// <param name="another">counters to add.</param>
+        public void Add(CountersSummary another)
+        {
+            this.NoData += another.NoData;
+            this.Warning += another.Warning;
+            this.Failed += another.Failed;
+            this.Passed += another.Passed;
+        }
     }
 }

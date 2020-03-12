@@ -24,10 +24,10 @@ namespace webapp.Database
     /// </summary>
     public class ChecksCache
     {
-        private static readonly ILogger Logger = Log.ForContext<ChecksCache>();
-
-        private static readonly ConcurrentDictionary<string, CheckCacheItem> Cache = new ConcurrentDictionary<string, CheckCacheItem>();
-        private static readonly Check ImageScanCheck = new Check
+        /// <summary>
+        /// Pre-defined image-scan check.
+        /// </summary>
+        public static readonly Check ImageScanCheck = new Check
         {
             Id = "container_image.CVE_scan",
             Category = "Security",
@@ -35,6 +35,10 @@ namespace webapp.Database
             Description = "Container Image scan with trivy",
             Remediation = "Update packages with found CVEs to versions, where these CVEs are addressed",
         };
+
+        private static readonly ILogger Logger = Log.ForContext<ChecksCache>();
+
+        private static readonly ConcurrentDictionary<string, CheckCacheItem> Cache = new ConcurrentDictionary<string, CheckCacheItem>();
 
         private readonly JosekiConfiguration config;
         private readonly JosekiDbContext db;
@@ -122,7 +126,7 @@ namespace webapp.Database
             {
                 return this.config.Cache.PolarisCheckTtl;
             }
-            else if (id.StartsWith("azure"))
+            else if (id.StartsWith("azsk"))
             {
                 return this.config.Cache.AzureCheckTtl;
             }

@@ -74,7 +74,7 @@ namespace webapp.Controllers
         {
             #region input validation
 
-            var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-31);
+            var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-30);
             var tomorrow = DateTime.UtcNow.Date.AddDays(1);
             if (date1 < oneMonthAgo)
             {
@@ -151,7 +151,7 @@ namespace webapp.Controllers
         {
             #region input validation
 
-            var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-31);
+            var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-30);
             if (date.HasValue)
             {
                 if (date < oneMonthAgo)
@@ -195,7 +195,7 @@ namespace webapp.Controllers
         {
             #region input validation
 
-            var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-31);
+            var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-30);
             var tomorrow = DateTime.UtcNow.Date.AddDays(1);
             if (date1 < oneMonthAgo)
             {
@@ -278,7 +278,7 @@ namespace webapp.Controllers
         {
             #region input validation
 
-            var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-31);
+            var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-30);
             if (date.HasValue)
             {
                 if (date < oneMonthAgo)
@@ -323,7 +323,7 @@ namespace webapp.Controllers
         {
             #region input validation
 
-            var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-31);
+            var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-30);
             var tomorrow = DateTime.UtcNow.Date.AddDays(1);
             if (date1 < oneMonthAgo)
             {

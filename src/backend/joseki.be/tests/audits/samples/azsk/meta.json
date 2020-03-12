@@ -1,0 +1,15 @@
+{
+  "audit-id": "ec783b2d-1da0-4a30-8e52-b72dd3174eae",
+  "scanner-version": "0.2.0",
+  "periodicity": "0 2 * * *",
+  "timestamp": 1583892106,
+  "audit-result": "succeeded",
+  "failure-description": null,
+  "azsk-version": "4.5.1",
+  "azsk-audit-paths": [
+    "GSS_aggregated.LOG",
+    "resources.json",
+    "GRS_aggregated.LOG",
+    "subscription.json"
+  ]
+}

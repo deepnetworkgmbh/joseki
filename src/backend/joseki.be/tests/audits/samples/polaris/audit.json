@@ -1,0 +1,1107 @@
+{
+	"PolarisOutputVersion": "1.0",
+	"AuditTime": "2020-03-11T02:00:04Z",
+	"SourceType": "Cluster",
+	"SourceName": "https://10.0.0.1:443",
+	"DisplayName": "https://10.0.0.1:443",
+	"ClusterInfo": {
+		"Version": "1.15",
+		"Nodes": 1,
+		"Pods": 6,
+		"Namespaces": 4,
+		"Deployments": 2,
+		"StatefulSets": 1,
+		"DaemonSets": 1,
+		"Jobs": 2,
+		"CronJobs": 1,
+		"ReplicationControllers": 0
+	},
+	"Results": [
+		{
+			"Name": "joseki-be",
+			"Namespace": "joseki",
+			"Kind": "Deployment",
+			"Results": {},
+			"PodResult": {
+				"Name": "",
+				"Results": {
+					"hostIPCSet": {
+						"ID": "hostIPCSet",
+						"Message": "Host IPC is not configured",
+						"Success": true,
+						"Severity": "error",
+						"Category": "Security"
+					},
+					"hostNetworkSet": {
+						"ID": "hostNetworkSet",
+						"Message": "Host network is not configured",
+						"Success": true,
+						"Severity": "warning",
+						"Category": "Networking"
+					},
+					"hostPIDSet": {
+						"ID": "hostPIDSet",
+						"Message": "Host PID is not configured",
+						"Success": true,
+						"Severity": "error",
+						"Category": "Security"
+					}
+				},
+				"ContainerResults": [
+					{
+						"Name": "joseki-be",
+						"Results": {
+							"cpuLimitsMissing": {
+								"ID": "cpuLimitsMissing",
+								"Message": "CPU limits are set",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"cpuRequestsMissing": {
+								"ID": "cpuRequestsMissing",
+								"Message": "CPU requests are set",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"dangerousCapabilities": {
+								"ID": "dangerousCapabilities",
+								"Message": "Container does not have any dangerous capabilities",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"hostPortSet": {
+								"ID": "hostPortSet",
+								"Message": "Host port is not configured",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Networking"
+							},
+							"insecureCapabilities": {
+								"ID": "insecureCapabilities",
+								"Message": "Container does not have any insecure capabilities",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"livenessProbeMissing": {
+								"ID": "livenessProbeMissing",
+								"Message": "Liveness probe is configured",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Health Checks"
+							},
+							"memoryLimitsMissing": {
+								"ID": "memoryLimitsMissing",
+								"Message": "Memory limits are set",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"memoryRequestsMissing": {
+								"ID": "memoryRequestsMissing",
+								"Message": "Memory requests are set",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"notReadOnlyRootFileSystem": {
+								"ID": "notReadOnlyRootFileSystem",
+								"Message": "Filesystem should be read only",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"privilegeEscalationAllowed": {
+								"ID": "privilegeEscalationAllowed",
+								"Message": "Privilege escalation not allowed",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"readinessProbeMissing": {
+								"ID": "readinessProbeMissing",
+								"Message": "Readiness probe is configured",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Health Checks"
+							},
+							"runAsPrivileged": {
+								"ID": "runAsPrivileged",
+								"Message": "Not running as privileged",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"runAsRootAllowed": {
+								"ID": "runAsRootAllowed",
+								"Message": "Is not allowed to run as root",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"tagNotSpecified": {
+								"ID": "tagNotSpecified",
+								"Message": "Image tag is specified",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Images"
+							}
+						}
+					}
+				]
+			}
+		},
+		{
+			"Name": "kubernetes-dashboard",
+			"Namespace": "kube-system",
+			"Kind": "Deployment",
+			"Results": {},
+			"PodResult": {
+				"Name": "",
+				"Results": {
+					"hostIPCSet": {
+						"ID": "hostIPCSet",
+						"Message": "Host IPC is not configured",
+						"Success": true,
+						"Severity": "error",
+						"Category": "Security"
+					},
+					"hostNetworkSet": {
+						"ID": "hostNetworkSet",
+						"Message": "Host network is not configured",
+						"Success": true,
+						"Severity": "warning",
+						"Category": "Networking"
+					},
+					"hostPIDSet": {
+						"ID": "hostPIDSet",
+						"Message": "Host PID is not configured",
+						"Success": true,
+						"Severity": "error",
+						"Category": "Security"
+					}
+				},
+				"ContainerResults": [
+					{
+						"Name": "main",
+						"Results": {
+							"cpuLimitsMissing": {
+								"ID": "cpuLimitsMissing",
+								"Message": "CPU limits are set",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"cpuRequestsMissing": {
+								"ID": "cpuRequestsMissing",
+								"Message": "CPU requests are set",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"dangerousCapabilities": {
+								"ID": "dangerousCapabilities",
+								"Message": "Container does not have any dangerous capabilities",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"hostPortSet": {
+								"ID": "hostPortSet",
+								"Message": "Host port is not configured",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Networking"
+							},
+							"insecureCapabilities": {
+								"ID": "insecureCapabilities",
+								"Message": "Container does not have any insecure capabilities",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"memoryLimitsMissing": {
+								"ID": "memoryLimitsMissing",
+								"Message": "Memory limits are set",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"memoryRequestsMissing": {
+								"ID": "memoryRequestsMissing",
+								"Message": "Memory requests are set",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"notReadOnlyRootFileSystem": {
+								"ID": "notReadOnlyRootFileSystem",
+								"Message": "Filesystem should be read only",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"privilegeEscalationAllowed": {
+								"ID": "privilegeEscalationAllowed",
+								"Message": "Privilege escalation not allowed",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"runAsPrivileged": {
+								"ID": "runAsPrivileged",
+								"Message": "Not running as privileged",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"runAsRootAllowed": {
+								"ID": "runAsRootAllowed",
+								"Message": "Should not be allowed to run as root",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"tagNotSpecified": {
+								"ID": "tagNotSpecified",
+								"Message": "Image tag is specified",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Images"
+							}
+						}
+					}
+				]
+			}
+		},
+		{
+			"Name": "es-cluster",
+			"Namespace": "operations",
+			"Kind": "StatefulSet",
+			"Results": {},
+			"PodResult": {
+				"Name": "",
+				"Results": {
+					"hostIPCSet": {
+						"ID": "hostIPCSet",
+						"Message": "Host IPC is not configured",
+						"Success": true,
+						"Severity": "error",
+						"Category": "Security"
+					},
+					"hostNetworkSet": {
+						"ID": "hostNetworkSet",
+						"Message": "Host network is not configured",
+						"Success": true,
+						"Severity": "warning",
+						"Category": "Networking"
+					},
+					"hostPIDSet": {
+						"ID": "hostPIDSet",
+						"Message": "Host PID is not configured",
+						"Success": true,
+						"Severity": "error",
+						"Category": "Security"
+					}
+				},
+				"ContainerResults": [
+					{
+						"Name": "fix-permissions",
+						"Results": {
+							"dangerousCapabilities": {
+								"ID": "dangerousCapabilities",
+								"Message": "Container does not have any dangerous capabilities",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"hostPortSet": {
+								"ID": "hostPortSet",
+								"Message": "Host port is not configured",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Networking"
+							},
+							"insecureCapabilities": {
+								"ID": "insecureCapabilities",
+								"Message": "Container does not have any insecure capabilities",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"notReadOnlyRootFileSystem": {
+								"ID": "notReadOnlyRootFileSystem",
+								"Message": "Filesystem should be read only",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"privilegeEscalationAllowed": {
+								"ID": "privilegeEscalationAllowed",
+								"Message": "Privilege escalation not allowed",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"runAsPrivileged": {
+								"ID": "runAsPrivileged",
+								"Message": "Should not be running as privileged",
+								"Success": false,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"runAsRootAllowed": {
+								"ID": "runAsRootAllowed",
+								"Message": "Should not be allowed to run as root",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"tagNotSpecified": {
+								"ID": "tagNotSpecified",
+								"Message": "Image tag should be specified",
+								"Success": false,
+								"Severity": "error",
+								"Category": "Images"
+							}
+						}
+					},
+					{
+						"Name": "increase-vm-max-map",
+						"Results": {
+							"dangerousCapabilities": {
+								"ID": "dangerousCapabilities",
+								"Message": "Container does not have any dangerous capabilities",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"hostPortSet": {
+								"ID": "hostPortSet",
+								"Message": "Host port is not configured",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Networking"
+							},
+							"insecureCapabilities": {
+								"ID": "insecureCapabilities",
+								"Message": "Container does not have any insecure capabilities",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"notReadOnlyRootFileSystem": {
+								"ID": "notReadOnlyRootFileSystem",
+								"Message": "Filesystem should be read only",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"privilegeEscalationAllowed": {
+								"ID": "privilegeEscalationAllowed",
+								"Message": "Privilege escalation not allowed",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"runAsPrivileged": {
+								"ID": "runAsPrivileged",
+								"Message": "Should not be running as privileged",
+								"Success": false,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"runAsRootAllowed": {
+								"ID": "runAsRootAllowed",
+								"Message": "Should not be allowed to run as root",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"tagNotSpecified": {
+								"ID": "tagNotSpecified",
+								"Message": "Image tag should be specified",
+								"Success": false,
+								"Severity": "error",
+								"Category": "Images"
+							}
+						}
+					},
+					{
+						"Name": "increase-fd-ulimit",
+						"Results": {
+							"dangerousCapabilities": {
+								"ID": "dangerousCapabilities",
+								"Message": "Container does not have any dangerous capabilities",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"hostPortSet": {
+								"ID": "hostPortSet",
+								"Message": "Host port is not configured",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Networking"
+							},
+							"insecureCapabilities": {
+								"ID": "insecureCapabilities",
+								"Message": "Container does not have any insecure capabilities",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"notReadOnlyRootFileSystem": {
+								"ID": "notReadOnlyRootFileSystem",
+								"Message": "Filesystem should be read only",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"privilegeEscalationAllowed": {
+								"ID": "privilegeEscalationAllowed",
+								"Message": "Privilege escalation not allowed",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"runAsPrivileged": {
+								"ID": "runAsPrivileged",
+								"Message": "Should not be running as privileged",
+								"Success": false,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"runAsRootAllowed": {
+								"ID": "runAsRootAllowed",
+								"Message": "Should not be allowed to run as root",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"tagNotSpecified": {
+								"ID": "tagNotSpecified",
+								"Message": "Image tag should be specified",
+								"Success": false,
+								"Severity": "error",
+								"Category": "Images"
+							}
+						}
+					},
+					{
+						"Name": "elasticsearch",
+						"Results": {
+							"cpuLimitsMissing": {
+								"ID": "cpuLimitsMissing",
+								"Message": "CPU limits are set",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"cpuRequestsMissing": {
+								"ID": "cpuRequestsMissing",
+								"Message": "CPU requests are set",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"dangerousCapabilities": {
+								"ID": "dangerousCapabilities",
+								"Message": "Container does not have any dangerous capabilities",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"hostPortSet": {
+								"ID": "hostPortSet",
+								"Message": "Host port is not configured",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Networking"
+							},
+							"insecureCapabilities": {
+								"ID": "insecureCapabilities",
+								"Message": "Container does not have any insecure capabilities",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"livenessProbeMissing": {
+								"ID": "livenessProbeMissing",
+								"Message": "Liveness probe should be configured",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Health Checks"
+							},
+							"memoryLimitsMissing": {
+								"ID": "memoryLimitsMissing",
+								"Message": "Memory limits are set",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"memoryRequestsMissing": {
+								"ID": "memoryRequestsMissing",
+								"Message": "Memory requests are set",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"notReadOnlyRootFileSystem": {
+								"ID": "notReadOnlyRootFileSystem",
+								"Message": "Filesystem should be read only",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"privilegeEscalationAllowed": {
+								"ID": "privilegeEscalationAllowed",
+								"Message": "Privilege escalation not allowed",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"readinessProbeMissing": {
+								"ID": "readinessProbeMissing",
+								"Message": "Readiness probe should be configured",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Health Checks"
+							},
+							"runAsPrivileged": {
+								"ID": "runAsPrivileged",
+								"Message": "Not running as privileged",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"runAsRootAllowed": {
+								"ID": "runAsRootAllowed",
+								"Message": "Should not be allowed to run as root",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"tagNotSpecified": {
+								"ID": "tagNotSpecified",
+								"Message": "Image tag is specified",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Images"
+							}
+						}
+					}
+				]
+			}
+		},
+		{
+			"Name": "filebeat",
+			"Namespace": "operations",
+			"Kind": "DaemonSet",
+			"Results": {},
+			"PodResult": {
+				"Name": "",
+				"Results": {
+					"hostIPCSet": {
+						"ID": "hostIPCSet",
+						"Message": "Host IPC is not configured",
+						"Success": true,
+						"Severity": "error",
+						"Category": "Security"
+					},
+					"hostNetworkSet": {
+						"ID": "hostNetworkSet",
+						"Message": "Host network should not be configured",
+						"Success": false,
+						"Severity": "warning",
+						"Category": "Networking"
+					},
+					"hostPIDSet": {
+						"ID": "hostPIDSet",
+						"Message": "Host PID is not configured",
+						"Success": true,
+						"Severity": "error",
+						"Category": "Security"
+					}
+				},
+				"ContainerResults": [
+					{
+						"Name": "filebeat",
+						"Results": {
+							"cpuLimitsMissing": {
+								"ID": "cpuLimitsMissing",
+								"Message": "CPU limits should be set",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"cpuRequestsMissing": {
+								"ID": "cpuRequestsMissing",
+								"Message": "CPU requests are set",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"dangerousCapabilities": {
+								"ID": "dangerousCapabilities",
+								"Message": "Container does not have any dangerous capabilities",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"hostPortSet": {
+								"ID": "hostPortSet",
+								"Message": "Host port is not configured",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Networking"
+							},
+							"insecureCapabilities": {
+								"ID": "insecureCapabilities",
+								"Message": "Container does not have any insecure capabilities",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"livenessProbeMissing": {
+								"ID": "livenessProbeMissing",
+								"Message": "Liveness probe should be configured",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Health Checks"
+							},
+							"memoryLimitsMissing": {
+								"ID": "memoryLimitsMissing",
+								"Message": "Memory limits are set",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"memoryRequestsMissing": {
+								"ID": "memoryRequestsMissing",
+								"Message": "Memory requests are set",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"notReadOnlyRootFileSystem": {
+								"ID": "notReadOnlyRootFileSystem",
+								"Message": "Filesystem should be read only",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"privilegeEscalationAllowed": {
+								"ID": "privilegeEscalationAllowed",
+								"Message": "Privilege escalation not allowed",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"readinessProbeMissing": {
+								"ID": "readinessProbeMissing",
+								"Message": "Readiness probe should be configured",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Health Checks"
+							},
+							"runAsPrivileged": {
+								"ID": "runAsPrivileged",
+								"Message": "Not running as privileged",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"runAsRootAllowed": {
+								"ID": "runAsRootAllowed",
+								"Message": "Should not be allowed to run as root",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"tagNotSpecified": {
+								"ID": "tagNotSpecified",
+								"Message": "Image tag is specified",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Images"
+							}
+						}
+					}
+				]
+			}
+		},
+		{
+			"Name": "scanner-azsk",
+			"Namespace": "joseki",
+			"Kind": "CronJob",
+			"Results": {},
+			"PodResult": {
+				"Name": "",
+				"Results": {
+					"hostIPCSet": {
+						"ID": "hostIPCSet",
+						"Message": "Host IPC is not configured",
+						"Success": true,
+						"Severity": "error",
+						"Category": "Security"
+					},
+					"hostNetworkSet": {
+						"ID": "hostNetworkSet",
+						"Message": "Host network is not configured",
+						"Success": true,
+						"Severity": "warning",
+						"Category": "Networking"
+					},
+					"hostPIDSet": {
+						"ID": "hostPIDSet",
+						"Message": "Host PID is not configured",
+						"Success": true,
+						"Severity": "error",
+						"Category": "Security"
+					}
+				},
+				"ContainerResults": [
+					{
+						"Name": "scanner-azsk",
+						"Results": {
+							"cpuLimitsMissing": {
+								"ID": "cpuLimitsMissing",
+								"Message": "CPU limits should be set",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"cpuRequestsMissing": {
+								"ID": "cpuRequestsMissing",
+								"Message": "CPU requests should be set",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"dangerousCapabilities": {
+								"ID": "dangerousCapabilities",
+								"Message": "Container does not have any dangerous capabilities",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"hostPortSet": {
+								"ID": "hostPortSet",
+								"Message": "Host port is not configured",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Networking"
+							},
+							"insecureCapabilities": {
+								"ID": "insecureCapabilities",
+								"Message": "Container does not have any insecure capabilities",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"memoryLimitsMissing": {
+								"ID": "memoryLimitsMissing",
+								"Message": "Memory limits should be set",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"memoryRequestsMissing": {
+								"ID": "memoryRequestsMissing",
+								"Message": "Memory requests should be set",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"notReadOnlyRootFileSystem": {
+								"ID": "notReadOnlyRootFileSystem",
+								"Message": "Filesystem should be read only",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"privilegeEscalationAllowed": {
+								"ID": "privilegeEscalationAllowed",
+								"Message": "Privilege escalation not allowed",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"runAsPrivileged": {
+								"ID": "runAsPrivileged",
+								"Message": "Not running as privileged",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"runAsRootAllowed": {
+								"ID": "runAsRootAllowed",
+								"Message": "Should not be allowed to run as root",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"tagNotSpecified": {
+								"ID": "tagNotSpecified",
+								"Message": "Image tag is specified",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Images"
+							}
+						}
+					}
+				]
+			}
+		},
+		{
+			"Name": "scanner-azsk-1583892000",
+			"Namespace": "joseki",
+			"Kind": "Job",
+			"Results": {},
+			"PodResult": {
+				"Name": "",
+				"Results": {
+					"hostIPCSet": {
+						"ID": "hostIPCSet",
+						"Message": "Host IPC is not configured",
+						"Success": true,
+						"Severity": "error",
+						"Category": "Security"
+					},
+					"hostNetworkSet": {
+						"ID": "hostNetworkSet",
+						"Message": "Host network is not configured",
+						"Success": true,
+						"Severity": "warning",
+						"Category": "Networking"
+					},
+					"hostPIDSet": {
+						"ID": "hostPIDSet",
+						"Message": "Host PID is not configured",
+						"Success": true,
+						"Severity": "error",
+						"Category": "Security"
+					}
+				},
+				"ContainerResults": [
+					{
+						"Name": "scanner-azsk",
+						"Results": {
+							"cpuLimitsMissing": {
+								"ID": "cpuLimitsMissing",
+								"Message": "CPU limits should be set",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"cpuRequestsMissing": {
+								"ID": "cpuRequestsMissing",
+								"Message": "CPU requests should be set",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"dangerousCapabilities": {
+								"ID": "dangerousCapabilities",
+								"Message": "Container does not have any dangerous capabilities",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"hostPortSet": {
+								"ID": "hostPortSet",
+								"Message": "Host port is not configured",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Networking"
+							},
+							"insecureCapabilities": {
+								"ID": "insecureCapabilities",
+								"Message": "Container does not have any insecure capabilities",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"memoryLimitsMissing": {
+								"ID": "memoryLimitsMissing",
+								"Message": "Memory limits should be set",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"memoryRequestsMissing": {
+								"ID": "memoryRequestsMissing",
+								"Message": "Memory requests should be set",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"notReadOnlyRootFileSystem": {
+								"ID": "notReadOnlyRootFileSystem",
+								"Message": "Filesystem should be read only",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"privilegeEscalationAllowed": {
+								"ID": "privilegeEscalationAllowed",
+								"Message": "Privilege escalation not allowed",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"runAsPrivileged": {
+								"ID": "runAsPrivileged",
+								"Message": "Not running as privileged",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"runAsRootAllowed": {
+								"ID": "runAsRootAllowed",
+								"Message": "Should not be allowed to run as root",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"tagNotSpecified": {
+								"ID": "tagNotSpecified",
+								"Message": "Image tag is specified",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Images"
+							}
+						}
+					}
+				]
+			}
+		},
+		{
+			"Name": "scanner-polaris",
+			"Namespace": "joseki",
+			"Kind": "Job",
+			"Results": {},
+			"PodResult": {
+				"Name": "",
+				"Results": {
+					"hostIPCSet": {
+						"ID": "hostIPCSet",
+						"Message": "Host IPC is not configured",
+						"Success": true,
+						"Severity": "error",
+						"Category": "Security"
+					},
+					"hostNetworkSet": {
+						"ID": "hostNetworkSet",
+						"Message": "Host network is not configured",
+						"Success": true,
+						"Severity": "warning",
+						"Category": "Networking"
+					},
+					"hostPIDSet": {
+						"ID": "hostPIDSet",
+						"Message": "Host PID is not configured",
+						"Success": true,
+						"Severity": "error",
+						"Category": "Security"
+					}
+				},
+				"ContainerResults": [
+					{
+						"Name": "scanner-polaris",
+						"Results": {
+							"cpuLimitsMissing": {
+								"ID": "cpuLimitsMissing",
+								"Message": "CPU limits should be set",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"cpuRequestsMissing": {
+								"ID": "cpuRequestsMissing",
+								"Message": "CPU requests should be set",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"dangerousCapabilities": {
+								"ID": "dangerousCapabilities",
+								"Message": "Container does not have any dangerous capabilities",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"hostPortSet": {
+								"ID": "hostPortSet",
+								"Message": "Host port is not configured",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Networking"
+							},
+							"insecureCapabilities": {
+								"ID": "insecureCapabilities",
+								"Message": "Container does not have any insecure capabilities",
+								"Success": true,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"memoryLimitsMissing": {
+								"ID": "memoryLimitsMissing",
+								"Message": "Memory limits should be set",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"memoryRequestsMissing": {
+								"ID": "memoryRequestsMissing",
+								"Message": "Memory requests should be set",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Resources"
+							},
+							"notReadOnlyRootFileSystem": {
+								"ID": "notReadOnlyRootFileSystem",
+								"Message": "Filesystem should be read only",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"privilegeEscalationAllowed": {
+								"ID": "privilegeEscalationAllowed",
+								"Message": "Privilege escalation not allowed",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"runAsPrivileged": {
+								"ID": "runAsPrivileged",
+								"Message": "Not running as privileged",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Security"
+							},
+							"runAsRootAllowed": {
+								"ID": "runAsRootAllowed",
+								"Message": "Should not be allowed to run as root",
+								"Success": false,
+								"Severity": "warning",
+								"Category": "Security"
+							},
+							"tagNotSpecified": {
+								"ID": "tagNotSpecified",
+								"Message": "Image tag is specified",
+								"Success": true,
+								"Severity": "error",
+								"Category": "Images"
+							}
+						}
+					}
+				]
+			}
+		}
+	]
+}

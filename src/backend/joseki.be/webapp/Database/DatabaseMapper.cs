@@ -60,7 +60,7 @@ namespace webapp.Database
                 entity.MetadataAzure = audit.MetadataAzure.ToEntity();
             }
 
-            entity.CheckResults = audit.CheckResults.Select(i => i.ToEntity()).ToList();
+            entity.CheckResults = audit.CheckResults?.Select(i => i.ToEntity()).ToList();
 
             return entity;
         }
