@@ -40,7 +40,27 @@ namespace webapp.Database
         {
             Logger.Information("Saving audit {AuditId} with {CheckResults} Check Results", audit.Id, audit.CheckResults?.Count ?? 0);
 
-            this.db.Set<AuditEntity>().Add(audit.ToEntity());
+            var componentEntity = await this.db
+                .Set<InfrastructureComponentEntity>()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(i => i.ComponentId == audit.ComponentId);
+
+            if (componentEntity == null)
+            {
+                Logger.Information(
+                    "Saving new Infrastructure Component record with id:{ComponentId} and scanner:{ScannerId}",
+                    audit.ComponentId,
+                    audit.ScannerId);
+
+                componentEntity = new InfrastructureComponentEntity
+                {
+                    ComponentId = audit.ComponentId,
+                    ComponentName = audit.ComponentName,
+                    ScannerId = audit.ScannerId,
+                };
+            }
+
+            this.db.Set<AuditEntity>().Add(audit.ToEntity(componentEntity));
             await this.db.SaveChangesAsync();
         }
 
@@ -126,6 +146,8 @@ namespace webapp.Database
             // find all audits for these components during the 31 days (~month)
             var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-30);
             var oneMonthAudits = await this.db.Set<AuditEntity>()
+                .Include(i => i.InfrastructureComponent)
+                .AsNoTracking()
                 .Where(i => i.Date > oneMonthAgo && componentIds.Contains(i.ComponentId))
                 .ToArrayAsync();
 

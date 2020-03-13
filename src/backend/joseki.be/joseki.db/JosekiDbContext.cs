@@ -27,6 +27,11 @@ namespace joseki.db
         }
 
         /// <summary>
+        /// Infrastructure Component table.
+        /// </summary>
+        public DbSet<InfrastructureComponentEntity> InfrastructureComponent { get; set; }
+
+        /// <summary>
         /// Audit table.
         /// </summary>
         public DbSet<AuditEntity> Audit { get; set; }
@@ -81,15 +86,26 @@ namespace joseki.db
         /// <inheritdoc />
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            #region Infrastructure Component
+
+            modelBuilder.Entity<InfrastructureComponentEntity>().HasKey(infra => infra.Id);
+            modelBuilder.Entity<InfrastructureComponentEntity>().Property(infra => infra.ScannerId).IsRequired();
+            modelBuilder.Entity<InfrastructureComponentEntity>().Property(infra => infra.ComponentId).IsRequired();
+            modelBuilder.Entity<InfrastructureComponentEntity>().Property(infra => infra.ComponentName).IsRequired();
+
+            #endregion
+
             #region Audit
 
             modelBuilder.Entity<AuditEntity>().HasKey(audit => audit.Id);
-            modelBuilder.Entity<AuditEntity>().Property(audit => audit.ScannerId).IsRequired();
             modelBuilder.Entity<AuditEntity>().Property(audit => audit.AuditId).IsRequired();
-            modelBuilder.Entity<AuditEntity>().Property(audit => audit.ComponentId).IsRequired().HasDefaultValue("undefined-id");
-            modelBuilder.Entity<AuditEntity>().Property(audit => audit.ComponentName).IsRequired().HasDefaultValue("undefined-name");
+            modelBuilder.Entity<AuditEntity>().Property(audit => audit.ComponentId).IsRequired();
             modelBuilder.Entity<AuditEntity>()
-                .HasIndex(audit => new { audit.Date, audit.ScannerId })
+                .HasOne(audit => audit.InfrastructureComponent)
+                .WithMany()
+                .IsRequired();
+            modelBuilder.Entity<AuditEntity>()
+                .HasIndex(audit => new { audit.Date, audit.ComponentId })
                 .IncludeProperties(audit => audit.AuditId)
                 .IsUnique();
 

@@ -3,13 +3,13 @@
     /// <summary>
     /// Thrown, when there is no audit to satisfy requested parameters.
     /// </summary>
-    public class AuditNotFoundException : JosekiException
+    public class ComponentNotFoundException : JosekiException
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AuditNotFoundException"/> class.
+        /// Initializes a new instance of the <see cref="ComponentNotFoundException"/> class.
         /// </summary>
         /// <param name="message">Custom exception message.</param>
-        public AuditNotFoundException(string message)
+        public ComponentNotFoundException(string message)
             : base(message)
         {
         }
