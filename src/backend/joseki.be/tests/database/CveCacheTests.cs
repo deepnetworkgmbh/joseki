@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 
 using FluentAssertions;
 
-using joseki.db;
 using joseki.db.entities;
 
 using Microsoft.EntityFrameworkCore;
@@ -27,11 +26,7 @@ namespace tests.database
         public async Task GetNotExistingItemAddOneRecordToDb()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
             var cveCache = new CveCache(parser, context);
 
@@ -48,11 +43,7 @@ namespace tests.database
         public async Task GetExistingItemDoesNotAddNewRecords()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
             var cveCache = new CveCache(parser, context);
 
@@ -71,11 +62,7 @@ namespace tests.database
         public async Task SeveralGetRequestsAddOnlySingleRecordToDb()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
             var cveCache = new CveCache(parser, context);
 
@@ -94,11 +81,7 @@ namespace tests.database
         public async Task ExpiredThresholdCausesRecordUpdate()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
             var cveCache = new CveCache(parser, context);
 
