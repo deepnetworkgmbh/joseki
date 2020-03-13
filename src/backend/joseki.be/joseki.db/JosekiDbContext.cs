@@ -256,7 +256,7 @@ namespace joseki.db
                 new KnowledgebaseEntity { Id = 47, DateCreated = checksTooltipsInsertTime, DateUpdated = checksTooltipsInsertTime, ItemId = "metadata.checks_warning_description", Content = "Warning indicates when Joseki found, likely, a not critical issue with a particular infrastructure component" },
                 new KnowledgebaseEntity { Id = 48, DateCreated = checksTooltipsInsertTime, DateUpdated = checksTooltipsInsertTime, ItemId = "metadata.checks_failed_description", Content = "Failed check highlights the most critical issues that should be reviewed first" },
                 new KnowledgebaseEntity { Id = 49, DateCreated = checksTooltipsInsertTime, DateUpdated = checksTooltipsInsertTime, ItemId = "metadata.checks_passed_description", Content = "You're good ;) A component satisfies verified rule" },
-                new KnowledgebaseEntity { Id = 50, DateCreated = checksTooltipsInsertTime, DateUpdated = checksTooltipsInsertTime, ItemId = "metadata.checks_score_description", Content = "The audit score. It indicates how close the infrastructure is to known best-practices configuration. The formula excludes NoData checks, gives doubled weight to Passed and Failed results: (Passed*2)/(Failed*2 + Passed*2 + Warning)" });
+                new KnowledgebaseEntity { Id = 50, DateCreated = checksTooltipsInsertTime, DateUpdated = checksTooltipsInsertTime, ItemId = "metadata.checks_score_description", Content = "The audit score indicates how close the infrastructure is to known best-practices configuration. The formula excludes NoData checks, gives doubled weight to Passed and Failed results: (Passed*2)/(Failed*2 + Passed*2 + Warning)" });
             #endregion
         }
 

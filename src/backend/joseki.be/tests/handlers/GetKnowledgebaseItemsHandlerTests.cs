@@ -123,5 +123,38 @@ namespace tests.handlers
             // Assert
             item.Should().Be(KnowledgebaseItem.NotFound);
         }
+
+        [TestMethod]
+        public async Task GetMetadataItemsReturnsOnlyMetadataRecords()
+        {
+            // Arrange
+            var itemsCount = new Random().Next(5, 10);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
+            var handler = new GetKnowledgebaseItemsHandler(context);
+
+            var expectedItems = new[]
+            {
+                new KnowledgebaseEntity { ItemId = $"metadata.{Guid.NewGuid().ToString()}", Content = Guid.NewGuid().ToString() },
+                new KnowledgebaseEntity { ItemId = $"metadata.{Guid.NewGuid().ToString()}", Content = Guid.NewGuid().ToString() },
+            };
+            var entities = Enumerable
+                .Range(1, itemsCount)
+                .Select(i => new KnowledgebaseEntity { ItemId = Guid.NewGuid().ToString(), Content = Guid.NewGuid().ToString() })
+                .ToList();
+            entities.AddRange(expectedItems);
+            context.Knowledgebase.AddRange(entities);
+            await context.SaveChangesAsync();
+
+            // Act
+            var actualItems = await handler.GetMetadataItems();
+
+            // Assert
+            actualItems.Should().HaveCount(expectedItems.Length);
+            foreach (var actualItem in actualItems)
+            {
+                var expectedItem = expectedItems.First(i => i.ItemId == actualItem.Id);
+                actualItem.Content.Should().Be(expectedItem.Content);
+            }
+        }
     }
 }

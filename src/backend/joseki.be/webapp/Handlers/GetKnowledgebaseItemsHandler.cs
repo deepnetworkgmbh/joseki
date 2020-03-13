@@ -78,5 +78,18 @@ namespace webapp.Handlers
 
             return items;
         }
+
+        /// <summary>
+        /// Returns all metadata items from DB.
+        /// </summary>
+        /// <returns>Metadata items.</returns>
+        public async Task<KnowledgebaseItem[]> GetMetadataItems()
+        {
+            return await this.db.Set<KnowledgebaseEntity>()
+                .AsNoTracking()
+                .Where(i => i.ItemId.StartsWith("metadata."))
+                .Select(i => new KnowledgebaseItem(i.ItemId, i.Content))
+                .ToArrayAsync();
+        }
     }
 }
