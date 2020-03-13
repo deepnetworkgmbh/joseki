@@ -8,8 +8,7 @@ import { InfrastructureComponentDiff } from '@/models';
 import { ScoreService } from '@/services/ScoreService';
 import ControlList from "@/components/controllist/ControlList.vue";
 import ControlGroup from "@/components/controlgroup/ControlGroup.vue";
-import { DiffCounters } from '@/models/ComponentDiff';
-import { CheckObject } from '@/services/MappingService';
+import { CheckObject, DiffCounters } from '@/services/DiffService';
 
 @Component({
     components: { Spinner, StatusBar, Score, ControlList, ControlGroup }
@@ -120,9 +119,9 @@ export default class ComponentDiff extends Vue {
     get scanDetail2url() { return '/component-detail/' + this.data.summary2.component.id + '/' + this.date2 }
 
     getWrapperClass(operation:string): string { return `diff-wrapper diff-wrapper-${operation}`; }
-    getRowClass(operation:string): string { return `diff-row diff-${operation}`; }
+    getRowClass(operation:string): string { return `diff-row diff-row-${operation}`; }
     getObjectClass(obj:CheckObject): string {         
-        return obj.empty ? `diff-spacer` : `diff-${obj.operation}`; 
+        return `diff-${obj.operation}`; 
     }
 
     getObjectContainerClass(obj:CheckObject): string {

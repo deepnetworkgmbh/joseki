@@ -1,7 +1,6 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { CheckControl } from '@/services/MappingService';
+import { CheckControl } from '@/services/DiffService';
 import router from '@/router';
-import { DiffOperation } from '@/services/MappingService';
 
 @Component
 export default class ControlList extends Vue {

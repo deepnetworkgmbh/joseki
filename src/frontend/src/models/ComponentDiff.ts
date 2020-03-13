@@ -1,5 +1,7 @@
 import { InfrastructureComponentSummary } from '@/models';
-import { MappingService, CheckCollection, DiffOperation } from '@/services/MappingService';
+import { MappingService } from '@/services/MappingService';
+import { DiffCollection, CheckCollection, DiffOperation, CheckObject } from '@/services/DiffService';
+import * as _ from 'lodash';
 
 export class InfrastructureComponentDiff {
   /// Components of first summary.
@@ -17,116 +19,69 @@ export class InfrastructureComponentDiff {
     diff.summary1.sections = InfrastructureComponentSummary.getSections(diff.summary1.current);
     diff.summary2.sections = InfrastructureComponentSummary.getSections(diff.summary2.current);
 
-    let r: DiffCollection[] = [];
-    let left: CheckCollection[] = MappingService.getResultsByCollection(diff.summary1.checks)
-    let right: CheckCollection[] = MappingService.getResultsByCollection(diff.summary2.checks)
-    
-    // traverse first collections list
-    for (let i = 0; i < left.length; i++) {
-      let left1 = left[i];    //  left collection
-      let key = left1.type + '---' + left1.name;
-      let row = new DiffCollection(key, left1.name, left1.type);
-      row.left = left1;
-      row.right = CheckCollection.GetEmpty();
-      r.push(row);
+    //let left: CheckCollection[] = MappingService.getResultsByCollection(diff.summary1.checks);
+    //let right: CheckCollection[] = MappingService.getResultsByCollection(diff.summary2.checks)
+    //diff.results = InfrastructureComponentDiff.Compare(left, right);
+  
+    let checks = MappingService.getResultsByCollection(diff.summary1.checks);
+    let objects = [checks[0].objects, checks[1].objects, checks[2].objects, checks[3].objects, checks[4].objects]; 
 
-      let rowIndex = r.findIndex(x => x.key === key);
-      let rightIndex = right.findIndex(x => x.name === left1.name && x.type === left1.type);
-      if (rightIndex === -1) {
-        r[rowIndex].operation = DiffOperation.Removed;
-        continue;
-      }      
-      let right1 = right[rightIndex]; // right collection;
-      let [operation, changes] = right1.Compare(left1);      
-      r[rowIndex].changes.merge(changes); 
-      if(operation !== DiffOperation.Same) {
-        r[rowIndex].operation = DiffOperation.Changed;
-      }
-    }
-
-
-    // traverse second collections list
-    for (let i = 0; i < right.length; i++) {
-      let right1 = right[i];    //  right collection
-      let key = right1.type + '---' + right1.name;
-
-      let rowIndex = r.findIndex(x => x.key === key);
-      if (rowIndex === -1) {
-        let row = new DiffCollection(key, right1.name, right1.type);
-        row.left = CheckCollection.GetEmpty();
-        row.right = right1;
-        row.operation = DiffOperation.Added;
-        r.push(row);
-        continue;
-      }
-
-      r[rowIndex].right = right1;
-      let [operation, changes] = r[rowIndex].left!.Compare(right1);
-      //r[rowIndex].changes.merge(changes); 
-      if(operation !== DiffOperation.Same) {
-        r[rowIndex].operation = DiffOperation.Changed;
-      }
-    }
-
-
-    for(let i=0; i< r.length; i++) {
-      let row = r[i];
-      let left = row.left;
-      let right = row.right;
-      if(left && left.objects.length>0) {
-        left.objects.sort((a, b) => a.id > b.id ? -1 : a.id < b.id ? 1 : 0).reverse();
-      }
-      if(right && right.objects.length>0) {
-        right.objects.sort((a, b) => a.id > b.id ? -1 : a.id < b.id ? 1 : 0).reverse();
-      }
-    }
-
-
-    // sort changed to top
-    r.sort((a, b) => a.operation > b.operation ? -1 : a.operation < b.operation ? 1 : 0).reverse();
-
-    diff.results = r;
+    let left: CheckCollection[] = DiffMock.GetCollection(true, objects.slice());
+    let right: CheckCollection[] = DiffMock.GetCollection(false, objects.slice());
+    diff.results = DiffCollection.CompareCollections(left, right);
     return diff;
-
   }
 
 }
 
-export class DiffCollection {
-  operation: DiffOperation = DiffOperation.Same;
-  left: undefined | CheckCollection;
-  right: undefined | CheckCollection;
-  changes: DiffCounters = new DiffCounters();  
-  constructor(public key: string, public name: string, public type:string) { }
-}
+export class DiffMock {
 
-export class DiffCounters {
-  added: number = 0;
-  removed: number = 0;
-  changed: number = 0;
+  public static GetCollection(left: boolean, objects: CheckObject[][]): CheckCollection[] {
+    let result: CheckCollection[] = []
+    let date = new Date();
 
-  public tick(operation:DiffOperation) {
-    switch(operation) {
-      case DiffOperation.Added: this.added+=1; break;
-      case DiffOperation.Removed: this.removed+=1; break;
-      case DiffOperation.Changed: this.changed+=1; break;
-      case DiffOperation.Same: break;
+    if (left) {
+      // removed collection
+      let c0 = new CheckCollection("Removed Collection", "namespace", date);    
+      c0.score = 68;
+      c0.objects = objects[0].slice();
+      result.push(c0);
     }
+
+    let unchangedObject = objects[3][1];
+    let changedObjectA = _.cloneDeep(objects.slice()[3].slice()[0])
+    let changedObjectB = _.cloneDeep(objects.slice()[3].slice()[0]);
+
+    if (!left) {
+      changedObjectB.controlGroups[0].items[0].result = "NoData";
+      changedObjectB.controlGroups[0].items[0].icon = "fas fa-times nodata-icon";
+    }
+    
+    // changed collection
+    let c1 = new CheckCollection("Changed Collection", "namespace", date);    
+    c1.score = left ? 40 : 60;
+    c1.objects = left ? [changedObjectA,unchangedObject,...objects[1]] 
+                      : [changedObjectB,unchangedObject,...objects[2]]
+    result.push(c1);
+
+    if (!left) {
+      // added collection
+      let c2 = new CheckCollection("Added Collection", "namespace", date);    
+      c2.score = 68;
+      c2.objects = objects[4].slice();
+      result.push(c2);
+    }
+
+    let c3 = new CheckCollection("Same Collection", "namespace", date);    
+    c3.score = 100;
+    c3.objects = objects[4].slice();    
+    result.push(c3);
+
+    return result;
   }
 
-  public merge(changes: DiffCounters) {
-    this.added += changes.added;
-    this.removed += changes.removed;
-    this.changed += changes.changed;
-  }
+}
 
-  public toString(): string {
-    let out: string[] = [];
-    if(this.added > 0) out.push(`${this.added} added`);
-    if(this.removed > 0) out.push(`${this.removed} removed`);
-    if(this.changed > 0) out.push(`${this.changed} changed`);
-    return out.join(', ');
-  }
-
-  public get total(): number { return this.added + this.removed + this.changed}
+export function clone<T>(a: T): T {
+  return JSON.parse(JSON.stringify(a));
 }

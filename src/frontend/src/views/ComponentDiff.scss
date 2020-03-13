@@ -25,36 +25,35 @@ $border: dashed 2px #aaa;
 }
 
 .diff-wrapper {
-
-	border:solid 1px red;
-	border-radius: 5px;
+	border: none;
+	border-radius: 8px;
 	margin:0;
 	margin-bottom: 8px;
-	background-color: #f8f8f8;
 	padding-top: 5px;
 }
 
 .diff-wrapper-SAME {
-	border: solid 1px #eee;
+	background-color: #aaa;
 }
 
 .diff-wrapper-ADDED {
-	border: solid 1px green;
+	background-color: #afa;
 }
 
 .diff-wrapper-REMOVED {
-	border: solid 1px red;
+	background-color: #faa;
 }
 
 .diff-wrapper-CHANGED {
-	border: solid 1px #ffcccc;
-	background-color: #ffccaa;
+	background-color: #eea;
 }
+
 
 .diff-row {
 	width: 100%;
 	display: flex;
 	flex-direction: row;
+	padding:0px 2px 1px 2px;
 }
 
 .diff-row-change-text {
@@ -73,28 +72,26 @@ $border: dashed 2px #aaa;
 }
 
 .diff-cell {
-	margin-top:5px;
-	width: 49%;	
+	width: 50%;
+	flex: 1 1 auto;
+	margin:3px;
 	border: solid 1px #eee;
 	border-radius: 8px;
-	padding-top:5px;
-	padding-bottom:5px;
 	background-color: #f0f0f0;
-	border:solid 1px red;
 }
 .diff-object-wrapper {
 	margin-left: -10px;
 	margin-right: -10px;
 	padding-bottom: 0;
+	//min-height: 40px;
 }
 
 .diff-object {
 	margin-left:15px;
-	padding:5px;
+	padding:0;
 	border-radius: 5px;
-	margin-bottom: 5px;	
-	background-color: #e0e0e0;
-	padding-bottom: 0;
+	margin-top:2px;
+	margin-bottom: 2px;
 }
 
 .diff-SAME {

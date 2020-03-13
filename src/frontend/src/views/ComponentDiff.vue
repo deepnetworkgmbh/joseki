@@ -68,56 +68,56 @@
     </a>-->
     <div v-if="loaded" class="segment shadow" style="flex-direction:row">
       <div class="w-full" style="min-height:200px;">
-        <ul v-for="(row, i) in data.results" :key="`collection1${i}`">
+        <ul v-for="(row, i) in data.results" :key="`collection1${i}`" class="mb-1">
           <li :class='getWrapperClass(row.operation)'>
-            <input type="checkbox" :id="`target${i}`" checked />
+            <input type="checkbox" :id="`target${i}`" v-model="row.checked"  />
             <label :for="`target${i}`" class='diff-row-label'>
-              <strong>{{ row.type }} : {{ row.name }}</strong> 
+              <strong>{{ row.type }} : {{ row.name }} : {{ row.operation }}</strong> 
               <span class='diff-row-change-text'>{{ getRowTitle(row.operation, row.changes) }}</span>
-              <div :class="getRowClass(row.operation)">
-                <div class="diff-cell">
-                  <ul v-for="(obj, g) in row.left.objects" :key="`left${i}-${g}`" class="diff-object-wrapper">
-                    <li :class='getObjectContainerClass(obj)'>
-                      <input type="checkbox" :id="`left-obj-${obj.id}`" v-model="obj.checked" 
-                           @click="toggleOther(`left-obj-${obj.id}`, row.key, obj.id)" />
-                      <label :for='`left-obj-${obj.id}`' :class='getObjectClass(obj)'>
-                        <span v-if='!obj.empty'><strong>{{ obj.type }} :</strong> {{ obj.name }} {{ obj.operation}}</span>
-                        <Score v-if='!obj.empty' :label="`Score`" :score="obj.score" />
-                        <div v-if="obj.checked">
-                          <ul v-for="(control, c) in obj.controls" :key="`left-controlp${i}-${g}-${c}`" class="control-ul">
-                            <ControlList :date="row.left.date" :control="control" />
-                          </ul>
-                          <ul v-for="(cg, c) in obj.controlGroups" :key="`left-controlg${i}-${g}-${c}`" class="control-ul">
-                            <ControlGroup :date="row.left.date" :name="cg.name" :items="cg.items" />
-                          </ul>
-                        </div>
-                      </label>
-                    </li>
-                  </ul>
-                </div>
-                <div class="diff-cell ml-1">
-                  <ul v-for="(obj, g) in row.right.objects" :key="`right${i}-${g}`"  class="diff-object-wrapper">
-                    <li :class='getObjectContainerClass(obj)'>
-                      <input type="checkbox" :id="`right-obj-${obj.id}`" v-model="obj.checked" 
-                           @click="toggleOther(`right-obj-${obj.id}`, row.key, obj.id)" />
-                      <label :for='`right-obj-${obj.id}`' :class='getObjectClass(obj)'>                        
-                        <span v-if='!obj.empty'><strong>{{ obj.type }} :</strong> {{ obj.name }} {{ obj.operation}}</span>
-                        <Score :label="`Score`" :score="obj.score" /> 
-                        <div v-if="obj.checked">
-                          <ul v-for="(control, c) in obj.controls" :key="`right-controlp${i}-${g}-${c}`" class="control-ul">
-                            <ControlList :date="row.left.date" :control="control" />
-                          </ul>
-                          <ul v-for="(cg, c) in obj.controlGroups" :key="`right-controlg${i}-${g}-${c}`" class="control-ul">
-                            <ControlGroup :date="row.left.date" :name="cg.name" :items="cg.items" />
-                          </ul>
-                        </div>
-                      </label>
-                    </li>
-                  </ul>
-
-                </div>                
-              </div>
             </label>
+            <div v-if="row.checked" :class="getRowClass(row.operation)">
+              <div class="diff-cell">
+                <ul v-for="(obj, g) in row.left.objects" :key="`left${i}-${g}`" class="diff-object-wrapper">
+                  <li :class='getObjectContainerClass(obj)'>
+                    <input type="checkbox" :id="`left-obj-${obj.id}`" v-model="obj.checked" 
+                          @click="toggleOther(`left-obj-${obj.id}`, row.key, obj.id)" />
+                    <label :for='`left-obj-${obj.id}`'>
+                      <span v-if='!obj.empty'><strong>{{ obj.type }} :</strong> {{ obj.name }} {{ obj.operation}}</span>
+                      <Score v-if='!obj.empty' :label="`Score`" :score="obj.score" />
+                    </label>
+                    <div v-if="obj.checked">
+                      <ul v-for="(control, c) in obj.controls" :key="`left-controlp${i}-${g}-${c}`" class="control-ul">
+                        <ControlList :date="row.left.date" :control="control" />
+                      </ul>
+                      <ul v-for="(cg, c) in obj.controlGroups" :key="`left-controlg${i}-${g}-${c}`" class="control-ul">
+                        <ControlGroup :date="row.left.date" :name="cg.name" :items="cg.items" />
+                      </ul>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+              <div class="diff-cell">
+                <ul v-for="(obj, g) in row.right.objects" :key="`right${i}-${g}`"  class="diff-object-wrapper">
+                  <li :class='getObjectContainerClass(obj)'>
+                    <input type="checkbox" :id="`right-obj-${obj.id}`" v-model="obj.checked" 
+                          @click="toggleOther(`right-obj-${obj.id}`, row.key, obj.id)" />
+                    <label :for='`right-obj-${obj.id}`'>                        
+                      <span v-if='!obj.empty'><strong>{{ obj.type }} :</strong> {{ obj.name }} {{ obj.operation}}</span>
+                      <Score :label="`Score`" :score="obj.score" /> 
+                    </label>
+                    <div v-if="obj.checked">
+                      <ul v-for="(control, c) in obj.controls" :key="`right-controlp${i}-${g}-${c}`" class="control-ul">
+                        <ControlList :date="row.left.date" :control="control" />
+                      </ul>
+                      <ul v-for="(cg, c) in obj.controlGroups" :key="`right-controlg${i}-${g}-${c}`" class="control-ul">
+                        <ControlGroup :date="row.left.date" :name="cg.name" :items="cg.items" />
+                      </ul>
+                    </div>
+                  </li>
+                </ul>
+
+              </div>                
+            </div>
           </li>
         </ul>
       </div>

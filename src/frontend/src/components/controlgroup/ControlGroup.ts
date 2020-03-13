@@ -1,6 +1,6 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
 import ControlList from "@/components/controllist/ControlList.vue";
-import { CheckControl } from '@/services/MappingService';
+import { CheckControl } from '@/services/DiffService';
 
 @Component({
     components: { ControlList }
