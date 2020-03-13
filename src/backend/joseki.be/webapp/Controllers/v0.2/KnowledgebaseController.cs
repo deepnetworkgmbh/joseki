@@ -11,13 +11,13 @@ using Serilog;
 using webapp.Handlers;
 using webapp.Models;
 
-namespace webapp.Controllers.v0._1
+namespace webapp.Controllers.v0._2
 {
     /// <summary>
     /// Audit data endpoints.
     /// </summary>
     [ApiController]
-    [ApiVersion("0.1")]
+    [ApiVersion("0.2")]
     [Route("api/knowledgebase")]
     public class KnowledgebaseController : Controller
     {

@@ -714,7 +714,7 @@ namespace joseki.db.Migrations
                         new
                         {
                             Id = 50,
-                            Content = "The audit score. It indicates how close the infrastructure is to known best-practices configuration. The formula excludes NoData checks, gives doubled weight to Passed and Failed results: (Passed*2)/(Failed*2 + Passed*2 + Warning)",
+                            Content = "The audit score indicates how close the infrastructure is to known best-practices configuration. The formula excludes NoData checks, gives doubled weight to Passed and Failed results: (Passed*2)/(Failed*2 + Passed*2 + Warning)",
                             DateCreated = new DateTime(2020, 3, 12, 13, 33, 48, 595, DateTimeKind.Utc).AddTicks(7551),
                             DateUpdated = new DateTime(2020, 3, 12, 13, 33, 48, 595, DateTimeKind.Utc).AddTicks(7551),
                             ItemId = "metadata.checks_score_description"

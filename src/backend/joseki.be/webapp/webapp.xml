@@ -912,9 +912,15 @@
             </summary>
             <returns>The knowledgebase items content.</returns>
         </member>
-        <member name="M:webapp.Controllers.v0._1.KnowledgebaseController.GetComponentCategoriesDescriptions">
+        <member name="M:webapp.Controllers.v0._1.KnowledgebaseController.GetAll">
             <summary>
             Returns all knowledgebase items.
+            </summary>
+            <returns>Knowledgebase items.</returns>
+        </member>
+        <member name="M:webapp.Controllers.v0._1.KnowledgebaseController.GetWebsiteMetadataItems">
+            <summary>
+            Returns all metadata items for UI.
             </summary>
             <returns>Knowledgebase items.</returns>
         </member>
@@ -987,6 +993,43 @@
             <param name="date1">The first date to compare.</param>
             <param name="date2">The second date to compare.</param>
             <returns>The Image Scan diff.</returns>
+        </member>
+        <member name="T:webapp.Controllers.v0._2.KnowledgebaseController">
+            <summary>
+            Audit data endpoints.
+            </summary>
+        </member>
+        <member name="M:webapp.Controllers.v0._2.KnowledgebaseController.#ctor(System.IServiceProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Controllers.v0._2.KnowledgebaseController"/> class.
+            </summary>
+            <param name="services">DI container.</param>
+        </member>
+        <member name="M:webapp.Controllers.v0._2.KnowledgebaseController.GetKnowledgebaseItemById(System.String)">
+            <summary>
+            Returns the knowledgebase item content.
+            </summary>
+            <returns>The knowledgebase item content.</returns>
+        </member>
+        <member name="M:webapp.Controllers.v0._2.KnowledgebaseController.GetKnowledgebaseItemById(System.String[])">
+            <summary>
+            Returns the knowledgebase items content for a subset of Ids.
+            The method returns only items, that exist in the storage.
+            If any id leads to not existing item - it is ignored.
+            </summary>
+            <returns>The knowledgebase items content.</returns>
+        </member>
+        <member name="M:webapp.Controllers.v0._2.KnowledgebaseController.GetAll">
+            <summary>
+            Returns all knowledgebase items.
+            </summary>
+            <returns>Knowledgebase items.</returns>
+        </member>
+        <member name="M:webapp.Controllers.v0._2.KnowledgebaseController.GetWebsiteMetadataItems">
+            <summary>
+            Returns all metadata items for UI.
+            </summary>
+            <returns>Knowledgebase items.</returns>
         </member>
         <member name="T:webapp.Database.ChecksCache">
             <summary>
@@ -1966,6 +2009,12 @@
             Returns all knowledgebase items from DB.
             </summary>
             <returns>All Knowledgebase items.</returns>
+        </member>
+        <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.GetMetadataItems">
+            <summary>
+            Returns all metadata items from DB.
+            </summary>
+            <returns>Metadata items.</returns>
         </member>
         <member name="T:webapp.Handlers.InfraScoreExtensions">
             <summary>
