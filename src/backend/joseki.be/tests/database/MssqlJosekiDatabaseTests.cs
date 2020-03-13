@@ -47,9 +47,7 @@ namespace tests.database
             var actual = await context.Audit.FirstAsync();
             actual.AuditId.Should().Be(audit.Id);
             actual.Date.Should().Be(audit.Date);
-            actual.ScannerId.Should().Be(audit.ScannerId);
             actual.ComponentId.Should().Be(audit.ComponentId);
-            actual.ComponentName.Should().Be(audit.ComponentName);
         }
 
         [TestMethod]
@@ -419,7 +417,13 @@ namespace tests.database
             var today = DateTime.UtcNow;
 
             // create more than 31 entries, which the oldest ones would be filtered-out
-            var entities = Enumerable.Range(0, 35).Select(i => today.AddDays(-i)).Select(i => new AuditEntity { Date = i, ComponentId = componentId });
+            var entities = Enumerable.Range(0, 35)
+                .Select(i => today.AddDays(-i)).Select(i => new AuditEntity
+                {
+                    Date = i,
+                    ComponentId = componentId,
+                    InfrastructureComponent = new InfrastructureComponentEntity(),
+                });
             context.AddRange(entities);
             await context.SaveChangesAsync();
 
@@ -442,10 +446,23 @@ namespace tests.database
             var componentId = Guid.NewGuid().ToString();
             var today3am = DateTime.UtcNow.Date.AddHours(3);
             var today10am = today3am.AddHours(7);
-            var entries3am = Enumerable.Range(0, 31).Select(i => today3am.AddDays(-i)).Select(i => new AuditEntity { Date = i, ComponentId = componentId });
-            var entries10am = Enumerable.Range(0, 31).Select(i => today10am.AddDays(-i)).Select(i => new AuditEntity { Date = i, ComponentId = componentId });
+            var entries3am = Enumerable.Range(0, 31)
+                .Select(i => new AuditEntity
+                {
+                    Date = today3am.AddDays(-i),
+                    ComponentId = componentId,
+                    InfrastructureComponent = new InfrastructureComponentEntity(),
+                });
+            var entries10am = Enumerable.Range(0, 31)
+                .Select(i => new AuditEntity
+                {
+                    Date = today10am.AddDays(-i),
+                    ComponentId = componentId,
+                    InfrastructureComponent = new InfrastructureComponentEntity(),
+                });
             context.AddRange(entries3am);
             context.AddRange(entries10am);
+            context.Add(new InfrastructureComponentEntity { ComponentId = componentId });
             await context.SaveChangesAsync();
 
             // Act & Assert
@@ -453,35 +470,6 @@ namespace tests.database
             var audits = await db.GetAuditedComponentsWithHistory(today10am.AddHours(2));
             audits.Should().HaveCount(31);
             audits.All(i => i.Date.Hour == 10).Should().BeTrue("All audits should be at 10 am");
-        }
-
-        [TestMethod]
-        public async Task GetAuditedComponentsWithHistoryReturnsAuditsOnlyForComponentsWithDataAtRequestedDate()
-        {
-            // Arrange
-            await using var context = JosekiTestsDb.CreateUniqueContext();
-
-            var parser = new ConfigurationParser("config.sample.yaml");
-            var db = new MssqlJosekiDatabase(context, parser);
-
-            var componentId1 = Guid.NewGuid().ToString();
-            var componentId2 = Guid.NewGuid().ToString();
-            var componentId3 = Guid.NewGuid().ToString();
-            var today = DateTime.UtcNow;
-
-            // create 31 records for three components, but today's audit only for componentId1 and componentId3
-            var entities1 = Enumerable.Range(0, 31).Select(i => today.AddDays(-i)).Select(i => new AuditEntity { Date = i, ComponentId = componentId1 });
-            var entities2 = Enumerable.Range(2, 31).Select(i => today.AddDays(-i)).Select(i => new AuditEntity { Date = i, ComponentId = componentId2 });
-            var entities3 = Enumerable.Range(0, 31).Select(i => today.AddDays(-i)).Select(i => new AuditEntity { Date = i, ComponentId = componentId3 });
-            context.AddRange(entities1);
-            context.AddRange(entities2);
-            context.AddRange(entities3);
-            await context.SaveChangesAsync();
-
-            // Act & Assert
-            var audits = await db.GetAuditedComponentsWithHistory(today);
-            audits.Should().HaveCount(62);
-            audits.All(i => i.ComponentId == componentId1 || i.ComponentId == componentId3).Should().BeTrue("All audits belong to components with data on requested day");
         }
     }
 }

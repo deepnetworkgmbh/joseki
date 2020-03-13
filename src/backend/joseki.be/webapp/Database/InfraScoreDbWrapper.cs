@@ -32,6 +32,7 @@ namespace webapp.Database
         {
             var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-30);
             var ids = await this.db.Set<AuditEntity>()
+                .AsNoTracking()
                 .Where(i => i.Date >= oneMonthAgo)
                 .Select(i => i.ComponentId)
                 .Distinct()
@@ -45,6 +46,8 @@ namespace webapp.Database
         {
             var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-30);
             var audits = await this.db.Set<AuditEntity>()
+                .Include(i => i.InfrastructureComponent)
+                .AsNoTracking()
                 .Where(i => i.Date >= oneMonthAgo && i.ComponentId == componentId)
                 .ToArrayAsync();
 
@@ -58,6 +61,8 @@ namespace webapp.Database
         public async Task<AuditEntity> GetAudit(string componentId, DateTime date)
         {
             var audit = await this.db.Set<AuditEntity>()
+                .Include(i => i.InfrastructureComponent)
+                .AsNoTracking()
                 .Where(i => i.Date.Date == date.Date && i.ComponentId == componentId)
                 .OrderByDescending(i => i.Date)
                 .FirstOrDefaultAsync();
@@ -70,7 +75,11 @@ namespace webapp.Database
         {
             var theDay = date.Date;
             var theNextDay = theDay.AddDays(1);
-            var oneDayAudits = await this.db.Set<AuditEntity>().Where(i => i.Date >= theDay && i.Date < theNextDay).ToArrayAsync();
+            var oneDayAudits = await this.db.Set<AuditEntity>()
+                .Include(i => i.InfrastructureComponent)
+                .AsNoTracking()
+                .Where(i => i.Date >= theDay && i.Date < theNextDay)
+                .ToArrayAsync();
 
             var audits = oneDayAudits
                 .GroupBy(i => i.ComponentId)
@@ -84,7 +93,8 @@ namespace webapp.Database
         public async Task<CountersSummary> GetCounterSummariesForAudit(int auditId)
         {
             var checkResults = await this.db.Set<CheckResultEntity>()
-                .Include("Check")
+                .Include(i => i.Check)
+                .AsNoTracking()
                 .Where(i => i.AuditId == auditId)
                 .Select(i => new
                 {

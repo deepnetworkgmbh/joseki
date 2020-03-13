@@ -132,7 +132,7 @@ namespace webapp.Controllers.v0._1
                 var history = await handler.GetHistory(componentId);
                 return this.StatusCode(200, history);
             }
-            catch (AuditNotFoundException ex)
+            catch (ComponentNotFoundException ex)
             {
                 Logger.Error(ex, "No audits found for requested component {ComponentId}", componentId);
                 return this.NotFound($"No audits found for requested component {componentId}");

@@ -31,19 +31,14 @@
             date when audit was performed.
             </summary>
         </member>
-        <member name="P:joseki.db.entities.AuditEntity.ScannerId">
-            <summary>
-            Which scanner did the audit.
-            </summary>
-        </member>
         <member name="P:joseki.db.entities.AuditEntity.ComponentId">
             <summary>
             Which infrastructure component was audited: k8s-cluster id or azure-subscription-id.
             </summary>
         </member>
-        <member name="P:joseki.db.entities.AuditEntity.ComponentName">
+        <member name="P:joseki.db.entities.AuditEntity.InfrastructureComponent">
             <summary>
-            Human-friendly infrastructure component name.
+            Reference to related infrastructure component.
             </summary>
         </member>
         <member name="P:joseki.db.entities.AuditEntity.CheckResults">
@@ -451,6 +446,38 @@
             Reference to Image Scan Result object.
             </summary>
         </member>
+        <member name="T:joseki.db.entities.InfrastructureComponentEntity">
+            <summary>
+            The entity represents Infrastructure Component object.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.InfrastructureComponentEntity.Id">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.InfrastructureComponentEntity.DateUpdated">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.InfrastructureComponentEntity.DateCreated">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.InfrastructureComponentEntity.ChangedBy">
+            <inheritdoc />
+        </member>
+        <member name="P:joseki.db.entities.InfrastructureComponentEntity.ScannerId">
+            <summary>
+            Which scanner is responsible for auditing.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.InfrastructureComponentEntity.ComponentId">
+            <summary>
+            External infrastructure component identifier: k8s-cluster id or azure-subscription-id.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.InfrastructureComponentEntity.ComponentName">
+            <summary>
+            Human-friendly infrastructure component name.
+            </summary>
+        </member>
         <member name="T:joseki.db.entities.KnowledgebaseEntity">
             <summary>
             The entity represents a single Knowledge-base item.
@@ -565,6 +592,11 @@
             Initializes a new instance of the <see cref="T:joseki.db.JosekiDbContext"/> class.
             </summary>
             <param name="options">Context options.</param>
+        </member>
+        <member name="P:joseki.db.JosekiDbContext.InfrastructureComponent">
+            <summary>
+            Infrastructure Component table.
+            </summary>
         </member>
         <member name="P:joseki.db.JosekiDbContext.Audit">
             <summary>

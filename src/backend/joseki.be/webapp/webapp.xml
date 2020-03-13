@@ -1110,11 +1110,12 @@
             <param name="check">Internal Check model.</param>
             <returns>Database compatible entity.</returns>
         </member>
-        <member name="M:webapp.Database.DatabaseMapper.ToEntity(webapp.Database.Models.Audit)">
+        <member name="M:webapp.Database.DatabaseMapper.ToEntity(webapp.Database.Models.Audit,joseki.db.entities.InfrastructureComponentEntity)">
             <summary>
             Creates Audit entity from internal model.
             </summary>
             <param name="audit">Internal Audit model.</param>
+            <param name="componentEntity">Related infrastructure component entity.</param>
             <returns>Database compatible entity.</returns>
         </member>
         <member name="M:webapp.Database.DatabaseMapper.ToEntity(webapp.Database.Models.CheckResult)">
@@ -1833,14 +1834,14 @@
         <member name="M:webapp.Database.MssqlJosekiDatabase.GetAuditedComponentsWithHistory(System.DateTime)">
             <inheritdoc />
         </member>
-        <member name="T:webapp.Exceptions.AuditNotFoundException">
+        <member name="T:webapp.Exceptions.ComponentNotFoundException">
             <summary>
             Thrown, when there is no audit to satisfy requested parameters.
             </summary>
         </member>
-        <member name="M:webapp.Exceptions.AuditNotFoundException.#ctor(System.String)">
+        <member name="M:webapp.Exceptions.ComponentNotFoundException.#ctor(System.String)">
             <summary>
-            Initializes a new instance of the <see cref="T:webapp.Exceptions.AuditNotFoundException"/> class.
+            Initializes a new instance of the <see cref="T:webapp.Exceptions.ComponentNotFoundException"/> class.
             </summary>
             <param name="message">Custom exception message.</param>
         </member>
