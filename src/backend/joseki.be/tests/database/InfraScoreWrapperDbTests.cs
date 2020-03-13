@@ -4,10 +4,8 @@ using System.Threading.Tasks;
 
 using FluentAssertions;
 
-using joseki.db;
 using joseki.db.entities;
 
-using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using webapp.Database;
@@ -21,11 +19,7 @@ namespace tests.database
         public async Task GetAllComponentsIdsReturnsIdsForLast31Days()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var wrapper = new InfraScoreDbWrapper(context);
 
             // create two audits, that satisfy the criteria ...
@@ -60,11 +54,7 @@ namespace tests.database
         public async Task GetAllComponentsIdsReturnsOnlyUniqueIds()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var wrapper = new InfraScoreDbWrapper(context);
 
             var today = DateTime.UtcNow.Date;
@@ -88,11 +78,7 @@ namespace tests.database
         public async Task GetLastMonthAuditsReturnsOnlyRequestedComponentAudits()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var wrapper = new InfraScoreDbWrapper(context);
 
             var auditDate = DateTime.UtcNow.Date.AddDays(-1);
@@ -113,11 +99,7 @@ namespace tests.database
         public async Task GetLastMonthAuditsReturnsOnlyLast31DaysAudits()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var wrapper = new InfraScoreDbWrapper(context);
 
             var componentId = Guid.NewGuid().ToString();
@@ -142,11 +124,7 @@ namespace tests.database
         public async Task GetLastMonthAuditsReturnsOnlyLatestAuditAtAnyGivenDay()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var wrapper = new InfraScoreDbWrapper(context);
 
             // create three audits at each day at 00:00, 08:00, 16:00
@@ -175,11 +153,7 @@ namespace tests.database
         public async Task GetAuditReturnsOnlyLatestAuditAtRequestedDate()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var wrapper = new InfraScoreDbWrapper(context);
 
             // create three audits a day before at 00:00, 08:00, 16:00
@@ -204,11 +178,7 @@ namespace tests.database
         public async Task GetAuditReturnsOnlyRequestedComponentAudit()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var wrapper = new InfraScoreDbWrapper(context);
 
             var auditDate = DateTime.UtcNow.Date.AddDays(-1);
@@ -232,11 +202,7 @@ namespace tests.database
         public async Task GetAuditReturnsOnlyAuditAtRequestedDay()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var wrapper = new InfraScoreDbWrapper(context);
 
             var auditDate = DateTime.UtcNow.Date.AddDays(-1);
@@ -260,11 +226,7 @@ namespace tests.database
         public async Task GetAuditsReturnsOnlyAuditsAtRequestedDay()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var wrapper = new InfraScoreDbWrapper(context);
 
             var auditDate = DateTime.UtcNow.Date.AddDays(-1);
@@ -287,11 +249,7 @@ namespace tests.database
         public async Task GetAuditsReturnsOnlyLatestAuditAtRequestedDate()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var wrapper = new InfraScoreDbWrapper(context);
 
             // create three audits a day before at 00:00, 08:00, 16:00
@@ -316,11 +274,7 @@ namespace tests.database
         public async Task GetAuditsReturnsOnlyUniqueComponentAudits()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var wrapper = new InfraScoreDbWrapper(context);
 
             var auditDate = DateTime.UtcNow.Date.AddDays(-1);
@@ -347,11 +301,7 @@ namespace tests.database
         {
             // Arrange
             var randomizer = new Random();
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var wrapper = new InfraScoreDbWrapper(context);
 
             var auditId = randomizer.Next();
@@ -377,11 +327,7 @@ namespace tests.database
         {
             // Arrange
             var randomizer = new Random();
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var wrapper = new InfraScoreDbWrapper(context);
 
             var auditId = randomizer.Next();
@@ -407,11 +353,7 @@ namespace tests.database
         {
             // Arrange
             var randomizer = new Random();
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var wrapper = new InfraScoreDbWrapper(context);
 
             var auditId = randomizer.Next();
@@ -437,11 +379,7 @@ namespace tests.database
         {
             // Arrange
             var randomizer = new Random();
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var wrapper = new InfraScoreDbWrapper(context);
 
             var auditId = randomizer.Next();
@@ -468,11 +406,7 @@ namespace tests.database
         {
             // Arrange
             var randomizer = new Random();
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var wrapper = new InfraScoreDbWrapper(context);
 
             var auditId = randomizer.Next();
@@ -498,11 +432,7 @@ namespace tests.database
         {
             // Arrange
             var randomizer = new Random();
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var wrapper = new InfraScoreDbWrapper(context);
 
             var auditId = randomizer.Next();

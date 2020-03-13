@@ -5,9 +5,6 @@ using System.Threading.Tasks;
 
 using FluentAssertions;
 
-using joseki.db;
-
-using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Moq;
@@ -32,11 +29,7 @@ namespace tests.audits
         public async Task ProcessAuditHappyPath()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
             var checksCache = new ChecksCache(parser, context);
 

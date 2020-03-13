@@ -52,6 +52,20 @@ namespace webapp.Handlers
         }
 
         /// <summary>
+        /// Tries to get items from the database by their public identifiers.
+        /// </summary>
+        /// <param name="ids">Knowledgebase item identifiers.</param>
+        /// <returns>Found knowledgebase items.</returns>
+        public async Task<KnowledgebaseItem[]> GetItemsByIds(string[] ids)
+        {
+            return await this.db.Set<KnowledgebaseEntity>()
+                .AsNoTracking()
+                .Where(i => ids.Contains(i.ItemId))
+                .Select(i => new KnowledgebaseItem(i.ItemId, i.Content))
+                .ToArrayAsync();
+        }
+
+        /// <summary>
         /// Returns all knowledgebase items from DB.
         /// </summary>
         /// <returns>All Knowledgebase items.</returns>
@@ -59,7 +73,7 @@ namespace webapp.Handlers
         {
             var items = await this.db.Set<KnowledgebaseEntity>()
                 .AsNoTracking()
-                .Select(i => new KnowledgebaseItem { Id = i.ItemId, Content = i.Content })
+                .Select(i => new KnowledgebaseItem(i.ItemId, i.Content))
                 .ToArrayAsync();
 
             return items;

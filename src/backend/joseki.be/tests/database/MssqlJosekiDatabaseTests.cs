@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 
 using FluentAssertions;
 
-using joseki.db;
 using joseki.db.entities;
 
 using Microsoft.EntityFrameworkCore;
@@ -28,11 +27,7 @@ namespace tests.database
         public async Task SaveAuditResultSavesCorrectAudit()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
             var db = new MssqlJosekiDatabase(context, parser);
             var audit = new Audit
@@ -61,11 +56,7 @@ namespace tests.database
         public async Task SaveAuditResultSavesAzureMetadata()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
             var db = new MssqlJosekiDatabase(context, parser);
             var audit = new Audit
@@ -91,11 +82,7 @@ namespace tests.database
         public async Task SaveAuditResultSavesKubeMetadata()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
             var db = new MssqlJosekiDatabase(context, parser);
             var audit = new Audit
@@ -121,11 +108,7 @@ namespace tests.database
         public async Task SaveAuditResultSavesCheckResults()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
             var db = new MssqlJosekiDatabase(context, parser);
             var audit = new Audit
@@ -158,11 +141,7 @@ namespace tests.database
         public async Task SaveInProgressImageScanSavesCorrectEntity()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
             var db = new MssqlJosekiDatabase(context, parser);
             var scan = new ImageScanResultWithCVEs
@@ -191,11 +170,7 @@ namespace tests.database
         public async Task SaveImageScanResultCouldSaveNewEntity()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
             var db = new MssqlJosekiDatabase(context, parser);
             var cves = new List<ImageScanToCve>
@@ -243,10 +218,7 @@ namespace tests.database
         public async Task SaveImageScanResultCouldUpdateExistingEntity()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
 
             var queuedScan = new ImageScanResultEntity
             {
@@ -305,10 +277,7 @@ namespace tests.database
         public async Task SaveImageScanResultUpdatesInProgressCheckResults()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
 
             var scan = new ImageScanResultWithCVEs
             {
@@ -359,10 +328,7 @@ namespace tests.database
         public async Task GetNotExpiredImageScansReturnsEmptyArrayIfNoActualScanResult()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
 
             context.ImageScanResult.Add(new ImageScanResultEntity { ImageTag = Guid.NewGuid().ToString(), Date = DateTime.UtcNow.AddHours(-1) });
             await context.SaveChangesAsync();
@@ -379,10 +345,7 @@ namespace tests.database
         public async Task GetNotExpiredImageScansReturnsOnlyNotExpiredScans()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
 
             var parser = new ConfigurationParser("config.sample.yaml");
             var db = new MssqlJosekiDatabase(context, parser);
@@ -408,10 +371,7 @@ namespace tests.database
         public async Task GetNotExpiredImageScansReturnsTheLatestScan()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
 
             var parser = new ConfigurationParser("config.sample.yaml");
             var db = new MssqlJosekiDatabase(context, parser);
@@ -436,10 +396,7 @@ namespace tests.database
         public async Task GetAuditedComponentsWithHistoryReturnsEmptyArrayIfNoAudits()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
 
             var parser = new ConfigurationParser("config.sample.yaml");
             var db = new MssqlJosekiDatabase(context, parser);
@@ -453,10 +410,7 @@ namespace tests.database
         public async Task GetAuditedComponentsWithHistoryReturnsOnlyOneMonthData()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
 
             var parser = new ConfigurationParser("config.sample.yaml");
             var db = new MssqlJosekiDatabase(context, parser);
@@ -479,10 +433,7 @@ namespace tests.database
         public async Task GetAuditedComponentsWithHistoryReturnsOnlyOneAuditPerDay()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
 
             var parser = new ConfigurationParser("config.sample.yaml");
             var db = new MssqlJosekiDatabase(context, parser);
@@ -508,10 +459,7 @@ namespace tests.database
         public async Task GetAuditedComponentsWithHistoryReturnsAuditsOnlyForComponentsWithDataAtRequestedDate()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<JosekiDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-            await using var context = new JosekiDbContext(options);
+            await using var context = JosekiTestsDb.CreateUniqueContext();
 
             var parser = new ConfigurationParser("config.sample.yaml");
             var db = new MssqlJosekiDatabase(context, parser);

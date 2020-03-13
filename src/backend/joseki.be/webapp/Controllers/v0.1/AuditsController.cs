@@ -12,7 +12,7 @@ using webapp.Exceptions;
 using webapp.Handlers;
 using webapp.Models;
 
-namespace webapp.Controllers
+namespace webapp.Controllers.v0._1
 {
     /// <summary>
     /// .Audit data endpoints.
