@@ -55,7 +55,7 @@ namespace tests.handlers
             var cacheMock = new Mock<IInfrastructureScoreCache>();
             var handler = new GetInfrastructureHistoryHandler(context, cacheMock.Object);
 
-            context.Audit.Add(new AuditEntity { ComponentId = componentId, ComponentName = componentName });
+            context.InfrastructureComponent.Add(new InfrastructureComponentEntity { ComponentId = componentId, ComponentName = componentName });
             await context.SaveChangesAsync();
 
             // Act
@@ -68,32 +68,7 @@ namespace tests.handlers
         }
 
         [TestMethod]
-        public async Task QueryComponentHistoryGetLatestComponentName()
-        {
-            // Arrange
-            var componentId = $"/k8s/{Guid.NewGuid().ToString()}";
-            var componentName = Guid.NewGuid().ToString();
-
-            await using var context = JosekiTestsDb.CreateUniqueContext();
-            var cacheMock = new Mock<IInfrastructureScoreCache>();
-            var handler = new GetInfrastructureHistoryHandler(context, cacheMock.Object);
-
-            context.Audit.AddRange(
-                new AuditEntity { ComponentId = componentId, ComponentName = Guid.NewGuid().ToString(), Date = DateTime.UtcNow.AddHours(-1) },
-                new AuditEntity { ComponentId = componentId, ComponentName = componentName, Date = DateTime.UtcNow },
-                new AuditEntity { ComponentId = componentId, ComponentName = Guid.NewGuid().ToString(), Date = DateTime.UtcNow.AddDays(-1) },
-                new AuditEntity { ComponentId = componentId, ComponentName = Guid.NewGuid().ToString(), Date = DateTime.UtcNow.AddDays(-2) });
-            await context.SaveChangesAsync();
-
-            // Act
-            var history = await handler.GetHistory(componentId);
-
-            // Assert
-            history.All(i => i.Component.Name == componentName).Should().BeTrue();
-        }
-
-        [TestMethod]
-        public async Task QueryComponentHistorythrowsExceptionIfNoAudits()
+        public async Task QueryComponentHistoryThrowsExceptionIfNoAudits()
         {
             // Arrange
             var componentId = Guid.NewGuid().ToString();
@@ -106,7 +81,7 @@ namespace tests.handlers
             await handler
                 .Invoking(h => h.GetHistory(componentId))
                 .Should()
-                .ThrowAsync<AuditNotFoundException>();
+                .ThrowAsync<ComponentNotFoundException>();
         }
     }
 }
