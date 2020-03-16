@@ -1,5 +1,5 @@
 <template>
-    <li class="control-li text-sm">
+    <li :class="getLineClass()">
         <i :class="control.icon"></i>
         {{ control.id }}
         <span class="ml-1 mr-1"
@@ -8,6 +8,7 @@
             :aria-label="control.text">
             <i class="far fa-question-circle tip-icon"></i>
         </span>
+        {{ control.operation }}
         <span v-if="control.id === 'container_image.CVE_scan' && control.text !== 'No issues'">
             <a class="small-link" @click="goToImageScan(control.tags.imageTag)">see details</a>
         </span>

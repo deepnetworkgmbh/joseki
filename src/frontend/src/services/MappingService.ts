@@ -1,97 +1,5 @@
 import { Check, CountersSummary, CheckSeverity, Collection } from '@/models'
-import { DiffCounters } from '@/models/ComponentDiff'
-
-export enum DiffOperation {
-    Added = 'ADDED',
-    Removed = 'REMOVED',
-    Changed = 'CHANGED',
-    Same = 'SAME'
-}
-
-export class CheckCollection {
-    score: number = 0
-    counters: CountersSummary = new CountersSummary()
-    objects: CheckObject[] = []
-    operation?: DiffOperation
-
-    constructor(public name: string, public type: string, public date: Date) {}
-
-    // compare objects
-    Compare(other: CheckCollection): [DiffOperation, DiffCounters] {
-
-        // parent Diff State
-        let result = DiffOperation.Same;
-        let changes = new DiffCounters();
-
-        if(this.score !== other.score) {
-            result = DiffOperation.Changed;
-        }
-
-        // compare this object array for removals
-        for(let i=0; i<this.objects.length;i++) {
-            let myObject = this.objects[i];
-            let otherIndex = other.objects.findIndex(x=>x.id === myObject.id);
-            if (otherIndex === -1) {
-                // this object is removed on other scan
-                result = DiffOperation.Changed;                
-                myObject.operation = DiffOperation.Removed;
-                changes.tick(myObject.operation)
-                continue;
-            }
-            // TODO: check object children
-
-            // if no change, mark it as same
-            myObject.operation = DiffOperation.Same;
-        }
-
-        // compare other object array for addition
-        for(let i=0; i<other.objects.length;i++) {
-            let otherObject = other.objects[i];
-            let myIndex = this.objects.findIndex(x=>x.id === otherObject.id);
-            if (myIndex === -1) {
-                // other obhect is removed from my scan
-                otherObject.operation = DiffOperation.Added
-                changes.tick(otherObject.operation)
-                result = DiffOperation.Changed;
-                continue;
-            }
-            // TODO: check object children
-            
-                  // if no change, mark it as same
-            otherObject.operation = DiffOperation.Same;
-        }  
-        
-        return [result, changes];
-    }
-}
-
-export class CheckObject {
-    id: string = ''
-    type: string = ''
-    name: string = ''
-    score: number = 0
-    counters: CountersSummary = new CountersSummary()
-    controls: CheckControl[] = []
-    controlGroups: CheckControlGroup[] = []
-    operation?: DiffOperation
-    checked: boolean = false;
-}
-
-export class CheckControl {
-    id: string = ''
-    text: string = ''
-    result: string = ''
-    icon: string = ''
-    order: number = 0
-    tags: string[] = []
-    operation?: DiffOperation
-}
-
-export class CheckControlGroup {
-    name: string = ''
-    items: CheckControl[] = []
-    operation?: DiffOperation
-}
+import { CheckCollection, CheckControl, CheckControlGroup, CheckObject } from './DiffService'
 
 export class MappingService {
     public static getResultsByCategory(checks: Check[]): any[] {
@@ -154,16 +62,18 @@ export class MappingService {
             const collectionIndex = results.findIndex(x => x.name === check.collection.name)
 
             if (results[collectionIndex].objects.findIndex(x => x.id === check.resource.id) === -1) {
-                results[collectionIndex].objects.push({
-                    id: check.resource.id,
-                    type: check.resource.type,
-                    name: check.resource.name,
-                    score: 0,
-                    controls: [],           // for flat control list
-                    controlGroups: [],      // for grouped control list
-                    counters: new CountersSummary(),
-                    checked: false
-                })
+
+                let checkObject = new CheckObject();
+                checkObject.id = check.resource.id,
+                checkObject.type = check.resource.type,
+                checkObject.name = check.resource.name,
+                checkObject.score = 0,
+                checkObject.controls = [],           // for flat control list
+                checkObject.controlGroups = [],      // for grouped control list
+                checkObject.counters = new CountersSummary(),
+                checkObject.checked = false
+
+                results[collectionIndex].objects.push(checkObject)
             }
 
             const objectIndex = results[collectionIndex].objects.findIndex(x => x.id == check.resource.id);
@@ -201,10 +111,10 @@ export class MappingService {
             if (check.tags.subGroup) {
                 let groupIndex = results[collectionIndex].objects[objectIndex].controlGroups.findIndex(x => x.name === check.tags.subGroup)
                 if (groupIndex === -1) {
-                    results[collectionIndex].objects[objectIndex].controlGroups.push({
-                        name: check.tags.subGroup,
-                        items: [control]
-                    })
+                    let cg = new CheckControlGroup();
+                    cg.name = check.tags.subGroup;
+                    cg.items = [control];
+                    results[collectionIndex].objects[objectIndex].controlGroups.push(cg);
                 } else {
                     results[collectionIndex].objects[objectIndex].controlGroups[groupIndex].items.push(control);
                 }

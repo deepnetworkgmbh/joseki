@@ -10,3 +10,25 @@
     margin-top:0px;
     margin-bottom:1px;
 }
+
+.control-CHANGED {
+    //background-color: red;
+    color: #cc5500;
+}
+
+
+.control-REMOVED {
+    //background-color: red;
+    color: #994444;
+}
+
+.control-ADDED {
+    //background-color: red;
+    color: green;
+}
+
+.control-SAME {
+    visibility: hidden;
+    display: none;
+    color: #666;
+}
