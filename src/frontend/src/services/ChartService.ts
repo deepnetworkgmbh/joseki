@@ -26,7 +26,7 @@ export class ChartService {
 				2: { color: this.groupColors[2] },
 				3: { color: this.groupColors[3] }
 			},
-			pieHole: 0.5,
+			pieHole: 0.4,
 			chartArea: { top: 50, width: '100%', height: '70%' },
 			legend: {
 				position: 'top',

@@ -1,5 +1,6 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
 import ControlList from "@/components/controllist/ControlList.vue";
+import { CheckControl, DiffOperation } from '@/services/DiffService';
 
 @Component({
     components: { ControlList }
@@ -13,5 +14,9 @@ export default class ControlGroup extends Vue {
   date!: Date;
 
   @Prop({ default: []})
-  items!:any[]
+  items!:CheckControl[]
+
+  @Prop()
+  operation!: DiffOperation
+
 }
