@@ -72,9 +72,8 @@ spec:
     spec:
       containers:
       - name: joseki-fe
-        image: 'deepnetwork/joseki-frontend:0.2.2'
+        image: 'deepnetwork/joseki-frontend:0.2.4'
         imagePullPolicy: 'Always'
-        name: joseki-fe
         ports:
         - name: main-http
           containerPort: 8080
