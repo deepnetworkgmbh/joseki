@@ -46,15 +46,14 @@ namespace webapp.Handlers
             }
             else
             {
-                componentName = await this.db.Set<AuditEntity>()
+                componentName = await this.db.Set<InfrastructureComponentEntity>()
                     .Where(i => i.ComponentId == componentId)
-                    .OrderByDescending(i => i.Date)
                     .Select(i => i.ComponentName)
                     .FirstOrDefaultAsync();
 
                 if (componentName == null)
                 {
-                    throw new AuditNotFoundException($"There is no audits for {componentId}");
+                    throw new ComponentNotFoundException($"There is no components with id {componentId}");
                 }
             }
 

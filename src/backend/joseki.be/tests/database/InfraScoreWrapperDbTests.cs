@@ -82,17 +82,18 @@ namespace tests.database
             var wrapper = new InfraScoreDbWrapper(context);
 
             var auditDate = DateTime.UtcNow.Date.AddDays(-1);
-            var componentId = Guid.NewGuid().ToString();
+            var expectedComponent = this.GenerateComponent();
+            var anotherComponent = this.GenerateComponent();
             await context.Audit.AddRangeAsync(new[]
             {
-                new AuditEntity { Date = auditDate, ComponentId = componentId },
-                new AuditEntity { Date = DateTime.UtcNow.AddDays(-2), ComponentId = Guid.NewGuid().ToString() },
+                new AuditEntity { Date = auditDate, ComponentId = expectedComponent.ComponentId, InfrastructureComponent = expectedComponent },
+                new AuditEntity { Date = DateTime.UtcNow.AddDays(-2), ComponentId = anotherComponent.ComponentId, InfrastructureComponent = anotherComponent },
             });
             await context.SaveChangesAsync();
 
             // Act & Assert
-            var audits = await wrapper.GetLastMonthAudits(componentId);
-            audits.Should().ContainSingle(a => a.ComponentId == componentId && a.Date == auditDate);
+            var audits = await wrapper.GetLastMonthAudits(expectedComponent.ComponentId);
+            audits.Should().ContainSingle(a => a.ComponentId == expectedComponent.ComponentId && a.Date == auditDate);
         }
 
         [TestMethod]
@@ -102,17 +103,17 @@ namespace tests.database
             await using var context = JosekiTestsDb.CreateUniqueContext();
             var wrapper = new InfraScoreDbWrapper(context);
 
-            var componentId = Guid.NewGuid().ToString();
+            var expectedComponent = this.GenerateComponent();
             var today = DateTime.UtcNow.Date;
             var entities = Enumerable
                 .Range(0, 35)
-                .Select(i => new AuditEntity { Date = today.AddDays(-i), ComponentId = componentId });
+                .Select(i => new AuditEntity { Date = today.AddDays(-i), ComponentId = expectedComponent.ComponentId, InfrastructureComponent = expectedComponent });
 
             await context.Audit.AddRangeAsync(entities);
             await context.SaveChangesAsync();
 
             // Act
-            var audits = await wrapper.GetLastMonthAudits(componentId);
+            var audits = await wrapper.GetLastMonthAudits(expectedComponent.ComponentId);
 
             // Assert
             var oneMonthAgo = today.AddDays(-30);
@@ -128,20 +129,20 @@ namespace tests.database
             var wrapper = new InfraScoreDbWrapper(context);
 
             // create three audits at each day at 00:00, 08:00, 16:00
-            var componentId = Guid.NewGuid().ToString();
+            var expectedComponent = this.GenerateComponent();
             var today = DateTime.UtcNow.Date;
             foreach (var auditDate in Enumerable.Range(0, 31).Select(i => today.AddDays(-i)))
             {
                 var entities = Enumerable
                     .Range(0, 3)
-                    .Select(i => new AuditEntity { Date = auditDate.AddHours(i * 8), ComponentId = componentId });
+                    .Select(i => new AuditEntity { Date = auditDate.AddHours(i * 8), ComponentId = expectedComponent.ComponentId, InfrastructureComponent = expectedComponent });
                 await context.Audit.AddRangeAsync(entities);
             }
 
             await context.SaveChangesAsync();
 
             // Act
-            var audits = await wrapper.GetLastMonthAudits(componentId);
+            var audits = await wrapper.GetLastMonthAudits(expectedComponent.ComponentId);
 
             // Assert
             // returned audit should be the latest one at each day
@@ -157,17 +158,17 @@ namespace tests.database
             var wrapper = new InfraScoreDbWrapper(context);
 
             // create three audits a day before at 00:00, 08:00, 16:00
-            var componentId = Guid.NewGuid().ToString();
+            var expectedComponent = this.GenerateComponent();
             var auditDate = DateTime.UtcNow.Date.AddDays(-1);
             var entities = Enumerable
                 .Range(0, 3)
-                .Select(i => new AuditEntity { Date = auditDate.AddHours(i * 8), ComponentId = componentId });
+                .Select(i => new AuditEntity { Date = auditDate.AddHours(i * 8), ComponentId = expectedComponent.ComponentId, InfrastructureComponent = expectedComponent });
             await context.Audit.AddRangeAsync(entities);
 
             await context.SaveChangesAsync();
 
             // Act
-            var audit = await wrapper.GetAudit(componentId, auditDate);
+            var audit = await wrapper.GetAudit(expectedComponent.ComponentId, auditDate);
 
             // Assert
             // returned audit should be the latest one at requested day
@@ -182,19 +183,20 @@ namespace tests.database
             var wrapper = new InfraScoreDbWrapper(context);
 
             var auditDate = DateTime.UtcNow.Date.AddDays(-1);
-            var componentId = Guid.NewGuid().ToString();
+            var expectedComponent = this.GenerateComponent();
+            var anotherComponent = this.GenerateComponent();
             await context.Audit.AddRangeAsync(new[]
             {
-                new AuditEntity { Date = auditDate, ComponentId = componentId },
-                new AuditEntity { Date = auditDate, ComponentId = Guid.NewGuid().ToString() },
+                new AuditEntity { Date = auditDate, ComponentId = expectedComponent.ComponentId, InfrastructureComponent = expectedComponent },
+                new AuditEntity { Date = auditDate, ComponentId = anotherComponent.ComponentId, InfrastructureComponent = anotherComponent },
             });
             await context.SaveChangesAsync();
 
             // Act
-            var audit = await wrapper.GetAudit(componentId, auditDate);
+            var audit = await wrapper.GetAudit(expectedComponent.ComponentId, auditDate);
 
             // Assert
-            audit.ComponentId.Should().Be(componentId);
+            audit.ComponentId.Should().Be(expectedComponent.ComponentId);
             audit.Date.Should().Be(auditDate);
         }
 
@@ -206,19 +208,19 @@ namespace tests.database
             var wrapper = new InfraScoreDbWrapper(context);
 
             var auditDate = DateTime.UtcNow.Date.AddDays(-1);
-            var componentId = Guid.NewGuid().ToString();
+            var component = this.GenerateComponent();
             await context.Audit.AddRangeAsync(new[]
             {
-                new AuditEntity { Date = auditDate, ComponentId = componentId },
-                new AuditEntity { Date = auditDate.AddDays(-1), ComponentId = componentId },
+                new AuditEntity { Date = auditDate, ComponentId = component.ComponentId, InfrastructureComponent = component },
+                new AuditEntity { Date = auditDate.AddDays(-1), ComponentId = component.ComponentId, InfrastructureComponent = component },
             });
             await context.SaveChangesAsync();
 
             // Act
-            var audit = await wrapper.GetAudit(componentId, auditDate);
+            var audit = await wrapper.GetAudit(component.ComponentId, auditDate);
 
             // Assert
-            audit.ComponentId.Should().Be(componentId);
+            audit.ComponentId.Should().Be(component.ComponentId);
             audit.Date.Should().Be(auditDate);
         }
 
@@ -230,11 +232,14 @@ namespace tests.database
             var wrapper = new InfraScoreDbWrapper(context);
 
             var auditDate = DateTime.UtcNow.Date.AddDays(-1);
+            var component1 = this.GenerateComponent();
+            var component2 = this.GenerateComponent();
+            var component3 = this.GenerateComponent();
             await context.Audit.AddRangeAsync(new[]
             {
-                new AuditEntity { Date = auditDate, ComponentId = Guid.NewGuid().ToString() },
-                new AuditEntity { Date = auditDate.AddDays(-1), ComponentId = Guid.NewGuid().ToString() },
-                new AuditEntity { Date = auditDate.AddDays(1), ComponentId = Guid.NewGuid().ToString() },
+                new AuditEntity { Date = auditDate, ComponentId = component1.ComponentId, InfrastructureComponent = component1 },
+                new AuditEntity { Date = auditDate.AddDays(-1), ComponentId = component2.ComponentId, InfrastructureComponent = component2 },
+                new AuditEntity { Date = auditDate.AddDays(1), ComponentId = component3.ComponentId, InfrastructureComponent = component3 },
             });
             await context.SaveChangesAsync();
 
@@ -253,11 +258,11 @@ namespace tests.database
             var wrapper = new InfraScoreDbWrapper(context);
 
             // create three audits a day before at 00:00, 08:00, 16:00
-            var componentId = Guid.NewGuid().ToString();
+            var component = this.GenerateComponent();
             var auditDate = DateTime.UtcNow.Date.AddDays(-1);
             var entities = Enumerable
                 .Range(0, 3)
-                .Select(i => new AuditEntity { Date = auditDate.AddHours(i * 8), ComponentId = componentId });
+                .Select(i => new AuditEntity { Date = auditDate.AddHours(i * 8), ComponentId = component.ComponentId, InfrastructureComponent = component });
             await context.Audit.AddRangeAsync(entities);
 
             await context.SaveChangesAsync();
@@ -278,13 +283,15 @@ namespace tests.database
             var wrapper = new InfraScoreDbWrapper(context);
 
             var auditDate = DateTime.UtcNow.Date.AddDays(-1);
-            var componentId = Guid.NewGuid().ToString();
+            var component1 = this.GenerateComponent();
+            var component2 = this.GenerateComponent();
+            var component3 = this.GenerateComponent();
             await context.Audit.AddRangeAsync(new[]
             {
-                new AuditEntity { Id = 1, Date = auditDate, ComponentId = componentId }, // this one should be ignored
-                new AuditEntity { Id = 2, Date = auditDate.AddHours(6), ComponentId = componentId },
-                new AuditEntity { Id = 3, Date = auditDate.AddHours(12), ComponentId = Guid.NewGuid().ToString() },
-                new AuditEntity { Id = 4, Date = auditDate.AddHours(23), ComponentId = Guid.NewGuid().ToString() },
+                new AuditEntity { Id = 1, Date = auditDate, ComponentId = component1.ComponentId, InfrastructureComponent = component1 }, // this one should be ignored
+                new AuditEntity { Id = 2, Date = auditDate.AddHours(6), ComponentId = component1.ComponentId, InfrastructureComponent = component1 },
+                new AuditEntity { Id = 3, Date = auditDate.AddHours(12), ComponentId = component2.ComponentId, InfrastructureComponent = component2 },
+                new AuditEntity { Id = 4, Date = auditDate.AddHours(23), ComponentId = component3.ComponentId, InfrastructureComponent = component3 },
             });
             await context.SaveChangesAsync();
 
@@ -457,6 +464,16 @@ namespace tests.database
             summary.Warning.Should().Be(3);
             summary.NoData.Should().Be(2);
             summary.Passed.Should().Be(1);
+        }
+
+        private InfrastructureComponentEntity GenerateComponent()
+        {
+            return new InfrastructureComponentEntity
+            {
+                ComponentId = Guid.NewGuid().ToString(),
+                ComponentName = Guid.NewGuid().ToString(),
+                ScannerId = Guid.NewGuid().ToString(),
+            };
         }
     }
 }

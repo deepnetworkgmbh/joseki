@@ -42,6 +42,8 @@ namespace webapp.Handlers
         {
             // 1. get audit which represents the "date".
             var audit = await this.db.Set<AuditEntity>()
+                .Include(i => i.InfrastructureComponent)
+                .AsNoTracking()
                 .Where(i => i.Date.Date == date.Date && i.ComponentId == componentId)
                 .OrderByDescending(i => i.Date)
                 .FirstOrDefaultAsync();
@@ -63,7 +65,7 @@ namespace webapp.Handlers
                 Component = new InfrastructureComponent(componentId)
                 {
                     Category = InfraScoreExtensions.GetCategory(componentId),
-                    Name = audit.ComponentName,
+                    Name = audit.InfrastructureComponent.ComponentName,
                 },
                 Current = currentSummary,
                 ScoreHistory = componentHistory.ToArray(),
@@ -71,7 +73,8 @@ namespace webapp.Handlers
 
             // 4. Get all the check details
             var checkResults = await this.db.Set<CheckResultEntity>()
-                .Include("Check")
+                .AsNoTracking()
+                .Include(i => i.Check)
                 .Where(i => i.AuditId == audit.Id)
                 .Select(i => new
                 {
@@ -128,7 +131,7 @@ namespace webapp.Handlers
             componentDetails.Checks = checks.ToArray();
 
             // 5. enrich with category descriptions
-            var scannerType = audit.ScannerId.Split('/').First();
+            var scannerType = audit.InfrastructureComponent.ScannerId.Split('/').First();
             var categories = checks
                 .Select(i => i.Category)
                 .Distinct()
