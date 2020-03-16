@@ -1,6 +1,6 @@
 import { InfrastructureComponentSummary } from '@/models';
 import { MappingService } from '@/services/MappingService';
-import { DiffCollection, CheckCollection, DiffOperation, CheckObject } from '@/services/DiffService';
+import { DiffCollection, CheckCollection, DiffOperation, CheckObject, CheckControlGroup, CheckControl } from '@/services/DiffService';
 import * as _ from 'lodash';
 
 export class InfrastructureComponentDiff {
@@ -19,16 +19,16 @@ export class InfrastructureComponentDiff {
     diff.summary1.sections = InfrastructureComponentSummary.getSections(diff.summary1.current);
     diff.summary2.sections = InfrastructureComponentSummary.getSections(diff.summary2.current);
 
-    //let left: CheckCollection[] = MappingService.getResultsByCollection(diff.summary1.checks);
-    //let right: CheckCollection[] = MappingService.getResultsByCollection(diff.summary2.checks)
-    //diff.results = InfrastructureComponentDiff.Compare(left, right);
-  
-    let checks = MappingService.getResultsByCollection(diff.summary1.checks);
-    let objects = [checks[0].objects, checks[1].objects, checks[2].objects, checks[3].objects, checks[4].objects]; 
-
-    let left: CheckCollection[] = DiffMock.GetCollection(true, objects.slice());
-    let right: CheckCollection[] = DiffMock.GetCollection(false, objects.slice());
+    let left: CheckCollection[] = MappingService.getResultsByCollection(diff.summary1.checks);
+    let right: CheckCollection[] = MappingService.getResultsByCollection(diff.summary2.checks)
     diff.results = DiffCollection.CompareCollections(left, right);
+  
+    //  let checks = MappingService.getResultsByCollection(diff.summary1.checks);
+    //  let objects = [checks[0].objects, checks[1].objects, checks[2].objects, checks[3].objects, checks[4].objects]; 
+
+    //  let left: CheckCollection[] = DiffMock.GetCollection(true, objects.slice());
+    //  let right: CheckCollection[] = DiffMock.GetCollection(false, objects.slice());
+    //  diff.results = DiffCollection.CompareCollections(left, right);
     return diff;
   }
 
@@ -49,7 +49,7 @@ export class DiffMock {
     }
 
     let unchangedObject = objects[3][1];
-    let changedObjectA = _.cloneDeep(objects.slice()[3].slice()[0])
+    let changedObjectA = _.cloneDeep(objects.slice()[3].slice()[0]);
     let changedObjectB = _.cloneDeep(objects.slice()[3].slice()[0]);
 
     if (!left) {
@@ -60,9 +60,45 @@ export class DiffMock {
     // changed collection
     let c1 = new CheckCollection("Changed Collection", "namespace", date);    
     c1.score = left ? 40 : 60;
-    c1.objects = left ? [changedObjectA,unchangedObject,...objects[1]] 
-                      : [changedObjectB,unchangedObject,...objects[2]]
+    c1.objects = left ? [changedObjectA, unchangedObject,...objects[1]] 
+                      : [changedObjectB, unchangedObject,...objects[2]]
     result.push(c1);
+
+
+    let c2 = new CheckCollection("Changed 2 Collection (+)", "namespace", date);
+    c2.score = left ? 55: 65;
+  
+    let co1= new CheckObject();
+    co1.id = 'aaaaa';
+    co1.name ='aaaaa';
+    co1.score = 50;
+    co1.type = 'aaaaa';
+    co1.controlGroups = [];
+    
+    let cg1  = new CheckControlGroup();
+    cg1.name = 'aaaaa';
+    cg1.items = []
+
+    let cc1 = new CheckControl();
+    cc1.id = 'first';
+    cc1.text = 'first check';
+    cc1.result = 'success'
+    cc1.operation = DiffOperation.Same;
+    cg1.items.push(cc1);
+
+    if(!left) {
+      let cc2 = new CheckControl();
+      cc2.id = 'second';
+      cc2.text = 'second check';
+      cc2.result = 'success'
+      cc2.operation = DiffOperation.Same;
+      cg1.items.push(cc2);  
+    }
+
+    co1.controlGroups.push(cg1);
+    c2.objects.push(co1)
+    result.push(c2)
+
 
     if (!left) {
       // added collection

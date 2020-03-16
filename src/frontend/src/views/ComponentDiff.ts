@@ -8,7 +8,7 @@ import { InfrastructureComponentDiff } from '@/models';
 import { ScoreService } from '@/services/ScoreService';
 import ControlList from "@/components/controllist/ControlList.vue";
 import ControlGroup from "@/components/controlgroup/ControlGroup.vue";
-import { CheckObject, DiffCounters } from '@/services/DiffService';
+import { CheckObject, DiffCounters, DiffOperation } from '@/services/DiffService';
 
 @Component({
     components: { Spinner, StatusBar, Score, ControlList, ControlGroup }
@@ -22,6 +22,7 @@ export default class ComponentDiff extends Vue {
     @Prop({ default: null })
     date2!: string;
 
+    nochanges: boolean = false;
     loaded: boolean = false;
     service: DataService = new DataService();
     data: InfrastructureComponentDiff = new InfrastructureComponentDiff();
@@ -33,6 +34,8 @@ export default class ComponentDiff extends Vue {
             .then(response => {
                 if (response) {
                     this.data = response;
+                    this.nochanges = this.data.results.length === this.data.results.filter(x=>x.operation === DiffOperation.Same).length;
+
                     console.info(JSON.parse(JSON.stringify(this.data.results)));
                     this.setupCharts();
                     this.loaded = true;
@@ -63,18 +66,18 @@ export default class ComponentDiff extends Vue {
         }
 
         function toggleHeight(id, otherId, isOtherEmpty, checked) {
-            console.log(`[]`, id, otherId);
+            //console.log(`[]`, id, otherId);
             let thisHeight = document.getElementById(id)!.parentElement!.clientHeight;
-            console.log(`[] this height ${thisHeight}`)
+            //console.log(`[] this height ${thisHeight}`)
             if(isOtherEmpty) {
                 // only set the other
                 let otherElement = document.getElementById(otherId)!.parentElement;         
                 otherElement!.style.height =  thisHeight + 'px';    
             }else{
                 let otherHeight = document.getElementById(otherId)!.parentElement!.clientHeight;
-                console.log(`[] otherHeight ${otherHeight}`)
+                //console.log(`[] otherHeight ${otherHeight}`)
                 let max = Math.max(thisHeight, otherHeight);
-                console.log(`[] max height is ${max}`)
+                //console.log(`[] max height is ${max}`)
                 // set both heights to max or min
                 let htmlElement = document.getElementById(id)!.parentElement;         
                 htmlElement!.style.height =  checked ? max + 'px' : 'inherit';    
@@ -118,14 +121,17 @@ export default class ComponentDiff extends Vue {
     get scanDetail1url() { return '/component-detail/' + this.data.summary1.component.id + '/' + this.date }
     get scanDetail2url() { return '/component-detail/' + this.data.summary2.component.id + '/' + this.date2 }
 
-    getWrapperClass(operation:string): string { return `diff-wrapper diff-wrapper-${operation}`; }
+    getWrapperClass(obj:CheckObject): string {
+        if(obj.empty) return `diff-wrapper diff-wrapper-EMPTY`;
+         return `diff-wrapper diff-wrapper-${obj.operation}`;
+     }
     getRowClass(operation:string): string { return `diff-row diff-row-${operation}`; }
     getObjectClass(obj:CheckObject): string {         
         return `diff-${obj.operation}`; 
     }
 
     getObjectContainerClass(obj:CheckObject): string {
-        return obj.empty ? `diff-object diff-spacer` : `diff-object`; 
+        return obj.empty ? `diff-object diff-spacer` : `diff-object-${obj.operation}`; 
     }
     getRowTitle(operation:string, changes: DiffCounters): string {
         switch(operation) {

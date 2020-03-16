@@ -13,13 +13,13 @@
 
 .control-CHANGED {
     //background-color: red;
-    color: orange;
+    color: #cc5500;
 }
 
 
 .control-REMOVED {
     //background-color: red;
-    color: red;
+    color: #994444;
 }
 
 .control-ADDED {
@@ -28,5 +28,7 @@
 }
 
 .control-SAME {
+    visibility: hidden;
+    display: none;
     color: #666;
 }
