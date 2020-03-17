@@ -22,7 +22,7 @@ export default class Overview extends Vue {
     selectedDat
     loaded: boolean = false;
     service: DataService = new DataService();
-    data: InfrastructureOverview = new InfrastructureOverview();
+    data!: InfrastructureOverview;
     panelOpen: boolean = false;
     checkedScans: any[] = [];
 
@@ -32,7 +32,7 @@ export default class Overview extends Vue {
         this.service
             .getGeneralOverviewData(dateString)
             .then(response => {
-                if (response && this.data.components && this.data.overall) {
+                if (response) {
                     this.data = response;
                     this.loaded = true;
                     this.setupCharts();

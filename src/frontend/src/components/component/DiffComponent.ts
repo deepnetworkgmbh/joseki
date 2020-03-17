@@ -4,7 +4,7 @@ import router from '@/router';
 import { ChartService } from '@/services/ChartService';
 
 @Component
-export default class InfComponent extends Vue {
+export default class DiffComponent extends Vue {
 
   @Prop()
   private component: any;
@@ -24,9 +24,6 @@ export default class InfComponent extends Vue {
   @Prop()
   private date: any;
 
-  @Prop({ default: false })
-  private showSecondPie!: boolean
-
   @Prop()
   private sections2: any;
 
@@ -35,11 +32,6 @@ export default class InfComponent extends Vue {
 
   @Prop()
   private total2: any;
-
-
-  getComponentClass() {
-    return this.showSecondPie ? 'shadow inf-component-diff' : 'shadow inf-component';
-  }
 
   goComponentHistory(component: InfrastructureComponent) {
     if (component) {

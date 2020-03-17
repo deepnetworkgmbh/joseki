@@ -14,19 +14,13 @@
       <div class="inf-component-histogram" :id="`bar${index}`"></div>
     </div>
     <div class="inf-component-right">
-      <div v-show="showButtons" class='inf-component-buttons'>
+      <div class='inf-component-buttons'>
         <button @click="goComponentHistory(component)">History</button>
         <button @click="goComponentDetail(component)">Detail</button>
       </div>
       <div class="inf-component-score">{{score}}%</div>
       <div class="inf-component-pie">
-        <vc-donut
-          :sections="sections"
-          :size="60"
-          unit="px"
-          :total="total"
-          :thickness="25"
-        ></vc-donut>
+        <vc-donut :sections="sections" :size="60" unit="px" :total="total" :thickness="25"></vc-donut>
       </div>
     </div>
   </div>

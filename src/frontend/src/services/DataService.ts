@@ -1,5 +1,5 @@
 import axios from "axios";
-import { VulnerabilityGroup, TargetGroup, ImageScanDetailModel, InfrastructureOverview, InfrastructureComponentSummary, InfrastructureComponentDiff } from "@/models";
+import { VulnerabilityGroup, TargetGroup, ImageScanDetailModel, InfrastructureOverview, InfrastructureComponentSummary, InfrastructureComponentDiff, InfrastructureOverviewDiff, MetaData } from "@/models";
 import { ScoreService } from './ScoreService';
 
 export class DataService {
@@ -14,6 +14,10 @@ export class DataService {
     return ''
   }
 
+  private get apiVersion():string {
+    return '0.1'
+  }
+
   public fixedEncodeURIComponent(str: string) {
     return encodeURIComponent(str).replace(/[!*]/g, function (c) {
       return "%" + c.charCodeAt(0).toString(16);
@@ -21,48 +25,22 @@ export class DataService {
   }
 
   public async getGeneralOverviewData(dateString: string = ''): Promise<void | InfrastructureOverview> {
-    let suffix = (dateString === '') ? '' : '?date=' + encodeURIComponent(dateString);
+    let suffix = (dateString === '') ? '?api-version=' + this.apiVersion 
+                                     : '?date=' + encodeURIComponent(dateString)  + '&api-version=' + this.apiVersion;
     let url = this.baseUrl + "/api/audits/overview" + suffix;
     console.log(`[] calling ${url}`);
 
     return axios
       .get(url)
       .then((response) => response.data)
-      .then((data) => processData(data))
+      .then((data) => InfrastructureOverview.GenerateFromData(data))
       .catch((error) => console.log(error));
-
-    function processData(data): InfrastructureOverview {
-      let result = new InfrastructureOverview();
-      result.overall = data.overall;
-
-      // reverse and slice overall history
-      result.overall.scoreHistory = result.overall.scoreHistory.reverse().slice(0, 14);
-      result.components = data.components;
-
-      // generate sections for components
-      for (let i = 0; i < result.components.length; i++) {
-
-        if (result.components[i].component.category === 'Subscription') {
-          result.components[i].component.category = 'Azure Subscription';
-        }
-        result.components[i].sections = InfrastructureComponentSummary.getSections(result.components[i].current);
-        result.components[i].scoreHistory = result.components[i].scoreHistory.reverse().slice(0, 14);
-
-        // truncate scan times from component history
-        for (let j = 0; j < result.components[i].scoreHistory.length; j++) {
-          let inputDate = result.components[i].scoreHistory[j].recordedAt.toString();
-          let dateReplacement = new Date(inputDate.split('T')[0] + 'T00:00:00');
-          result.components[i].scoreHistory[j].recordedAt = dateReplacement;
-        }
-      }
-      console.log("[] result", result);
-      return result;
-    }
   }
 
   public async getComponentDetailData(id: string, date: string = ''): Promise<void | InfrastructureComponentSummary> {
     let suffix = '?id=' + encodeURIComponent(id);
     if (date !== '' && date.indexOf('1970') === -1) { suffix += '&date=' + encodeURIComponent(date); }
+    suffix += '&api-version=' + this.apiVersion;
     let url = this.baseUrl + "/api/audits/component/detail" + suffix;
     console.log(`[] calling ${url}`);
     return axios
@@ -93,7 +71,7 @@ export class DataService {
   }
 
   public async getImageScanResultData(imageTag: string, date: string): Promise<void | ImageScanDetailModel> {
-    const suffix = this.fixedEncodeURIComponent(imageTag) + '/details/?date=' + encodeURIComponent(date);
+    const suffix = this.fixedEncodeURIComponent(imageTag) + '/details/?date=' + encodeURIComponent(date) + '&api-version=' + this.apiVersion;
     const url = this.baseUrl + "/api/audits/container-image/" + suffix;
     console.log(`[] calling ${url}`);
 
@@ -152,19 +130,29 @@ export class DataService {
     }
   }
 
-  public async getGeneralOverviewDiffData(date1: string, date2: string) {
-    let suffix = '?date1=' + encodeURIComponent(date1) + '&date2=' + encodeURIComponent(date2);
+  public async getGeneralOverviewDiffData(date1: string, date2: string): Promise<void | InfrastructureOverviewDiff> {
+    let suffix = '?date1=' + encodeURIComponent(date1) + '&date2=' + encodeURIComponent(date2)  + '&api-version=' + this.apiVersion;
     let url = this.baseUrl + "/api/audits/overview/diff" + suffix;
     console.log(`[] calling ${url}`);
 
     return axios
       .get(url)
       .then((response) => response.data)
+      .then((data) => processData(data))
       .catch((error) => console.log(error));
+
+    function processData(data:any) : InfrastructureOverviewDiff {
+      console.log(`[]data`, data);
+      let result = new InfrastructureOverviewDiff();
+      result.summary1 = InfrastructureOverview.GenerateFromDiff(data.overall1, data.components1);
+      result.summary2 = InfrastructureOverview.GenerateFromDiff(data.overall2, data.components2);
+      return result;
+    }
+
   }
 
   public async getComponentHistoryData(id: string): Promise<void | InfrastructureComponentSummary[]> {
-    let suffix = '?id=' + encodeURIComponent(id);
+    let suffix = '?id=' + encodeURIComponent(id)  + '&api-version=' + this.apiVersion;
     let url = this.baseUrl + "/api/audits/component/history" + suffix;
     console.log(`[] calling ${url}`);
     return axios
@@ -182,7 +170,7 @@ export class DataService {
   }
 
   public async getComponentDiffData(id: string, date1: string, date2: string): Promise<void | InfrastructureComponentDiff> {
-    let suffix = '?id=' + id + '&date1=' + encodeURIComponent(date1) + '&date2=' + encodeURIComponent(date2);
+    let suffix = '?id=' + id + '&date1=' + encodeURIComponent(date1) + '&date2=' + encodeURIComponent(date2) + '&api-version=' + this.apiVersion;
     let url = this.baseUrl + "/api/audits/component/diff" + suffix;
     console.log(`[] calling ${url}`)
 
@@ -197,5 +185,14 @@ export class DataService {
     }
   }
 
+  public async getWebsiteMeta(): Promise< void | MetaData[]> {
+    let url = this.baseUrl + "/api/knowledgebase/website-metadata?api-version=" + this.apiVersion;
+    console.log(`[] calling ${url}`);
+    return axios
+      .get(url)
+      .then((response) => response.data)
+      .then((data) => data)
+      .catch((error) => console.log(error));
+  }
 
 }

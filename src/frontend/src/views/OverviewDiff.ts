@@ -5,10 +5,11 @@ import StatusBar from "@/components/statusbar/StatusBar.vue";
 import { DataService } from '@/services/DataService';
 import { InfrastructureComponentSummary, InfrastructureOverviewDiff, InfrastructureComponent } from '@/models';
 import { ScoreService } from '@/services/ScoreService';
+import DiffComponent from '@/components/component/DiffComponent.vue';
 import router from '@/router';
 
 @Component({
-    components: { Spinner, StatusBar }
+    components: { Spinner, StatusBar, DiffComponent }
 })
 export default class OverviewDiff extends Vue {
 
@@ -19,8 +20,7 @@ export default class OverviewDiff extends Vue {
 
     loaded: boolean = false;
     service: DataService = new DataService();
-    data: InfrastructureOverviewDiff = new InfrastructureOverviewDiff();
-
+    data!: InfrastructureOverviewDiff;
     checkedScans: any[] = [];
 
     created() {
@@ -32,10 +32,12 @@ export default class OverviewDiff extends Vue {
     loadData() {
         this.service.getGeneralOverviewDiffData(this.date, this.date2)
             .then(response => {
-                this.data = response;
-                console.log(`[] data is`, this.data);
-                this.loaded = true;
-                this.setupCharts();
+                if(response) {
+                    this.data = response;
+                    console.log(`[] data is`, this.data);
+                    this.loaded = true;
+                    this.setupCharts();    
+                }
             }).catch(error => {
                 console.log(error);
             });
@@ -46,13 +48,6 @@ export default class OverviewDiff extends Vue {
     }
 
     setupCharts() {
-        // TODO: ugly fix, getter does not work
-        for (let i = 0; i < this.data.components1.length; i++) {
-            this.data.components1[i].sections = InfrastructureComponentSummary.getSections(this.data.components1[i].current);
-        }
-        for (let i = 0; i < this.data.components2.length; i++) {
-            this.data.components2[i].sections = InfrastructureComponentSummary.getSections(this.data.components2[i].current);
-        }
         google.charts.load('current', { 'packages': ['corechart'] });
         google.charts.setOnLoadCallback(this.drawCharts);
     }
@@ -63,17 +58,17 @@ export default class OverviewDiff extends Vue {
     }
 
     drawCharts() {
-        ChartService.drawPieChart(this.data.overall1.current, "overall_pie1", 200)
-        ChartService.drawPieChart(this.data.overall2.current, "overall_pie2", 200)
-        for (let i = 0; i < this.data.components1.length; i++) {
-            ChartService.drawBarChart(this.data.components1[i].scoreHistory, 'bar' + i, new Date(this.date), undefined, 48, this.date2);
+        ChartService.drawPieChart(this.data.summary1.overall.current, "overall_pie1", 200)
+        ChartService.drawPieChart(this.data.summary2.overall.current, "overall_pie2", 200)
+        for (let i = 0; i < this.data.summary1.components.length; i++) {
+            ChartService.drawBarChart(this.data.summary1.components[i].scoreHistory, 'bar' + i, new Date(this.date), undefined, 48, this.date2);
         }
     }
 
-    getClusters1() { return this.data.components1.filter(x => x.component.category === 'Kubernetes').length; }
-    getSubscriptions1() { return this.data.components1.filter(x => x.component.category === 'Subscription').length; }
-    getClusters2() { return this.data.components2.filter(x => x.component.category === 'Kubernetes').length; }
-    getSubscriptions2() { return this.data.components2.filter(x => x.component.category === 'Subscription').length; }
+    getClusters1() { return this.data.summary1.components.filter(x => x.component.category === 'Kubernetes').length; }
+    getSubscriptions1() { return this.data.summary1.components.filter(x => x.component.category === 'Subscription').length; }
+    getClusters2() { return this.data.summary2.components.filter(x => x.component.category === 'Kubernetes').length; }
+    getSubscriptions2() { return this.data.summary2.components.filter(x => x.component.category === 'Subscription').length; }
     getScoreIconClass(score: number) { return ScoreService.getScoreIconClass(score); }
     getGrade(score: number) { return ScoreService.getGrade(score); }
 }

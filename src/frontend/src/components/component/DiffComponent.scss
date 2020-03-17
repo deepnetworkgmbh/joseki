@@ -1,5 +1,6 @@
-.inf-component {
-	width: 275px;
+
+.inf-component-diff {
+	width: 315px;
 	height: 100px;
 	background-color: #eee;
 	border: solid 1px #aaa;
@@ -18,7 +19,7 @@
 	}
 
 	&-right {
-		width: 85px;
+		width: 145px;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -88,7 +89,7 @@
 		position: relative;
 		font-size: 18px;
 		z-index: 1;
-		left: 7px;
+		left: 15px;
 		top: 18px;
 	}
 
@@ -96,7 +97,21 @@
 		position: relative;
 		top: -25px;
 		z-index: 0;
-		left: 5px;
-	}
-}
+        left: 5px;
+        width:70px;
+        margin-left: -10px;
+    }
+    
+    &-pies {
+        display: flex;
+        flex-direction: row;
+    }
 
+    &-arrow {
+        margin-left:2px;
+        width:15px;
+        text-align: center;
+        padding-top:20px;   
+        color:#444;     
+    }
+}
