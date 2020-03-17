@@ -36,6 +36,11 @@
             Which infrastructure component was audited: k8s-cluster id or azure-subscription-id.
             </summary>
         </member>
+        <member name="P:joseki.db.entities.AuditEntity.InfrastructureComponentId">
+            <summary>
+            Related infrastructure component identifier.
+            </summary>
+        </member>
         <member name="P:joseki.db.entities.AuditEntity.InfrastructureComponent">
             <summary>
             Reference to related infrastructure component.

@@ -898,12 +898,6 @@
             </summary>
             <param name="services">DI container.</param>
         </member>
-        <member name="M:webapp.Controllers.v0._1.KnowledgebaseController.GetKnowledgebaseItemById(System.String)">
-            <summary>
-            Returns the knowledgebase item content.
-            </summary>
-            <returns>The knowledgebase item content.</returns>
-        </member>
         <member name="M:webapp.Controllers.v0._1.KnowledgebaseController.GetKnowledgebaseItemById(System.String[])">
             <summary>
             Returns the knowledgebase items content for a subset of Ids.
@@ -1005,12 +999,6 @@
             </summary>
             <param name="services">DI container.</param>
         </member>
-        <member name="M:webapp.Controllers.v0._2.KnowledgebaseController.GetKnowledgebaseItemById(System.String)">
-            <summary>
-            Returns the knowledgebase item content.
-            </summary>
-            <returns>The knowledgebase item content.</returns>
-        </member>
         <member name="M:webapp.Controllers.v0._2.KnowledgebaseController.GetKnowledgebaseItemById(System.String[])">
             <summary>
             Returns the knowledgebase items content for a subset of Ids.
@@ -1110,12 +1098,12 @@
             <param name="check">Internal Check model.</param>
             <returns>Database compatible entity.</returns>
         </member>
-        <member name="M:webapp.Database.DatabaseMapper.ToEntity(webapp.Database.Models.Audit,joseki.db.entities.InfrastructureComponentEntity)">
+        <member name="M:webapp.Database.DatabaseMapper.ToEntity(webapp.Database.Models.Audit,System.Int32)">
             <summary>
             Creates Audit entity from internal model.
             </summary>
             <param name="audit">Internal Audit model.</param>
-            <param name="componentEntity">Related infrastructure component entity.</param>
+            <param name="componentId">Related infrastructure component identifier.</param>
             <returns>Database compatible entity.</returns>
         </member>
         <member name="M:webapp.Database.DatabaseMapper.ToEntity(webapp.Database.Models.CheckResult)">

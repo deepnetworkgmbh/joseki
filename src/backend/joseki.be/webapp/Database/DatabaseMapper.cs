@@ -39,16 +39,16 @@ namespace webapp.Database
         /// Creates Audit entity from internal model.
         /// </summary>
         /// <param name="audit">Internal Audit model.</param>
-        /// <param name="componentEntity">Related infrastructure component entity.</param>
+        /// <param name="componentId">Related infrastructure component identifier.</param>
         /// <returns>Database compatible entity.</returns>
-        public static AuditEntity ToEntity(this Audit audit, InfrastructureComponentEntity componentEntity)
+        public static AuditEntity ToEntity(this Audit audit, int componentId)
         {
             var entity = new AuditEntity
             {
                 AuditId = audit.Id,
                 Date = audit.Date,
                 ComponentId = audit.ComponentId,
-                InfrastructureComponent = componentEntity,
+                InfrastructureComponentId = componentId,
             };
 
             if (audit.MetadataKube != null)

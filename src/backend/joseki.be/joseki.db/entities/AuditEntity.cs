@@ -36,6 +36,11 @@ namespace joseki.db.entities
         public string ComponentId { get; set; }
 
         /// <summary>
+        /// Related infrastructure component identifier.
+        /// </summary>
+        public int InfrastructureComponentId { get; set; }
+
+        /// <summary>
         /// Reference to related infrastructure component.
         /// </summary>
         public InfrastructureComponentEntity InfrastructureComponent { get; set; }
