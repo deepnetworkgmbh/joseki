@@ -27,9 +27,13 @@ Vue.filter('formatDate', function (value) {
 });
 
 import linkify from 'vue-linkify'
+import { MetaService } from './services/MetaService';
 Vue.directive('linkified', linkify)
 
-new Vue({
-  router,
-  render: h => h(App)
-}).$mount("#app");
+MetaService
+  .Init()
+  .then(()=>{
+    new Vue({ router, render: h => h(App) }).$mount("#app");
+  });
+
+

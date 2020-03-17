@@ -1,9 +1,10 @@
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import Spinner from "@/components/spinner/Spinner.vue";
 import { DataService } from '@/services/DataService';
-import { InfrastructureComponentSummary, InfrastructureComponent } from '@/models';
+import { InfrastructureComponentSummary, InfrastructureComponent, MetaData } from '@/models';
 import { ScoreService } from '@/services/ScoreService';
 import router from '@/router';
+import { MetaService } from '@/services/MetaService';
 
 @Component({
     components: { Spinner }
@@ -18,6 +19,7 @@ export default class ComponentHistory extends Vue {
     service: DataService = new DataService();
     data: InfrastructureComponentSummary[] = [];
     checkedScans: any[] = [];
+    
 
     mounted() {
         this.loadData();
@@ -100,5 +102,5 @@ export default class ComponentHistory extends Vue {
     }
     getScoreIconClass(score: number) { return ScoreService.getScoreIconClass(score); }
     getGrade(score: number) { return ScoreService.getGrade(score); }
-
+    meta(key: string) { return MetaService.Get(key) }
 }

@@ -95,7 +95,7 @@ export class ChartService {
 			legend: { position: 'none' },
 			orientation: 'horizontal',
 			chartArea: {
-				width: '79%',
+				width: '91%',
 				height: '90%'
 			},
 		};

@@ -14,6 +14,7 @@ import { ScoreHistoryItem } from './ScoreHistory';
 import { TargetGroup } from './TargetGroup';
 import { Vulnerability } from './Vulnerability';
 import { VulnerabilityGroup } from './VulnerabilityGroup';
+import { MetaData } from './MetaData';
 
 export {
   Check, CheckControl, CheckSeverity,
@@ -23,5 +24,6 @@ export {
   ImageScanDetailModel,
   InfrastructureOverview, InfrastructureOverviewDiff,
   Resource, ScoreHistoryItem,
-  TargetGroup, Vulnerability, VulnerabilityGroup
+  TargetGroup, Vulnerability, VulnerabilityGroup,
+  MetaData
 }

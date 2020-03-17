@@ -2,9 +2,7 @@
   <div>
     <Spinner v-if="!loaded" />
     <div v-if="loaded" class="segment shadow" style="min-height:300px">
-      <div
-        class="w-1/4 border-r border-gray-300 flex flex-col justify-center content-center"
-        style="overflow:hidden;">
+      <div class="w-1/4 border-r border-gray-300 flex flex-col justify-center content-center" style="overflow:hidden;">
         <div class="status-icon ml-1 mt-3">
           <i :class="getScoreIconClass(data.summary1.current.score)"></i>
         </div>
@@ -63,9 +61,6 @@
         </div>
       </div>
     </div>
-    <!-- <a class='btn' :href="scanDetail1url">
-                 <span class="px-2"><i class="fas fa-external-link-alt pr-2"></i>Scan Detail</span>
-    </a>-->
     <div v-if="loaded" class="segment shadow" style="flex-direction:row">
       <div v-if="!nochanges" class="w-full" style="min-height:80px;">
         <ul v-for="(row, i) in data.results" :key="`collection1${i}`">
