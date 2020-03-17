@@ -1,0 +1,75 @@
+name: scanner_azsk_ci_master
+
+on: 
+  push:
+    branches:
+    - master
+    paths:
+      - 'src/scanners/az-sk/**'
+      - '!src/scanners/az-sk/*.md'
+
+jobs:
+  build-n-push:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set env vars
+      run: |
+        echo "::set-env name=SERVICE_ROOT::src/scanners/az-sk/"
+        echo "::set-env name=DOCKERFILE_PATH::src/scanners/az-sk/dockerfile"
+
+        version=$(cat src/scanners/az-sk/version)
+        SHA8=$(echo $GITHUB_SHA | cut -c1-8)
+        webapp_tag="deepnetwork/joseki-scanner-azsk:$version"
+        webapp_tag_dev="$webapp_tag-$SHA8"
+        echo "::set-env name=WEBAPP_TAG::$webapp_tag"
+        echo "::set-env name=WEBAPP_TAG_DEV::$webapp_tag_dev"
+        echo "::set-env name=WEBAPP_TAG_LATEST::deepnetwork/joseki-scanner-azsk:latest"
+
+        tests_tag="$webapp_tag_dev-tests"
+        tests_dir="$HOME/azsk_testresults"
+        echo "::set-env name=TESTS_TAG::$tests_tag"
+        echo "::set-env name=TESTS_DIR::$tests_dir"
+
+    - name: lint dockerfile
+      uses: brpaz/hadolint-action@2d3af3e
+      with:
+        dockerfile: ${{ env.DOCKERFILE_PATH }}
+
+    - name: run unit-tests
+      run: |
+        docker build -t ${{ env.TESTS_TAG }} -f ${{ env.DOCKERFILE_PATH }} --target testrunner ${{ env.SERVICE_ROOT }}
+        sudo mkdir -p ${{ env.TESTS_DIR }}
+        docker run --rm --mount type=bind,source=${{ env.TESTS_DIR }},target=/app/testresults ${{ env.TESTS_TAG }}
+
+    - name: publish test results
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: test_results
+        path: '${{ env.TESTS_DIR }}/test_results.xml'
+
+    - name: build dockerimage
+      run: |
+        docker build -t ${{ env.WEBAPP_TAG_DEV }} -f ${{ env.DOCKERFILE_PATH }} --target webapp ${{ env.SERVICE_ROOT }}
+        docker tag ${{ env.WEBAPP_TAG_DEV }} ${{ env.WEBAPP_TAG }}
+        docker tag ${{ env.WEBAPP_TAG_DEV }} ${{ env.WEBAPP_TAG_LATEST }}
+
+    - name: scan image for CVEs
+      uses: 'docker://aquasec/trivy:0.5.2'
+      with:
+        args: --exit-code 1 --severity HIGH,CRITICAL ${{ env.WEBAPP_TAG_DEV }}
+
+    - name: Docker Login
+      uses: Azure/docker-login@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: push dockerimage
+      run: |
+        docker push ${{ env.WEBAPP_TAG }}
+        docker push ${{ env.WEBAPP_TAG_DEV }}
+        docker push ${{ env.WEBAPP_TAG_LATEST }}
