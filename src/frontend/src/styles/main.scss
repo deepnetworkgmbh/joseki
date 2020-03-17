@@ -21,23 +21,50 @@ body {
 @import 'balloon-css';
 
 .segment {
-	@apply flex flex-row justify-around border rounded-lg p-2 mb-3;
+	@apply flex;
+	@apply flex-row;
+	@apply justify-around;
+	@apply border;
+	@apply rounded-lg;
+	@apply p-2;
+	@apply mb-3;
 }
 
 .segment-noborder {
-	@apply flex flex-row justify-around p-2 mb-3;
+	@apply flex;
+	@apply flex-row;
+	@apply justify-around;
+	@apply p-2;
+	@apply mb-3;
 }
 
 .big-text {
-	@apply text-xl antialiased;
+	@apply text-xl;
+	@apply antialiased;
 }
 
 .btn {
-	@apply text-center bg-gray-300 text-black p-1 border border-gray-600 rounded text-xs ml-1;
+	@apply text-center;
+	@apply bg-gray-300;
+	@apply text-black;
+	@apply p-1;
+	@apply border;
+	@apply border-gray-600;
+	@apply rounded;
+	@apply text-xs;
+	@apply ml-1;
 	min-width: 100px;
 
 	&-selected {
-		@apply text-center bg-green-300 text-white p-1 border border-gray-600 rounded text-xs ml-1;
+		@apply text-center;
+		@apply bg-green-300;
+		@apply text-white;
+		@apply p-1;
+		@apply border;
+		@apply border-gray-600;
+		@apply rounded;
+		@apply text-xs;
+		@apply ml-1;
 	}
 }
 

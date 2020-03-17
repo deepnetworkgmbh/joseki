@@ -17,22 +17,27 @@
                     <td>Scan Date</td>
                     <td class='text-right'>
                       No Data 
-                      <span class='text-center' data-balloon-length="xlarge" data-balloon-pos="up" aria-label="`No Data` counter indicates the number of unsuccessful scans that could not occur for a reason, like permissions."><i class="far fa-question-circle tip-icon"></i></span>
+                      <span class='text-center' data-balloon-length="xlarge" data-balloon-pos="up" 
+                          :aria-label="meta('metadata.checks_nodata_description')"><i class="far fa-question-circle tip-icon"></i></span>
                     </td>
                     <td class='text-right'>
                       Warning
-                       <span class='text-center' data-balloon-length="xlarge" data-balloon-pos="up" aria-label="`Warning` counter indicates the number of issues that may cause problems that requires your attention."><i class="far fa-question-circle tip-icon"></i></span>
+                       <span class='text-center' data-balloon-length="xlarge" data-balloon-pos="up"
+                       :aria-label="meta('metadata.checks_warning_description')"><i class="far fa-question-circle tip-icon"></i></span>
                     </td>
                     <td class='text-right'>                      
                       Failed
-                      <span class='text-center' data-balloon-length="xlarge" data-balloon-pos="up" aria-label="`Failed` counter indicates the number of issues that fail a required security measure."><i class="far fa-question-circle tip-icon"></i></span>
+                      <span class='text-center' data-balloon-length="xlarge" data-balloon-pos="up" 
+                      :aria-label="meta('metadata.checks_failed_description')"><i class="far fa-question-circle tip-icon"></i></span>
                       </td>
                     <td class='text-right'>
                       Passed
-                      <span class='text-center' data-balloon-length="xlarge" data-balloon-pos="up" aria-label="`Passed` counter indicates the number of audit controls passed against a component."><i class="far fa-question-circle tip-icon"></i></span>
+                      <span class='text-center' data-balloon-length="xlarge" data-balloon-pos="up" 
+                      :aria-label="meta('metadata.checks_passed_description')"><i class="far fa-question-circle tip-icon"></i></span>
                       </td>
                     <td class='text-right'>Score
-                      <span class='text-center' data-balloon-length="xlarge" data-balloon-pos="up-right" aria-label="`Score` is a health metric display of the scan with percentages."><i class="far fa-question-circle tip-icon"></i></span>
+                      <span class='text-center' data-balloon-length="xlarge" data-balloon-pos="up-right" 
+                      :aria-label="meta('metadata.checks_score_description')"><i class="far fa-question-circle tip-icon"></i></span>
                     </td>
                 </tr>
             </thead>
