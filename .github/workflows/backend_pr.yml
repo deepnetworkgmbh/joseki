@@ -18,6 +18,8 @@ jobs:
 
     - name: Set env vars
       run: |
+        echo "::set-env name=DOCKERFILE_PATH::src/backend/dockerfile"
+
         SHA8=$(echo $GITHUB_SHA | cut -c1-8)
         tests_tag="deepnetwork/joseki-backend:$SHA8-tests"
         tests_dir="$HOME/be_testresults"
@@ -27,11 +29,11 @@ jobs:
     - name: lint dockerfile
       uses: brpaz/hadolint-action@2d3af3e
       with:
-        dockerfile: /src/backend/dockerfile
+        dockerfile: ${{ env.DOCKERFILE_PATH }}
 
     - name: run unit-tests
       run: |
-        docker build -t ${{ env.TESTS_TAG }} -f /src/backend/dockerfile --target testrunner .
+        docker build -t ${{ env.TESTS_TAG }} -f ${{ env.DOCKERFILE_PATH }} --target testrunner .
         sudo mkdir -p ${{ env.TESTS_DIR }}
         docker run --rm --mount type=bind,source=${{ env.TESTS_DIR }},target=/app/testresults ${{ env.TESTS_TAG }}
 

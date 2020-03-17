@@ -18,6 +18,8 @@ jobs:
 
     - name: Set env vars
       run: |
+        echo "::set-env name=DOCKERFILE_PATH::src/backend/dockerfile"
+
         version=$(cat src/backend/version)
         SHA8=$(echo $GITHUB_SHA | cut -c1-8)
         webapp_tag="deepnetwork/joseki-backend:$version"
@@ -34,11 +36,11 @@ jobs:
     - name: lint dockerfile
       uses: brpaz/hadolint-action@2d3af3e
       with:
-        dockerfile: src/backend/dockerfile
+        dockerfile: ${{ env.DOCKERFILE_PATH }}
 
     - name: run unit-tests
       run: |
-        docker build -t ${{ env.TESTS_TAG }} -f src/backend/dockerfile --target testrunner .
+        docker build -t ${{ env.TESTS_TAG }} -f ${{ env.DOCKERFILE_PATH }} --target testrunner .
         sudo mkdir -p ${{ env.TESTS_DIR }}
         docker run --rm --mount type=bind,source=${{ env.TESTS_DIR }},target=/app/testresults ${{ env.TESTS_TAG }}
 
@@ -50,7 +52,7 @@ jobs:
 
     - name: build dockerimage
       run: |
-        docker build -t ${{ env.WEBAPP_TAG_DEV }} -f src/backend/dockerfile --target webapp .
+        docker build -t ${{ env.WEBAPP_TAG_DEV }} -f ${{ env.DOCKERFILE_PATH }} --target webapp .
         docker tag ${{ env.WEBAPP_TAG_DEV }} ${{ env.WEBAPP_TAG }}
         docker tag ${{ env.WEBAPP_TAG_DEV }} ${{ env.WEBAPP_TAG_LATEST }}
 
