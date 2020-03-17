@@ -1,0 +1,42 @@
+name: be_validate_pull_request
+
+on: 
+  pull_request:
+    branches:
+    - master
+    paths:
+      - 'src/backend/*'
+      - '!src/backend/*.md'
+
+jobs:
+  validate-pr:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set env vars
+      run: |
+        SHA8=$(echo $GITHUB_SHA | cut -c1-8)
+        tests_tag="deepnetwork/joseki-backend:$SHA8-tests"
+        tests_dir="$HOME/be_testresults"
+        echo "::set-env name=TESTS_TAG::$tests_tag"
+        echo "::set-env name=TESTS_DIR::$tests_dir"
+
+    - name: lint dockerfile
+      uses: brpaz/hadolint-action@2d3af3e
+      with:
+        dockerfile: /src/backend/dockerfile
+
+    - name: run unit-tests
+      run: |
+        docker build -t ${{ env.TESTS_TAG }} -f /src/backend/dockerfile --target testrunner .
+        sudo mkdir -p ${{ env.TESTS_DIR }}
+        docker run --rm --mount type=bind,source=${{ env.TESTS_DIR }},target=/app/testresults ${{ env.TESTS_TAG }}
+
+    - name: publish test results
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: test_results
+        path: '${{ env.TESTS_DIR }}/test_results.xml'
