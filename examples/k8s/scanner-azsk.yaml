@@ -7,15 +7,15 @@ metadata:
   labels:
     app: scanner-azsk
     module: scanners
-    version: 0.2.0
+    version: 0.2.1
 data:
   scanner-azsk-config.yaml:  |
     scanner:
       !azsk-scanner
       id: 0dfa8355-b20d-4701-af37-6cc021df3244
-      version: 0.2.0
+      version: 0.2.1
       periodicity: 0 2 * * *
-      azSkVersion: 4.5.1
+      azSkVersion: 4.7.0
       auditScriptPath: /app/azsk.ps1
       tenantId: TENANT_ID
       servicePrincipalId: SP_ID
@@ -72,7 +72,7 @@ metadata:
   labels:
     app: scanner-azsk
     module: scanners
-    version: 0.2.0
+    version: 0.2.1
 spec:
   schedule: "0 2 * * *"
   jobTemplate:
@@ -81,7 +81,7 @@ spec:
         spec:
           containers:
           - name: scanner-azsk
-            image: deepnetwork/joseki-scanner-azsk:0.2.0
+            image: deepnetwork/joseki-scanner-azsk:0.2.1
             imagePullPolicy: Always
             args:
             - --config
