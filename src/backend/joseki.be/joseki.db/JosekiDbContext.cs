@@ -103,6 +103,7 @@ namespace joseki.db
             modelBuilder.Entity<AuditEntity>()
                 .HasOne(audit => audit.InfrastructureComponent)
                 .WithMany()
+                .HasForeignKey(audit => audit.InfrastructureComponentId)
                 .IsRequired();
             modelBuilder.Entity<AuditEntity>()
                 .HasIndex(audit => new { audit.Date, audit.ComponentId })

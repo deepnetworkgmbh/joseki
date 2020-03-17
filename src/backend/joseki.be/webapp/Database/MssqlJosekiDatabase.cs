@@ -52,15 +52,15 @@ namespace webapp.Database
                     audit.ComponentId,
                     audit.ScannerId);
 
-                componentEntity = new InfrastructureComponentEntity
+                componentEntity = this.db.InfrastructureComponent.Add(new InfrastructureComponentEntity
                 {
                     ComponentId = audit.ComponentId,
                     ComponentName = audit.ComponentName,
                     ScannerId = audit.ScannerId,
-                };
+                }).Entity;
             }
 
-            this.db.Set<AuditEntity>().Add(audit.ToEntity(componentEntity));
+            this.db.Set<AuditEntity>().Add(audit.ToEntity(componentEntity.Id));
             await this.db.SaveChangesAsync();
         }
 

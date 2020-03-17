@@ -1,7 +1,12 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1.102-alpine3.11 AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1.200-alpine3.11 AS build
 WORKDIR /app/src
 COPY ./joseki.be .
 RUN dotnet build joseki.be.sln -c Release
+
+
+FROM build AS testrunner
+WORKDIR /app/src/tests
+ENTRYPOINT ["dotnet","test","--logger:trx;LogFileName=test_results.xml","--no-build","-c","Release","-r","/app/testresults"]
 
 
 FROM build AS publish
