@@ -1,0 +1,45 @@
+name: scanner_trivy_validate_pull_request
+
+on: 
+  pull_request:
+    branches:
+    - master
+    paths:
+      - 'src/scanners/trivy/*'
+      - '!src/scanners/trivy/*.md'
+
+jobs:
+  validate-pr:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set env vars
+      run: |
+        echo "::set-env name=SERVICE_ROOT::src/scanners/trivy/"
+        echo "::set-env name=DOCKERFILE_PATH::src/scanners/trivy/dockerfile"
+
+        SHA8=$(echo $GITHUB_SHA | cut -c1-8)
+        tests_tag="deepnetwork/joseki-scanner-trivy:$SHA8-tests"
+        tests_dir="$HOME/trivy_testresults"
+        echo "::set-env name=TESTS_TAG::$tests_tag"
+        echo "::set-env name=TESTS_DIR::$tests_dir"
+
+    - name: lint dockerfile
+      uses: brpaz/hadolint-action@2d3af3e
+      with:
+        dockerfile: ${{ env.DOCKERFILE_PATH }}
+
+    - name: run unit-tests
+      run: |
+        docker build -t ${{ env.TESTS_TAG }} -f ${{ env.DOCKERFILE_PATH }} --target testrunner ${{ env.SERVICE_ROOT }}
+        sudo mkdir -p ${{ env.TESTS_DIR }}
+        docker run --rm --mount type=bind,source=${{ env.TESTS_DIR }},target=/app/testresults ${{ env.TESTS_TAG }}
+
+    - name: publish test results
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: test_results
+        path: '${{ env.TESTS_DIR }}/test_results.xml'
