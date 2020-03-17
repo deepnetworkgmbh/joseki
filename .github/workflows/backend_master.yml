@@ -18,6 +18,7 @@ jobs:
 
     - name: Set env vars
       run: |
+        echo "::set-env name=SERVICE_ROOT::src/backend/"
         echo "::set-env name=DOCKERFILE_PATH::src/backend/dockerfile"
 
         version=$(cat src/backend/version)
@@ -40,7 +41,7 @@ jobs:
 
     - name: run unit-tests
       run: |
-        docker build -t ${{ env.TESTS_TAG }} -f ${{ env.DOCKERFILE_PATH }} --target testrunner .
+        docker build -t ${{ env.TESTS_TAG }} -f ${{ env.DOCKERFILE_PATH }} --target testrunner ${{ env.SERVICE_ROOT }}
         sudo mkdir -p ${{ env.TESTS_DIR }}
         docker run --rm --mount type=bind,source=${{ env.TESTS_DIR }},target=/app/testresults ${{ env.TESTS_TAG }}
 
@@ -52,7 +53,7 @@ jobs:
 
     - name: build dockerimage
       run: |
-        docker build -t ${{ env.WEBAPP_TAG_DEV }} -f ${{ env.DOCKERFILE_PATH }} --target webapp .
+        docker build -t ${{ env.WEBAPP_TAG_DEV }} -f ${{ env.DOCKERFILE_PATH }} --target webapp ${{ env.SERVICE_ROOT }}
         docker tag ${{ env.WEBAPP_TAG_DEV }} ${{ env.WEBAPP_TAG }}
         docker tag ${{ env.WEBAPP_TAG_DEV }} ${{ env.WEBAPP_TAG_LATEST }}
 
