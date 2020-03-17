@@ -34,35 +34,6 @@ namespace webapp.Controllers.v0._2
         }
 
         /// <summary>
-        /// Returns the knowledgebase item content.
-        /// </summary>
-        /// <returns>The knowledgebase item content.</returns>
-        [HttpGet]
-        [Route("items", Name = "get-knowledgebase-item-by-id")]
-        [ProducesResponseType(200, Type = typeof(KnowledgebaseItem))]
-        [ProducesResponseType(404, Type = typeof(string))]
-        [ProducesResponseType(500, Type = typeof(string))]
-        public async Task<ObjectResult> GetKnowledgebaseItemById([FromQuery]string id)
-        {
-            var unescapedId = HttpUtility.UrlDecode(id);
-            try
-            {
-                var handler = this.services.GetService<GetKnowledgebaseItemsHandler>();
-
-                var details = await handler.GetItemById(unescapedId);
-
-                return details == KnowledgebaseItem.NotFound
-                    ? this.NotFound($"Item with id {id} was not found")
-                    : this.StatusCode(200, details);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex, "Failed to get knowledgebase item {ItemId}", unescapedId);
-                return this.StatusCode(500, $"Failed to get knowledgebase item {unescapedId}");
-            }
-        }
-
-        /// <summary>
         /// Returns the knowledgebase items content for a subset of Ids.
         /// The method returns only items, that exist in the storage.
         /// If any id leads to not existing item - it is ignored.
@@ -96,7 +67,7 @@ namespace webapp.Controllers.v0._2
         /// </summary>
         /// <returns>Knowledgebase items.</returns>
         [HttpGet]
-        [Route("items", Name = "get-all-knowledgebase-items")]
+        [Route("items/all", Name = "get-all-knowledgebase-items")]
         [ProducesResponseType(200, Type = typeof(KnowledgebaseItem[]))]
         [ProducesResponseType(500, Type = typeof(string))]
         public async Task<ObjectResult> GetAll()
