@@ -5,6 +5,7 @@ on:
     branches:
     - master
     paths:
+      - '.github/workflows/backend_master.yml'
       - 'src/backend/**'
       - '!src/backend/*.md'
 
@@ -21,15 +22,16 @@ jobs:
         echo "::set-env name=SERVICE_ROOT::src/backend/"
         echo "::set-env name=DOCKERFILE_PATH::src/backend/dockerfile"
 
+        docker_repository="deepnetwork/joseki-backend"
+        echo "::set-env name=DOCKER_REPOSITORY::$docker_repository"
+
         version=$(cat src/backend/version)
         SHA8=$(echo $GITHUB_SHA | cut -c1-8)
-        webapp_tag="deepnetwork/joseki-backend:$version"
-        webapp_tag_dev="$webapp_tag-$SHA8"
-        echo "::set-env name=WEBAPP_TAG::$webapp_tag"
-        echo "::set-env name=WEBAPP_TAG_DEV::$webapp_tag_dev"
-        echo "::set-env name=WEBAPP_TAG_LATEST::deepnetwork/joseki-backend:latest"
+        tag_dev="$version-sha-$SHA8"
+        echo "::set-env name=VERSION_TAG::$version"
+        echo "::set-env name=DEV_TAG::$tag_dev"
 
-        tests_tag="$webapp_tag_dev-tests"
+        tests_tag="$docker_repository:$tag_dev.tests"
         tests_dir="$HOME/be_testresults"
         echo "::set-env name=TESTS_TAG::$tests_tag"
         echo "::set-env name=TESTS_DIR::$tests_dir"
@@ -52,15 +54,20 @@ jobs:
         path: '${{ env.TESTS_DIR }}/test_results.xml'
 
     - name: build dockerimage
-      run: |
-        docker build -t ${{ env.WEBAPP_TAG_DEV }} -f ${{ env.DOCKERFILE_PATH }} --target webapp ${{ env.SERVICE_ROOT }}
-        docker tag ${{ env.WEBAPP_TAG_DEV }} ${{ env.WEBAPP_TAG }}
-        docker tag ${{ env.WEBAPP_TAG_DEV }} ${{ env.WEBAPP_TAG_LATEST }}
+      uses: docker/build-push-action@v1.0
+      with:
+        path: ${{ env.SERVICE_ROOT }}
+        dockerfile: ${{ env.DOCKERFILE_PATH }}
+        target: webapp
+        repository: ${{ env.DOCKER_REPOSITORY }}
+        tags: ${{ env.VERSION_TAG }}, ${{ env.DEV_TAG }}, edge
+        add_git_labels: true
+        push: false
 
     - name: scan image for CVEs
       uses: 'docker://aquasec/trivy:0.5.2'
       with:
-        args: --exit-code 1 --severity HIGH,CRITICAL ${{ env.WEBAPP_TAG_DEV }}
+        args: --exit-code 1 --severity HIGH,CRITICAL "${{ env.DOCKER_REPOSITORY }}:${{ env.DEV_TAG }}"
 
     - name: Docker Login
       uses: Azure/docker-login@v1
@@ -70,6 +77,7 @@ jobs:
 
     - name: push dockerimage
       run: |
-        docker push ${{ env.WEBAPP_TAG }}
-        docker push ${{ env.WEBAPP_TAG_DEV }}
-        docker push ${{ env.WEBAPP_TAG_LATEST }}
+        docker push "${{ env.DOCKER_REPOSITORY }}:${{ env.DEV_TAG }}"
+        docker push "${{ env.DOCKER_REPOSITORY }}:${{ env.VERSION_TAG }}"
+        docker push "${{ env.DOCKER_REPOSITORY }}:edge"
+
