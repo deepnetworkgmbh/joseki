@@ -55,7 +55,7 @@ $border: dashed 2px #eee;
 
 .diff-wrapper-EMPTY {
 	//background-color: transparent;
-	background-color: red;
+	//background-color: red;
 	min-height: 30px;
 	background-image: url('../assets/tick.gif');
 	background-repeat: repeat-y;
@@ -109,25 +109,6 @@ $border: dashed 2px #eee;
 	margin-top:2px;
 	margin-bottom: 2px;
 }
-
-
-.diff-object-SAME {
-	//background-color: #ccc;
-	//visibility: hidden;
-	//display: none;
-}
-
-// .diff-object-ADDED {
-// 	background-color: #8c8;
-// }
-
-// .diff-object-REMOVED {
-// 	background-color: #c88;
-// }
-
-// .diff-object-CHANGED {
-// 	background-color: #cc8;
-// }
 
 
 .diff-SAME {

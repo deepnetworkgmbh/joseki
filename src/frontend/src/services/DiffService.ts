@@ -31,7 +31,7 @@ export class DiffCollection {
             let rightIndex = right.findIndex(x => x.name === left1.name && x.type === left1.type && x.empty === false);
             if (rightIndex === -1) {
                 r[rowIndex].operation = DiffOperation.Removed;   
-                r[rowIndex].left!.SetChildren(DiffOperation.Removed);             
+                //r[rowIndex].left!.SetChildren(DiffOperation.Removed);             
                 continue;
             }      
             let right1 = right[rightIndex]; // right collection;
@@ -148,47 +148,44 @@ export class CheckCollection {
         let operation = DiffOperation.Same;
         let changes = new DiffCounters();
 
-        // compare this object array for removals
+        // check removals
         for(let i=0; i<this.objects.length;i++) {
             let myObject = this.objects[i];
+            
             let otherIndex = other.objects.findIndex(x=>x.id === myObject.id && x.empty === false);
-            if (otherIndex === -1) {
-                // this object is removed on other scan
+            if (otherIndex === -1 && myObject.empty === false) {                // this object is removed on other scan
                 operation = DiffOperation.Changed;                
                 myObject.operation = DiffOperation.Removed;
                 myObject.SetChildren(DiffOperation.Removed);
                 other.objects.push(CheckObject.GetEmpty(myObject.id))
                 changes.tick(myObject.operation)
-                continue;
-            }
-            // check object children
-            let [childOperation, childChanges] = other.objects[otherIndex].Compare(myObject);           
-            if(childOperation !== DiffOperation.Same) {
-                myObject.operation = DiffOperation.Changed;
-                operation = DiffOperation.Changed;
             }
         }
 
-        // compare other object array for addition
+        // check for addition
         for(let i=0; i<other.objects.length;i++) {
-            let otherObject = other.objects[i];
+            let otherObject = other.objects[i];           
             let myIndex = this.objects.findIndex(x=>x.id === otherObject.id && x.empty === false);
-            if (myIndex === -1) {
-                // other object is removed from my scan
+            if (myIndex === -1 && otherObject.empty === false) {                // other object is removed from my scan
                 otherObject.operation = DiffOperation.Added
-                otherObject.SetChildren(DiffOperation.Added);
-                changes.tick(otherObject.operation)
+                //otherObject.SetChildren(DiffOperation.Added);
                 operation = DiffOperation.Changed;
-                continue;
+                changes.tick(otherObject.operation)
             }
-            // check object children
-            let [childOperation, childChanges] = this.objects[myIndex].Compare(otherObject);           
-            if(childOperation !== DiffOperation.Same) {
+        }  
+
+        // check for changes
+        for(let i=0; i<other.objects.length;i++) {
+            let otherObject = other.objects[i];           
+            let myIndex = this.objects.findIndex(x=>x.id === otherObject.id && x.empty === false);
+            if (myIndex === -1) continue;
+             let [childOperation, childChanges] = this.objects[myIndex].Compare(otherObject);           
+            if(childChanges.total > 0) {
                 otherObject.operation = DiffOperation.Changed;
                 operation = DiffOperation.Changed;
                 changes.merge(childChanges)
-            }            
-        }  
+            }
+        }
         
         return [operation, changes];
     }
@@ -242,15 +239,7 @@ export class CheckObject {
                     operation = DiffOperation.Changed;
                     myControlGroup.operation = DiffOperation.Removed;
                     changes.tick(myControlGroup.operation);
-                    continue;
                 }
-                let otherControlGroup = other.controlGroups[otherControlGroupIndex];
-                let [cgOperation, cgChanges] = otherControlGroup.Compare(myControlGroup);
-                myControlGroup.operation = cgOperation;
-                if(cgOperation !== DiffOperation.Same && operation === DiffOperation.Same) {
-                    operation = DiffOperation.Changed
-                }
-                //changes.merge(cgChanges);
             }
 
             // check for additions
@@ -261,62 +250,63 @@ export class CheckObject {
                     operation = DiffOperation.Changed;
                     otherControlGroup.operation = DiffOperation.Added;
                     changes.tick(otherControlGroup.operation);
-                    continue;               
                 }
+            }
+
+            // check for changes
+            for(let j=0; j<other.controlGroups.length; j++) {
+                let otherControlGroup = other.controlGroups[j];
+                let myControlGroupIndex = this.controlGroups.findIndex(x=>x.name === otherControlGroup.name);
+                if(myControlGroupIndex === -1) continue;               
                 let myControlGroup = this.controlGroups[myControlGroupIndex];
                 let [cgOperation, cgChanges] = myControlGroup.Compare(otherControlGroup);
-
                 if(cgOperation !== DiffOperation.Same && operation === DiffOperation.Same) {
-                    operation = DiffOperation.Changed
-                }
-                
+                    operation = DiffOperation.Changed    
+                    myControlGroup.operation = operation;
+                    otherControlGroup.operation = operation;                
+                }                
                 changes.merge(cgChanges);
             }
         }
 
         // check controls
         if(this.controls.length > 0 || other.controls.length > 0) {
-
-            let controlChanges = new DiffCounters();
-
+            
+            // check for removals
             for(let i=0;i< this.controls.length; i++) {
                 let myControl = this.controls[i];
                 let otherControlIndex = other.controls.findIndex(x=>x.id === myControl.id);
                 if(otherControlIndex === -1) {
                     myControl.operation = DiffOperation.Removed;
                     operation = DiffOperation.Changed;
-                    controlChanges.tick(myControl.operation);
-                    continue;
+                    changes.tick(myControl.operation);
                 }
-                let otherControl = other.controls[otherControlIndex];            
-                if(myControl.result !== otherControl.result || myControl.text !== otherControl.text) {
-                    myControl.operation = DiffOperation.Changed;
-                    operation = DiffOperation.Changed;
-                    //controlChanges.tick(operation);
-                    continue;
-                }           
-                //myControl.operation = DiffOperation.Same;
             }
     
+            // check for additions
             for(let i=0;i< other.controls.length; i++) {
                 let otherControl = other.controls[i];
                 let myControlIndex = this.controls.findIndex(x=>x.id === otherControl.id);
                 if(myControlIndex === -1) {
                     otherControl.operation = DiffOperation.Added;
                     operation = DiffOperation.Changed;
-                    controlChanges.tick(otherControl.operation);
-                    continue;
-                }
-                let myControl = this.controls[myControlIndex];            
-                if(myControl.result !== otherControl.result || myControl.text !== otherControl.text) {
-                    otherControl.operation = DiffOperation.Changed;
-                    operation = DiffOperation.Changed;
-                    controlChanges.tick(otherControl.operation);
-                    continue;
+                    changes.tick(otherControl.operation);
                 }
             }
 
-            changes.merge(controlChanges);
+            // check for changes
+            for(let i=0;i< other.controls.length; i++) {
+                let otherControl = other.controls[i];
+                let myControlIndex = this.controls.findIndex(x=>x.id === otherControl.id);
+                if(myControlIndex === -1) continue;
+                let myControl = this.controls[myControlIndex];            
+                if(myControl.result !== otherControl.result || myControl.text !== otherControl.text) {
+                    myControl.operation = DiffOperation.Changed;
+                    otherControl.operation = DiffOperation.Changed;
+                    operation = DiffOperation.Changed;
+                    changes.tick(otherControl.operation);
+                }
+            }
         }
        
         return [operation, changes];
@@ -339,10 +329,19 @@ export class CheckControlGroup {
     items: CheckControl[] = []
     operation?: DiffOperation = DiffOperation.Same;
 
+    SetChildren(op:DiffOperation) {
+        // modify children if only parent is added or removed
+        if(op !== DiffOperation.Added && op !== DiffOperation.Removed ) return;
+        for(let j=0;j<this.items.length;j++) {
+            this.items[j].operation = op;                
+        }
+    }
+
     Compare(other: CheckControlGroup): [DiffOperation, DiffCounters] { 
         let operation = DiffOperation.Same
         let changes = new DiffCounters()
 
+        // check for removals
         for(let i=0;i< this.items.length; i++) {
             let myControl = this.items[i];
             let otherControlIndex = other.items.findIndex(x=>x.id === myControl.id);
@@ -350,18 +349,10 @@ export class CheckControlGroup {
                 myControl.operation = DiffOperation.Removed;
                 operation = DiffOperation.Changed;
                 changes.tick(operation);
-                continue;
             }
-            let otherControl = other.items[otherControlIndex];            
-            if(myControl.result !== otherControl.result || myControl.text !== otherControl.text) {
-                myControl.operation = DiffOperation.Changed;
-                operation = DiffOperation.Changed;
-                changes.tick(operation);
-                continue;
-            }           
-            //myControl.operation = DiffOperation.Same;
         }
 
+        // check for additions
         for(let i=0;i< other.items.length; i++) {
             let otherControl = other.items[i];
             let myControlIndex = this.items.findIndex(x=>x.id === otherControl.id);
@@ -369,16 +360,23 @@ export class CheckControlGroup {
                 otherControl.operation = DiffOperation.Added;
                 operation = DiffOperation.Changed;
                 changes.tick(operation);
-                continue;
-            }
-            let myControl = this.items[myControlIndex];            
-            if(myControl.result !== otherControl.result || myControl.text !== otherControl.text) {
-                otherControl.operation = DiffOperation.Changed;
-                operation = DiffOperation.Changed;
-                changes.tick(operation);
-                continue;
             }
         }
+
+        // check for changes
+        for(let i=0;i< other.items.length; i++) {
+            let otherControl = other.items[i];
+            let myControlIndex = this.items.findIndex(x=>x.id === otherControl.id);
+            if(myControlIndex === -1) continue;
+            let myControl = this.items[myControlIndex];            
+            if(myControl.result !== otherControl.result || myControl.text !== otherControl.text) {
+                myControl.operation = DiffOperation.Changed;
+                otherControl.operation = DiffOperation.Changed;
+                operation = DiffOperation.Changed;                
+                changes.tick(operation);
+            }
+        }
+        
 
         return [operation, changes];
     }

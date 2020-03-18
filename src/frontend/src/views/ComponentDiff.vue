@@ -74,8 +74,8 @@
           <li v-if="row.operation !== 'SAME'" :class='getWrapperClass(row)'>
             <input type="checkbox" :id="`target${i}`" v-model="row.checked"  />
             <label :for="`target${i}`" class='diff-row-label'>
-              <strong>{{ row.type }} : {{ row.name }} : {{ row.operation }}</strong> 
-              <span class='diff-row-change-text'>{{ getRowTitle(row.operation, row.changes) }}</span>
+              <strong>{{ row.type }} : {{ row.name }} </strong> 
+              <span class='diff-row-change-text'>{{ row.operation }}</span>
             </label>
             <div v-if="row.checked" :class="getRowClass(row.operation)">
               <div class="diff-cell">

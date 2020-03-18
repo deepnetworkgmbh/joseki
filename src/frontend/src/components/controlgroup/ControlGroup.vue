@@ -1,6 +1,6 @@
 <template>
      <li style="padding:2px;padding-left:0;margin-left:5px;margin-top:0px;margin-bottom:2px;">
-        <b>{{ name }} ({{ items.length }})</b>  
+        <b>{{ name }} ({{ itemCount }})</b>  
         <ul v-for="(control, cgi) in items" :key="`cgi${name}-${cgi}`">
             <ControlList :date="date" :control="control" />
         </ul>
