@@ -1,4 +1,4 @@
-name: fe_ci_master
+name: Frontend
 
 on: 
   push:

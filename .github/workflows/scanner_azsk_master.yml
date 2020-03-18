@@ -1,4 +1,4 @@
-name: scanner_azsk_ci_master
+name: Scanner AzSk
 
 on: 
   push:
