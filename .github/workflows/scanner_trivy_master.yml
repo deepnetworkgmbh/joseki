@@ -30,7 +30,7 @@ jobs:
         echo "::set-env name=WEBAPP_TAG_LATEST::deepnetwork/joseki-scanner-trivy:latest"
 
         tests_tag="$webapp_tag_dev-tests"
-        tests_dir="$HOME/be_testresults"
+        tests_dir="$HOME/trivy_testresults"
         echo "::set-env name=TESTS_TAG::$tests_tag"
         echo "::set-env name=TESTS_DIR::$tests_dir"
 
