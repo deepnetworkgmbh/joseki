@@ -26,6 +26,10 @@
               {{ getGrade(data.summary1.current.score) }}
             </div>
           </div>
+          <div class="text-center mt-2 pt-2">
+            <a class='btn' :href="scanDetail1url"><span class="px-2"><i class="fas fa-external-link-alt pr-2"></i>Scan Detail</span></a>
+          </div>
+
         </div>
       </div>
       <div class="w-1/4">
@@ -57,6 +61,9 @@
             <div class="w-5/12 font-hairline text-left">
               {{ getGrade(data.summary2.current.score) }}
             </div>
+          </div>
+          <div class="text-center mt-2 pt-2">
+            <a class='btn' :href="scanDetail2url"><span class="px-2"><i class="fas fa-external-link-alt pr-2"></i>Scan Detail</span></a>
           </div>
         </div>
       </div>
@@ -100,10 +107,10 @@
                     </label>
                     <div v-if="obj.checked">
                       <ul v-for="(control, c) in obj.controls" :key="`right-controlp${i}-${g}-${c}`" class="control-ul">
-                        <ControlList :date="row.left.date" :control="control" />
+                        <ControlList :date="row.right.date" :control="control" />
                       </ul>
                       <ul v-for="(cg, c) in obj.controlGroups" :key="`right-controlg${i}-${g}-${c}`" class="control-ul">
-                        <ControlGroup v-if="cg.operation !== 'SAME'" :date="row.left.date" :name="cg.name" :items="cg.items" :operation="cg.operation" />
+                        <ControlGroup v-if="cg.operation !== 'SAME'" :date="row.right.date" :name="cg.name" :items="cg.items" :operation="cg.operation" />
                       </ul>
                     </div>
                   </li>
