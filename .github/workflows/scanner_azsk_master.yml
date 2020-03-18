@@ -53,7 +53,7 @@ jobs:
 
     - name: build dockerimage
       run: |
-        docker build -t ${{ env.WEBAPP_TAG_DEV }} -f ${{ env.DOCKERFILE_PATH }} --target webapp ${{ env.SERVICE_ROOT }}
+        docker build -t ${{ env.WEBAPP_TAG_DEV }} -f ${{ env.DOCKERFILE_PATH }} --target cliapp ${{ env.SERVICE_ROOT }}
         docker tag ${{ env.WEBAPP_TAG_DEV }} ${{ env.WEBAPP_TAG }}
         docker tag ${{ env.WEBAPP_TAG_DEV }} ${{ env.WEBAPP_TAG_LATEST }}
 
