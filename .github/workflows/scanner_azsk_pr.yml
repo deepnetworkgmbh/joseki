@@ -5,8 +5,8 @@ on:
     branches:
     - master
     paths:
-      - 'src/scanners/azsk/*'
-      - '!src/scanners/azsk/*.md'
+      - 'src/scanners/az-sk/**'
+      - '!src/scanners/az-sk/*.md'
 
 jobs:
   validate-pr:
@@ -18,8 +18,8 @@ jobs:
 
     - name: Set env vars
       run: |
-        echo "::set-env name=SERVICE_ROOT::src/scanners/azsk/"
-        echo "::set-env name=DOCKERFILE_PATH::src/scanners/azsk/dockerfile"
+        echo "::set-env name=SERVICE_ROOT::src/scanners/az-sk/"
+        echo "::set-env name=DOCKERFILE_PATH::src/scanners/az-sk/dockerfile"
 
         SHA8=$(echo $GITHUB_SHA | cut -c1-8)
         tests_tag="deepnetwork/joseki-scanner-azsk:$SHA8-tests"
