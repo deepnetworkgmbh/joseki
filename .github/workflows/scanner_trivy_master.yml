@@ -1,4 +1,4 @@
-name: scanner_trivy_ci_master
+name: Scanner trivy
 
 on: 
   push:

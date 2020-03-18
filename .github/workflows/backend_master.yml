@@ -1,4 +1,4 @@
-name: be_ci_master
+name: Backend
 
 on: 
   push:
