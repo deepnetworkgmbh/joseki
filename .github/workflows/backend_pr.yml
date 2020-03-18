@@ -5,6 +5,7 @@ on:
     branches:
     - master
     paths:
+      - '.github/workflows/backend_pr.yml'
       - 'src/backend/**'
       - '!src/backend/*.md'
 

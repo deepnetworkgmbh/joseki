@@ -5,6 +5,7 @@ on:
     branches:
     - master
     paths:
+      - '.github/workflows/scanner_trivy_pr.yml'
       - 'src/scanners/trivy/**'
       - '!src/scanners/trivy/*.md'
 

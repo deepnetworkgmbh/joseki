@@ -5,6 +5,7 @@ on:
     branches:
     - master
     paths:
+      - '.github/workflows/scanner_azsk_pr.yml'
       - 'src/scanners/az-sk/**'
       - '!src/scanners/az-sk/*.md'
 
