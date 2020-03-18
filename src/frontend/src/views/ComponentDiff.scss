@@ -44,7 +44,7 @@ $border: dashed 2px #eee;
 }
 
 .diff-wrapper-REMOVED {
-	background-color: #daa;
+	background-color: #fcc;
 	padding-bottom: 2px;
 }
 
@@ -54,8 +54,12 @@ $border: dashed 2px #eee;
 }
 
 .diff-wrapper-EMPTY {
-	background-color: transparent;
-	//background-color: red;
+	//background-color: transparent;
+	background-color: red;
+	min-height: 30px;
+	background-image: url('../assets/tick.gif');
+	background-repeat: repeat-y;
+	background-position: center;
 }
 
 .diff-row {

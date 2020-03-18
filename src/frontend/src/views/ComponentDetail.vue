@@ -106,8 +106,7 @@
                     <b>{{control.name}} ({{ control.items.length }})</b>
                     <div v-for="(cg, cgi) in control.items" :key='`cgi${i}-${g}-${c}-${cgi}`'>
                       <label :for="`control${i}-${g}-${c}`" class="text-sm">
-                        <i :class="cg.icon"></i>
-                        {{ cg.id }}
+                        <i :class="cg.icon"></i> {{ cg.result }} : {{ cg.id }}
                         <span class="ml-1 mr-1" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="cg.text">
                           <i class="far fa-question-circle tip-icon"></i>
                         </span>

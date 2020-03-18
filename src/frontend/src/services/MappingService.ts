@@ -151,6 +151,7 @@ export class MappingService {
             case 'NoData':
                 return 'fas fa-times nodata-icon'
             case 'Failed':
+                return 'fas fa-times failed-icon'
             case 'Warning':
                 return 'fas fa-exclamation-triangle warning-icon'
             case 'Success':
