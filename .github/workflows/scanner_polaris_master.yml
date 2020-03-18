@@ -1,0 +1,65 @@
+name: scanner_polaris_ci_master
+
+on: 
+  push:
+    branches:
+    - master
+    paths:
+      - '.github/workflows/scanner_polaris_master.yml'
+      - 'src/scanners/polaris/**'
+      - '!src/scanners/polaris/*.md'
+
+jobs:
+  build-n-push:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set env vars
+      run: |
+        echo "::set-env name=SERVICE_ROOT::src/scanners/polaris/"
+        echo "::set-env name=DOCKERFILE_PATH::src/scanners/polaris/dockerfile"
+
+        docker_repository="deepnetwork/joseki-scanner-polaris"
+        echo "::set-env name=DOCKER_REPOSITORY::$docker_repository"
+
+        version=$(cat src/scanners/polaris/version)
+        SHA8=$(echo $GITHUB_SHA | cut -c1-8)
+        tag_dev="$version-sha-$SHA8"
+        echo "::set-env name=VERSION_TAG::$version"
+        echo "::set-env name=DEV_TAG::$tag_dev"
+
+    - name: lint dockerfile
+      uses: brpaz/hadolint-action@2d3af3e
+      with:
+        dockerfile: ${{ env.DOCKERFILE_PATH }}
+
+    - name: build dockerimage
+      uses: docker/build-push-action@v1.0
+      with:
+        path: ${{ env.SERVICE_ROOT }}
+        dockerfile: ${{ env.DOCKERFILE_PATH }}
+        repository: ${{ env.DOCKER_REPOSITORY }}
+        tags: ${{ env.VERSION_TAG }}, ${{ env.DEV_TAG }}, edge
+        add_git_labels: true
+        push: false
+
+    - name: scan image for CVEs
+      uses: 'docker://aquasec/trivy:0.5.2'
+      with:
+        args: --exit-code 1 --severity CRITICAL "${{ env.DOCKER_REPOSITORY }}:${{ env.DEV_TAG }}"
+
+    - name: Docker Login
+      uses: Azure/docker-login@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: push dockerimage
+      run: |
+        docker push "${{ env.DOCKER_REPOSITORY }}:${{ env.DEV_TAG }}"
+        docker push "${{ env.DOCKER_REPOSITORY }}:${{ env.VERSION_TAG }}"
+        docker push "${{ env.DOCKER_REPOSITORY }}:edge"
+

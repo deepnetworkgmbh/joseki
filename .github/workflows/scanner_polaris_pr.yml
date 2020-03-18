@@ -1,0 +1,38 @@
+name: scanner_polaris_validate_pull_request
+
+on: 
+  pull_request:
+    branches:
+    - master
+    paths:
+      - '.github/workflows/scanner_polaris_pr.yml'
+      - 'src/scanners/polaris/**'
+      - '!src/scanners/polaris/*.md'
+
+jobs:
+  validate-pr:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set env vars
+      run: |
+        echo "::set-env name=SERVICE_ROOT::src/scanners/polaris/"
+        echo "::set-env name=DOCKERFILE_PATH::src/scanners/polaris/dockerfile"
+        echo "::set-env name=DOCKER_REPOSITORY::deepnetwork/joseki-scanner-polaris"
+
+    - name: lint dockerfile
+      uses: brpaz/hadolint-action@2d3af3e
+      with:
+        dockerfile: ${{ env.DOCKERFILE_PATH }}
+
+    - name: build
+      uses: docker/build-push-action@v1.0
+      with:
+        path: ${{ env.SERVICE_ROOT }}
+        dockerfile: ${{ env.DOCKERFILE_PATH }}
+        repository: ${{ env.DOCKER_REPOSITORY }}
+        tag_with_sha: true
+        push: false
