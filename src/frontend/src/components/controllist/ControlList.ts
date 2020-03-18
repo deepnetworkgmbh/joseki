@@ -14,7 +14,9 @@ export default class ControlList extends Vue {
   getLineClass(): string {
     return `control-li text-sm control-${this.control.operation}`
   }
-  goToImageScan(imageTag: string) {
-    router.push('/image-detail/' + encodeURIComponent(imageTag) + '/' + encodeURIComponent(this.date.toDateString()));
+
+  get imageScanUrl() { 
+    let dateParam = new Date(this.date).toDateString();
+    return '/image-detail/' + encodeURIComponent(this.control.tags['imageTag']) + '/' + encodeURIComponent(dateParam) 
   }
 }
