@@ -18,10 +18,7 @@ export default class ImageDetail extends Vue {
   data: ImageScanDetailModel = new ImageScanDetailModel();
 
   created() {
-    //this.id = decodeURIComponent(this.$route.params.imageid);
-    const dateString = new Date(this.date).toDateString();
-    console.log(`getting data for image ${this.imageid} with date ${dateString}`);
-    this.service.getImageScanResultData(this.imageid, dateString)
+    this.service.getImageScanResultData(this.imageid, this.date)
       .then(response => {
         if (response) {
           this.data = response;

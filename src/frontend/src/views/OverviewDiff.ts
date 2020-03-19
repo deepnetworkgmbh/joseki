@@ -7,6 +7,7 @@ import { InfrastructureComponentSummary, InfrastructureOverviewDiff, Infrastruct
 import { ScoreService } from '@/services/ScoreService';
 import DiffComponent from '@/components/component/DiffComponent.vue';
 import router from '@/router';
+import { DateTime } from 'luxon';
 
 @Component({
     components: { Spinner, StatusBar, DiffComponent }
@@ -60,8 +61,10 @@ export default class OverviewDiff extends Vue {
     drawCharts() {
         ChartService.drawPieChart(this.data.summary1.overall.current, "overall_pie1", 200)
         ChartService.drawPieChart(this.data.summary2.overall.current, "overall_pie2", 200)
+        let date = DateTime.fromISO(this.date);
+        let date2 = DateTime.fromISO(this.date2);
         for (let i = 0; i < this.data.summary1.components.length; i++) {
-            ChartService.drawBarChart(this.data.summary1.components[i].scoreHistory, 'bar' + i, new Date(this.date), undefined, 48, this.date2);
+            ChartService.drawBarChart(this.data.summary1.components[i].scoreHistory, 'bar' + i, date, undefined, 48, date2);
         }
     }
 

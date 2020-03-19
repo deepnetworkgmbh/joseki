@@ -2,6 +2,7 @@ import { InfrastructureComponentSummary } from '@/models';
 import { MappingService } from '@/services/MappingService';
 import { DiffCollection, CheckCollection, DiffOperation, CheckObject, CheckControlGroup, CheckControl } from '@/services/DiffService';
 import * as _ from 'lodash';
+import { DateTime } from 'luxon';
 
 export class InfrastructureComponentDiff {
   /// Components of first summary.
@@ -38,7 +39,7 @@ export class DiffMock {
 
   public static GetCollection(left: boolean, objects: CheckObject[][]): CheckCollection[] {
     let result: CheckCollection[] = []
-    let date = new Date();
+    let date = new DateTime();
 
     if (left) {
       // removed collection

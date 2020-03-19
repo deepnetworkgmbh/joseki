@@ -1,5 +1,6 @@
 import { Check, CountersSummary, CheckSeverity, Collection } from '@/models'
 import { CheckCollection, CheckControl, CheckControlGroup, CheckObject } from './DiffService'
+import { DateTime } from 'luxon'
 
 export class MappingService {
     public static getResultsByCategory(checks: Check[]): any[] {
@@ -55,7 +56,8 @@ export class MappingService {
             let check = checks[i];
 
             if (results.findIndex(x => x.name === check.collection.name) === -1) {
-                let collection = new CheckCollection(check.collection.name, check.collection.type, check.date);
+                let date = DateTime.fromISO(check.date.toString());
+                let collection = new CheckCollection(check.collection.name, check.collection.type, date);
                 results.push(collection)
             }
 
@@ -151,6 +153,7 @@ export class MappingService {
             case 'NoData':
                 return 'fas fa-times nodata-icon'
             case 'Failed':
+                return 'fas fa-times failed-icon'
             case 'Warning':
                 return 'fas fa-exclamation-triangle warning-icon'
             case 'Success':
@@ -161,13 +164,14 @@ export class MappingService {
 
     public static getSeverityScore(severity: CheckSeverity): number {
         switch (severity.toString()) {
-            case 'NoData':
-                return 10
-            case 'Failed':
-            case 'Warning':
-                return 100
             case 'Success':
                 return 1
+            case 'NoData':
+                return 10
+            case 'Warning':
+                return 50
+            case 'Failed':
+                return 100
         }
         return 0;
     }

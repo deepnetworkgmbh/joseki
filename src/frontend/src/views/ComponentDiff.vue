@@ -26,6 +26,10 @@
               {{ getGrade(data.summary1.current.score) }}
             </div>
           </div>
+          <div class="text-center mt-2 pt-2">
+            <a class='btn' :href="scanDetail1url"><span class="px-2"><i class="fas fa-external-link-alt pr-2"></i>Scan Detail</span></a>
+          </div>
+
         </div>
       </div>
       <div class="w-1/4">
@@ -58,6 +62,9 @@
               {{ getGrade(data.summary2.current.score) }}
             </div>
           </div>
+          <div class="text-center mt-2 pt-2">
+            <a class='btn' :href="scanDetail2url"><span class="px-2"><i class="fas fa-external-link-alt pr-2"></i>Scan Detail</span></a>
+          </div>
         </div>
       </div>
     </div>
@@ -67,8 +74,8 @@
           <li v-if="row.operation !== 'SAME'" :class='getWrapperClass(row)'>
             <input type="checkbox" :id="`target${i}`" v-model="row.checked"  />
             <label :for="`target${i}`" class='diff-row-label'>
-              <strong>{{ row.type }} : {{ row.name }} : {{ row.operation }}</strong> 
-              <span class='diff-row-change-text'>{{ getRowTitle(row.operation, row.changes) }}</span>
+              <strong>{{ row.type }} : {{ row.name }} </strong> 
+              <span class='diff-row-change-text'>{{ row.operation }}</span>
             </label>
             <div v-if="row.checked" :class="getRowClass(row.operation)">
               <div class="diff-cell">
@@ -77,7 +84,8 @@
                     <input type="checkbox" :id="`left-obj-${obj.id}`" v-model="obj.checked" 
                           @click="toggleOther(`left-obj-${obj.id}`, row.key, obj.id)" />
                     <label :for='`left-obj-${obj.id}`'>
-                      <span v-if='!obj.empty'><strong>{{ obj.type }} :</strong> {{ obj.name }} {{ obj.operation}}</span>                     
+                      <span v-if='!obj.empty'><strong>{{ obj.type }} :</strong> {{ obj.name }} </span>                     
+                      <span class="diff-tag">{{ obj.operation }}</span>
                     </label>
                     <div v-if="obj.checked">
                       <ul v-for="(control, c) in obj.controls" :key="`left-controlp${i}-${g}-${c}`" class="control-ul">
@@ -96,14 +104,15 @@
                     <input type="checkbox" :id="`right-obj-${obj.id}`" v-model="obj.checked" 
                           @click="toggleOther(`right-obj-${obj.id}`, row.key, obj.id)" />
                     <label :for='`right-obj-${obj.id}`'>                        
-                      <span v-if='!obj.empty'><strong>{{ obj.type }} :</strong> {{ obj.name }} {{ obj.operation}}</span>                    
+                      <span v-if='!obj.empty'><strong>{{ obj.type }} :</strong> {{ obj.name }}</span>       
+                      <span class="diff-tag">{{ obj.operation }}</span>             
                     </label>
                     <div v-if="obj.checked">
                       <ul v-for="(control, c) in obj.controls" :key="`right-controlp${i}-${g}-${c}`" class="control-ul">
-                        <ControlList :date="row.left.date" :control="control" />
+                        <ControlList :date="row.right.date" :control="control" />
                       </ul>
                       <ul v-for="(cg, c) in obj.controlGroups" :key="`right-controlg${i}-${g}-${c}`" class="control-ul">
-                        <ControlGroup v-if="cg.operation !== 'SAME'" :date="row.left.date" :name="cg.name" :items="cg.items" :operation="cg.operation" />
+                        <ControlGroup v-if="cg.operation !== 'SAME'" :date="row.right.date" :name="cg.name" :items="cg.items" :operation="cg.operation" />
                       </ul>
                     </div>
                   </li>
