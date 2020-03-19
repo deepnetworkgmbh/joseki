@@ -74,6 +74,6 @@ jobs:
 
         TO_APPLY=./to_apply.yml
         cp examples/k8s/fe.yaml $TO_APPLY
-        sed -i 's|#{JOSEKI_IMAGE_TAG}#|"$IMAGE_TAG"|' $TO_APPLY
+        sed -i 's|#{JOSEKI_IMAGE_TAG}#|'"$IMAGE_TAG"'|' $TO_APPLY
         kubectl apply -f $TO_APPLY
         rm $TO_APPLY
