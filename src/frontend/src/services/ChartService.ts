@@ -48,7 +48,7 @@ export class ChartService {
 		selected: DateTime,
 		cb?: Function,
 		height: number = 100,
-		selected2: DateTime = new DateTime(),
+		selected2: DateTime = DateTime.fromJSDate(new Date(1970,1,1,0,0,0,0)),
 		gridlines: number = 0,
 		componentId: string = '') {
 
