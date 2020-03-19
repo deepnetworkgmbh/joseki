@@ -1,4 +1,4 @@
-name: fe_validate_pull_request
+name: frontend_validate_pr
 
 on: 
   pull_request:

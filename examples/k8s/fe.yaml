@@ -60,6 +60,7 @@ metadata:
   namespace: joseki
   labels:
     app: joseki-frontend
+    version: '#{JOSEKI_IMAGE_TAG}#'
 spec:
   replicas: 1
   selector:
@@ -72,7 +73,7 @@ spec:
     spec:
       containers:
       - name: joseki-fe
-        image: 'deepnetwork/joseki-frontend:0.2.5'
+        image: 'deepnetwork/joseki-frontend:#{JOSEKI_IMAGE_TAG}#'
         imagePullPolicy: 'Always'
         ports:
         - name: main-http
