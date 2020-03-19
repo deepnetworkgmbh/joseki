@@ -17,7 +17,7 @@ export default class Overview extends Vue {
     @Prop({ default: null })
     date!: string;
 
-    selectedDate?: DateTime;
+    selectedDate?: DateTime = undefined;
     loaded: boolean = false;
     service: DataService = new DataService();
     data!: InfrastructureOverview;
