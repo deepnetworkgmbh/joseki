@@ -30,13 +30,6 @@ export class InfrastructureOverview {
         }
         result.components[i].sections = InfrastructureComponentSummary.getSections(result.components[i].current);
         result.components[i].scoreHistory = result.components[i].scoreHistory.reverse().slice(0, 14);
-
-        // truncate scan times from component history
-        for (let j = 0; j < result.components[i].scoreHistory.length; j++) {
-          let inputDate = result.components[i].scoreHistory[j].recordedAt.toString();
-          let dateReplacement = new Date(inputDate.split('T')[0] + 'T00:00:00');
-          result.components[i].scoreHistory[j].recordedAt = dateReplacement;
-        }
       }
 
       return result;

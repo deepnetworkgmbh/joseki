@@ -106,12 +106,12 @@
                     <b>{{control.name}} ({{ control.items.length }})</b>
                     <div v-for="(cg, cgi) in control.items" :key='`cgi${i}-${g}-${c}-${cgi}`'>
                       <label :for="`control${i}-${g}-${c}`" class="text-sm">
-                        <i :class="cg.icon"></i> {{ cg.result }} : {{ cg.id }}
+                        <i :class="cg.icon"></i> {{ cg.result }} : {{ cg.id }}                        
                         <span class="ml-1 mr-1" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="cg.text">
                           <i class="far fa-question-circle tip-icon"></i>
                         </span>
                         <span v-if="cg.id === 'container_image.CVE_scan' && cg.text !== 'No issues'">                        
-                        <a class='small-link' @click="goToImageScan(cg.tags.imageTag)">see details</a>                                               
+                          <a class='small-link' :href="imageScanUrl(cg.tags.imageTag)">see details</a>
                         </span>
                       </label>
                     </div>
@@ -122,13 +122,12 @@
                   :key="`control${i}-${g}-${c}`" style="border:dashed 1px #eee;margin-left:10px;">
                   <li style="padding:2px;padding-left:0;margin-left:5px;margin-top:0px;margin-bottom:2px;">
                       <label :for="`control${i}-${g}-${c}`" class="text-sm">
-                        <i :class="control.icon"></i>
-                        {{ control.id }}
+                        <i :class="control.icon"></i> {{ control.result }} : {{ control.id }}
                         <span class="ml-1 mr-1" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="control.text">
                           <i class="far fa-question-circle tip-icon"></i>
                         </span>
                         <span v-if="control.id === 'container_image.CVE_scan' && control.text !== 'No issues'">                        
-                        <a class='small-link' @click="goToImageScan(control.tags.imageTag)">see details</a>                                               
+                          <a class='small-link' :href="imageScanUrl(control.tags.imageTag)">see details</a>
                         </span>
                       </label>
                   </li>

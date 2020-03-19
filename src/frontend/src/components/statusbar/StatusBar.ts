@@ -11,12 +11,12 @@ export default class StatusBar extends Vue {
 
   private sum: number = 0;
   private failingSum: number = 0;
-  private noDataSum: number = 0;
+  //private noDataSum: number = 0;
 
   created() {
     this.sum = this.counters.passed + this.counters.failed + this.counters.noData;
     this.failingSum = Math.round((this.counters.failed * 200) / this.sum);
-    this.noDataSum = Math.round((this.counters.noData * 200) / this.sum);
+    //this.noDataSum = Math.round((this.counters.noData * 200) / this.sum);
   }
 
   noDataWidth() {
@@ -25,7 +25,7 @@ export default class StatusBar extends Vue {
   }
 
   passingWidth() {
-    const passingPx = 200 - this.failingSum - this.noDataSum;
+    const passingPx = 200 - this.failingSum; // - this.noDataSum;
     return passingPx + 'px';
   }
 

@@ -8,6 +8,7 @@ import { InfrastructureComponentSummary } from '@/models';
 import { ScoreService } from '@/services/ScoreService';
 import router from '@/router';
 import { MappingService } from '@/services/MappingService';
+import { DateTime } from 'luxon';
 
 @Component({
     components: { Spinner, StatusBar, Score }
@@ -20,8 +21,7 @@ export default class ComponentDetail extends Vue {
     @Prop({ default: null })
     date!: string;
 
-    selectedDate?: Date = new Date(this.date);
-
+    selectedDate?: DateTime;
     loaded: boolean = false;
     service: DataService = new DataService();
     data: InfrastructureComponentSummary = new InfrastructureComponentSummary();
@@ -29,9 +29,10 @@ export default class ComponentDetail extends Vue {
     checkedScans: any[] = [];
 
     loadData() {
-        let dateString = (this.selectedDate === undefined) ? '' : this.selectedDate.toDateString();
+        this.selectedDate = (this.date === null) ? undefined : DateTime.fromISO(this.date);
+
         this.service
-            .getComponentDetailData(decodeURIComponent(this.id), dateString)
+            .getComponentDetailData(decodeURIComponent(this.id), this.selectedDate)
             .then(response => {
                 if (response) {
                     this.data = response;
@@ -55,17 +56,18 @@ export default class ComponentDetail extends Vue {
     }
 
     drawCharts() {
-        if (this.selectedDate === undefined) {
-            this.selectedDate = this.date ? new Date(decodeURIComponent(this.date)) : this.data.scoreHistory[0].recordedAt;
-        }
+        if(this.selectedDate === undefined) {
+            this.selectedDate = DateTime.fromISO(this.data.scoreHistory[0].recordedAt);
+            console.log(`[selectedDate::chart]=>`, this.selectedDate.toISODate());
+        }       
         ChartService.drawPieChart(this.data.current, "overall_pie", 300);
         ChartService.drawBarChart(this.data.scoreHistory, "overall_bar", this.selectedDate, this.dayClicked, 100, undefined, 4, this.data.component.id);
     }
 
-    dayClicked(date: Date, component: string) {
+    dayClicked(date: string, component: string) {
         console.log(`[] dayClicked ${date}`)
-        this.selectedDate = date;
-        router.push('/component-detail/' + encodeURIComponent(component) + '/' + encodeURIComponent(date.toDateString()));
+        //this.selectedDate = date;
+        router.push('/component-detail/' + encodeURIComponent(component) + '/' + date);
     }
 
     goComponentHistory() {
@@ -76,11 +78,11 @@ export default class ComponentDetail extends Vue {
         }
     }
 
-    goToImageScan(imageTag: string) {
-        console.log(`[] current date`, this.selectedDate);
-        if (this.selectedDate) {
-            router.push('/image-detail/' + encodeURIComponent(imageTag) + '/' + encodeURIComponent(this.selectedDate.toDateString()));
-        }
+    imageScanUrl(imageTag: string) {
+        if(this.selectedDate === undefined) {
+            this.selectedDate = DateTime.fromISO(this.data.scoreHistory[0].recordedAt);
+        } 
+        return '/image-detail/' + encodeURIComponent(imageTag) + '/' + this.selectedDate.toISODate();    
     }
 
     getArrowHtml(i: number) {

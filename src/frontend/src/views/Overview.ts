@@ -4,10 +4,10 @@ import Spinner from "@/components/spinner/Spinner.vue";
 import StatusBar from "@/components/statusbar/StatusBar.vue";
 import { DataService } from '@/services/DataService';
 import InfComponent from '@/components/component/InfComponent.vue';
-
 import { InfrastructureOverview, InfrastructureComponent } from '@/models';
 import { ScoreService } from '@/services/ScoreService';
 import router from '@/router';
+import { DateTime } from 'luxon';
 
 @Component({
     components: { Spinner, StatusBar, InfComponent }
@@ -17,9 +17,7 @@ export default class Overview extends Vue {
     @Prop({ default: null })
     date!: string;
 
-    selectedDate?: Date = new Date();
-
-    selectedDat
+    selectedDate?: DateTime;
     loaded: boolean = false;
     service: DataService = new DataService();
     data!: InfrastructureOverview;
@@ -27,10 +25,10 @@ export default class Overview extends Vue {
     checkedScans: any[] = [];
 
     loadData() {
-        let dateString = (this.date === null) ? '' : this.date;
-
+        this.selectedDate = (this.date === null) ? undefined : DateTime.fromISO(this.date);
+        console.log(`[selectedDate]=>`, this.selectedDate);
         this.service
-            .getGeneralOverviewData(dateString)
+            .getGeneralOverviewData(this.selectedDate)
             .then(response => {
                 if (response) {
                     this.data = response;
@@ -53,11 +51,11 @@ export default class Overview extends Vue {
         google.charts.setOnLoadCallback(this.drawCharts);
     }
 
-
     drawCharts() {
-        this.selectedDate = this.date ?
-            new Date(decodeURIComponent(this.date))
-            : this.data.overall.scoreHistory[0].recordedAt;
+        if(this.selectedDate === undefined) {
+            this.selectedDate = DateTime.fromISO(this.data.overall.scoreHistory[0].recordedAt);
+            console.log(`[selectedDate::chart]=>`, this.selectedDate.toISODate());
+        }       
 
         ChartService.drawPieChart(this.data.overall.current, "overall_pie", 300)
         ChartService.drawBarChart(this.data.overall.scoreHistory, "overall_bar", this.selectedDate, this.dayClicked, 100, undefined, 4)
@@ -66,13 +64,12 @@ export default class Overview extends Vue {
         }
     }
 
-    dayClicked(date: Date) {
-        router.push('/overview/' + encodeURIComponent(date.toDateString()));
+    dayClicked(date: string) {
+        router.push('/overview/' + date);
     }
 
-    goComponentDetail(date: Date, componentId: string) {
-        console.log(`[] go component detail`, componentId, date);
-        router.push('/component-detail/' + componentId + '/' + encodeURIComponent(date.toDateString()));
+    goComponentDetail(date: string, componentId: string) {
+        router.push('/component-detail/' + componentId + '/' + date);
     }
 
     goComponentHistory(component: InfrastructureComponent) {

@@ -84,7 +84,8 @@
                     <input type="checkbox" :id="`left-obj-${obj.id}`" v-model="obj.checked" 
                           @click="toggleOther(`left-obj-${obj.id}`, row.key, obj.id)" />
                     <label :for='`left-obj-${obj.id}`'>
-                      <span v-if='!obj.empty'><strong>{{ obj.type }} :</strong> {{ obj.name }} {{ obj.operation}}</span>                     
+                      <span v-if='!obj.empty'><strong>{{ obj.type }} :</strong> {{ obj.name }} </span>                     
+                      <span class="diff-tag">{{ obj.operation }}</span>
                     </label>
                     <div v-if="obj.checked">
                       <ul v-for="(control, c) in obj.controls" :key="`left-controlp${i}-${g}-${c}`" class="control-ul">
@@ -103,7 +104,8 @@
                     <input type="checkbox" :id="`right-obj-${obj.id}`" v-model="obj.checked" 
                           @click="toggleOther(`right-obj-${obj.id}`, row.key, obj.id)" />
                     <label :for='`right-obj-${obj.id}`'>                        
-                      <span v-if='!obj.empty'><strong>{{ obj.type }} :</strong> {{ obj.name }} {{ obj.operation}}</span>                    
+                      <span v-if='!obj.empty'><strong>{{ obj.type }} :</strong> {{ obj.name }}</span>       
+                      <span class="diff-tag">{{ obj.operation }}</span>             
                     </label>
                     <div v-if="obj.checked">
                       <ul v-for="(control, c) in obj.controls" :key="`right-controlp${i}-${g}-${c}`" class="control-ul">

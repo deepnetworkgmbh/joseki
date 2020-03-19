@@ -1,4 +1,5 @@
 import { CountersSummary } from '@/models';
+import { DateTime } from 'luxon';
 
 export enum DiffOperation {
     Added = 'ADDED',
@@ -31,7 +32,7 @@ export class DiffCollection {
             let rightIndex = right.findIndex(x => x.name === left1.name && x.type === left1.type && x.empty === false);
             if (rightIndex === -1) {
                 r[rowIndex].operation = DiffOperation.Removed;   
-                //r[rowIndex].left!.SetChildren(DiffOperation.Removed);             
+                r[rowIndex].left!.SetChildren(DiffOperation.Removed);             
                 continue;
             }      
             let right1 = right[rightIndex]; // right collection;
@@ -51,9 +52,9 @@ export class DiffCollection {
             if (rowIndex === -1) {
                 let row = new DiffCollection(key, right1.name, right1.type);
                 row.left = CheckCollection.GetEmpty();
+                right1.SetChildren(DiffOperation.Added);             
                 row.right = right1;
                 row.operation = DiffOperation.Added;
-                row.right!.SetChildren(DiffOperation.Added);             
                 r.push(row);
                 continue;
             }
@@ -122,10 +123,10 @@ export class CheckCollection {
     empty: boolean = false;
     changes: DiffCounters = new DiffCounters();  
 
-    constructor(public name: string, public type: string, public date: Date) {}
+    constructor(public name: string, public type: string, public date: DateTime) {}
 
     public static GetEmpty() : CheckCollection {
-        let empty = new CheckCollection("", "", new Date());
+        let empty = new CheckCollection("", "", DateTime.fromJSDate(new Date()));
         empty.empty = true;
         return empty;
     }
@@ -137,6 +138,9 @@ export class CheckCollection {
                 for(let k=0;k<this.objects[i].controlGroups[j].items.length;k++) {
                     this.objects[i].controlGroups[j].items[k].operation = op;
                 }                
+            }
+            for(let j=0;j<this.objects[i].controls.length;j++) {
+                this.objects[i].controls[j].operation = op;              
             }
         }
     }

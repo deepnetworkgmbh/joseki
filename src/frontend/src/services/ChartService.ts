@@ -1,5 +1,6 @@
 import { BarChartOptions, PieChartOptions, AreaChartOptions } from '@/types/';
 import { CountersSummary, ScoreHistoryItem } from '@/models';
+import { DateTime } from 'luxon';
 
 export class ChartService {
 	public static groupColors = ['#B7B8A8', '#E33035', '#F8A462', '#41C6B9'];
@@ -44,10 +45,10 @@ export class ChartService {
 	public static drawBarChart(
 		data: ScoreHistoryItem[],
 		key: string,
-		selected: Date,
+		selected: DateTime,
 		cb?: Function,
 		height: number = 100,
-		selected2: string = '',
+		selected2: DateTime = new DateTime(),
 		gridlines: number = 0,
 		componentId: string = '') {
 
@@ -57,16 +58,12 @@ export class ChartService {
 		chart_data.addColumn('date', 'X');
 		chart_data.addColumn('number', 'Score');
 		chart_data.addColumn({ type: 'string', role: 'style' });
-
-		let selectedDate = new Date(selected);
-		let selected2Date = (selected2 == '') ? new Date() : new Date(selected2);
-
+		
 		for (let i = 0; i < data.length; i++) {
-			const rowdate = new Date(data[i].recordedAt);
-			const diff: any = selectedDate.getTime() - rowdate.getTime();
-			const diff2: any = (selected2 == '') ? 1 : (selected2Date.getTime() - rowdate.getTime());
-			let color = (diff === 0 || diff2 === 0) ? '#4AF0C0' : '#31B6A9';
-			chart_data.addRow([rowdate, data[i].score, color]);
+			const rowdate = data[i].recordedAt.toString().split('T')[0];
+			let isSelected = selected.toISODate() === rowdate || selected2.toISODate() === rowdate;
+			let color = isSelected ? '#4AF0C0' : '#31B6A9';
+			chart_data.addRow([new Date(rowdate), data[i].score, color]);
 		}
 
 		var options: BarChartOptions = {
@@ -105,9 +102,9 @@ export class ChartService {
 			var selectedItem = chart.getSelection()[0];
 			if (selectedItem && cb) {
 				let row = selectedItem.row as number;
-				var selectedDate = chart_data.getValue(row, 0);
-				cb(selectedDate, componentId);
-				console.log('[] callback called with params', selectedDate, componentId);
+				var selectedDate = DateTime.fromJSDate(chart_data.getValue(row, 0)).toISODate(); 
+				//console.log('[] selectedDate >', selectedDate);
+				cb(selectedDate, componentId);				
 			}
 		}
 
