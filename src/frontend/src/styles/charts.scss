@@ -108,7 +108,7 @@ svg > g > g.google-visualization-tooltip {
 }
 
 .warning-icon {
-  color: $color-critical;
+  color: $color-high-severity;
   font-size: 9px;
   line-height: 9px;
   margin-right: 2px;
@@ -125,6 +125,13 @@ svg > g > g.google-visualization-tooltip {
 .nodata-icon {
   font-size: 12px;
   color: #bbb;
+  padding-left: 1px;
+  margin-right: 2px;
+}
+
+.failed-icon {
+  font-size: 12px;
+  color: $color-critical;
   padding-left: 1px;
   margin-right: 2px;
 }

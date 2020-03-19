@@ -43,34 +43,6 @@ export default class ComponentHistory extends Vue {
         //window.removeEventListener("resize", this.setupCharts);
     }
 
-    dayClicked(date: Date) {
-        router.push('/overview/' + encodeURIComponent(date.toDateString()));
-    }
-
-    getArrowHtml(i: number) {
-        if (i >= (this.data.length - 1)) return '-';
-        if (this.data[i].current.score > this.data[i + 1].current.score) {
-            return '<i class="fas fa-arrow-up" style="color:green;"></i>'
-        } else if (this.data[i].current.score < this.data[i + 1].current.score) {
-            return '<i class="fas fa-arrow-down" style="color:red;"></i>'
-        }
-        return '-'
-    }
-
-    getErrorArrowHtml(key: string, i: number, reverseColor: boolean = false) {
-        let data = { class: '-', color: '-' };
-
-        if (i < (this.data.length - 1)) {
-            if (this.data[i].current[key] > this.data[i + 1].current[key]) {
-                data = { class: 'up', color: reverseColor ? 'green' : 'red' };
-            } else if (this.data[i].current[key] < this.data[i + 1].current[key]) {
-                data = { class: 'down', color: reverseColor ? 'red' : 'green' };
-            }
-        }
-        if (data.class === '-') return ''
-        return `<i class="fas fa-arrow-${data.class}" style="color:${data.color};"></i>`
-    }
-
     getScanRowClass(i: number): string {
         return i % 2 === 0 ? 'bg-gray-100' : 'bg-gray-200';
     }
@@ -84,13 +56,13 @@ export default class ComponentHistory extends Vue {
     }
 
     CompareScans() {
+        let params = this.checkedScans[1].split('T')[0] + '/' + this.checkedScans[0].split('T')[0];
         if (this.component && this.component.category === 'Overall') {
             console.log(`[] comparing ${this.checkedScans}`);
-            const params = encodeURIComponent(this.checkedScans[1]) + '/' + encodeURIComponent(this.checkedScans[0]);
             router.push('/overview-diff/' + params);
         } else {
             if (this.component) {
-                const params = this.component.id + '/' + this.checkedScans[1] + '/' + this.checkedScans[0];
+                params = this.component.id + '/' + params;
                 router.push('/component-diff/' + params);
             }
         }
