@@ -1,4 +1,4 @@
-name: Scanner Polaris
+name: scanner_polaris_ci_master
 
 on: 
   push:
@@ -10,7 +10,7 @@ on:
       - '!src/scanners/polaris/*.md'
 
 jobs:
-  build-n-push:
+  build-push-deploy:
 
     runs-on: ubuntu-latest
 
@@ -62,4 +62,28 @@ jobs:
         docker push "${{ env.DOCKER_REPOSITORY }}:${{ env.DEV_TAG }}"
         docker push "${{ env.DOCKER_REPOSITORY }}:${{ env.VERSION_TAG }}"
         docker push "${{ env.DOCKER_REPOSITORY }}:edge"
+
+    - name: deploy to k8s
+      env:
+        IMAGE_TAG: ${{ env.DEV_TAG }}
+        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        STORAGE_ACCOUNT_NAME: ${{ secrets.STORAGE_ACCOUNT }}
+        STORAGE_CONTAINER_NAME: ${{ secrets.POLARIS_CONTAINER_NAME }}
+        STORAGE_SAS: ${{ secrets.POLARIS_STORAGE_SAS }}
+        SCANNER_ID: ${{ secrets.POLARIS_SCANNER_ID }}
+      run: |
+        echo "$KUBE_CONFIG_DATA" | base64 --decode > /tmp/config
+        export KUBECONFIG=/tmp/config
+
+        TO_APPLY=./to_apply.yml
+        cp examples/k8s/scanner-polaris.yaml $TO_APPLY
+
+        sed -i 's|#{polaris.imageTag}#|'"$IMAGE_TAG"'|' $TO_APPLY
+        sed -i 's|#{polaris.scannerId}#|'"$SCANNER_ID"'|' $TO_APPLY
+        sed -i 's|#{polaris.clusterId}#|'"$SCANNER_ID"'|' $TO_APPLY
+        sed -i 's|#{polaris.storageName}#|'"$STORAGE_ACCOUNT_NAME"'|' $TO_APPLY
+        sed -i 's|#{polaris.containerName}#|'"$STORAGE_CONTAINER_NAME"'|' $TO_APPLY
+        sed -i 's|#{polaris.storageSas}#|'"$STORAGE_SAS"'|' $TO_APPLY
+        kubectl apply -f $TO_APPLY
+        rm $TO_APPLY
 

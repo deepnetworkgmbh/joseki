@@ -1,4 +1,4 @@
-name: scanner_polaris_validate_pull_request
+name: scanner_polaris_validate_pr
 
 on: 
   pull_request:

@@ -7,22 +7,22 @@ metadata:
   labels:
     app: scanner-polaris
     module: scanners
-    version: 0.2.0
+    version: '#{polaris.imageTag}#'
 data:
   scanner-polaris-config.yaml:  |
     scanner:
-      id: SCANNER_ID
-      cluster-id: CLUSTER_ID
+      id: #{polaris.scannerId}#
+      cluster-id: #{polaris.clusterId}#
       periodicity: "0 2 * * *"
       heartbeat-periodicity: 86400
-      version: 0.2.0
+      version: #{polaris.imageTag}#
     polaris:
       configPath: /app/polaris-config.yaml
       version: 0.6.0
     blobStorageType: azure-blob-storage
     azureBlob:
-      storageBaseUrl: https://STORAGE__ACCOUNT_NAME.blob.core.windows.net/CONTAINER_NAME
-      sasToken: INSERT_SAS_TOKEN_HERE
+      storageBaseUrl: https://#{polaris.storageName}#.blob.core.windows.net/#{polaris.containerName}#
+      sasToken: #{polaris.storageSas}#
     logFormat: plain-text
   polaris-config.yaml:  |
     checks:
@@ -224,7 +224,7 @@ metadata:
   labels:
     app: scanner-polaris
     module: scanners
-    version: 0.2.0
+    version: '#{polaris.imageTag}#'
 spec:
   schedule: "0 2 * * *"
   jobTemplate:
@@ -233,7 +233,7 @@ spec:
         spec:
           containers:
           - name: scanner-polaris
-            image: deepnetwork/joseki-scanner-polaris:0.2.0
+            image: 'deepnetwork/joseki-scanner-polaris:#{polaris.imageTag}#'
             imagePullPolicy: Always
             args:
             - --config
