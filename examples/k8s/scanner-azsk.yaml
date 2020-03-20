@@ -7,24 +7,24 @@ metadata:
   labels:
     app: scanner-azsk
     module: scanners
-    version: 0.2.1
+    version: '#{azsk.imageTag}#'
 data:
   scanner-azsk-config.yaml:  |
     scanner:
       !azsk-scanner
-      id: 0dfa8355-b20d-4701-af37-6cc021df3244
-      version: 0.2.1
+      id: #{azsk.scannerId}#
+      version: #{azsk.imageTag}#
       periodicity: 0 2 * * *
       azSkVersion: 4.7.0
       auditScriptPath: /app/azsk.ps1
-      tenantId: TENANT_ID
-      servicePrincipalId: SP_ID
-      servicePrincipalPassword: SP_PASSWORD
+      tenantId: #{azsk.tenantId}#
+      servicePrincipalId: #{azsk.spId}#
+      servicePrincipalPassword: #{azsk.spPassword}#
 
     exporter:
       !az-blob
-      basePath: https://STORAGE_ACCOUNT.blob.core.windows.net/CONTAINER_NAME
-      sas: TOKEN
+      basePath: https://#{azsk.storageAccountName}#.blob.core.windows.net/#{azsk.containerName}#
+      sas: #{azsk.storageSas}#
       heartbeatPeriodicity: 86400
 
 ---
@@ -72,7 +72,7 @@ metadata:
   labels:
     app: scanner-azsk
     module: scanners
-    version: 0.2.1
+    version: '#{azsk.imageTag}#'
 spec:
   schedule: "0 2 * * *"
   jobTemplate:
@@ -81,15 +81,11 @@ spec:
         spec:
           containers:
           - name: scanner-azsk
-            image: deepnetwork/joseki-scanner-azsk:0.2.1
+            image: deepnetwork/joseki-scanner-azsk:#{azsk.imageTag}#
             imagePullPolicy: Always
             args:
-            - --config
-            - /app/config.az.yaml
-            - --subscriptions
-            - s1
-            - s2
-            - s3
+            - --config /app/config.az.yaml
+            - '--subscriptions #{azsk.subscriptions}#'
             volumeMounts:
             - name: config
               mountPath: /app/config.az.yaml
