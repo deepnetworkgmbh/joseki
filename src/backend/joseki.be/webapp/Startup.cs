@@ -122,9 +122,8 @@ namespace webapp
             services.AddDbContext<JosekiDbContext>((provider, options) =>
             {
                 var config = provider.GetService<ConfigurationParser>().Get();
-                var sqlConnectionString = string.Format(config.Database.ConnectionString, config.Database.Username, config.Database.Password);
                 options.UseSqlServer(
-                    sqlConnectionString,
+                    config.Database.ConnectionString,
                     o => o
                         .MigrationsAssembly(typeof(JosekiDbContext).Assembly.GetName().Name)
                         .EnableRetryOnFailure());

@@ -1,7 +1,5 @@
 database:
   connectionString: Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=local-joseki-db;Integrated Security=True;
-  username: test
-  password: t3st
 
 cache:
   polarisCheckTtl: 2
