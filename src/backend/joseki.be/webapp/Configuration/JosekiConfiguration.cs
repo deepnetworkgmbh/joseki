@@ -40,16 +40,6 @@
         /// MSSQL server connection string with place-holders fow username and password.
         /// </summary>
         public string ConnectionString { get; set; }
-
-        /// <summary>
-        /// MSSQL database username.
-        /// </summary>
-        public string Username { get; set; }
-
-        /// <summary>
-        /// MSSQL database password.
-        /// </summary>
-        public string Password { get; set; }
     }
 
     /// <summary>

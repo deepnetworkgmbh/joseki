@@ -1,4 +1,4 @@
-name: Backend
+name: backend_ci_master
 
 on: 
   push:
@@ -81,3 +81,25 @@ jobs:
         docker push "${{ env.DOCKER_REPOSITORY }}:${{ env.VERSION_TAG }}"
         docker push "${{ env.DOCKER_REPOSITORY }}:edge"
 
+    - name: deploy to k8s
+      env:
+        IMAGE_TAG: ${{ env.DEV_TAG }}
+        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        STORAGE_ACCOUNT_NAME: ${{ secrets.STORAGE_ACCOUNT }}
+        STORAGE_ACCOUNT_KEY: ${{ secrets.STORAGE_KEY }}
+        SQL_CONNECTION_STRING: ${{ secrets.BE_SQL_CONNECTION_STRING }}
+        BLOB_SAS: ${{ secrets.BE_BLOB_SAS }}
+      run: |
+        echo "$KUBE_CONFIG_DATA" | base64 --decode > /tmp/config
+        export KUBECONFIG=/tmp/config
+
+        TO_APPLY=./to_apply.yml
+        cp examples/k8s/be.yaml $TO_APPLY
+
+        sed -i 's|#{be.imageTag}#|'"$IMAGE_TAG"'|' $TO_APPLY
+        sed -i 's|#{be.sqlConnectionString}#|'"$SQL_CONNECTION_STRING"'|' $TO_APPLY
+        sed -i 's|#{be.storageAccountName}#|'"$STORAGE_ACCOUNT_NAME"'|' $TO_APPLY
+        sed -i 's|#{be.storageAccountKey}#|'"$STORAGE_ACCOUNT_KEY"'|' $TO_APPLY
+        sed -i 's|#{be.blobSas}#|'"$BLOB_SAS"'|' $TO_APPLY
+        kubectl apply -f $TO_APPLY
+        rm $TO_APPLY /tmp/config
