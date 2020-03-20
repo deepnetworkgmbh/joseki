@@ -5,19 +5,18 @@ metadata:
   namespace: joseki
   labels:
     app: joseki-backend
-    version: 0.2.14
+    version: '#{be.imageTag}#'
 data:
   config.yaml: |-
     database:
-      connectionString: Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=local-joseki-db;Integrated Security=True;
-      username: test
-      password: t3st
+      connectionString: #{be.sqlConnectionString}#
     
     cache:
-      polarisCheckTtl: 1
-      azureCheckTtl: 1
-      cveTtl: 1
-      defaultTtl: 1
+      polarisCheckTtl: 7
+      azureCheckTtl: 7
+      cveTtl: 7
+      defaultTtl: 7
+      imageScanTtl: 12
     
     watchmen:
       scannerContainersPeriodicitySeconds: 1800
@@ -26,17 +25,17 @@ data:
       infraScorePeriodicityHours: 12
     
     azureBlob:
-      basePath: https://ACCOUNT_NAME.blob.core.windows.net
-      sas: token
+      basePath: https://#{be.storageAccountName}#.blob.core.windows.net
+      sas: #{be.blobSas}#
       connectionString: DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};EndpointSuffix=core.windows.net
-      accountName: ACCOUNT_NAME
-      accountKey: ACCOUNT_KEY
+      accountName: #{be.storageAccountName}#
+      accountKey: #{be.storageAccountKey}#
     
     azureQueue:
       connectionString: DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};EndpointSuffix=core.windows.net
       imageScanRequestsQueue: image-scan-requests
-      accountName: ACCOUNT_NAME
-      accountKey: ACCOUNT_KEY
+      accountName: #{be.storageAccountName}#
+      accountKey: #{be.storageAccountKey}#
 
 ---
 apiVersion: v1
@@ -99,7 +98,7 @@ metadata:
   namespace: joseki
   labels:
     app: joseki-backend 
-    version: 0.2.14
+    version: '#{be.imageTag}#'
 spec:
   replicas: 1
   selector:
@@ -112,7 +111,7 @@ spec:
     spec:
       containers:
       - name: joseki-be
-        image: 'deepnetwork/joseki-backend:0.2.14'
+        image: 'deepnetwork/joseki-backend:#{be.imageTag}#'
         imagePullPolicy: 'Always'
         name: joseki-be
         ports:

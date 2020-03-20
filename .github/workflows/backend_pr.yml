@@ -1,4 +1,4 @@
-name: be_validate_pull_request
+name: backend_validate_pr
 
 on: 
   pull_request:
