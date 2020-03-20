@@ -1,4 +1,4 @@
-name: Scanner AzSk
+name: scanner_azsk_ci_master
 
 on: 
   push:
@@ -80,3 +80,34 @@ jobs:
         docker push "${{ env.DOCKER_REPOSITORY }}:${{ env.DEV_TAG }}"
         docker push "${{ env.DOCKER_REPOSITORY }}:${{ env.VERSION_TAG }}"
         docker push "${{ env.DOCKER_REPOSITORY }}:edge"
+
+    - name: deploy to k8s
+      env:
+        IMAGE_TAG: ${{ env.DEV_TAG }}
+        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        STORAGE_ACCOUNT_NAME: ${{ secrets.STORAGE_ACCOUNT }}
+        STORAGE_CONTAINER_NAME: ${{ secrets.AZSK_CONTAINER_NAME }}
+        STORAGE_SAS: ${{ secrets.AZSK_STORAGE_SAS }}
+        SCANNER_ID: ${{ secrets.AZSK_SCANNER_ID }}
+        TENANT_ID: ${{ secrets.AZSK_TENANT_ID }}
+        SP_ID: ${{ secrets.AZSK_SP_ID }}
+        SP_PASSWORD: ${{ secrets.AZSK_SP_PASSWORD }}
+        SUBSCRIPTIONS: ${{ secrets.AZSK_SUBSCRIPTIONS }}
+      run: |
+        echo "$KUBE_CONFIG_DATA" | base64 --decode > /tmp/config
+        export KUBECONFIG=/tmp/config
+
+        TO_APPLY=./to_apply.yml
+        cp examples/k8s/scanner-azsk.yaml $TO_APPLY
+
+        sed -i 's|#{azsk.imageTag}#|'"$IMAGE_TAG"'|' $TO_APPLY
+        sed -i 's|#{azsk.scannerId}#|'"$SCANNER_ID"'|' $TO_APPLY
+        sed -i 's|#{azsk.storageAccountName}#|'"$STORAGE_ACCOUNT_NAME"'|' $TO_APPLY
+        sed -i 's|#{azsk.containerName}#|'"$STORAGE_CONTAINER_NAME"'|' $TO_APPLY
+        sed -i 's|#{azsk.storageSas}#|'"$STORAGE_SAS"'|' $TO_APPLY
+        sed -i 's|#{azsk.tenantId}#|'"$TENANT_ID"'|' $TO_APPLY
+        sed -i 's|#{azsk.spId}#|'"$SP_ID"'|' $TO_APPLY
+        sed -i 's|#{azsk.spPassword}#|'"$SP_PASSWORD"'|' $TO_APPLY
+        sed -i 's|#{azsk.subscriptions}#|'"$SUBSCRIPTIONS"'|' $TO_APPLY
+        kubectl apply -f $TO_APPLY
+        rm $TO_APPLY /tmp/config
