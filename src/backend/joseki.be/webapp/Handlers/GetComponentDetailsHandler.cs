@@ -68,7 +68,7 @@ namespace webapp.Handlers
                     Name = audit.InfrastructureComponent.ComponentName,
                 },
                 Current = currentSummary,
-                ScoreHistory = componentHistory.OrderByDescending(i => i.RecordedAt).ToArray(),
+                ScoreHistory = componentHistory.OrderBy(i => i.RecordedAt).ToArray(),
             };
 
             // 4. Get all the check details
