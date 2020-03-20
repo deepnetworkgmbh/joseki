@@ -60,7 +60,7 @@ namespace webapp.Handlers
                     Name = Audit.OverallName,
                 },
                 Date = date,
-                ScoreHistory = overallHistory.OrderByDescending(i => i.RecordedAt).ToArray(),
+                ScoreHistory = overallHistory.OrderBy(i => i.RecordedAt).ToArray(),
                 Current = await cache.GetCountersSummary(Audit.OverallId, date),
             };
 
@@ -89,7 +89,7 @@ namespace webapp.Handlers
                         Name = audit.ComponentName,
                     },
                     Current = currentSummary,
-                    ScoreHistory = componentHistory.OrderByDescending(i => i.RecordedAt).ToArray(),
+                    ScoreHistory = componentHistory.OrderBy(i => i.RecordedAt).ToArray(),
                 };
 
                 components.Add(component);
