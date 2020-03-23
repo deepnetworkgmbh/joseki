@@ -67,7 +67,7 @@ jobs:
     - name: scan image for CVEs
       uses: 'docker://aquasec/trivy:0.5.2'
       with:
-        args: --exit-code 1 --severity HIGH,CRITICAL "${{ env.DOCKER_REPOSITORY }}:${{ env.DEV_TAG }}"
+        args: --exit-code 1 --severity HIGH,CRITICAL --no-progress "${{ env.DOCKER_REPOSITORY }}:${{ env.DEV_TAG }}"
 
     - name: Docker Login
       uses: Azure/docker-login@v1
@@ -85,21 +85,18 @@ jobs:
       env:
         IMAGE_TAG: ${{ env.DEV_TAG }}
         KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-        STORAGE_ACCOUNT_NAME: ${{ secrets.STORAGE_ACCOUNT }}
-        STORAGE_ACCOUNT_KEY: ${{ secrets.STORAGE_KEY }}
-        SQL_CONNECTION_STRING: ${{ secrets.BE_SQL_CONNECTION_STRING }}
-        BLOB_SAS: ${{ secrets.BE_BLOB_SAS }}
+        BE_CONFIG_DATA: ${{ secrets.BE_CONFIG_DATA }}
       run: |
         echo "$KUBE_CONFIG_DATA" | base64 --decode > /tmp/config
         export KUBECONFIG=/tmp/config
 
-        TO_APPLY=./to_apply.yml
-        cp examples/k8s/be.yaml $TO_APPLY
+        CONFIG_PATH=examples/k8s/backend/config.yaml
+        echo "$BE_CONFIG_DATA" | base64 --decode > $CONFIG_PATH
 
-        sed -i 's|#{be.imageTag}#|'"$IMAGE_TAG"'|' $TO_APPLY
-        sed -i 's|#{be.sqlConnectionString}#|'"$SQL_CONNECTION_STRING"'|' $TO_APPLY
-        sed -i 's|#{be.storageAccountName}#|'"$STORAGE_ACCOUNT_NAME"'|' $TO_APPLY
-        sed -i 's|#{be.storageAccountKey}#|'"$STORAGE_ACCOUNT_KEY"'|' $TO_APPLY
-        sed -i 's|#{be.blobSas}#|'"$BLOB_SAS"'|' $TO_APPLY
-        kubectl apply -f $TO_APPLY
-        rm $TO_APPLY /tmp/config
+        sed -i 's|#{be.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/backend/kustomization.yaml
+        sed -i 's|#{be.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/backend/be.yaml
+
+        kubectl apply -f examples/k8s/backend/rbac.yaml
+        kubectl apply -k examples/k8s/backend
+
+        rm $CONFIG_PATH /tmp/config
