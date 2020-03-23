@@ -1,0 +1,13 @@
+resources:
+- be.yaml
+generatorOptions:
+  labels: 
+    app: joseki-backend
+    version: '#{be.imageTag}#'
+configMapGenerator:
+- name: backend-config
+  namespace: joseki
+  behavior: replace
+  files:
+  - config.yaml
+
