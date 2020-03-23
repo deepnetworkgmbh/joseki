@@ -26,7 +26,7 @@ input[type="checkbox"]:checked ~ ul
 	visibility: visible;
 	display: block;
 	border-left: dashed 1px #ddd;
-	margin-left: 7px;
+	margin-left: 4px;
 	margin-right: -10px;
 }
 
@@ -38,22 +38,22 @@ input[type="checkbox"]:checked ~ label > .diff-row {
 }
 
 input[type="checkbox"] + label:before {
-	margin-left: -15px;
 	width: 0;
 	height: 0;
 	display: inline-block;
 	text-align: center;
-	content: "\f105";
+	content: "\e907";
 	color: #666;
 	position: absolute;
-	margin-top: -3px;
-	font-family: "Font Awesome 5 Free";
+	margin-left: -20px;
+	margin-top: -2px;
+	font-family: "icomoon";
 	font-weight: 900;
 	font-size: 19px;
 }
 input[type="checkbox"]:checked + label:before {
-	content: "\f107";
-	font-family: "Font Awesome 5 Free";
+	content: "\e906";
+	font-family: "icomoon";
 	font-weight: 900;
 }
 

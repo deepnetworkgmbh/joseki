@@ -151,13 +151,13 @@ export class MappingService {
     public static getControlIcon(severity: CheckSeverity): string {
         switch (severity.toString()) {
             case 'NoData':
-                return 'fas fa-times nodata-icon'
+                return 'icon-x-circle nodata-icon'
             case 'Failed':
-                return 'fas fa-times failed-icon'
+                return 'icon-x-circle failed-icon'
             case 'Warning':
-                return 'fas fa-exclamation-triangle warning-icon'
+                return 'icon-alert-triangle warning-icon'
             case 'Success':
-                return 'fas fa-check noissues-icon'
+                return 'icon-check-circle noissues-icon'
         }
         return ''
     }
