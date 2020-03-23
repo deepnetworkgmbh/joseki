@@ -2,6 +2,7 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 import { InfrastructureComponent } from '@/models';
 import router from '@/router';
 import { ChartService } from '@/services/ChartService';
+import { DateTime } from 'luxon';
 
 @Component
 export default class InfComponent extends Vue {
@@ -22,25 +23,8 @@ export default class InfComponent extends Vue {
   private index: any;
 
   @Prop()
-  private date: any;
-
-  @Prop({ default: false })
-  private showSecondPie!: boolean
-
-  @Prop()
-  private sections2: any;
-
-  @Prop()
-  private score2: any;
-
-  @Prop()
-  private total2: any;
-
-
-  getComponentClass() {
-    return this.showSecondPie ? 'shadow inf-component-diff' : 'shadow inf-component';
-  }
-
+  private date?: DateTime;
+  
   goComponentHistory(component: InfrastructureComponent) {
     if (component) {
       router.push('/component-history/' + component.id);
@@ -51,8 +35,8 @@ export default class InfComponent extends Vue {
 
   goComponentDetail(component: InfrastructureComponent) {
     let params = encodeURIComponent(component.id);
-    if (this.date) {
-      params += '/' + encodeURIComponent(this.date);
+    if (this.date !== undefined) {
+      params += '/' + this.date.toISODate();
     }
     router.push('/component-detail/' + params);
   }

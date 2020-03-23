@@ -16,7 +16,10 @@
     <div class="inf-component-diff-right">
       <div class='inf-component-diff-buttons'>
         <button @click="goComponentHistory(component)">History</button>
-        <button @click="goComponentDetail(component)">Detail</button>
+        <button v-if="notLoaded" :disabled="notLoaded">
+         <span class='text-center' data-balloon-length="xlarge" data-balloon-pos="left" 
+            aria-label="This component has no overview on one of the dates, thus cannot be compared.">Compare<i class="far fa-question-circle tip-icon"></i></span></button>
+        <button v-if="!notLoaded" @click="goComponentDiff(component)" :disabled="notLoaded">Differences</button>
       </div>
       <div class="inf-component-diff-pies">
         <div>

@@ -13,6 +13,9 @@ export class InfrastructureComponentSummary {
   sections: any[] = [];
   checks: Check[] = [];
   categorySummaries: any[] = []
+  // true if this component summary does not
+  // have a pair on overview diff
+  notLoaded: boolean = false;
 
   public static getSections(c: CountersSummary): any[] {
     let result: any[] = [];

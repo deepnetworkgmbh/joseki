@@ -64,7 +64,9 @@ export default class OverviewDiff extends Vue {
         let date = DateTime.fromISO(this.date);
         let date2 = DateTime.fromISO(this.date2);
         for (let i = 0; i < this.data.summary1.components.length; i++) {
-            ChartService.drawBarChart(this.data.summary1.components[i].scoreHistory, 'bar' + i, date, undefined, 48, date2);
+            if(this.data.summary2.components[i]) {
+                ChartService.drawBarChart(this.data.summary1.components[i].scoreHistory, 'bar' + i, date, undefined, 48, date2);
+            }
         }
     }
 
