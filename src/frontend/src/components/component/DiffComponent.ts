@@ -40,6 +40,16 @@ export default class DiffComponent extends Vue {
   @Prop()
   private notLoaded!: boolean;
 
+  getComponentIcon() {
+    if(this.component.category === 'Azure Subscription') {
+      return 'icon-azuredevops';
+    }
+    if(this.component.category === 'Kubernetes') {
+      return 'icon-kubernetes';
+    }
+    return ''
+  }
+  
   goComponentHistory(component: InfrastructureComponent) {
     if (component) {
       router.push('/component-history/' + component.id);

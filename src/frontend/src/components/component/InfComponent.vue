@@ -3,8 +3,7 @@
     <div class="inf-component-left">
       <div class="inf-component-left-top">
         <div class='inf-component-icon'>
-          <img v-show="component.category==='Azure Subscription'" src='@/assets/azure.png'>
-          <img v-show="component.category==='Kubernetes'" src='@/assets/kubernetes.png'>
+           <span :class="getComponentIcon()"></span>
         </div>
         <div class='inf-component-info'>
           <div class="inf-component-name">{{ component.name }}</div>
@@ -15,8 +14,8 @@
     </div>
     <div class="inf-component-right">
       <div class='inf-component-buttons'>
-        <button @click="goComponentHistory(component)">History</button>
-        <button @click="goComponentDetail(component)">Detail</button>
+        <button @click="goComponentHistory(component)"><span class="icon-more-vertical"></span> History</button>
+        <button @click="goComponentDetail(component)"><span class="icon-search"></span> Detail</button>
       </div>
       <div class="inf-component-score">{{score}}%</div>
       <div class="inf-component-pie">

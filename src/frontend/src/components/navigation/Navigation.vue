@@ -2,8 +2,8 @@
   <div id="nav" class='flex flex-row p-2'>
     <div class="logo">
       <router-link to="/">
-      <font-awesome-icon icon="shield-alt" />
-      Joseki</router-link>
+        <span class="icon-shield"></span>Joseki
+      </router-link>
     </div>
     <!-- <div class="links flex-grow justify-end text-right pt-1">
       <router-link to="/" :active-class="returnClusterOverviewActive()">Cluster Overview</router-link>
