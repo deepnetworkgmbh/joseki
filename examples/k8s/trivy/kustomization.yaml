@@ -1,5 +1,5 @@
 resources:
-- deployment.yaml
+- scanner-trivy.yaml
 generatorOptions:
   labels: 
     app: scanner-trivy
