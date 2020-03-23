@@ -124,6 +124,11 @@
             <param name="input">String representation of YAML file.</param>
             <returns>The application configuration object.</returns>
         </member>
+        <member name="P:webapp.Configuration.ConfigurationParser.TrivyPath">
+            <summary>
+            Returns trivy binary path.
+            </summary>
+        </member>
         <member name="M:webapp.Configuration.ConfigurationParser.Get">
             <summary>
             Parses Scanner Config on the first request and cache the result in memory.
@@ -189,21 +194,6 @@
         <member name="P:webapp.Configuration.TrivyConfiguration.Id">
             <summary>
             Scanner identifier.
-            </summary>
-        </member>
-        <member name="P:webapp.Configuration.TrivyConfiguration.Version">
-            <summary>
-            Scanner version.
-            </summary>
-        </member>
-        <member name="P:webapp.Configuration.TrivyConfiguration.TrivyVersion">
-            <summary>
-            Trivy binary version.
-            </summary>
-        </member>
-        <member name="P:webapp.Configuration.TrivyConfiguration.BinaryPath">
-            <summary>
-            The address of trivy binary.
             </summary>
         </member>
         <member name="P:webapp.Configuration.TrivyConfiguration.CachePath">

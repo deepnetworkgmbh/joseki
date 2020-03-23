@@ -80,3 +80,20 @@ jobs:
         docker push "${{ env.DOCKER_REPOSITORY }}:${{ env.DEV_TAG }}"
         docker push "${{ env.DOCKER_REPOSITORY }}:${{ env.VERSION_TAG }}"
         docker push "${{ env.DOCKER_REPOSITORY }}:edge"
+
+    - name: deploy to k8s
+      env:
+        IMAGE_TAG: ${{ env.DEV_TAG }}
+        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        TRIVY_CONFIG_DATA: ${{ secrets.TRIVY_CONFIG_DATA }}
+      run: |
+        echo "$KUBE_CONFIG_DATA" | base64 --decode > /tmp/config
+        export KUBECONFIG=/tmp/config
+
+        CONFIG_PATH=examples/k8s/trivy/scanner-trivy-config.yaml
+        echo "$TRIVY_CONFIG_DATA" | base64 --decode > $CONFIG_PATH
+
+        sed -i 's|#{trivy.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/trivy/kustomization.yaml
+        sed -i 's|#{trivy.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/trivy/scanner-trivy.yaml
+        kubectl apply -k examples/k8s/trivy
+        rm $CONFIG_PATH /tmp/config

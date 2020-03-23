@@ -22,6 +22,8 @@ namespace webapp.Configuration
         private static readonly IDeserializer Deserializer;
 
         private readonly Lazy<ImageScannerConfiguration> imageScannerConfig;
+        private readonly string scannerVersion;
+        private readonly string trivyVersion;
 
         static ConfigurationParser()
         {
@@ -41,13 +43,40 @@ namespace webapp.Configuration
         /// <param name="configuration">The application configuration object.</param>
         public ConfigurationParser(IConfiguration configuration)
         {
-            const string envVarName = "IMAGE_SCANNER_CONFIG_FILE_PATH";
-            var configFilePath = configuration[envVarName];
+            const string configPathEnvVar = "IMAGE_SCANNER_CONFIG_FILE_PATH";
+            const string trivyPathEnvVar = "TRIVY_BINARY_PATH";
+            const string trivyVersionEnvVar = "TRIVY_VERSION";
+            const string versionVarName = "SCANNER_VERSION";
 
+            if (string.IsNullOrEmpty(configuration[trivyPathEnvVar]))
+            {
+                Logger.Fatal("There is no {EnvVar} environment variable", trivyPathEnvVar);
+                throw new Exception(trivyPathEnvVar);
+            }
+
+            this.TrivyPath = configuration[trivyPathEnvVar];
+
+            if (string.IsNullOrEmpty(configuration[trivyVersionEnvVar]))
+            {
+                Logger.Fatal("There is no {EnvVar} environment variable", trivyVersionEnvVar);
+                throw new Exception(trivyVersionEnvVar);
+            }
+
+            this.trivyVersion = configuration[trivyVersionEnvVar];
+
+            if (string.IsNullOrEmpty(configuration[versionVarName]))
+            {
+                Logger.Fatal("There is no {EnvVar} environment variable", versionVarName);
+                throw new Exception(versionVarName);
+            }
+
+            this.scannerVersion = configuration[versionVarName];
+
+            var configFilePath = configuration[configPathEnvVar];
             if (string.IsNullOrEmpty(configFilePath))
             {
-                Logger.Fatal("There is no IMAGE_SCANNER_CONFIG_FILE_PATH environment variable with Image Scanner config filepath");
-                throw new Exception(envVarName);
+                Logger.Fatal("There is no {EnvVar} environment variable", configPathEnvVar);
+                throw new Exception(configPathEnvVar);
             }
 
             if (!File.Exists(configFilePath))
@@ -70,6 +99,11 @@ namespace webapp.Configuration
         }
 
         /// <summary>
+        /// Returns trivy binary path.
+        /// </summary>
+        public string TrivyPath { get; }
+
+        /// <summary>
         /// Parses Scanner Config on the first request and cache the result in memory.
         /// </summary>
         /// <returns>Image Scanner configuration object.</returns>
@@ -89,8 +123,8 @@ namespace webapp.Configuration
             return new TrivyAzblobScannerConfiguration
             {
                 Id = trivyCfg.Id,
-                Version = trivyCfg.Version,
-                TrivyVersion = trivyCfg.TrivyVersion,
+                Version = this.scannerVersion,
+                TrivyVersion = this.trivyVersion,
                 AzureBlobBaseUrl = azBlobCfg.BasePath,
                 AzureBlobSasToken = azBlobCfg.Sas,
                 HeartbeatPeriodicity = azBlobCfg.HeartbeatPeriodicity,

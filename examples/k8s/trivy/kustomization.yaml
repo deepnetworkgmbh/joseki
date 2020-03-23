@@ -1,0 +1,13 @@
+namespace: joseki
+resources:
+- scanner-trivy.yaml
+generatorOptions:
+  labels: 
+    app: scanner-trivy
+    module: scanners
+    version: '#{trivy.imageTag}#'
+configMapGenerator:
+- name: scanner-trivy-cfg
+  files:
+  - scanner-trivy-config.yaml
+
