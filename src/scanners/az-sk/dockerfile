@@ -49,7 +49,8 @@ RUN chmod +x /opt/microsoft/powershell/7/pwsh
 RUN ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/powershell
 
 # Install az-sk module
-RUN powershell -Command Install-Module AzSK -RequiredVersion 4.7.0 -Force
+ENV AZSK_VERSION=4.7.0
+RUN powershell -Command Install-Module AzSK -RequiredVersion "$AZSK_VERSION" -Force
 
 WORKDIR /app
 COPY --from=publish-cli /app/publish .

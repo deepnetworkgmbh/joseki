@@ -24,11 +24,15 @@ namespace core.exporters.azure
         private static readonly ILogger Logger = Log.ForContext<AzureBlobExporter>();
         private readonly AzBlobExporterConfiguration blobCfg;
         private readonly AzSkConfiguration scannerCfg;
+        private readonly string scannerVersion;
+        private readonly string azskVersion;
 
         public AzureBlobExporter(ConfigurationParser config)
         {
             this.blobCfg = config.GetAzBlobConfig();
             this.scannerCfg = config.GetScannerConfig();
+            this.scannerVersion = config.ScannerVersion;
+            this.azskVersion = config.AzskVersion;
         }
 
         /// <inheritdoc />
@@ -109,9 +113,9 @@ namespace core.exporters.azure
             var metadata = new AuditMetadata
             {
                 AuditId = Guid.NewGuid().ToString(),
-                ScannerVersion = this.scannerCfg.Version,
+                ScannerVersion = this.scannerVersion,
                 Periodicity = this.scannerCfg.Periodicity,
-                AzSkVersion = this.scannerCfg.AzSkVersion,
+                AzSkVersion = this.azskVersion,
                 Timestamp = ((DateTimeOffset)details.Timestamp).ToUnixTimeSeconds(),
             };
 
