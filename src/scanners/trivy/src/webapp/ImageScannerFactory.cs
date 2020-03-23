@@ -35,7 +35,7 @@ namespace webapp
 
             return scannerConfiguration.Scanner switch
             {
-                TrivyConfiguration trivy => new Trivy(trivy.CachePath, trivy.BinaryPath, trivy.Registries),
+                TrivyConfiguration trivy => new Trivy(trivy.CachePath, this.configuration.TrivyPath, trivy.Registries),
                 _ => throw new NotImplementedException("At the moment only trivy scanner is supported")
             };
         }
