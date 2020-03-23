@@ -1,41 +1,4 @@
 ---
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: scanner-trivy
-  namespace: joseki
-  labels:
-    app: scanner-trivy
-    module: scanners
-  
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRole
-metadata:
-  name: scanner-trivy
-  labels:
-    app: scanner-trivy
-    module: scanners
-rules:
-  
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRoleBinding
-metadata:
-  name: scanner-trivy
-  labels:
-    app: scanner-trivy
-    module: scanners
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: scanner-trivy
-subjects:
-  - kind: ServiceAccount
-    name: scanner-trivy
-    namespace: joseki
-
----
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
@@ -65,6 +28,10 @@ spec:
       app: scanner-trivy
       module: scanners
   template:
+    metadata:
+      labels:
+        app: scanner-trivy
+        module: scanners
     spec:
       containers:
       - name: scanner-trivy
