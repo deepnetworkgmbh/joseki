@@ -1,0 +1,15 @@
+resources:
+- scanner-polaris.yaml
+generatorOptions:
+  labels: 
+    app: scanner-polaris
+    module: scanners
+    version: '#{polaris.imageTag}#'
+configMapGenerator:
+- name: scanner-polaris-cfg
+  namespace: joseki
+  behavior: replace
+  files:
+  - scanner-polaris-config.yaml
+  - polaris-config.yaml
+
