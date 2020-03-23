@@ -60,11 +60,13 @@
           :sections="c.sections"
           :score="c.current.score"
           :total="c.current.total"
+          :notLoaded="c.notLoaded"
           :date="date"
           :index="i"
           :sections2="data.summary2.components[i].sections"
           :score2="data.summary2.components[i].current.score"
           :total2="data.summary2.components[i].current.total"          
+          :date2="date2"
         ></DiffComponent>        
       </div>
     </div>    

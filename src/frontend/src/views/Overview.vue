@@ -69,32 +69,7 @@
         ></InfComponent>        
       </div>
     </div>
-    <div :class="getPanelClass()" style="z-index:90;">
-      <div v-if="panelOpen" class="p-2">
-        <button class="btn m-1" @click="panelOpen=false" style="float:right;border:none;">X</button>
-        <h1 class="-mt-1">Select Scans to Compare</h1>
-        <h1 class="mt-1 font-bold">for Overall</h1>
-        <div class="scan-list">
-          <table style="width:100%">
-            <tr v-for="(scan,i) in data.overall.scoreHistory" :key="`scan${i}1`">
-              <td class="w-1">
-               <input type="checkbox" class='chk' :id="`scan${i}1`" :value="`${scan.recordedAt}`" v-model="checkedScans" 
-               :disabled="checkDisabled(i, `${scan.recordedAt}`)">
-              </td>
-              <td class='text-sm'>{{ scan.recordedAt | formatDate }}</td>
-              <td class='text-sm'>{{ scan.id }}</td>
-              <td class="w-1" v-html="getArrowHtml(i)"></td>
-              <td class="w-1 text-sm">{{scan.score}}%</td>
-            </tr>
-          </table>
-        </div>
-        <div class='panel-button-container'>
-          <div class='text-right m-2'>
-            <button class="btn" @click="CompareScans()" :disabled='canCompare()'>Compare</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    
   </div>
 </template>
 

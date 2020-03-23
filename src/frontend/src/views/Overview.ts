@@ -21,30 +21,30 @@ export default class Overview extends Vue {
     loaded: boolean = false;
     service: DataService = new DataService();
     data!: InfrastructureOverview;
-    panelOpen: boolean = false;
-    checkedScans: any[] = [];
 
     loadData() {
         this.selectedDate = (this.date === null) ? undefined : DateTime.fromISO(this.date);
-        console.log(`[selectedDate]=>`, this.selectedDate);
+        if (this.selectedDate !== undefined) {
+            console.log(`[selectedDate]=>`, this.selectedDate.toISODate());
+        }
         this.service
             .getGeneralOverviewData(this.selectedDate)
             .then(response => {
                 if (response) {
                     this.data = response;
-                    this.loaded = true;
                     this.setupCharts();
+                    this.$forceUpdate();
+                    this.loaded = true;
                 }
             });
     }
 
-    created() {
-        window.addEventListener("resize", this.setupCharts);
+    created() { 
+        window.addEventListener("resize", this.setupCharts); 
+        this.loadData();
     }
 
-    destroyed() {
-        window.removeEventListener("resize", this.setupCharts);
-    }
+    destroyed() { window.removeEventListener("resize", this.setupCharts); }
 
     setupCharts() {
         google.charts.load('current', { 'packages': ['corechart'] });
@@ -65,6 +65,8 @@ export default class Overview extends Vue {
     }
 
     dayClicked(date: string) {
+        this.selectedDate = DateTime.fromISO(date);
+        console.log(`[] day clicked ${date}`)
         router.push('/overview/' + date);
     }
 
@@ -91,10 +93,6 @@ export default class Overview extends Vue {
         return '-'
     }
 
-    getScanRowClass(i: number): string {
-        return i % 2 === 0 ? 'bg-gray-100' : 'bg-gray-200';
-    }
-
     get shortHistory() {
         return this.data.overall.scoreHistory.slice(0, 5);
     }
@@ -107,27 +105,9 @@ export default class Overview extends Vue {
         router.push('/overview-history/');
     }
 
-    getPanelClass() {
-        this.$emit(this.panelOpen ? 'sideWindowOpened' : 'sideWindowClosed');
-        return this.panelOpen ? 'right-menu-open' : 'right-menu';
-    }
-
-    canCompare(): boolean {
-        return this.checkedScans.length !== 2;
-    }
-
-    checkDisabled(i: number, val: string) {
-        return this.checkedScans.length > 1 && this.checkedScans.indexOf(val) === -1
-    }
-
-    CompareScans() {
-        console.log(`[] comparing ${this.checkedScans}`);
-        const params = encodeURIComponent(this.checkedScans[1]) + '/' + encodeURIComponent(this.checkedScans[0]);
-        router.push('/overview-diff/' + params);
-    }
-
     @Watch('date', { immediate: true })
-    private onDateChanged(newValue: Date) {
+    private onDateChanged(newValue: string) {
+        this.selectedDate = DateTime.fromISO(newValue);
         this.loadData();
     }
 

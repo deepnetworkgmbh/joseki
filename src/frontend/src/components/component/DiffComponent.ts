@@ -2,6 +2,7 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 import { InfrastructureComponent } from '@/models';
 import router from '@/router';
 import { ChartService } from '@/services/ChartService';
+import { DateTime } from 'luxon';
 
 @Component
 export default class DiffComponent extends Vue {
@@ -22,7 +23,7 @@ export default class DiffComponent extends Vue {
   private index: any;
 
   @Prop()
-  private date: any;
+  private date!: string;
 
   @Prop()
   private sections2: any;
@@ -33,6 +34,12 @@ export default class DiffComponent extends Vue {
   @Prop()
   private total2: any;
 
+  @Prop()
+  private date2!: string;
+
+  @Prop()
+  private notLoaded!: boolean;
+
   goComponentHistory(component: InfrastructureComponent) {
     if (component) {
       router.push('/component-history/' + component.id);
@@ -41,12 +48,10 @@ export default class DiffComponent extends Vue {
     }
   }
 
-  goComponentDetail(component: InfrastructureComponent) {
+  goComponentDiff(component: InfrastructureComponent) {
     let params = encodeURIComponent(component.id);
-    if (this.date) {
-      params += '/' + encodeURIComponent(this.date);
-    }
-    router.push('/component-detail/' + params);
+    params += '/' + this.date + '/' + this.date2;
+    router.push('/component-diff/' + params);
   }
 
 }
