@@ -67,7 +67,7 @@ jobs:
     - name: scan image for CVEs
       uses: 'docker://aquasec/trivy:0.5.2'
       with:
-        args: --exit-code 1 --severity HIGH,CRITICAL "${{ env.DOCKER_REPOSITORY }}:${{ env.DEV_TAG }}"
+        args: --exit-code 1 --severity HIGH,CRITICAL --no-progress "${{ env.DOCKER_REPOSITORY }}:${{ env.DEV_TAG }}"
 
     - name: Docker Login
       uses: Azure/docker-login@v1
@@ -85,29 +85,21 @@ jobs:
       env:
         IMAGE_TAG: ${{ env.DEV_TAG }}
         KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-        STORAGE_ACCOUNT_NAME: ${{ secrets.STORAGE_ACCOUNT }}
-        STORAGE_CONTAINER_NAME: ${{ secrets.AZSK_CONTAINER_NAME }}
-        STORAGE_SAS: ${{ secrets.AZSK_STORAGE_SAS }}
-        SCANNER_ID: ${{ secrets.AZSK_SCANNER_ID }}
-        TENANT_ID: ${{ secrets.AZSK_TENANT_ID }}
-        SP_ID: ${{ secrets.AZSK_SP_ID }}
-        SP_PASSWORD: ${{ secrets.AZSK_SP_PASSWORD }}
+        AZSK_CONFIG_DATA: ${{ secrets.AZSK_CONFIG_DATA }}
         SUBSCRIPTIONS: ${{ secrets.AZSK_SUBSCRIPTIONS }}
       run: |
         echo "$KUBE_CONFIG_DATA" | base64 --decode > /tmp/config
         export KUBECONFIG=/tmp/config
 
-        TO_APPLY=./to_apply.yml
-        cp examples/k8s/scanner-azsk.yaml $TO_APPLY
+        CONFIG_PATH=examples/k8s/azsk/scanner-azsk-config.yaml
+        echo "$AZSK_CONFIG_DATA" | base64 --decode > $CONFIG_PATH
 
-        sed -i 's|#{azsk.imageTag}#|'"$IMAGE_TAG"'|' $TO_APPLY
-        sed -i 's|#{azsk.scannerId}#|'"$SCANNER_ID"'|' $TO_APPLY
-        sed -i 's|#{azsk.storageAccountName}#|'"$STORAGE_ACCOUNT_NAME"'|' $TO_APPLY
-        sed -i 's|#{azsk.containerName}#|'"$STORAGE_CONTAINER_NAME"'|' $TO_APPLY
-        sed -i 's|#{azsk.storageSas}#|'"$STORAGE_SAS"'|' $TO_APPLY
-        sed -i 's|#{azsk.tenantId}#|'"$TENANT_ID"'|' $TO_APPLY
-        sed -i 's|#{azsk.spId}#|'"$SP_ID"'|' $TO_APPLY
-        sed -i 's|#{azsk.spPassword}#|'"$SP_PASSWORD"'|' $TO_APPLY
-        sed -i 's|#{azsk.subscriptions}#|'"$SUBSCRIPTIONS"'|' $TO_APPLY
-        kubectl apply -f $TO_APPLY
-        rm $TO_APPLY /tmp/config
+        sed -i 's|#{azsk.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/azsk/kustomization.yaml
+        sed -i 's|#{azsk.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/azsk/scanner-azsk.yaml
+        sed -i 's|#{azsk.subscriptions}#|'"$SUBSCRIPTIONS"'|' examples/k8s/azsk/scanner-azsk.yaml
+
+        # apply rbac yaml and kustomized objects
+        kubectl apply -f examples/k8s/azsk/rbac.yaml
+        kubectl apply -k examples/k8s/azsk
+
+        rm $CONFIG_PATH /tmp/config

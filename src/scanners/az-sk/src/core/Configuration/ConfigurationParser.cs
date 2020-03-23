@@ -49,7 +49,28 @@ namespace core.Configuration
             }
 
             this.scannerConfig = new Lazy<ScannerConfiguration>(() => this.Init(configFilePath));
+
+            const string azskVersionEnvVar = "AZSK_VERSION";
+            const string versionEnvVar = "SCANNER_VERSION";
+
+            this.AzskVersion = Environment.GetEnvironmentVariable(azskVersionEnvVar);
+            if (string.IsNullOrEmpty(this.AzskVersion))
+            {
+                Logger.Fatal("There is no {EnvVar} environment variable", azskVersionEnvVar);
+                throw new Exception(azskVersionEnvVar);
+            }
+
+            this.ScannerVersion = Environment.GetEnvironmentVariable(versionEnvVar);
+            if (string.IsNullOrEmpty(this.ScannerVersion))
+            {
+                Logger.Fatal("There is no {EnvVar} environment variable", versionEnvVar);
+                throw new Exception(versionEnvVar);
+            }
         }
+
+        public string ScannerVersion { get; }
+
+        public string AzskVersion { get; }
 
         /// <summary>
         /// Parse the string into dotnet object.
