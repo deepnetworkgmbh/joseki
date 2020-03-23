@@ -2,6 +2,7 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
+  namespace: joseki
   name: scanner-trivy-storage
 spec:
   accessModes:
@@ -14,6 +15,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: joseki
   name: scanner-trivy
 spec:
   replicas: 1
