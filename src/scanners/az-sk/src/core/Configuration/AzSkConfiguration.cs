@@ -11,19 +11,9 @@
         public string Id { get; set; }
 
         /// <summary>
-        /// Scanner version.
-        /// </summary>
-        public string Version { get; set; }
-
-        /// <summary>
         /// How often the scanner is scheduled to run.
         /// </summary>
         public string Periodicity { get; set; }
-
-        /// <summary>
-        /// az-sk module version.
-        /// </summary>
-        public string AzSkVersion { get; set; }
 
         /// <summary>
         /// Path to audit script file.
