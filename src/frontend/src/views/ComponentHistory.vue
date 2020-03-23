@@ -18,26 +18,26 @@
                     <td class='text-right'>
                       No Data 
                       <span class='text-center' data-balloon-length="xlarge" data-balloon-pos="up" 
-                          :aria-label="meta('metadata.checks_nodata_description')"><i class="far fa-question-circle tip-icon"></i></span>
+                          :aria-label="meta('metadata.checks_nodata_description')"><span class="icon-help-circle tip-icon"></span></span>
                     </td>
                     <td class='text-right'>
                       Warning
                        <span class='text-center' data-balloon-length="xlarge" data-balloon-pos="up"
-                       :aria-label="meta('metadata.checks_warning_description')"><i class="far fa-question-circle tip-icon"></i></span>
+                       :aria-label="meta('metadata.checks_warning_description')"><span class="icon-help-circle tip-icon"></span></span>
                     </td>
                     <td class='text-right'>                      
                       Failed
                       <span class='text-center' data-balloon-length="xlarge" data-balloon-pos="up" 
-                      :aria-label="meta('metadata.checks_failed_description')"><i class="far fa-question-circle tip-icon"></i></span>
+                      :aria-label="meta('metadata.checks_failed_description')"><span class="icon-help-circle tip-icon"></span></span>
                       </td>
                     <td class='text-right'>
                       Passed
                       <span class='text-center' data-balloon-length="xlarge" data-balloon-pos="up" 
-                      :aria-label="meta('metadata.checks_passed_description')"><i class="far fa-question-circle tip-icon"></i></span>
+                      :aria-label="meta('metadata.checks_passed_description')"><span class="icon-help-circle tip-icon"></span></span>
                       </td>
                     <td class='text-right'>Score
                       <span class='text-center' data-balloon-length="xlarge" data-balloon-pos="up-right" 
-                      :aria-label="meta('metadata.checks_score_description')"><i class="far fa-question-circle tip-icon"></i></span>
+                      :aria-label="meta('metadata.checks_score_description')"><span class="icon-help-circle tip-icon"></span></span>
                     </td>
                 </tr>
             </thead>
@@ -60,11 +60,8 @@
           </table>
         </div>
         <div class="subscription-history-buttons">
-            <button class="btn" @click="GoBack()">
-              <i class="fas fa-chevron-left pr-2"></i>Back
-            </button>
             <button class="btn" @click="CompareScans()" :disabled='canCompare()'>
-              <i class="fas fa-not-equal pr-2"></i>Compare
+              <span class="icon-compare pr-1"></span>Compare
             </button>
         </div>
       </div>

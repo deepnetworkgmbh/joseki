@@ -27,7 +27,7 @@
             </div>
           </div>
           <div class="text-center mt-2 pt-2">
-            <a class='btn' :href="scanDetail1url"><span class="px-2"><i class="fas fa-external-link-alt pr-2"></i>Scan Detail</span></a>
+            <a class='btn' :href="scanDetail1url"><span class="px-2"><i class="icon-arrow-up-right pr-2"></i>Scan Detail</span></a>
           </div>
 
         </div>
@@ -63,7 +63,7 @@
             </div>
           </div>
           <div class="text-center mt-2 pt-2">
-            <a class='btn' :href="scanDetail2url"><span class="px-2"><i class="fas fa-external-link-alt pr-2"></i>Scan Detail</span></a>
+            <a class='btn' :href="scanDetail2url"><span class="px-2"><i class="icon-arrow-up-right pr-2"></i>Scan Detail</span></a>
           </div>
         </div>
       </div>

@@ -51,7 +51,7 @@
           </table>
           <div class="text-right">
             <button class="btn mt-2" @click="goComponentHistory()">
-              <span class="px-4"><i class="fas fa-history pr-2"></i>See Scan History</span>
+              <span class="px-4"><span class="icon-more-vertical pr-1"></span>See Scan History</span>
             </button>
           </div>  
         </div>
