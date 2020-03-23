@@ -10,6 +10,19 @@ spec:
   resources:
     requests:
       storage: 32Gi
+ 
+---
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: scanner-trivy-cfg
+    namespace: joseki
+    labels:
+      app: scanner-trivy
+      module: scanners
+  data:
+    scanner-trivy-config.yaml:  |-
+      to-be-replaced
 
 ---
 apiVersion: apps/v1
