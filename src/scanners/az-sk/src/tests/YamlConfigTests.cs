@@ -23,8 +23,6 @@ namespace tests
             // Assert
             config.Scanner.Should().BeOfType<AzSkConfiguration>();
             config.Scanner.As<AzSkConfiguration>().Id.Should().NotBeNullOrWhiteSpace();
-            config.Scanner.As<AzSkConfiguration>().Version.Should().NotBeNullOrWhiteSpace();
-            config.Scanner.As<AzSkConfiguration>().AzSkVersion.Should().NotBeNullOrWhiteSpace();
             config.Scanner.As<AzSkConfiguration>().AuditScriptPath.Should().NotBeNullOrWhiteSpace();
             config.Scanner.As<AzSkConfiguration>().TenantId.Should().NotBeNullOrWhiteSpace();
             config.Scanner.As<AzSkConfiguration>().ServicePrincipalId.Should().NotBeNullOrWhiteSpace();
@@ -44,8 +42,6 @@ namespace tests
             // Assert
             config.Scanner.Should().BeOfType<AzSkConfiguration>();
             config.Scanner.As<AzSkConfiguration>().Id.Should().NotBeNullOrWhiteSpace();
-            config.Scanner.As<AzSkConfiguration>().Version.Should().NotBeNullOrWhiteSpace();
-            config.Scanner.As<AzSkConfiguration>().AzSkVersion.Should().NotBeNullOrWhiteSpace();
             config.Scanner.As<AzSkConfiguration>().AuditScriptPath.Should().NotBeNullOrWhiteSpace();
             config.Scanner.As<AzSkConfiguration>().TenantId.Should().NotBeNullOrWhiteSpace();
             config.Scanner.As<AzSkConfiguration>().ServicePrincipalId.Should().NotBeNullOrWhiteSpace();
