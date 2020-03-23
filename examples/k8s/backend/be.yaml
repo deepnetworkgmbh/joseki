@@ -5,71 +5,9 @@ metadata:
   namespace: joseki
   labels:
     app: joseki-backend
-    version: '#{be.imageTag}#'
 data:
   config.yaml: |-
-    database:
-      connectionString: #{be.sqlConnectionString}#
-    
-    cache:
-      polarisCheckTtl: 7
-      azureCheckTtl: 7
-      cveTtl: 7
-      defaultTtl: 7
-      imageScanTtl: 12
-    
-    watchmen:
-      scannerContainersPeriodicitySeconds: 1800
-      archiverPeriodicityHours: 24
-      archiveTtlDays: 90
-      infraScorePeriodicityHours: 12
-    
-    azureBlob:
-      basePath: https://#{be.storageAccountName}#.blob.core.windows.net
-      sas: #{be.blobSas}#
-      connectionString: DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};EndpointSuffix=core.windows.net
-      accountName: #{be.storageAccountName}#
-      accountKey: #{be.storageAccountKey}#
-    
-    azureQueue:
-      connectionString: DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};EndpointSuffix=core.windows.net
-      imageScanRequestsQueue: image-scan-requests
-      accountName: #{be.storageAccountName}#
-      accountKey: #{be.storageAccountKey}#
-
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: joseki-be
-  namespace: joseki
-  labels:
-    app: joseki-backend
-
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRole
-metadata:
-  name: joseki-be
-  labels:
-    app: joseki-backend
-rules:
-
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRoleBinding
-metadata:
-  name: joseki-be
-  labels:
-    app: joseki-backend
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: joseki-be
-subjects:
-  - kind: ServiceAccount
-    name: joseki-be
-    namespace: joseki
+    to-be-replaced
 
 ---
 apiVersion: v1
@@ -155,6 +93,8 @@ spec:
         env:
           - name: JOSEKI_CONFIG_FILE_PATH
             value: "/app/config.yaml"
+          - name: SCANNER_VERSION
+            value: "#{be.imageTag}#"
       serviceAccountName: joseki-be
       securityContext:
         fsGroup: 10001
