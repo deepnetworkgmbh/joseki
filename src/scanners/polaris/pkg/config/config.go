@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"os"
 	"time"
 
 	"k8s.io/apimachinery/pkg/util/yaml"
@@ -24,12 +25,10 @@ type Scanner struct {
 	ClusterId            string `json:"cluster-id"`
 	Periodicity          string `json:"periodicity"`
 	HeartbeatPeriodicity int64  `json:"heartbeat-periodicity"`
-	Version              string `json:"version"`
 }
 
 type Polaris struct {
 	ConfigPath string `json:"configPath"`
-	Version    string `json:"version"`
 }
 
 type LogFormat string
@@ -88,4 +87,12 @@ func (config *Config) GetScannerMetadata() Metadata {
 		HeartbeatPeriodicity: config.Scanner.HeartbeatPeriodicity,
 		Heartbeat:            unixNow,
 	}
+}
+
+func (config *Config) GetScannerVersion() string {
+	return os.Getenv("SCANNER_VERSION")
+}
+
+func (config *Config) GetPolarisVersion() string {
+	return "0.6.0"
 }

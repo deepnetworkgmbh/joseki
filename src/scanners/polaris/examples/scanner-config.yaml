@@ -3,10 +3,8 @@ scanner:
   cluster-id: 8fc1b601-d5a2-466d-8236-c747c1dc02a2
   periodicity: "0 2 * * *"
   heartbeat-periodicity: 86400
-  version: 0.1.2
 polaris:
   configPath: ./examples/polaris-config.yaml
-  version: 0.6.0
 blobStorageType: azure-blob-storage
 azureBlob:
   storageBaseUrl: https://BLOB_NAME.blob.core.windows.net/CONTAINER_NAME

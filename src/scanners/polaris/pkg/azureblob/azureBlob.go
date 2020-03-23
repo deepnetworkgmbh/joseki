@@ -67,11 +67,11 @@ func (client *Client) UploadAuditResult(polarisResult scanner.PolarisAudit) (err
 	auditMeta := AuditMetadata{
 		Id:                 uuid.New().String(),
 		ClusterId:          client.config.Scanner.ClusterId,
-		ScannerVersion:     client.config.Scanner.Version,
+		ScannerVersion:     client.config.GetScannerVersion(),
 		Timestamp:          now.Unix(),
 		Result:             result,
 		FailureDescription: polarisResult.FailureDescription,
-		PolarisVersion:     client.config.Polaris.Version,
+		PolarisVersion:     client.config.GetPolarisVersion(),
 		PolarisAuditPath:   fmt.Sprintf("%s/audit.json", folderName),
 		KubeMetadataPath:   fmt.Sprintf("%s/k8s-meta.json", folderName),
 	}
