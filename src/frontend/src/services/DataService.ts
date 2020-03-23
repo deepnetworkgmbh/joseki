@@ -129,7 +129,7 @@ export class DataService {
   }
 
   public async getGeneralOverviewDiffData(date1: string, date2: string): Promise<void | InfrastructureOverviewDiff> {
-    let suffix = '?date1=' + encodeURIComponent(date1) + '&date2=' + encodeURIComponent(date2)  + '&api-version=' + this.apiVersion;
+    let suffix = '?date1=' + date1 + '&date2=' + date2  + '&api-version=' + this.apiVersion;
     let url = this.baseUrl + "/api/audits/overview/diff" + suffix;
     console.log(`[] calling ${url}`);
 
@@ -144,6 +144,17 @@ export class DataService {
       let result = new InfrastructureOverviewDiff();
       result.summary1 = InfrastructureOverview.GenerateFromDiff(data.overall1, data.components1);
       result.summary2 = InfrastructureOverview.GenerateFromDiff(data.overall2, data.components2);
+      for(let i=0;i<result.summary1.components.length;i++) {
+        let id = result.summary1.components[i].component.id;
+        let index = result.summary2.components.findIndex(x=>x.component.id == id);
+        if (index === -1) {
+          // clone the component summary not to break the view
+          result.summary2.components.push(result.summary1.components[i]);   
+          // but mark as not loaded
+          result.summary1.components[i].notLoaded = true;       
+        }
+      }
+
       return result;
     }
 
