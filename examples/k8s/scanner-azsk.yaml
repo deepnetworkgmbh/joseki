@@ -83,9 +83,7 @@ spec:
           - name: scanner-azsk
             image: deepnetwork/joseki-scanner-azsk:#{azsk.imageTag}#
             imagePullPolicy: Always
-            args:
-            - --config /app/config.az.yaml
-            - '--subscriptions #{azsk.subscriptions}#'
+            args: ["--config", "/app/config.az.yaml", "--subscriptions", #{azsk.subscriptions}#]
             volumeMounts:
             - name: config
               mountPath: /app/config.az.yaml
