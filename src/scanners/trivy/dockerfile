@@ -19,6 +19,8 @@ WORKDIR /app
 COPY --from=publish-webapp /app/publish .
 
 COPY /dll/trivy /usr/local/bin/trivy
+ENV TRIVY_BINARY_PATH=/usr/local/bin/trivy
+ENV TRIVY_VERSION=0.5.2
 
 # Change to 8080 because 80 requires elevated privileges
 ENV ASPNETCORE_URLS="http://*:8080"

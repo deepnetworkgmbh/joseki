@@ -63,7 +63,6 @@ namespace webapp
             services.AddTransient(provider => provider.GetService<ImageScannerFactory>().GetQueue());
             services.AddSingleton(provider =>
             {
-                var config = provider.GetService<ConfigurationParser>().Get();
                 var scanner = provider.GetService<IScanner>();
                 var exporter = provider.GetService<IExporter>();
                 return new ImageScanner(scanner, exporter);

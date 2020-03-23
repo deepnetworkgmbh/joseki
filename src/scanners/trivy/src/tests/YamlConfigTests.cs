@@ -23,9 +23,6 @@ namespace tests
             // Assert
             config.Scanner.Should().BeOfType<TrivyConfiguration>();
             config.Scanner.As<TrivyConfiguration>().Id.Should().NotBeNullOrWhiteSpace();
-            config.Scanner.As<TrivyConfiguration>().Version.Should().NotBeNullOrWhiteSpace();
-            config.Scanner.As<TrivyConfiguration>().TrivyVersion.Should().NotBeNullOrWhiteSpace();
-            config.Scanner.As<TrivyConfiguration>().BinaryPath.Should().NotBeNullOrWhiteSpace();
             config.Scanner.As<TrivyConfiguration>().CachePath.Should().NotBeNullOrWhiteSpace();
             config.Scanner.As<TrivyConfiguration>().Registries.Should().HaveCount(2);
             config.Exporter.Should().BeOfType<FileExporterConfiguration>();
@@ -44,9 +41,6 @@ namespace tests
             // Assert
             config.Scanner.Should().BeOfType<TrivyConfiguration>();
             config.Scanner.As<TrivyConfiguration>().Id.Should().NotBeNullOrWhiteSpace();
-            config.Scanner.As<TrivyConfiguration>().Version.Should().NotBeNullOrWhiteSpace();
-            config.Scanner.As<TrivyConfiguration>().TrivyVersion.Should().NotBeNullOrWhiteSpace();
-            config.Scanner.As<TrivyConfiguration>().BinaryPath.Should().NotBeNullOrWhiteSpace();
             config.Scanner.As<TrivyConfiguration>().CachePath.Should().NotBeNullOrWhiteSpace();
             config.Scanner.As<TrivyConfiguration>().Registries.Should().HaveCount(2);
             config.Exporter.Should().BeOfType<AzBlobExporterConfiguration>();

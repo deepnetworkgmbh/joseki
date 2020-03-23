@@ -36,54 +36,10 @@ subjects:
     namespace: joseki
 
 ---
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: scanner-trivy-cfg
-  namespace: joseki
-  labels:
-    app: scanner-trivy
-    module: scanners
-    version: 0.2.1
-data:
-  scanner-trivy-config.yaml:  |-
-    scanner:
-      !trivy-scanner
-      id: 831c5288-5b95-4a28-a664-87d02e50770e
-      version: 0.2.1
-      trivyVersion: 0.5.2
-      binaryPath: /usr/local/bin/trivy
-      cachePath: /app/.cache/.trivy
-      registries:
-        - name: deepnetwork
-          address: https://registry.hub.docker.com
-          username:
-          password:
-        - name: acr.azurecr.io
-          address: acr.azurecr.io
-          username: acr
-          password: ...
-    
-    exporter:
-      !az-blob
-      basePath: https://STORAGE_ACCOUNT.blob.core.windows.net/trivy-831c5288
-      sas: token
-      heartbeatPeriodicity: 600
-    
-    queue:
-      !az-storage-queue
-      basePath: https://STORAGE_ACCOUNT.queue.core.windows.net
-      mainQueue: image-scan-requests
-      mainQueueSas: token
-      quarantineQueue: image-scan-requests-quarantine
-      quarantineQueueSas: token
-
----
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: scanner-trivy-storage
-  namespace: joseki
 spec:
   accessModes:
     - ReadWriteOnce
@@ -96,11 +52,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: scanner-trivy
-  namespace: joseki
-  labels:
-    app: scanner-trivy
-    module: scanners
-    version: 0.2.1
 spec:
   replicas: 1
   strategy:
@@ -114,15 +65,10 @@ spec:
       app: scanner-trivy
       module: scanners
   template:
-    metadata:
-      labels:
-        app: scanner-trivy
-        module: scanners
-        version: 0.2.1
     spec:
       containers:
       - name: scanner-trivy
-        image: deepnetwork/joseki-scanner-trivy:0.2.1
+        image: 'deepnetwork/joseki-scanner-trivy:#{trivy.imageTag}#'
         imagePullPolicy: Always
         resources:
           requests:
@@ -167,6 +113,8 @@ spec:
         env:
           - name: IMAGE_SCANNER_CONFIG_FILE_PATH
             value: "/app/scanner-trivy-config.yaml"
+          - name: SCANNER_VERSION
+            value: "#{trivy.imageTag}#"
       securityContext:
         fsGroup: 10001
       volumes:

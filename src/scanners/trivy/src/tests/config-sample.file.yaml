@@ -1,9 +1,6 @@
 ﻿scanner:
   !trivy-scanner
   id: 831c5288-5b95-4a28-a664-87d02e50770e
-  version: 0.1.0
-  trivyVersion: 0.4.3
-  binaryPath: /usr/local/bin/trivy
   cachePath: /app/image-scanner-cache/.trivy
   registries:
     - name: deepnetwork
