@@ -152,8 +152,13 @@ namespace webapp
             services.AddScoped<ArchiveWatchman>();
             services.AddScoped<InfraScoreCacheWatchman>();
 
-            services.AddHostedService<ScannerResultsReaderJob>();
-            services.AddHostedService<ArchiverJob>();
+            var blobsEnabled = this.Configuration["DEV_JOSEKI_BLOB_STORAGE_ENABLED"];
+            if (blobsEnabled == null || bool.Parse(blobsEnabled))
+            {
+                services.AddHostedService<ScannerResultsReaderJob>();
+                services.AddHostedService<ArchiverJob>();
+            }
+
             services.AddHostedService<InfraScoreCacheReloaderJob>();
         }
 
@@ -174,7 +179,10 @@ namespace webapp
             app.UseHealthChecks("/health/liveness", CreateHealthCheckOptions("liveness"));
             app.UseHealthChecks("/health/readiness", CreateHealthCheckOptions("readiness"));
 
-            RunDbMigrations(app);
+            if (env.IsProduction())
+            {
+                RunDbMigrations(app);
+            }
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
