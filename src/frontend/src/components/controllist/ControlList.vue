@@ -1,6 +1,6 @@
 <template>
     <li :class="getLineClass()">
-        <i :class="control.icon"></i> {{ control.result }} : 
+        <i :class="control.icon" style="padding-right:5px;"></i> {{ control.result }} :        
         {{ control.id }}
         <span class="ml-1 mr-1"
             data-balloon-length="xlarge"
@@ -8,7 +8,7 @@
             :aria-label="control.text">
             <span class="icon-help-circle tip-icon"></span>
         </span>
-        <span class="diff-tag">{{ control.operation }}</span>
+        <!-- <span class="diff-tag">{{ control.operation }}</span> -->
         <span v-if="control.id === 'container_image.CVE_scan' && control.text !== 'No issues'">
             <a class="small-link" :href="imageScanUrl">see details</a>
         </span>
