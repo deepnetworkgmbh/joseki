@@ -108,13 +108,13 @@
   font-size: 15px;
   color: #bbb;  
   margin-left:-4px;
-  margin-right: -2px;
+  margin-right: 1px;
 }
 
 .warning-icon {
   color: $color-high-severity;
   font-size: 14px;
-  margin-left: -2px;
+  margin-left: -4px;
 }
 
 .noissues-icon {
@@ -122,6 +122,7 @@
   font-size: 14px;
   float: left;
   margin-top:5px;
+  margin-left:-2px;
 }
 
 .failed-icon {

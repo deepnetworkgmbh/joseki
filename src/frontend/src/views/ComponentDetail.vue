@@ -1,39 +1,39 @@
 <template>
   <div>
     <Spinner v-if="!loaded" />
-    <div v-show="loaded" class="segment shadow" style="min-height:300px">
-      <div
-        class="w-1/4 border-r border-gray-300 flex flex-col justify-center content-center"
-        style="overflow:hidden;"
-      >
+    <div v-show="loaded" class="segment shadow" style="min-height:300px;padding:0">
+      <div class="w-1/4 border-r border-gray-300 flex flex-col justify-center content-center top-left-panel"
+        style="overflow:hidden;">
         <div class="status-icon">
           <i :class="getScoreIconClass(data.current.score)"></i>
         </div>
-        <div class="status-text">
-          <div class="p-1 m-auto rounded-sm text-lg text-center -mt-8 mb-2 pb-4">{{ selectedDate | formatDate }}</div>
-
-          <div class="flex flex-row xl:text-xl lg:text-lg md:text-sm">
-            <div class="w-4/12 font-thin text-right mr-1 text-gray-600">Type:</div>
-            <div class="w-6/12 font-hairline text-left">{{ data.component.category }}</div>
+        <div class="status-text p-5 pl-10 pt-16">
+          <div class="mb-3">
+            <h5>Date</h5>
+            <h1 class="info">{{ selectedDate | formatDate }}</h1>
           </div>
-          <div class="flex flex-row xl:text-xl lg:text-lg md:text-sm">
-            <div class="w-4/12 font-thin text-right mr-1 text-gray-600">Name:</div>
-            <div class="w-6/12 font-hairline text-left">{{ data.component.name }}</div>
+          <div class="mb-3">
+            <h5>Score</h5>
+            <h1 class="info">{{ data.current.score }}%</h1>
           </div>
-          <div class="flex flex-row xl:text-xl lg:text-lg md:text-sm">
-            <div class="w-4/12 font-thin text-right mr-1 text-gray-600">Score:</div>
-            <div class="w-6/12 font-hairline text-left">{{ data.current.score }}%</div>
+          <div class="mb-3">
+            <h5>Grade</h5>
+            <h1 class="info">{{ getGrade(data.current.score) }}</h1>
           </div>
-          <div class="flex flex-row xl:text-xl lg:text-lg md:text-sm">
-            <div class="w-4/12 font-thin text-right mr-1 text-gray-600">Grade:</div>
-            <div class="w-6/12 font-hairline text-left">{{ getGrade(data.current.score) }}</div>
+          <div class="mb-3">
+            <h5>Type</h5>
+            <h1 class="info">{{ data.component.category }}</h1>
+          </div>
+          <div class="mb-3">
+            <h5>Name</h5>
+            <h1 class="info">{{ data.component.name }}</h1>
           </div>
         </div>
       </div>
-      <div class="w-2/4">
+      <div class="w-2/4 pt-8">
         <div id="overall_pie" class="w-auto" style="z-index:0;"></div>
       </div>
-      <div class="w-1/4 border-l border-gray-300" style="z-index:10;">
+      <div class="w-1/4 border-l border-gray-300 top-right-panel" style="z-index:10;">
         <div class="w-auto p-2 ml-1 mb-2">
           <div class='text-center text-sm font-bold'>Scan History</div>
           <div id="overall_bar" style="width:100%"></div>
@@ -58,37 +58,40 @@
       </div>
     </div>
     <div v-show="loaded" class="segment shadow" style="flex-direction:column">
-      <h1 class="mb-2">Results By Category</h1>
-      <hr class='mb-2' />
-      <div v-for="(category,i) in getResultsByCategory(data)" :key="`category${i}`">
+       <div class="segment-header">
+        <h1 class="mb-2">Results by Category</h1>
+      </div>
+      <div v-for="(category,i) in getResultsByCategory(data)" :key="`category${i}`" class="zigzag">
         <ul>
-          <li>
+          <li style="margin-left:10px;min-height:30px;padding-top:3px;">
             <input type="checkbox" v-bind:id="`cat${i}`" />
             <label class="text-base" v-bind:for="`cat${i}`">
               <strong>{{category.category}}</strong>
               <Score :label='`Score`' :score='category.score' />              
             </label>
-            <StatusBar :counters="category.counters" />
+            <div style="float:right;"><StatusBar :counters="category.counters" /></div>
             <ul>
-               <div style="padding:4px;padding-left:10px;" v-html="getCategoryMeta(category.category)" v-linkified:options="{ className: 'external-link' }" />              
+               <div style="padding:4px;padding-left:10px;padding-right:220px;text-align:justify" 
+                   v-html="getCategoryMeta(category.category)" v-linkified:options="{ className: 'external-link' }" />              
             </ul>
           </li>
         </ul>
       </div>      
     </div>
     <div v-show="loaded" class="segment shadow" style="flex-direction:column">
-      <h1 class="mb-2">Results by Resources</h1>
-      <hr class='mb-2' />
+      <div class="segment-header">
+        <h1 class="mb-2">Results by Resources</h1>
+      </div>
 
-      <ul v-for="(collection,i) in getResultsByCollection(data)" :key="`collection${i}`">
-          <li style="margin-left:10px;">
+      <ul v-for="(collection,i) in getResultsByCollection(data)" :key="`collection${i}`" >
+          <li style="margin-left:10px;min-height:30px;">
             <input type="checkbox" :id="`target${i}`" checked />
             <label :for="`target${i}`">
                <strong>{{ collection.type }} :</strong>
                <Score :label='`Score`' :score='collection.score' />             
                 {{ collection.name }}
             </label>
-            <StatusBar :counters="collection.counters" />
+            <div style="float:right;margin-top:3px;"><StatusBar :counters="collection.counters" /></div>
             <ul v-for="(obj, g) in collection.objects" :key="`obj${i}-${g}`">
               <li style="margin-left:15px;">
                 <input type="checkbox" :id="`obj${i}-${g}`" />
@@ -97,10 +100,10 @@
                    <Score :label='`Score`' :score='obj.score' />         
                    {{ obj.name }}
                 </label>
-                <StatusBar :mini='false' :counters="obj.counters" style="margin-right:-5px;margin-top:-27px;" />
+                <!-- <StatusBar :mini='false' :counters="obj.counters" style="margin-right:-5px;margin-top:-27px;" />  -->
                 <!-- list with subgroup -->
                 <ul v-for="(control, c) in obj.controlGroups" 
-                  :key="`control${i}-${g}-${c}`" style="border:dashed 1px #eee;margin-left:10px;">
+                  :key="`control${i}-${g}-${c}`" class="scan-control">
                   <li style="padding:2px;padding-left:0;margin-left:5px;margin-top:0px;margin-bottom:2px;">
 
                     <b>{{control.name}} ({{ control.items.length }})</b>
@@ -108,7 +111,7 @@
                       <label :for="`control${i}-${g}-${c}`" class="text-sm">
                         <i :class="cg.icon"></i> {{ cg.result }} : {{ cg.id }}                        
                         <span class="ml-1 mr-1" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="cg.text">
-                          <i class="far fa-question-circle tip-icon"></i>
+                          <span class="icon-help-circle tip-icon"></span>
                         </span>
                         <span v-if="cg.id === 'container_image.CVE_scan' && cg.text !== 'No issues'">                        
                           <a class='small-link' :href="imageScanUrl(cg.tags.imageTag)">see details</a>
@@ -119,12 +122,12 @@
                 </ul>
                 <!-- list with no subgroup -->
                 <ul v-for="(control, c) in obj.controls" 
-                  :key="`control${i}-${g}-${c}`" style="border:dashed 1px #eee;margin-left:10px;">
+                  :key="`control${i}-${g}-${c}`" class="scan-control">
                   <li style="padding:2px;padding-left:0;margin-left:5px;margin-top:0px;margin-bottom:2px;">
                       <label :for="`control${i}-${g}-${c}`" class="text-sm">
                         <i :class="control.icon"></i> {{ control.result }} : {{ control.id }}
                         <span class="ml-1 mr-1" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="control.text">
-                          <i class="far fa-question-circle tip-icon"></i>
+                          <span class="icon-help-circle tip-icon"></span>
                         </span>
                         <span v-if="control.id === 'container_image.CVE_scan' && control.text !== 'No issues'">                        
                           <a class='small-link' :href="imageScanUrl(control.tags.imageTag)">see details</a>

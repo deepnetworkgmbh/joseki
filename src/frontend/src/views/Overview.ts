@@ -33,7 +33,6 @@ export default class Overview extends Vue {
                 if (response) {
                     this.data = response;
                     this.setupCharts();
-                    this.$forceUpdate();
                     this.loaded = true;
                 }
             });
@@ -62,6 +61,7 @@ export default class Overview extends Vue {
         for (let i = 0; i < this.data.components.length; i++) {
             ChartService.drawBarChart(this.data.components[i].scoreHistory, 'bar' + i, this.selectedDate, this.goComponentDetail, 52, undefined, 0, this.data.components[i].component.id);
         }
+        this.$forceUpdate();
     }
 
     dayClicked(date: string) {
