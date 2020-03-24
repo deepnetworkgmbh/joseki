@@ -2,38 +2,33 @@
   <div>
     <Spinner v-if="!loaded" />
     <div v-if="loaded" class="segment shadow" style="min-height:300px;padding:0;">
-      <div
-        class="w-1/4 border-r border-gray-300 flex flex-col justify-center content-center"
-        style="overflow:hidden;">
-        <div class="status-icon">
-          <i :class="getScoreIconClass(data.overall.current.score)"></i>
-        </div>
-        <div class="status-text">
-          <div class="p-1 m-auto rounded-sm text-lg text-center -mt-8 mb-2 pb-4">
-            {{ selectedDate | formatDate }}
+      <div class="w-1/4 border-r border-gray-300 flex flex-col justify-center content-center top-left-panel" style="background-color:#eee;">
+        <div class="status-icon"><i :class="getScoreIconClass(data.overall.current.score)"></i></div>
+        <div class="status-text p-5 pl-10 pt-16">
+          <div class="mb-3">
+            <h5>Date</h5>
+            <h1 class="info">{{ selectedDate | formatDate }}</h1>
           </div>
-          <div class="flex flex-row big-text xl:text-2xl lg:text-xl">
-            <div class="w-7/12 font-thin text-right mr-1 text-gray-600">Score:</div>
-            <div class="w-5/12 font-hairline text-left">{{ data.overall.current.score }}%</div>
+          <div class="mb-3">
+            <h5>Score</h5>
+            <h1 class="info">{{ data.overall.current.score }}%</h1>
           </div>
-          <div class="flex flex-row big-text xl:text-2xl lg:text-xl">
-            <div class="w-7/12 font-thin text-right mr-1 text-gray-600">Grade:</div>
-            <div class="w-5/12 font-hairline text-left">{{ getGrade(data.overall.current.score) }}</div>
+          <div class="mb-3">
+            <h5>Grade</h5>
+            <h1 class="info">{{ getGrade(data.overall.current.score) }}</h1>
           </div>
-          <div class="flex flex-row big-text xl:text-2xl lg:text-xl">
-            <div class="w-7/12 font-thin text-right mr-1 text-gray-600">Clusters:</div>
-            <div class="w-5/12 font-hairline text-left">{{ getClusters() }}</div>
+          <div class="mb-3">
+            <h5>Clusters</h5>
+            <h1 class="info">{{ getClusters() }}</h1>
           </div>
-          <div class="flex flex-row big-text xl:text-2xl lg:text-xl">
-            <div class="w-7/12 font-thin text-right mr-1 text-gray-600">Subscriptions:</div>
-            <div class="w-5/12 font-hairline text-left">{{ getSubscriptions() }}</div>
+          <div class="mb-3">
+            <h5>Subscriptions</h5>
+            <h1 class="info">{{ getSubscriptions() }}</h1>
           </div>
         </div>
       </div>
-      <div class="w-2/4">
-        <div id="overall_pie" class="w-auto" style="z-index:0;"></div>
-      </div>
-      <div class="w-1/4 border-l border-gray-300" style="z-index:10;">
+      <div class="w-2/4 pt-8"><div id="overall_pie" class="w-auto" style="z-index:0;"></div></div>
+      <div class="w-1/4 border-l border-gray-300 top-right-panel" style="z-index:10;">
         <div class="w-auto p-2 ml-1 mb-2">
           <div class='text-center text-xs font-bold'>Scan History</div>
           <div id="overall_bar" style="width:100%;"></div>
@@ -49,7 +44,7 @@
               </tr>
             </tbody>
           </table>
-          <div class="text-right">
+          <div class="text-center">
             <button class="btn mt-2" @click="goComponentHistory()">
               <span class="px-4"><span class="icon-more-vertical pr-1"></span>See Scan History</span>
             </button>

@@ -1,70 +1,55 @@
 <template>
   <div>
     <Spinner v-if="!loaded" />
-    <div v-if="loaded" class="segment shadow" style="min-height:300px">
-      <div class="w-1/4 border-r border-gray-300 flex flex-col justify-center content-center" style="overflow:hidden;">
+    <div v-if="loaded" class="segment shadow" style="min-height:300px;padding:0">
+      <div class="w-1/4 border-r border-gray-300 flex flex-col justify-center content-center top-left-panel" style="overflow:hidden;">
         <div class="status-icon ml-1 mt-3">
           <i :class="getScoreIconClass(data.summary1.current.score)"></i>
         </div>
-        <div class="status-text">
-          <div class="p-1 m-auto rounded-sm text-lg text-center -mt-8 mb-2 pb-4">
-            {{ date | formatDate }}
+        <div class="status-text p-5 pl-10 pt-16">
+          <div class="mb-3">
+            <h5>Date</h5>
+            <h1 class="info">{{ date | formatDate }}</h1>
           </div>
-          <div class="flex flex-row xl:text-xl lg:text-lg md:text-md sm:text-sm">
-            <div class="w-7/12 font-thin text-right mr-1 text-gray-600">
-              Score:
-            </div>
-            <div class="w-5/12 font-hairline text-left">
-              {{ data.summary1.current.score }}%
-            </div>
+          <div class="mb-3">
+            <h5>Score</h5>
+            <h1 class="info">{{ data.summary1.current.score }}%</h1>
           </div>
-          <div class="flex flex-row xl:text-xl lg:text-lg md:text-md sm:text-sm">
-            <div class="w-7/12 font-thin text-right mr-1 text-gray-600">
-              Grade:
-            </div>
-            <div class="w-5/12 font-hairline text-left">
-              {{ getGrade(data.summary1.current.score) }}
-            </div>
+          <div class="mb-3">
+            <h5>Grade</h5>
+            <h1 class="info">{{ getGrade(data.summary1.current.score) }}</h1>
           </div>
           <div class="text-center mt-2 pt-2">
             <a class='btn' :href="scanDetail1url"><span class="px-2"><i class="icon-arrow-up-right pr-2"></i>Scan Detail</span></a>
-          </div>
-
+          </div>       
         </div>
       </div>
-      <div class="w-1/4">
+      <div class="w-1/4 pt-4">
         <div id="overall_pie1" class="w-auto mt-4" style="z-index:0;"></div>
       </div>
-      <div class="w-1/4 top-seperator">
+      <div class="w-1/4 pt-4 top-seperator">
         <div id="overall_pie2" class="w-auto mt-4" style="z-index:0;"></div>
       </div>
-      <div class="w-1/4 border-l border-gray-300 flex flex-col justify-center content-center" style="overflow:hidden;">
+      <div class="w-1/4 border-l border-gray-300 flex flex-col justify-center content-center top-right-panel" style="overflow:hidden;">
         <div class="status-icon ml-1 mt-3">
           <i :class="getScoreIconClass(data.summary2.current.score)"></i>
         </div>
-        <div class="status-text">
-          <div class="p-1 m-auto rounded-sm text-lg text-center -mt-8 mb-2 pb-4">
-            {{ date2 | formatDate }}
+        <div class="status-text p-5 pl-10 pt-16">
+          <div class="mb-3">
+            <h5>Date</h5>
+            <h1 class="info">{{ date2 | formatDate }}</h1>
           </div>
-          <div class="flex flex-row xl:text-xl lg:text-lg md:text-md sm:text-sm">
-            <div class="w-7/12 font-thin text-right mr-1 text-gray-600">
-              Score:
-            </div>
-            <div class="w-5/12 font-hairline text-left">
-              {{ data.summary2.current.score }}%
-            </div>
+          <div class="mb-3">
+            <h5>Score</h5>
+            <h1 class="info">{{ data.summary2.current.score }}%</h1>
           </div>
-          <div class="flex flex-row xl:text-xl lg:text-lg md:text-md sm:text-sm">
-            <div class="w-7/12 font-thin text-right mr-1 text-gray-600">
-              Grade:
-            </div>
-            <div class="w-5/12 font-hairline text-left">
-              {{ getGrade(data.summary2.current.score) }}
-            </div>
+          <div class="mb-3">
+            <h5>Grade</h5>
+            <h1 class="info">{{ getGrade(data.summary2.current.score) }}</h1>
           </div>
           <div class="text-center mt-2 pt-2">
             <a class='btn' :href="scanDetail2url"><span class="px-2"><i class="icon-arrow-up-right pr-2"></i>Scan Detail</span></a>
-          </div>
+          </div>       
         </div>
       </div>
     </div>

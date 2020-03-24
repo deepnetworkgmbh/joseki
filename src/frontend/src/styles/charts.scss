@@ -106,38 +106,3 @@ svg > g > g.google-visualization-tooltip {
   padding: 6px 4px;
   font-size: 12px;
 }
-
-.warning-icon {
-  color: $color-high-severity;
-  font-size: 9px;
-  line-height: 9px;
-  margin-right: 2px;
-}
-
-.noissues-icon {
-  color: $color-low-severity;
-  font-size: 12px;
-  float: left;
-  margin-top: 8px;
-  margin-right: 2px;
-}
-
-.nodata-icon {
-  font-size: 12px;
-  color: #bbb;
-  padding-left: 1px;
-  margin-right: 2px;
-}
-
-.failed-icon {
-  font-size: 12px;
-  color: $color-critical;
-  padding-left: 1px;
-  margin-right: 2px;
-}
-
-.tip-icon {
-  font-size: 10px;
-  color: #bbb;
-  padding-left: 2px;
-}
