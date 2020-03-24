@@ -17,12 +17,16 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "webapp": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "applicationUrl": "http://localhost:5001"
+    "local_development": {
+        "commandName": "Project",
+        "launchBrowser": true,
+        "launchUrl": "swagger",
+        "environmentVariables": {
+            "ASPNETCORE_ENVIRONMENT": "Development",
+            "DEV_JOSEKI_BLOB_STORAGE_ENABLED": false,
+            "JOSEKI_CONFIG_FILE_PATH": "path-to-config-file"
+        },
+        "applicationUrl": "http://localhost:5001"
     }
   }
 }
