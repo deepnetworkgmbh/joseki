@@ -17,7 +17,9 @@
         <button @click="goComponentHistory(component)"><span class="icon-more-vertical"></span> History</button>
         <button v-if="notLoaded" :disabled="notLoaded">
          <span class='text-center' data-balloon-length="xlarge" data-balloon-pos="left" 
-            aria-label="This component has no overview on one of the dates, thus cannot be compared.">Compare<i class="far fa-question-circle tip-icon"></i></span></button>
+            aria-label="This component has no overview on one of the dates, thus cannot be compared.">
+            Compare<i class="icon-help-circle tip-icon" style="font-size:9px;"></i>
+         </span></button>
         <button v-if="!notLoaded" @click="goComponentDiff(component)" :disabled="notLoaded">
           <i class="icon-compare pr-1"></i>Differences</button>
       </div>

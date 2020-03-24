@@ -7,10 +7,14 @@ body {
 	min-height: calc(100vh - 30px);
 	margin-bottom: 30px;
 	padding: 10px;
+	max-width: 1024px;
+	margin: auto;
 }
 
 .footer {
-	@apply text-center text-xs my-2;
+	@apply text-center;
+	@apply text-xs;
+	@apply my-2;
 	position: absolute;
 	bottom: -35px;
 	width: 100%;

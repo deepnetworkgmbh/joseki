@@ -38,6 +38,18 @@ body {
 	@apply mb-3;
 }
 
+.segment-header {
+	background-color: #eee;
+	margin:-10px;
+	margin-bottom: 8px;
+	border-top-right-radius: 5px;
+	border-top-left-radius: 5px;
+	padding:5px;	
+	padding-left:8px;
+	padding-bottom: 0;
+	color:#666;
+}
+
 .big-text {
 	@apply text-xl;
 	@apply antialiased;
@@ -99,4 +111,25 @@ tr {
 	font-size:9px;
 	margin-right: 5px;
 	margin-left: 5px;
+}
+
+h1.info {
+	font-size: 24px;
+}
+
+h5 {
+	color:#888;
+	line-height: 5px;
+}
+
+.top-left-panel {
+	border-top-left-radius: 6px;
+	border-bottom-left-radius: 6px;
+	background-color: #eee;
+}
+
+.top-right-panel {
+	border-top-right-radius: 6px;
+	border-bottom-right-radius: 6px;
+	background-color: #eee;
 }

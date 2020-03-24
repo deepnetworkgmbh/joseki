@@ -6,7 +6,7 @@
             data-balloon-length="xlarge"
             data-balloon-pos="up"
             :aria-label="control.text">
-            <i class="far fa-question-circle tip-icon"></i>
+            <span class="icon-help-circle tip-icon"></span>
         </span>
         <span class="diff-tag">{{ control.operation }}</span>
         <span v-if="control.id === 'container_image.CVE_scan' && control.text !== 'No issues'">

@@ -21,4 +21,23 @@ export class CountersSummary {
     return isNaN(result) ? 0 : result;
   }
 
+  public getString(): string {
+
+    let result: string[] = [];
+    if(this.noData>0) {
+      result.push('No Data:' + this.noData);
+    }
+    if(this.failed>0) {
+      result.push('Failed:' + this.failed);
+    }
+    if(this.warning>0) {
+      result.push('Warning:' + this.warning);
+    }
+    if(this.passed>0) {
+      result.push('Passed:' + this.passed);
+    }
+    return result.join(", ");
+
+  }
+
 }
