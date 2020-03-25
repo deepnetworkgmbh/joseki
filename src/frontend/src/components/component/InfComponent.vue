@@ -17,9 +17,8 @@
         <button @click="goComponentHistory(component)"><span class="icon-more-vertical"></span> History</button>
         <button @click="goComponentDetail(component)"><span class="icon-search"></span> Detail</button>
       </div>
-      <div class="inf-component-score">{{score}}%</div>
       <div class="inf-component-pie">
-        <vc-donut :sections="sections" :size="60" unit="px" :total="total" :thickness="25"></vc-donut>
+        <vc-donut :sections="sections" :size="60" unit="px" :auto-adjust-text-size="false" :text="`${this.score}%`" :total="total" :thickness="25"></vc-donut>
       </div>
     </div>
   </div>

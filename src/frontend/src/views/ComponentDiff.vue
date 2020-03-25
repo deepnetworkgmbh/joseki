@@ -6,16 +6,16 @@
         <div class="status-icon ml-1 mt-3">
           <i :class="getScoreIconClass(data.summary1.current.score)"></i>
         </div>
-        <div class="status-text p-5 pl-10 pt-16">
-          <div class="mb-3">
+        <div class="status-text p-5 pl-4 pt-16">
+          <div class="mb-3 info-tag-date">
             <h5>Date</h5>
             <h1 class="info">{{ date | formatDate }}</h1>
           </div>
-          <div class="mb-3">
+          <div class="mb-3 info-tag-score">
             <h5>Score</h5>
             <h1 class="info">{{ data.summary1.current.score }}%</h1>
           </div>
-          <div class="mb-3">
+          <div class="mb-3 info-tag-score">
             <h5>Grade</h5>
             <h1 class="info">{{ getGrade(data.summary1.current.score) }}</h1>
           </div>
@@ -34,16 +34,16 @@
         <div class="status-icon ml-1 mt-3">
           <i :class="getScoreIconClass(data.summary2.current.score)"></i>
         </div>
-        <div class="status-text p-5 pl-10 pt-16">
-          <div class="mb-3">
+        <div class="status-text p-5 pl-4 pt-16">
+          <div class="mb-3 info-tag-date">
             <h5>Date</h5>
             <h1 class="info">{{ date2 | formatDate }}</h1>
           </div>
-          <div class="mb-3">
+          <div class="mb-3 info-tag-score">
             <h5>Score</h5>
             <h1 class="info">{{ data.summary2.current.score }}%</h1>
           </div>
-          <div class="mb-3">
+          <div class="mb-3 info-tag-score">
             <h5>Grade</h5>
             <h1 class="info">{{ getGrade(data.summary2.current.score) }}</h1>
           </div>

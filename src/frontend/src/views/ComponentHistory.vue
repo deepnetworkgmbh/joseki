@@ -14,7 +14,7 @@
           <table>
             <thead>
                 <tr>
-                    <td>Scan Date</td>
+                    <td colspan="2">Scan Date</td>
                     <td class='text-right'>
                       No Data 
                       <span class='text-center' data-balloon-length="xlarge" data-balloon-pos="up" 
@@ -43,18 +43,21 @@
             </thead>
             <tbody>
             <tr v-for="(scan,i) in data" :key="`scan${i}1`">
-              <td class="w-1/6">
+              <td>
                 <label :for="`scan${i}1`">
                 <input type="checkbox" class='chk' :id="`scan${i}1`" :value="`${scan.date}`" v-model="checkedScans" 
                 :disabled="checkDisabled(i, `${scan.date}`)">
                 <span class="pl-2">{{ scan.date | formatDate }}</span>
                 </label>
               </td>
-              <td class='w-1/6 text-sm text-right'>{{ scan.current.noData || '0' }}</td>
-              <td class='w-1/6 text-sm text-right'>{{ scan.current.warning || '0' }}</td>
-              <td class='w-1/6 text-sm text-right'>{{ scan.current.failed || '0' }}</td>
-              <td class='w-1/6 text-sm text-right'>{{ scan.current.passed || '0' }}</td>
-              <td class="w-1/6 text-sm text-right">{{ scan.current.score }}%</td>
+              <td style="font-size:11px;" class='external-link'>
+                <a class='show-on-hover' :href="getscanDetailurl(scan.date)" :target="`out_${scan.date}`"><i class="icon-arrow-up-right"></i>scan detail</a>
+              </td>
+              <td class='text-sm text-right'>{{ scan.current.noData || '0' }}</td>
+              <td class='text-sm text-right'>{{ scan.current.warning || '0' }}</td>
+              <td class='text-sm text-right'>{{ scan.current.failed || '0' }}</td>
+              <td class='text-sm text-right'>{{ scan.current.passed || '0' }}</td>
+              <td class="text-sm text-right">{{ scan.current.score }}%</td>
             </tr> 
             </tbody>          
           </table>

@@ -25,16 +25,14 @@
       </div>
       <div class="inf-component-diff-pies">
         <div>
-          <div class="inf-component-diff-score">{{score}}%</div>
           <div class="inf-component-diff-pie">
-              <vc-donut :sections="sections" :size="60" unit="px" :total="total" :thickness="25"></vc-donut>
+              <vc-donut :sections="sections" :size="60" unit="px" :auto-adjust-text-size="false" :total="total" :text="`${score}%`" :thickness="25"></vc-donut>
           </div>
         </div>
         <div class="inf-component-diff-arrow">►</div>
         <div>
-          <div class="inf-component-diff-score">{{score2}}%</div>
           <div class="inf-component-diff-pie">
-              <vc-donut :sections="sections2" :size="60" unit="px" :total="total2" :thickness="25"></vc-donut>
+              <vc-donut :sections="sections2" :size="60" unit="px" :auto-adjust-text-size="false" :total="total2" :text="`${score2}%`" :thickness="25"></vc-donut>
           </div>
         </div>
       </div>
