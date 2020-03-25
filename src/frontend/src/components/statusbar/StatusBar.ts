@@ -10,6 +10,7 @@ export default class StatusBar extends Vue {
   @Prop({ default: false })
   mini!: boolean
 
+  private useNoData = true;
   
   private starts: boolean[] = [false, false, false, false];
   private ends: boolean[] = [false, false, false, false];
@@ -19,7 +20,7 @@ export default class StatusBar extends Vue {
   // {{ counters.noData }}, {{ counters.failed }}, {{ counters.warning }}, {{ counters.passed }}
   created() {
 
-    let arr = [this.counters.noData, this.counters.failed, this.counters.warning, this.counters.passed];
+    let arr = [ (this.useNoData ? this.counters.noData : 0) , this.counters.failed, this.counters.warning, this.counters.passed];
 
     // calculate start-ends
     for(let i=0;i<arr.length;i++) {
@@ -44,7 +45,6 @@ export default class StatusBar extends Vue {
     let widthSum = this.widths.reduce((a, b)=>a+b);
 
     if(widthSum<200) {
-
       // adjust widths
       let min = 200;    
       let minIndex = -1;
