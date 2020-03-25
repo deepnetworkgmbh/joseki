@@ -7,24 +7,24 @@
         <div class="status-icon">
           <i :class="getScoreIconClass(data.current.score)"></i>
         </div>
-        <div class="status-text p-5 pl-10 pt-16">
-          <div class="mb-3">
+        <div class="status-text p-5 pl-4 pt-16">
+          <div class="mb-3 info-tag-date">
             <h5>Date</h5>
             <h1 class="info">{{ selectedDate | formatDate }}</h1>
           </div>
-          <div class="mb-3">
+          <div class="mb-3 info-tag-score">
             <h5>Score</h5>
             <h1 class="info">{{ data.current.score }}%</h1>
           </div>
-          <div class="mb-3">
+          <div class="mb-3 info-tag-score">
             <h5>Grade</h5>
             <h1 class="info">{{ getGrade(data.current.score) }}</h1>
           </div>
-          <div class="mb-3">
+          <div class="mb-3 info-tag">
             <h5>Type</h5>
             <h1 class="info">{{ data.component.category }}</h1>
           </div>
-          <div class="mb-3">
+          <div class="mb-3 info-tag">
             <h5>Name</h5>
             <h1 class="info">{{ data.component.name }}</h1>
           </div>
@@ -42,14 +42,15 @@
           <div class='text-center text-sm font-bold border-b border-gray-500'>Last 5 scans</div>
           <table class="w-full text-xs p-4">
             <tbody>
-              <tr v-for="(scan,i) in shortHistory" :key="`scan${i}`">
+              <tr v-for="(scan,i) in shortHistory" :key="`scan${i}`" 
+              @click="scan.score > 0 ? dayClicked(scan.recordedAt.split('T')[0], data.component.id) : undefined" 
+              :class='getHistoryClass(scan)'>
                 <td>{{ scan.recordedAt | formatDate }}</td>
-                <td class="w-1">{{scan.score}}%</td>
-                <td class="w-1" v-html="getArrowHtml(i)"></td>
+                <td class="w-1 text-right">{{scan.score}}%</td>
               </tr>
             </tbody>
           </table>
-          <div class="text-right">
+          <div class="text-center">
             <button class="btn mt-2" @click="goComponentHistory()">
               <span class="px-4"><span class="icon-more-vertical pr-1"></span>See Scan History</span>
             </button>
@@ -83,7 +84,7 @@
         <h1 class="mb-2">Results by Resources</h1>
       </div>
 
-      <ul v-for="(collection,i) in getResultsByCollection(data)" :key="`collection${i}`" >
+      <ul v-for="(collection,i) in getResultsByCollection(data)" :key="`collection${i}`"  class="zigzag">
           <li style="margin-left:10px;min-height:30px;">
             <input type="checkbox" :id="`target${i}`" checked />
             <label :for="`target${i}`">

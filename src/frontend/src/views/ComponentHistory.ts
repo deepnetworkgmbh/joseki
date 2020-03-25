@@ -20,7 +20,6 @@ export default class ComponentHistory extends Vue {
     data: InfrastructureComponentSummary[] = [];
     checkedScans: any[] = [];
     
-
     mounted() {
         this.loadData();
         ///window.addEventListener("resize", this.setupCharts);
@@ -65,6 +64,14 @@ export default class ComponentHistory extends Vue {
                 params = this.component.id + '/' + params;
                 router.push('/component-diff/' + params);
             }
+        }
+    }
+
+    getscanDetailurl(date:string) { 
+        if (this.component && this.component.category === 'Overall') {
+            return '/overview/' + date.split('T')[0];
+        } else {
+            return '/component-detail/' + this.component!.id + '/' + date.split('T')[0];
         }
     }
 

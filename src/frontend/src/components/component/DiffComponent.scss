@@ -86,17 +86,9 @@
 		}
 	}
 
-	&-score {
-		position: relative;
-		font-size: 18px;
-		z-index: 1;
-		left: 15px;
-		top: 18px;
-	}
-
 	&-pie {
 		position: relative;
-		top: -25px;
+		top: 0px;
 		z-index: 0;
         left: 5px;
         width:70px;

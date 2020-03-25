@@ -1,6 +1,6 @@
 <template>
   <div id="nav" class='flex flex-row p-2'>
-    <div class="logo">
+    <div class="logo" style="cursor:pointer">
       <router-link to="/">
         <span class="icon-shield"></span>Joseki
       </router-link>

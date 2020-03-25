@@ -51,3 +51,11 @@ table thead, table tbody tr {
     display: table;
     table-layout: fixed;
 }
+
+table > tbody > tr:hover > td > .show-on-hover {
+	display:block;
+}
+  
+table > tbody > tr > td >  .show-on-hover {
+	display: none;
+}

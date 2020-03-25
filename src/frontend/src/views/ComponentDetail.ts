@@ -4,7 +4,7 @@ import Spinner from "@/components/spinner/Spinner.vue";
 import StatusBar from "@/components/statusbar/StatusBar.vue";
 import Score from "@/components/score/Score.vue";
 import { DataService } from '@/services/DataService';
-import { InfrastructureComponentSummary } from '@/models';
+import { InfrastructureComponentSummary, ScoreHistoryItem } from '@/models';
 import { ScoreService } from '@/services/ScoreService';
 import router from '@/router';
 import { MappingService } from '@/services/MappingService';
@@ -38,6 +38,7 @@ export default class ComponentDetail extends Vue {
                     this.data = response;
                     this.setupCharts();
                     this.loaded = true;
+                    this.$forceUpdate();
                 }
             });
     }
@@ -62,6 +63,7 @@ export default class ComponentDetail extends Vue {
         }       
         ChartService.drawPieChart(this.data.current, "overall_pie", 300);
         ChartService.drawBarChart(this.data.scoreHistory, "overall_bar", this.selectedDate, this.dayClicked, 100, undefined, 4, this.data.component.id);
+        this.$forceUpdate();
     }
 
     dayClicked(date: string, component: string) {
@@ -85,17 +87,6 @@ export default class ComponentDetail extends Vue {
         return '/image-detail/' + encodeURIComponent(imageTag) + '/' + this.selectedDate.toISODate();    
     }
 
-    getArrowHtml(i: number) {
-        const scans = this.data.scoreHistory;
-        if (i >= (scans.length - 1)) return '-';
-        if (scans[i].score > scans[i + 1].score) {
-            return '<i class="fas fa-arrow-up" style="color:green;"></i>'
-        } else if (scans[i].score < scans[i + 1].score) {
-            return '<i class="fas fa-arrow-down" style="color:red;"></i>'
-        }
-        return '-'
-    }
-
     get shortHistory() {
         return this.data.scoreHistory.slice(0, 5);
     }
@@ -105,7 +96,8 @@ export default class ComponentDetail extends Vue {
     }
 
     @Watch('date', { immediate: true })
-    private onDateChanged(newValue: Date) {
+    private onDateChanged(newValue: string) {
+        this.selectedDate = DateTime.fromISO(newValue);
         this.loadData();
     }
 
@@ -121,5 +113,10 @@ export default class ComponentDetail extends Vue {
         }
         return '???'
     }
-
+    getHistoryClass(scan: ScoreHistoryItem) {
+        if(scan.score === 0) {
+            return 'history-not-scanned';
+        }
+        return scan.recordedAt.startsWith(this.selectedDate!.toISODate()) ? 'history-selected' : 'history';
+    }
 }

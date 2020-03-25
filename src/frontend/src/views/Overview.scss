@@ -106,3 +106,33 @@ svg > g > g {
 	border-left: solid 2px #444;
 	opacity: .95;
 }
+
+.history {
+	cursor:pointer;
+}
+
+.history-selected {
+	font-weight: bold;
+}
+
+.history-not-scanned {
+	color:#666;
+}
+
+.info-tag {
+	border-left:solid 3px green;
+	padding-left:5px;
+	padding-top:5px;
+}
+
+.info-tag-score {
+	border-left:solid 3px orange;
+	padding-left:5px;
+	padding-top:5px;
+}
+
+.info-tag-date {
+	border-left:solid 3px #888;
+	padding-left:5px;
+	padding-top:5px;
+}
