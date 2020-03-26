@@ -27,10 +27,10 @@ export default class InfComponent extends Vue {
   
   getComponentIcon() {
     if(this.component.category === 'Azure Subscription') {
-      return 'icon-azuredevops';
+      return 'component-icon-azure icon-azuredevops';
     }
     if(this.component.category === 'Kubernetes') {
-      return 'icon-kubernetes';
+      return 'component-icon-kubernetes icon-kubernetes';
     }
     return ''
   }

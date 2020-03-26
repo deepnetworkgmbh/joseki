@@ -12,6 +12,13 @@ export default class ControlList extends Vue {
   @Prop()
   date!: DateTime;
 
+  @Prop({default: false})
+  smallWidth!: boolean
+
+  getIdClass(): string {
+    return this.smallWidth ? `limited-li` : ``;
+  }
+
   getLineClass(): string {
     return `control-li text-sm control-${this.control.operation}`
   }

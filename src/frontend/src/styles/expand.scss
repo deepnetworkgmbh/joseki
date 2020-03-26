@@ -68,4 +68,13 @@ input[type="checkbox"]:checked + label:before {
 	padding-left: 20px;
 }
 
+.limited-li {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	max-width: 260px;	
+	position: relative;
+	float: left;
+}
+
 

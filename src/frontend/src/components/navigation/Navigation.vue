@@ -2,7 +2,7 @@
   <div id="nav" class='flex flex-row p-2'>
     <div class="logo" style="cursor:pointer">
       <router-link to="/">
-        <span class="icon-shield"></span>Joseki
+        <span class="icon-shield" style="font-size:19px;"></span>Joseki
       </router-link>
     </div>
     <!-- <div class="links flex-grow justify-end text-right pt-1">

@@ -115,7 +115,7 @@
                           <span class="icon-help-circle tip-icon"></span>
                         </span>
                         <span v-if="cg.id === 'container_image.CVE_scan' && cg.text !== 'No issues'">                        
-                          <a class='small-link' :href="imageScanUrl(cg.tags.imageTag)">see details</a>
+                          <router-link class='small-link' :to="{ name: 'ImageDetail', params: { imageid: cg.tags.imageTag, date: date, component: data.component }}">see details</router-link>
                         </span>
                       </label>
                     </div>

@@ -4,7 +4,7 @@
     <div v-if="loaded" class="segment shadow" style="min-height:300px;padding:0;">
       <div class="w-1/4 border-r border-gray-300 flex flex-col justify-center content-center top-left-panel" style="overflow:hidden;background-color:#eee;">
         <div class="status-icon ml-1 mt-3"><i :class="getScoreIconClass(data.summary1.overall.current.score)"></i></div>
-         <div class="status-text p-5 pl-10 pt-16">
+         <div class="status-text p-5 pl-4 pt-16">
           <div class="mb-3 info-tag-date">
             <h5>Date</h5>
             <h1 class="info">{{ date | formatDate }}</h1>
@@ -35,7 +35,7 @@
       </div>
       <div class="w-1/4 border-l border-gray-300 flex flex-col justify-center content-center top-right-panel" style="overflow:hidden;background-color:#eee;">
         <div class="status-icon ml-1 mt-3"><i :class="getScoreIconClass(data.summary2.overall.current.score)"></i></div>
-         <div class="status-text p-5 pl-10 pt-16">
+         <div class="status-text p-5 pl-4 pt-16">
           <div class="mb-3 info-tag-date">
             <h5>Date</h5>
             <h1 class="info">{{ date2 | formatDate }}</h1>
