@@ -15,12 +15,13 @@ Vue.filter('formatDate', function (value) {
 
 import linkify from 'vue-linkify'
 import { MetaService } from './services/MetaService';
-Vue.directive('linkified', linkify)
+import { ConfigService } from './services/ConfigService';
+Vue.directive('linkified', linkify);
 
-MetaService
-  .Init()
-  .then(()=>{
-    new Vue({ router, render: h => h(App) }).$mount("#app");
-  });
+(async()=>{
 
+  await ConfigService.Init();
+  await MetaService.Init();
+  new Vue({ router, render: h => h(App) }).$mount("#app");
 
+})()
