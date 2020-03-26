@@ -35,7 +35,7 @@ export default class ComponentDiff extends Vue {
                 if (response) {
                     this.data = response;
                     this.nochanges = this.data.results.length === this.data.results.filter(x=>x.operation === DiffOperation.Same).length;
-
+                    this.$emit('componentChanged', this.data.summary1.component);
                     console.info(JSON.parse(JSON.stringify(this.data.results)));
                     this.setupCharts();
                     this.loaded = true;

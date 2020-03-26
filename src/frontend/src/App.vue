@@ -1,7 +1,8 @@
 <template>
   <div id="app" class="wrapper">
     <Navigation />
-    <router-view @sideWindowOpened='toggleSideWindow(true)' @sideWindowClosed='toggleSideWindow(false)' />
+    <Breadcrumbs :date='date' :component='component' />
+    <router-view @dateChanged='dateChanged' @componentChanged='componentChanged' />
     <div class="footer">
       ©2020
       <a href="http://www.deepnetwork.com" target="_blank">Deep Network GmbH</a>

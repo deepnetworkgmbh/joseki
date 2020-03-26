@@ -74,10 +74,10 @@
                     </label>
                     <div v-if="obj.checked">
                       <ul v-for="(control, c) in obj.controls" :key="`left-controlp${i}-${g}-${c}`" class="control-ul">
-                        <ControlList :date="row.left.date" :control="control" />
+                        <ControlList :date="row.left.date" :control="control" :smallWidth="'true'" />
                       </ul>
                       <ul v-for="(cg, c) in obj.controlGroups" :key="`left-controlg${i}-${g}-${c}`" class="control-ul">
-                        <ControlGroup  v-if="cg.operation !== 'SAME'" :date="row.left.date" :name="cg.name" :items="cg.items" :operation="cg.operation" />
+                        <ControlGroup  v-if="cg.operation !== 'SAME'" :date="row.left.date" :name="cg.name" :items="cg.items" :operation="cg.operation" :smallWidth="'true'" />
                       </ul>
                     </div>
                   </li>
@@ -94,10 +94,10 @@
                     </label>
                     <div v-if="obj.checked">
                       <ul v-for="(control, c) in obj.controls" :key="`right-controlp${i}-${g}-${c}`" class="control-ul">
-                        <ControlList :date="row.right.date" :control="control" />
+                        <ControlList :date="row.right.date" :control="control" :smallWidth="'true'" />
                       </ul>
                       <ul v-for="(cg, c) in obj.controlGroups" :key="`right-controlg${i}-${g}-${c}`" class="control-ul">
-                        <ControlGroup v-if="cg.operation !== 'SAME'" :date="row.right.date" :name="cg.name" :items="cg.items" :operation="cg.operation" />
+                        <ControlGroup v-if="cg.operation !== 'SAME'" :date="row.right.date" :name="cg.name" :items="cg.items" :operation="cg.operation" :smallWidth="'true'" />
                       </ul>
                     </div>
                   </li>

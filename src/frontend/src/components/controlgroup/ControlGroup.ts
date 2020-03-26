@@ -19,6 +19,9 @@ export default class ControlGroup extends Vue {
   @Prop()
   operation!: DiffOperation
 
+  @Prop({default: false})
+  smallWidth!: boolean
+  
   get itemCount(): number {
 
     return this.items.filter(x=>x.operation !== DiffOperation.Same).length;

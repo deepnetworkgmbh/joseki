@@ -1,0 +1,30 @@
+.link {
+    color:#08c;
+    cursor: pointer;
+}
+.link:hover {
+    text-decoration: underline;
+}
+
+.breadcrumbs {
+    background-color: #eee;
+    height:26px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    text-align: left;
+    justify-content: left;
+    padding:6px;
+    padding-top:3px;
+    font-size: 12px;
+    color:#666;
+
+    & i {
+        font-size: 10px;
+    }
+}
+
+.slash {
+    padding-left:5px;
+    padding-right:5px;
+    font-weight: bold;
+}

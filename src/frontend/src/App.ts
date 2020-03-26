@@ -1,17 +1,28 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
 import Navigation from "@/components/navigation/Navigation.vue";
+import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs.vue';
+import { InfrastructureComponent } from './models';
 
 @Component({
   components: {
-    Navigation
+    Navigation, Breadcrumbs
   }
 })
 export default class App extends Vue {
 
+  date: string = '';
+  component: InfrastructureComponent = new InfrastructureComponent();
+
   sideWindowOpen: boolean = true;
 
-  toggleSideWindow(isOpen: boolean) {
-    this.sideWindowOpen = isOpen;
+  componentChanged(component: InfrastructureComponent) {
+    console.log(`[P] component changed: ${component.id}`);
+    this.component = component;
+  }
+
+  dateChanged(date: string) {
+    console.log(`[P] date changed: ${date}`);
+    this.date = date;
   }
 
   getWrapperClass() {

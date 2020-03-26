@@ -24,18 +24,18 @@ export default class Overview extends Vue {
 
     loadData() {
         this.selectedDate = (this.date === null) ? undefined : DateTime.fromISO(this.date);
-        if (this.selectedDate !== undefined) {
-            console.log(`[selectedDate]=>`, this.selectedDate.toISODate());
-        }
         this.service
             .getGeneralOverviewData(this.selectedDate)
             .then(response => {
                 if (response) {
                     this.data = response;
+                    console.log(`[] data`, response);
                     if(this.selectedDate === undefined) {
                         this.selectedDate = DateTime.fromISO(this.data.overall.scoreHistory[0].recordedAt);
+                        this.$emit('dateChanged', this.selectedDate.toISODate())
                         console.log(`[selectedDate::chart]=>`, this.selectedDate.toISODate());
                     }       
+                    this.$emit('componentChanged', this.data.overall.component)
                     this.setupCharts();
                     this.loaded = true;
                     this.$forceUpdate();
@@ -95,9 +95,19 @@ export default class Overview extends Vue {
         router.push('/overview-history/');
     }
 
+    // @Watch('data', { immediate: true, deep: true })
+    // private onDataChanged(newdata: InfrastructureOverview) {
+    //     if(newdata && newdata.overall.component) {
+    //         console.log('[] component changed')
+    //         this.$emit('componentChanged', this.data.overall.component)    
+    //     }
+    // }
+
+
     @Watch('date', { immediate: true })
     private onDateChanged(newValue: string) {
         this.selectedDate = DateTime.fromISO(newValue);
+        this.$emit('dateChanged', this.selectedDate.toISODate())
         this.loadData();
     }
 

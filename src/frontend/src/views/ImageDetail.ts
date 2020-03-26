@@ -1,7 +1,7 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { DataService } from "@/services/DataService";
 import Spinner from "@/components/spinner/Spinner.vue";
-import { ImageScanDetailModel } from '@/models';
+import { ImageScanDetailModel, InfrastructureComponent } from '@/models';
 
 @Component({
   components: { Spinner }
@@ -12,6 +12,9 @@ export default class ImageDetail extends Vue {
 
   @Prop({ default: null })
   date!: string;
+
+  @Prop()
+  component?: InfrastructureComponent
 
   loaded: boolean = false;
   service: DataService = new DataService();
@@ -26,6 +29,11 @@ export default class ImageDetail extends Vue {
           this.setupPage();
         }
       });
+
+    if(this.component) {
+      console.log(`[] component=>`, this.component.id);
+      this.$emit('componentChanged', this.component);
+    }
   }
 
   setupPage() { }

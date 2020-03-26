@@ -26,83 +26,6 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-azuredevops:before {
-  content: "\e900";
-  color: #0078d7;
-  font-size: 26px;
-  padding: 2px;
-}
-.icon-kubernetes:before {
-  content: "\e901";
-  color: #326ce5;
-  font-size: 26px;
-  padding: 3px;
-}
-
-.icon-alert-circle:before {
-  content: "\e902";
-}
-.icon-alert-triangle:before {
-  content: "\e903";
-}
-.icon-arrow-up-right:before {
-  content: "\e904";
-}
-.icon-check-circle:before {
-  content: "\e905";
-}
-.icon-chevron-down:before {
-  content: "\e906";
-}
-.icon-chevron-right:before {
-  content: "\e907";
-}
-.icon-compare:before {
-  content: "\e908";
-}
-.icon-github:before {
-  content: "\e909";
-}
-.icon-help-circle:before {
-  content: "\e90a";
-}
-.icon-info:before {
-  content: "\e90b";
-}
-.icon-key:before {
-  content: "\e90c";
-}
-.icon-list:before {
-  content: "\e90d";
-}
-.icon-log-in:before {
-  content: "\e90e";
-}
-.icon-log-out:before {
-  content: "\e90f";
-}
-.icon-more-vertical:before {
-  content: "\e910";
-}
-.icon-search:before {
-  content: "\e911";
-}
-.icon-settings:before {
-  content: "\e912";
-}
-.icon-shield:before {
-  content: "\e913";
-  font-size:19px;
-}
-.icon-user:before {
-  content: "\e914";
-}
-.icon-x:before {
-  content: "\e915";
-}
-.icon-x-circle:before {
-  content: "\e916";
-}
 
 .nodata-icon {
   font-size: 15px;
@@ -137,4 +60,141 @@
   color: #bbb;
   padding-left: 2px;
 
+}
+
+.component-icon-azure {
+  color: #0078d7;
+  font-size: 26px;
+  padding: 2px;
+}
+
+.component-icon-kubernetes {
+  color: #326ce5;
+  font-size: 26px;
+  padding: 3px;
+}
+
+.icon-azuredevops:before {
+  content: "\e900";
+}
+.icon-kubernetes:before {
+  content: "\e901";
+}
+
+.icon-alert-circle:before {
+  content: "\e902";
+}
+.icon-alert-triangle:before {
+  content: "\e903";
+}
+.icon-arrow-up-right:before {
+  content: "\e904";
+}
+.icon-bookmark:before {
+  content: "\e917";
+}
+.icon-calendar:before {
+  content: "\e921";
+}
+.icon-check:before {
+  content: "\e922";
+}
+.icon-check-circle:before {
+  content: "\e905";
+}
+.icon-check-square:before {
+  content: "\e923";
+}
+.icon-chevron-down:before {
+  content: "\e906";
+}
+.icon-chevron-left:before {
+  content: "\e918";
+}
+.icon-chevron-right:before {
+  content: "\e907";
+}
+.icon-chevron-up:before {
+  content: "\e919";
+}
+.icon-clock:before {
+  content: "\e924";
+}
+.icon-copy:before {
+  content: "\e908";
+}
+.icon-filter:before {
+  content: "\e91a";
+}
+.icon-frown:before {
+  content: "\e925";
+}
+.icon-git-commit:before {
+  content: "\e91b";
+}
+.icon-github:before {
+  content: "\e909";
+}
+.icon-help-circle:before {
+  content: "\e90a";
+}
+.icon-home:before {
+  content: "\e91c";
+}
+.icon-info:before {
+  content: "\e90b";
+}
+.icon-key:before {
+  content: "\e90c";
+}
+.icon-list:before {
+  content: "\e90d";
+}
+.icon-log-in:before {
+  content: "\e90e";
+}
+.icon-log-out:before {
+  content: "\e90f";
+}
+.icon-meh:before {
+  content: "\e926";
+}
+.icon-more-horizontal:before {
+  content: "\e91d";
+}
+.icon-more-vertical:before {
+  content: "\e910";
+}
+.icon-search:before {
+  content: "\e911";
+}
+.icon-settings:before {
+  content: "\e912";
+}
+.icon-shield:before {
+  content: "\e913";
+}
+.icon-sliders:before {
+  content: "\e91e";
+}
+.icon-smile:before {
+  content: "\e927";
+}
+.icon-target:before {
+  content: "\e928";
+}
+.icon-toggle-left:before {
+  content: "\e91f";
+}
+.icon-toggle-right:before {
+  content: "\e920";
+}
+.icon-user:before {
+  content: "\e914";
+}
+.icon-x:before {
+  content: "\e915";
+}
+.icon-x-circle:before {
+  content: "\e916";
 }
