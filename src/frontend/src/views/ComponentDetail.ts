@@ -36,6 +36,7 @@ export default class ComponentDetail extends Vue {
             .then(response => {
                 if (response) {
                     this.data = response;
+                    this.$emit('componentChanged', this.data.component);
                     this.setupCharts();
                     this.loaded = true;
                     this.$forceUpdate();
@@ -59,6 +60,7 @@ export default class ComponentDetail extends Vue {
     drawCharts() {
         if(this.selectedDate === undefined) {
             this.selectedDate = DateTime.fromISO(this.data.scoreHistory[0].recordedAt);
+            this.$emit('dateChanged', this.selectedDate.toISODate())
             console.log(`[selectedDate::chart]=>`, this.selectedDate.toISODate());
         }       
         ChartService.drawPieChart(this.data.current, "overall_pie", 300);
@@ -98,6 +100,7 @@ export default class ComponentDetail extends Vue {
     @Watch('date', { immediate: true })
     private onDateChanged(newValue: string) {
         this.selectedDate = DateTime.fromISO(newValue);
+        this.$emit('dateChanged', this.selectedDate.toISODate())
         this.loadData();
     }
 
