@@ -9,10 +9,6 @@
             <span class="icon-help-circle tip-icon"></span>
         </span>
         <a class="small-link" :href="imageScanUrl">see details</a>
-        <!-- <span class="diff-tag">{{ control.operation }}</span> -->
-        <span v-if="control.id === 'container_image.CVE_scan' && control.text !== 'No issues'">
-            <a class="small-link" :href="imageScanUrl">see details</a>
-        </span>
     </li>
 </template>
 <script lang="ts" src="./ControlList.ts"></script>
