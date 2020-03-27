@@ -66,14 +66,20 @@ jobs:
 
     - name: deploy to k8s
       env:
-        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         IMAGE_TAG: ${{ env.DEV_TAG }}
+        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        FE_CONFIG_DATA: ${{ secrets.FE_CONFIG_DATA }}
       run: |
         echo "$KUBE_CONFIG_DATA" | base64 --decode > /tmp/config
         export KUBECONFIG=/tmp/config
 
-        TO_APPLY=./to_apply.yml
-        cp examples/k8s/fe.yaml $TO_APPLY
-        sed -i 's|#{JOSEKI_IMAGE_TAG}#|'"$IMAGE_TAG"'|' $TO_APPLY
-        kubectl apply -f $TO_APPLY
-        rm $TO_APPLY
+        CONFIG_PATH=examples/k8s/frontend/config.json
+        echo "$FE_CONFIG_DATA" | base64 --decode > $CONFIG_PATH
+
+        sed -i 's|#{fe.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/frontend/kustomization.yaml
+        sed -i 's|#{fe.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/frontend/fe.yaml
+
+        kubectl apply -f examples/k8s/frontend/rbac.yaml
+        kubectl apply -k examples/k8s/frontend
+
+        rm $CONFIG_PATH /tmp/config
