@@ -1,3 +1,4 @@
+import axios from "axios";
 import { VulnerabilityGroup, TargetGroup, ImageScanDetailModel, InfrastructureOverview, InfrastructureComponentSummary, InfrastructureComponentDiff, InfrastructureOverviewDiff, MetaData } from "@/models";
 import { ScoreService } from './ScoreService';
 import { DateTime } from 'luxon';
@@ -13,15 +14,6 @@ export class DataService {
     return '0.1'
   }
 
-  private async getData(url = ''){
-    const response = await fetch(url, {
-      method: 'GET',
-      mode: 'cors', // no-cors, *cors, same-origin
-      credentials: 'same-origin', // include, *same-origin, omit
-    });
-    return await response.json();
-  }
-
   public fixedEncodeURIComponent(str: string) {
     return encodeURIComponent(str).replace(/[!*]/g, function (c) {
       return "%" + c.charCodeAt(0).toString(16);
@@ -33,10 +25,12 @@ export class DataService {
     let suffix = (date === undefined) ? '?api-version=' + this.apiVersion 
                                       : '?date=' + date!.toISODate() + '&api-version=' + this.apiVersion;
 
-    let url = this.baseUrl + "/api/audits/overview" + suffix;
+    let url = this.baseUrl + "/audits/overview" + suffix;
     console.log(`[] calling ${url}`);
 
-    return this.getData(url)
+    return axios
+      .get(url)
+      .then((response) => response.data)
       .then((data) => InfrastructureOverview.GenerateFromData(data))
       .catch((error) => console.log(error));
   }
@@ -46,10 +40,12 @@ export class DataService {
     let suffix = '?id=' + encodeURIComponent(id);
     if (date !== undefined) { suffix += '&date=' + date!.toISODate(); }
     suffix += '&api-version=' + this.apiVersion;   
-    let url = this.baseUrl + "/api/audits/component/detail" + suffix;
+    let url = this.baseUrl + "/audits/component/detail" + suffix;
     console.log(`[] calling ${url}`);
 
-    return this.getData(url)
+    return axios
+      .get(url)
+      .then((response) => response.data)
       .then((data) => processData(data))
       .catch((error) => console.log(error));
 
@@ -69,10 +65,12 @@ export class DataService {
 
   public async getImageScanResultData(imageTag: string, date: string): Promise<void | ImageScanDetailModel> {
     const suffix = this.fixedEncodeURIComponent(imageTag) + '/details/?date=' + date + '&api-version=' + this.apiVersion;
-    const url = this.baseUrl + "/api/audits/container-image/" + suffix;
+    const url = this.baseUrl + "/audits/container-image/" + suffix;
     console.log(`[] calling ${url}`);
 
-    return this.getData(url)
+    return axios
+      .get(url)
+      .then((response) => response.data)
       .then((data) => processData(data))
       .catch((error) => console.log(error));
 
@@ -127,10 +125,12 @@ export class DataService {
 
   public async getGeneralOverviewDiffData(date1: string, date2: string): Promise<void | InfrastructureOverviewDiff> {
     let suffix = '?date1=' + date1 + '&date2=' + date2  + '&api-version=' + this.apiVersion;
-    let url = this.baseUrl + "/api/audits/overview/diff" + suffix;
+    let url = this.baseUrl + "/audits/overview/diff" + suffix;
     console.log(`[] calling ${url}`);
 
-    return this.getData(url)
+    return axios
+      .get(url)
+      .then((response) => response.data)
       .then((data) => processData(data))
       .catch((error) => console.log(error));
 
@@ -157,9 +157,11 @@ export class DataService {
 
   public async getComponentHistoryData(id: string): Promise<void | InfrastructureComponentSummary[]> {
     let suffix = '?id=' + encodeURIComponent(id)  + '&api-version=' + this.apiVersion;
-    let url = this.baseUrl + "/api/audits/component/history" + suffix;
+    let url = this.baseUrl + "/audits/component/history" + suffix;
     console.log(`[] calling ${url}`);
-    return this.getData(url)
+    return axios
+      .get(url)
+      .then((response) => response.data)
       .then((data) => processData(data))
       .catch((error) => console.log(error))
       .finally(() => console.log("component history request finished."));
@@ -173,19 +175,23 @@ export class DataService {
 
   public async getComponentDiffData(id: string, date1: string, date2: string): Promise<void | InfrastructureComponentDiff> {
     let suffix = '?id=' + id + '&date1=' + encodeURIComponent(date1) + '&date2=' + encodeURIComponent(date2) + '&api-version=' + this.apiVersion;
-    let url = this.baseUrl + "/api/audits/component/diff" + suffix;
+    let url = this.baseUrl + "/audits/component/diff" + suffix;
     console.log(`[] calling ${url}`)
 
-    return this.getData(url)
+    return axios
+      .get(url)
+      .then((response) => response.data)
       .then((data) => InfrastructureComponentDiff.CreateFromData(data))
       .catch((error) => console.log(error));
 
   }
 
   public async getWebsiteMeta(): Promise< void | MetaData[]> {
-    let url = this.baseUrl + "/api/knowledgebase/website-metadata?api-version=" + this.apiVersion;
+    let url = this.baseUrl + "/knowledgebase/website-metadata?api-version=" + this.apiVersion;
     console.log(`[] calling ${url}`);
-    return this.getData(url)
+    return axios
+      .get(url)
+      .then((response) => response.data)
       .then((data) => data)
       .catch((error) => console.log(error));
   }
