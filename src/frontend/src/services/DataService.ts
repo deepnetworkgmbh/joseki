@@ -2,17 +2,12 @@ import axios from "axios";
 import { VulnerabilityGroup, TargetGroup, ImageScanDetailModel, InfrastructureOverview, InfrastructureComponentSummary, InfrastructureComponentDiff, InfrastructureOverviewDiff, MetaData } from "@/models";
 import { ScoreService } from './ScoreService';
 import { DateTime } from 'luxon';
+import { ConfigService } from './ConfigService';
 
 export class DataService {
 
-  private get baseUrl() {
-    if (process.env.NODE_ENV === 'production') {
-      // prefix the api url because devServer is not being used in production
-      // as devServer was wiring the api calls using vue.config.js
-      // the cors must be adjusted on the Production server
-      return process.env.VUE_APP_API_URL;
-    }
-    return ''
+  private get baseUrl() {    
+    return ConfigService.ApiUrl;
   }
 
   private get apiVersion():string {

@@ -1,39 +1,19 @@
 
 ---
+
 apiVersion: v1
-kind: ServiceAccount
+kind: ConfigMap
 metadata:
-  name: joseki-fe
+  name: frontend-config
   namespace: joseki
   labels:
     app: joseki-frontend
+data:
+  config.json: |-
+    to-be-replaced
 
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRole
-metadata:
-  name: joseki-fe
-  labels:
-    app: joseki-frontend
-rules:
 
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRoleBinding
-metadata:
-  name: joseki-fe
-  labels:
-    app: joseki-frontend
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: joseki-fe
-subjects:
-  - kind: ServiceAccount
-    name: joseki-fe
-    namespace: joseki
-
----
 apiVersion: v1
 kind: Service
 metadata:
@@ -60,7 +40,7 @@ metadata:
   namespace: joseki
   labels:
     app: joseki-frontend
-    version: '#{JOSEKI_IMAGE_TAG}#'
+    version: '#{fe.imageTag}#'
 spec:
   replicas: 1
   selector:
@@ -73,7 +53,7 @@ spec:
     spec:
       containers:
       - name: joseki-fe
-        image: 'deepnetwork/joseki-frontend:#{JOSEKI_IMAGE_TAG}#'
+        image: 'deepnetwork/joseki-frontend:#{fe.imageTag}#'
         imagePullPolicy: 'Always'
         ports:
         - name: main-http
@@ -85,4 +65,16 @@ spec:
           requests:
             cpu: 100m
             memory: 128Mi
+        volumeMounts:
+          - name: frontend-config-volume
+            mountPath: /usr/share/nginx/html/config.json
+            subPath: config.json
       serviceAccountName: joseki-fe
+      volumes:
+        - name: frontend-config-volume
+          configMap:
+            name: frontend-config
+            defaultMode: 0777
+            items:
+              - key: config.json
+                path: config.json
