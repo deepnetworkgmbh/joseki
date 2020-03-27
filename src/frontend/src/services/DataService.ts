@@ -1,4 +1,3 @@
-import axios from "axios";
 import { VulnerabilityGroup, TargetGroup, ImageScanDetailModel, InfrastructureOverview, InfrastructureComponentSummary, InfrastructureComponentDiff, InfrastructureOverviewDiff, MetaData } from "@/models";
 import { ScoreService } from './ScoreService';
 import { DateTime } from 'luxon';
@@ -12,6 +11,15 @@ export class DataService {
 
   private get apiVersion():string {
     return '0.1'
+  }
+
+  private async getData(url = ''){
+    const response = await fetch(url, {
+      method: 'GET',
+      mode: 'cors', // no-cors, *cors, same-origin
+      credentials: 'same-origin', // include, *same-origin, omit
+    });
+    return await response.json();
   }
 
   public fixedEncodeURIComponent(str: string) {
@@ -28,9 +36,7 @@ export class DataService {
     let url = this.baseUrl + "/api/audits/overview" + suffix;
     console.log(`[] calling ${url}`);
 
-    return axios
-      .get(url)
-      .then((response) => response.data)
+    return this.getData(url)
       .then((data) => InfrastructureOverview.GenerateFromData(data))
       .catch((error) => console.log(error));
   }
@@ -43,9 +49,7 @@ export class DataService {
     let url = this.baseUrl + "/api/audits/component/detail" + suffix;
     console.log(`[] calling ${url}`);
 
-    return axios
-      .get(url)
-      .then((response) => response.data)
+    return this.getData(url)
       .then((data) => processData(data))
       .catch((error) => console.log(error));
 
@@ -68,9 +72,7 @@ export class DataService {
     const url = this.baseUrl + "/api/audits/container-image/" + suffix;
     console.log(`[] calling ${url}`);
 
-    return axios
-      .get(url)
-      .then((response) => response.data)
+    return this.getData(url)
       .then((data) => processData(data))
       .catch((error) => console.log(error));
 
@@ -128,9 +130,7 @@ export class DataService {
     let url = this.baseUrl + "/api/audits/overview/diff" + suffix;
     console.log(`[] calling ${url}`);
 
-    return axios
-      .get(url)
-      .then((response) => response.data)
+    return this.getData(url)
       .then((data) => processData(data))
       .catch((error) => console.log(error));
 
@@ -159,9 +159,7 @@ export class DataService {
     let suffix = '?id=' + encodeURIComponent(id)  + '&api-version=' + this.apiVersion;
     let url = this.baseUrl + "/api/audits/component/history" + suffix;
     console.log(`[] calling ${url}`);
-    return axios
-      .get(url)
-      .then((response) => response.data)
+    return this.getData(url)
       .then((data) => processData(data))
       .catch((error) => console.log(error))
       .finally(() => console.log("component history request finished."));
@@ -178,9 +176,7 @@ export class DataService {
     let url = this.baseUrl + "/api/audits/component/diff" + suffix;
     console.log(`[] calling ${url}`)
 
-    return axios
-      .get(url)
-      .then((response) => response.data)
+    return this.getData(url)
       .then((data) => InfrastructureComponentDiff.CreateFromData(data))
       .catch((error) => console.log(error));
 
@@ -189,9 +185,7 @@ export class DataService {
   public async getWebsiteMeta(): Promise< void | MetaData[]> {
     let url = this.baseUrl + "/api/knowledgebase/website-metadata?api-version=" + this.apiVersion;
     console.log(`[] calling ${url}`);
-    return axios
-      .get(url)
-      .then((response) => response.data)
+    return this.getData(url)
       .then((data) => data)
       .catch((error) => console.log(error));
   }
