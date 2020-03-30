@@ -51,13 +51,11 @@ export default class Breadcrumbs extends Vue {
 
     @Watch("date")
     onDateChanged(date: string) {
-        console.log(`[brd] date set to ${date}`);
         this.$forceUpdate();
     }
 
     @Watch("component")
     onComponentChanged(component: InfrastructureComponent) {
-        console.log(`[brd] component set to ${component.id}`);
         this.$forceUpdate();
     }
 
@@ -71,7 +69,6 @@ export default class Breadcrumbs extends Vue {
             case 'GeneralOverview': 
                 {
                     let date = this.$route.params.date;
-                    console.log(`[r] date: ${date}`);
                     this.showComponent = true;
                     this.showDate = true;
                     this.showHistory = false;

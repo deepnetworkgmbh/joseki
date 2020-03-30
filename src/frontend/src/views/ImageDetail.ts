@@ -31,7 +31,6 @@ export default class ImageDetail extends Vue {
       });
 
     if(this.component) {
-      console.log(`[] component=>`, this.component.id);
       this.$emit('componentChanged', this.component);
     }
   }
