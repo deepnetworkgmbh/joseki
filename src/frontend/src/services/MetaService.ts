@@ -11,7 +11,6 @@ export class MetaService {
                .then(data => {
                    if(data) {
                         MetaService.data = data
-                        console.log(`[meta]`, data);
                    }
                 })
                .then(()=> console.log(MetaService.data))

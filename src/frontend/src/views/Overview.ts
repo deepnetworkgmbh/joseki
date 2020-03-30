@@ -29,11 +29,9 @@ export default class Overview extends Vue {
             .then(response => {
                 if (response) {
                     this.data = response;
-                    console.log(`[] data`, response);
                     if(this.selectedDate === undefined) {
                         this.selectedDate = DateTime.fromISO(this.data.overall.scoreHistory[0].recordedAt);
                         this.$emit('dateChanged', this.selectedDate.toISODate())
-                        console.log(`[selectedDate::chart]=>`, this.selectedDate.toISODate());
                     }       
                     this.$emit('componentChanged', this.data.overall.component)
                     this.setupCharts();
@@ -94,15 +92,6 @@ export default class Overview extends Vue {
     onHistoryClicked() {
         router.push('/overview-history/');
     }
-
-    // @Watch('data', { immediate: true, deep: true })
-    // private onDataChanged(newdata: InfrastructureOverview) {
-    //     if(newdata && newdata.overall.component) {
-    //         console.log('[] component changed')
-    //         this.$emit('componentChanged', this.data.overall.component)    
-    //     }
-    // }
-
 
     @Watch('date', { immediate: true })
     private onDateChanged(newValue: string) {
