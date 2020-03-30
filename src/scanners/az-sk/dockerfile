@@ -18,20 +18,20 @@ FROM mcr.microsoft.com/dotnet/core/runtime:3.1.2-alpine3.11 AS cliapp
 
 # install the requirements for powershell
 RUN apk add --no-cache \
-    ca-certificates=20191127-r1 \
-    less=551-r0 \
-    ncurses-terminfo-base=6.1_p20200118-r2 \
-    krb5-libs=1.17.1-r0 \
-    libgcc=9.2.0-r3 \
-    libintl=0.20.1-r2 \
-    libssl1.1=1.1.1d-r3 \
-    libstdc++=9.2.0-r3 \
-    lttng-ust=2.10.4-r0 \
+    ca-certificates=~20191127-r1 \
+    less=~551-r0 \
+    ncurses-terminfo-base=~6.1_p20200118-r2 \
+    krb5-libs=~1.17.1-r0 \
+    libgcc=~9.2.0-r4 \
+    libintl=~0.20.1-r2 \
+    libssl1.1=~1.1.1d-r3 \
+    libstdc++=~9.2.0-r4 \
+    lttng-ust=~2.10.4-r0 \
     tzdata=2019c-r0 \
-    userspace-rcu=0.11.1-r0 \
-    zlib=1.2.11-r3 \
-    icu-libs=64.2-r1 \
-    curl=7.67.0-r0
+    userspace-rcu=~0.11.1-r0 \
+    zlib=~1.2.11-r3 \
+    icu-libs=~64.2-r1 \
+    curl=~7.67.0-r0
 
 # Download the powershell '.tar.gz' archive
 RUN curl -L https://github.com/PowerShell/PowerShell/releases/download/v7.0.0/powershell-7.0.0-linux-alpine-x64.tar.gz -o /tmp/powershell.tar.gz
