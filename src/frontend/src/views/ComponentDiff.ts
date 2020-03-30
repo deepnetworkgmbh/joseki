@@ -44,7 +44,6 @@ export default class ComponentDiff extends Vue {
     }
 
     created() {
-        console.log(`[] id: ${this.id} dates: ${this.date} vs ${this.date2}`)
         window.addEventListener("resize", this.setupCharts);
         this.loadData();
     }
@@ -66,18 +65,14 @@ export default class ComponentDiff extends Vue {
         }
 
         function toggleHeight(id, otherId, isOtherEmpty, checked) {
-            //console.log(`[]`, id, otherId);
             let thisHeight = document.getElementById(id)!.parentElement!.clientHeight;
-            //console.log(`[] this height ${thisHeight}`)
             if(isOtherEmpty) {
                 // only set the other
                 let otherElement = document.getElementById(otherId)!.parentElement;         
                 otherElement!.style.height =  thisHeight + 'px';    
             }else{
                 let otherHeight = document.getElementById(otherId)!.parentElement!.clientHeight;
-                //console.log(`[] otherHeight ${otherHeight}`)
                 let max = Math.max(thisHeight, otherHeight);
-                //console.log(`[] max height is ${max}`)
                 // set both heights to max or min
                 let htmlElement = document.getElementById(id)!.parentElement;         
                 htmlElement!.style.height =  checked ? max + 'px' : 'inherit';    
@@ -96,7 +91,6 @@ export default class ComponentDiff extends Vue {
     setupCharts() {
         google.charts.load('current', { 'packages': ['corechart'] });
         google.charts.setOnLoadCallback(this.drawCharts);
-        //console.log(`[] results diff`, this.data.results);
     }
 
     sleep(milliseconds) {
@@ -110,10 +104,6 @@ export default class ComponentDiff extends Vue {
     drawCharts() {
         ChartService.drawPieChart(this.data.summary1.current, "overall_pie1", 200)
         ChartService.drawPieChart(this.data.summary2.current, "overall_pie2", 200)
-    }
-
-    dayClicked(date: string) {
-        console.log(`[] date clicked ${date}`);
     }
 
     getScoreIconClass(score: number) { return ScoreService.getScoreIconClass(score); }

@@ -26,7 +26,6 @@ export default class ComponentHistory extends Vue {
     }
 
     loadData() {
-        console.log(`[] calling history for component ${this.id}`)
         this.service
             .getComponentHistoryData(this.id)
             .then(response => {
@@ -56,9 +55,9 @@ export default class ComponentHistory extends Vue {
     }
 
     CompareScans() {
-        let params = this.checkedScans[1].split('T')[0] + '/' + this.checkedScans[0].split('T')[0];
+        this.checkedScans.sort();
+        let params = this.checkedScans[0].split('T')[0] + '/' + this.checkedScans[1].split('T')[0];
         if (this.component && this.component.category === 'Overall') {
-            console.log(`[] comparing ${this.checkedScans}`);
             router.push('/overview-diff/' + params);
         } else {
             if (this.component) {

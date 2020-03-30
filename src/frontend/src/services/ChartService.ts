@@ -103,7 +103,6 @@ export class ChartService {
 			if (selectedItem && cb) {
 				let row = selectedItem.row as number;
 				var selectedDate = DateTime.fromJSDate(chart_data.getValue(row, 0)).toISODate(); 
-				//console.log('[] selectedDate >', selectedDate);
 				cb(selectedDate, componentId);				
 			}
 		}

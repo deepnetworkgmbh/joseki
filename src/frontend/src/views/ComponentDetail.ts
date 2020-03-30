@@ -61,7 +61,6 @@ export default class ComponentDetail extends Vue {
         if(this.selectedDate === undefined) {
             this.selectedDate = DateTime.fromISO(this.data.scoreHistory[0].recordedAt);
             this.$emit('dateChanged', this.selectedDate.toISODate())
-            console.log(`[selectedDate::chart]=>`, this.selectedDate.toISODate());
         }       
         ChartService.drawPieChart(this.data.current, "overall_pie", 300);
         ChartService.drawBarChart(this.data.scoreHistory, "overall_bar", this.selectedDate, this.dayClicked, 100, undefined, 4, this.data.component.id);
@@ -69,7 +68,6 @@ export default class ComponentDetail extends Vue {
     }
 
     dayClicked(date: string, component: string) {
-        console.log(`[] dayClicked ${date}`)
         //this.selectedDate = date;
         router.push('/component-detail/' + encodeURIComponent(component) + '/' + date);
     }

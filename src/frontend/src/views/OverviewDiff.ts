@@ -25,7 +25,6 @@ export default class OverviewDiff extends Vue {
     checkedScans: any[] = [];
 
     created() {
-        console.log(`[] ${this.date} vs ${this.date2}`)
         window.addEventListener("resize", this.setupCharts);
         this.loadData();
     }
@@ -35,7 +34,6 @@ export default class OverviewDiff extends Vue {
             .then(response => {
                 if(response) {
                     this.data = response;
-                    console.log(`[] data is`, this.data);
                     this.loaded = true;
                     this.setupCharts();    
                 }
@@ -54,7 +52,6 @@ export default class OverviewDiff extends Vue {
     }
 
     goDiffPage(component: InfrastructureComponent) {
-        console.log(`[] id: ${component.id} dates: ${this.date} , ${this.date2}`);
         router.push('/component-diff/' + component.id + '/' + this.date + '/' + this.date2);
     }
 
