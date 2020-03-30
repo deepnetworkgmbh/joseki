@@ -232,6 +232,8 @@ namespace tests.audits
 
         private static bool VerifySingleTargetScan(ImageScanResultWithCVEs scanResult)
         {
+            // NOTE: the result has EIGHT CVE, but CVE-2019-13050 and CVE-2019-14855 are found in two different packages
+            // Thus, there are EIGHT FoundCVEs, but counters has only SIX items (two medium and two low instead of three each)
             var scanDate = DateTimeOffset.FromUnixTimeSeconds(1583894784).DateTime;
 
             scanResult.Id.Should().Be("33340604-22b6-4a8b-b1f7-0faddd20c37a");
@@ -249,10 +251,10 @@ namespace tests.audits
                         counter.Count.Should().Be(2, "single target result should have 2 HIGH priority CVEs");
                         break;
                     case CveSeverity.Medium:
-                        counter.Count.Should().Be(3, "single target result should have 3 MEDIUM priority CVEs");
+                        counter.Count.Should().Be(2, "single target result should have 3 MEDIUM priority CVEs");
                         break;
                     case CveSeverity.Low:
-                        counter.Count.Should().Be(3, "single target result should have 3 LOW priority CVEs");
+                        counter.Count.Should().Be(2, "single target result should have 3 LOW priority CVEs");
                         break;
                     default:
                         break;
