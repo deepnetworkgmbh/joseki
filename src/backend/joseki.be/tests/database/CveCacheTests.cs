@@ -7,10 +7,12 @@ using FluentAssertions;
 using joseki.db.entities;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using webapp.Configuration;
 using webapp.Database;
+using webapp.Database.Cache;
 using webapp.Database.Models;
 
 using CveSeverity = webapp.Database.Models.CveSeverity;
@@ -28,7 +30,7 @@ namespace tests.database
             // Arrange
             await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
-            var cveCache = new CveCache(parser, context);
+            var cveCache = new CveCache(parser, context, new MemoryCache(new MemoryCacheOptions()));
 
             var id = this.GetCveId();
             var cve = new CVE { Id = id, Description = Guid.NewGuid().ToString(), };
@@ -45,7 +47,7 @@ namespace tests.database
             // Arrange
             await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
-            var cveCache = new CveCache(parser, context);
+            var cveCache = new CveCache(parser, context, new MemoryCache(new MemoryCacheOptions()));
 
             var id = this.GetCveId();
             var cve = new CVE { Id = id, Description = Guid.NewGuid().ToString(), };
@@ -64,7 +66,7 @@ namespace tests.database
             // Arrange
             await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
-            var cveCache = new CveCache(parser, context);
+            var cveCache = new CveCache(parser, context, new MemoryCache(new MemoryCacheOptions()));
 
             var id = this.GetCveId();
             var cve = new CVE { Id = id, Description = Guid.NewGuid().ToString(), };
@@ -83,7 +85,7 @@ namespace tests.database
             // Arrange
             await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
-            var cveCache = new CveCache(parser, context);
+            var cveCache = new CveCache(parser, context, new MemoryCache(new MemoryCacheOptions()));
 
             var id = this.GetCveId();
             var now = DateTime.UtcNow;

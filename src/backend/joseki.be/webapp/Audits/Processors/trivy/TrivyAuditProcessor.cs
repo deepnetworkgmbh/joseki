@@ -12,6 +12,7 @@ using Serilog;
 
 using webapp.BlobStorage;
 using webapp.Database;
+using webapp.Database.Cache;
 using webapp.Database.Models;
 
 namespace webapp.Audits.Processors.trivy

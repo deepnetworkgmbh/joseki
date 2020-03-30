@@ -4,14 +4,15 @@ using System.Threading.Tasks;
 
 using FluentAssertions;
 
-using joseki.db;
 using joseki.db.entities;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using webapp.Configuration;
 using webapp.Database;
+using webapp.Database.Cache;
 using webapp.Database.Models;
 
 using CheckSeverity = webapp.Database.Models.CheckSeverity;
@@ -27,7 +28,7 @@ namespace tests.database
             // Arrange
             await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
-            var checksCache = new ChecksCache(parser, context);
+            var checksCache = new ChecksCache(parser, context, new MemoryCache(new MemoryCacheOptions()));
 
             var id = $"azsk.{Guid.NewGuid().ToString()}";
             var check = new Check { Id = id, Category = Guid.NewGuid().ToString(), Description = Guid.NewGuid().ToString(), Severity = CheckSeverity.High };
@@ -44,7 +45,7 @@ namespace tests.database
             // Arrange
             await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
-            var checksCache = new ChecksCache(parser, context);
+            var checksCache = new ChecksCache(parser, context, new MemoryCache(new MemoryCacheOptions()));
 
             var id = $"azsk.{Guid.NewGuid().ToString()}";
             var check = new Check { Id = id, Category = Guid.NewGuid().ToString(), Description = Guid.NewGuid().ToString(), Severity = CheckSeverity.High };
@@ -63,7 +64,7 @@ namespace tests.database
             // Arrange
             await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
-            var checksCache = new ChecksCache(parser, context);
+            var checksCache = new ChecksCache(parser, context, new MemoryCache(new MemoryCacheOptions()));
 
             var id = $"azsk.{Guid.NewGuid().ToString()}";
             var check = new Check { Id = id, Category = Guid.NewGuid().ToString(), Description = Guid.NewGuid().ToString(), Severity = CheckSeverity.High };
@@ -82,7 +83,7 @@ namespace tests.database
             // Arrange
             await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
-            var checksCache = new ChecksCache(parser, context);
+            var checksCache = new ChecksCache(parser, context, new MemoryCache(new MemoryCacheOptions()));
 
             var id = $"azsk.{Guid.NewGuid().ToString()}";
             var now = DateTime.UtcNow;
@@ -128,7 +129,7 @@ namespace tests.database
             // Arrange
             await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
-            var checksCache = new ChecksCache(parser, context);
+            var checksCache = new ChecksCache(parser, context, new MemoryCache(new MemoryCacheOptions()));
 
             var id = $"polaris.{Guid.NewGuid().ToString()}";
             var now = DateTime.UtcNow;
@@ -174,7 +175,7 @@ namespace tests.database
             // Arrange
             await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
-            var checksCache = new ChecksCache(parser, context);
+            var checksCache = new ChecksCache(parser, context, new MemoryCache(new MemoryCacheOptions()));
 
             var checkEntity = ChecksCache.ImageScanCheck.ToEntity();
 

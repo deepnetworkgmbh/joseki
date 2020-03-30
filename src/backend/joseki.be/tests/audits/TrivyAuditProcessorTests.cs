@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using FluentAssertions;
 
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Moq;
@@ -15,6 +16,7 @@ using webapp.Audits.Processors.trivy;
 using webapp.BlobStorage;
 using webapp.Configuration;
 using webapp.Database;
+using webapp.Database.Cache;
 using webapp.Database.Models;
 
 namespace tests.audits
@@ -28,7 +30,7 @@ namespace tests.audits
             // Arrange
             await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
-            var cveCache = new CveCache(parser, context);
+            var cveCache = new CveCache(parser, context, new MemoryCache(new MemoryCacheOptions()));
 
             var blobsMock = new Mock<IBlobStorageProcessor>(MockBehavior.Strict);
             var dbMock = new Mock<IJosekiDatabase>();
@@ -70,7 +72,7 @@ namespace tests.audits
             // Arrange
             await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
-            var cveCache = new CveCache(parser, context);
+            var cveCache = new CveCache(parser, context, new MemoryCache(new MemoryCacheOptions()));
 
             var blobsMock = new Mock<IBlobStorageProcessor>(MockBehavior.Strict);
             var dbMock = new Mock<IJosekiDatabase>();
@@ -116,7 +118,7 @@ namespace tests.audits
             // Arrange
             await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
-            var cveCache = new CveCache(parser, context);
+            var cveCache = new CveCache(parser, context, new MemoryCache(new MemoryCacheOptions()));
 
             var blobsMock = new Mock<IBlobStorageProcessor>(MockBehavior.Strict);
             var dbMock = new Mock<IJosekiDatabase>();
@@ -162,7 +164,7 @@ namespace tests.audits
             // Arrange
             await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
-            var cveCache = new CveCache(parser, context);
+            var cveCache = new CveCache(parser, context, new MemoryCache(new MemoryCacheOptions()));
 
             var blobsMock = new Mock<IBlobStorageProcessor>(MockBehavior.Strict);
             var dbMock = new Mock<IJosekiDatabase>();
