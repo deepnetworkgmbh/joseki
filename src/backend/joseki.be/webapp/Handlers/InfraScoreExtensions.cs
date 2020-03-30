@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using webapp.Database;
+using webapp.Database.Cache;
 using webapp.Database.Models;
 using webapp.Exceptions;
 using webapp.Models;

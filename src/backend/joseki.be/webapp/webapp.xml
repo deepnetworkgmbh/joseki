@@ -64,7 +64,7 @@
             Az-sk audit processor.
             </summary>
         </member>
-        <member name="M:webapp.Audits.Processors.azsk.AzskAuditProcessor.#ctor(webapp.BlobStorage.IBlobStorageProcessor,webapp.Database.IJosekiDatabase,webapp.Database.ChecksCache)">
+        <member name="M:webapp.Audits.Processors.azsk.AzskAuditProcessor.#ctor(webapp.BlobStorage.IBlobStorageProcessor,webapp.Database.IJosekiDatabase,webapp.Database.Cache.ChecksCache)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Audits.Processors.azsk.AzskAuditProcessor"/> class.
             </summary>
@@ -145,7 +145,7 @@
             Polaris audit processor.
             </summary>
         </member>
-        <member name="M:webapp.Audits.Processors.polaris.PolarisAuditProcessor.#ctor(webapp.BlobStorage.IBlobStorageProcessor,webapp.Database.IJosekiDatabase,webapp.Database.ChecksCache,webapp.Queues.IQueue)">
+        <member name="M:webapp.Audits.Processors.polaris.PolarisAuditProcessor.#ctor(webapp.BlobStorage.IBlobStorageProcessor,webapp.Database.IJosekiDatabase,webapp.Database.Cache.ChecksCache,webapp.Queues.IQueue)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Audits.Processors.polaris.PolarisAuditProcessor"/> class.
             </summary>
@@ -214,7 +214,7 @@
             Indicates character used to separate lines.
             </summary>
         </member>
-        <member name="M:webapp.Audits.Processors.trivy.TrivyAuditProcessor.#ctor(webapp.BlobStorage.IBlobStorageProcessor,webapp.Database.IJosekiDatabase,webapp.Database.CveCache)">
+        <member name="M:webapp.Audits.Processors.trivy.TrivyAuditProcessor.#ctor(webapp.BlobStorage.IBlobStorageProcessor,webapp.Database.IJosekiDatabase,webapp.Database.Cache.CveCache)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Audits.Processors.trivy.TrivyAuditProcessor"/> class.
             </summary>
@@ -362,7 +362,7 @@
             Regularly reloads Infrastructure Score cache items.
             </summary>
         </member>
-        <member name="M:webapp.BackgroundJobs.InfraScoreCacheWatchman.#ctor(webapp.Database.IInfrastructureScoreCache,webapp.Configuration.ConfigurationParser)">
+        <member name="M:webapp.BackgroundJobs.InfraScoreCacheWatchman.#ctor(webapp.Database.Cache.IInfrastructureScoreCache,webapp.Configuration.ConfigurationParser)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.BackgroundJobs.InfraScoreCacheWatchman"/> class.
             </summary>
@@ -1009,7 +1009,27 @@
             </summary>
             <returns>Knowledgebase items.</returns>
         </member>
-        <member name="T:webapp.Database.ChecksCache">
+        <member name="T:webapp.Database.Cache.CacheGroup">
+            <summary>
+            Stores Cache group names.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.Cache.CacheGroup.Cve">
+            <summary>
+            CVEs cache.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.Cache.CacheGroup.Check">
+            <summary>
+            Checks cache.
+            </summary>
+        </member>
+        <member name="F:webapp.Database.Cache.CacheGroup.InfraScore">
+            <summary>
+            Infrastructure score cache.
+            </summary>
+        </member>
+        <member name="T:webapp.Database.Cache.ChecksCache">
             <summary>
             Keeps track of Check items to reduce amount of interactions with real database.
             The objects stores in memory identifiers of Checks, that are already in database.
@@ -1017,19 +1037,20 @@
             The cache is expected to be used in Singleton mode.
             </summary>
         </member>
-        <member name="F:webapp.Database.ChecksCache.ImageScanCheck">
+        <member name="F:webapp.Database.Cache.ChecksCache.ImageScanCheck">
             <summary>
             Pre-defined image-scan check.
             </summary>
         </member>
-        <member name="M:webapp.Database.ChecksCache.#ctor(webapp.Configuration.ConfigurationParser,joseki.db.JosekiDbContext)">
+        <member name="M:webapp.Database.Cache.ChecksCache.#ctor(webapp.Configuration.ConfigurationParser,joseki.db.JosekiDbContext,Microsoft.Extensions.Caching.Memory.IMemoryCache)">
             <summary>
-            Initializes a new instance of the <see cref="T:webapp.Database.ChecksCache"/> class.
+            Initializes a new instance of the <see cref="T:webapp.Database.Cache.ChecksCache"/> class.
             </summary>
             <param name="config">Joseki configuration object.</param>
             <param name="db">Joseki database instance.</param>
+            <param name="cache">In-memory cache.</param>
         </member>
-        <member name="M:webapp.Database.ChecksCache.GetOrAddItem(System.String,System.Func{webapp.Database.Models.Check})">
+        <member name="M:webapp.Database.Cache.ChecksCache.GetOrAddItem(System.String,System.Func{webapp.Database.Models.Check})">
             <summary>
             The method gets Check integer identifier from in-memory list, or if it's not there does requests to the Database.
             The method could do one of the following:
@@ -1042,13 +1063,13 @@
             <param name="checkFactory">The factory method to generate a new Check object.</param>
             <returns>The integer identifier, which is used as Database Primary and Foreign Keys.</returns>
         </member>
-        <member name="M:webapp.Database.ChecksCache.GetImageScanCheck">
+        <member name="M:webapp.Database.Cache.ChecksCache.GetImageScanCheck">
             <summary>
             Gets the default Image Scan Check object.
             </summary>
             <returns>Internal id of image-scan Check.</returns>
         </member>
-        <member name="T:webapp.Database.CveCache">
+        <member name="T:webapp.Database.Cache.CveCache">
             <summary>
             Keeps track of CVE items to reduce amount of interactions with real database.
             The objects stores in memory identifiers of CVEs, that are already in database.
@@ -1056,14 +1077,15 @@
             The cache is expected to be used in Singleton mode.
             </summary>
         </member>
-        <member name="M:webapp.Database.CveCache.#ctor(webapp.Configuration.ConfigurationParser,joseki.db.JosekiDbContext)">
+        <member name="M:webapp.Database.Cache.CveCache.#ctor(webapp.Configuration.ConfigurationParser,joseki.db.JosekiDbContext,Microsoft.Extensions.Caching.Memory.IMemoryCache)">
             <summary>
-            Initializes a new instance of the <see cref="T:webapp.Database.CveCache"/> class.
+            Initializes a new instance of the <see cref="T:webapp.Database.Cache.CveCache"/> class.
             </summary>
             <param name="config">Joseki configuration object.</param>
             <param name="db">Joseki database instance.</param>
+            <param name="cache">In-memory cache.</param>
         </member>
-        <member name="M:webapp.Database.CveCache.GetOrAddItem(System.String,System.Func{webapp.Database.Models.CVE})">
+        <member name="M:webapp.Database.Cache.CveCache.GetOrAddItem(System.String,System.Func{webapp.Database.Models.CVE})">
             <summary>
             The method gets CVE integer identifier from in-memory list, or if it's not there does requests to the Database.
             The method could do one of the following:
@@ -1075,6 +1097,45 @@
             <param name="id">CVE string identifier.</param>
             <param name="cveFactory">The factory method to generate a new CVE object.</param>
             <returns>The integer identifier, which is used as Database Primary and Foreign Keys.</returns>
+        </member>
+        <member name="T:webapp.Database.Cache.InfrastructureScoreCache">
+            <summary>
+            Takes care of keeping pre-calculated counter-summaries.
+            </summary>
+        </member>
+        <member name="M:webapp.Database.Cache.InfrastructureScoreCache.#ctor(webapp.Database.IInfraScoreDbWrapper,Microsoft.Extensions.Caching.Memory.IMemoryCache)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Database.Cache.InfrastructureScoreCache"/> class.
+            </summary>
+            <param name="db">Joseki database.</param>
+            <param name="cache">In-memory cache.</param>
+        </member>
+        <member name="M:webapp.Database.Cache.InfrastructureScoreCache.ReloadEntireCache">
+            <inheritdoc />
+        </member>
+        <member name="M:webapp.Database.Cache.InfrastructureScoreCache.GetCountersSummary(System.String,System.DateTime)">
+            <inheritdoc />
+        </member>
+        <member name="T:webapp.Database.Cache.IInfrastructureScoreCache">
+            <summary>
+            Interface to abstract infra-score cache for testing.
+            </summary>
+        </member>
+        <member name="M:webapp.Database.Cache.IInfrastructureScoreCache.ReloadEntireCache">
+            <summary>
+            Pre-calculate counters for all available scanners during last month.
+            </summary>
+            <returns>A task object.</returns>
+        </member>
+        <member name="M:webapp.Database.Cache.IInfrastructureScoreCache.GetCountersSummary(System.String,System.DateTime)">
+            <summary>
+            Returns counters summary for requested component and date.
+            First method tries to look inside local cache.
+            Only if there is no record in the case - requests it from DB.
+            </summary>
+            <param name="componentId">Infrastructure component identifier.</param>
+            <param name="date">Audit date.</param>
+            <returns>Counters Summary for requested component and date.</returns>
         </member>
         <member name="T:webapp.Database.DatabaseMapper">
             <summary>
@@ -1309,44 +1370,6 @@
             </summary>
             <param name="auditId">Audit identifier to calculate summaries.</param>
             <returns>counters-summary for requested audit-id.</returns>
-        </member>
-        <member name="T:webapp.Database.InfrastructureScoreCache">
-            <summary>
-            Takes care of keeping pre-calculated counter-summaries.
-            </summary>
-        </member>
-        <member name="M:webapp.Database.InfrastructureScoreCache.#ctor(webapp.Database.IInfraScoreDbWrapper)">
-            <summary>
-            Initializes a new instance of the <see cref="T:webapp.Database.InfrastructureScoreCache"/> class.
-            </summary>
-            <param name="db">Joseki database.</param>
-        </member>
-        <member name="M:webapp.Database.InfrastructureScoreCache.ReloadEntireCache">
-            <inheritdoc />
-        </member>
-        <member name="M:webapp.Database.InfrastructureScoreCache.GetCountersSummary(System.String,System.DateTime)">
-            <inheritdoc />
-        </member>
-        <member name="T:webapp.Database.IInfrastructureScoreCache">
-            <summary>
-            Interface to abstract infra-score cache for testing.
-            </summary>
-        </member>
-        <member name="M:webapp.Database.IInfrastructureScoreCache.ReloadEntireCache">
-            <summary>
-            Pre-calculate counters for all available scanners during last month.
-            </summary>
-            <returns>A task object.</returns>
-        </member>
-        <member name="M:webapp.Database.IInfrastructureScoreCache.GetCountersSummary(System.String,System.DateTime)">
-            <summary>
-            Returns counters summary for requested component and date.
-            First method tries to look inside local cache.
-            Only if there is no record in the case - requests it from DB.
-            </summary>
-            <param name="componentId">Infrastructure component identifier.</param>
-            <param name="date">Audit date.</param>
-            <returns>Counters Summary for requested component and date.</returns>
         </member>
         <member name="T:webapp.Database.Models.Audit">
             <summary>
@@ -1851,7 +1874,7 @@
             Prepares response to get-component-details request.
             </summary>0
         </member>
-        <member name="M:webapp.Handlers.GetComponentDetailsHandler.#ctor(joseki.db.JosekiDbContext,webapp.Database.IInfrastructureScoreCache)">
+        <member name="M:webapp.Handlers.GetComponentDetailsHandler.#ctor(joseki.db.JosekiDbContext,webapp.Database.Cache.IInfrastructureScoreCache)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Handlers.GetComponentDetailsHandler"/> class.
             </summary>
@@ -1905,7 +1928,7 @@
             Prepares response to get-infrastructure-history request.
             </summary>
         </member>
-        <member name="M:webapp.Handlers.GetInfrastructureHistoryHandler.#ctor(joseki.db.JosekiDbContext,webapp.Database.IInfrastructureScoreCache)">
+        <member name="M:webapp.Handlers.GetInfrastructureHistoryHandler.#ctor(joseki.db.JosekiDbContext,webapp.Database.Cache.IInfrastructureScoreCache)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Handlers.GetInfrastructureHistoryHandler"/> class.
             </summary>
@@ -1924,7 +1947,7 @@
             Prepares response to get-overall-infrastructure-diff request.
             </summary>
         </member>
-        <member name="M:webapp.Handlers.GetInfrastructureOverviewDiffHandler.#ctor(webapp.Database.IJosekiDatabase,webapp.Database.IInfrastructureScoreCache)">
+        <member name="M:webapp.Handlers.GetInfrastructureOverviewDiffHandler.#ctor(webapp.Database.IJosekiDatabase,webapp.Database.Cache.IInfrastructureScoreCache)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Handlers.GetInfrastructureOverviewDiffHandler"/> class.
             </summary>
@@ -1944,7 +1967,7 @@
             Prepares response to get-overall-infrastructure request.
             </summary>
         </member>
-        <member name="M:webapp.Handlers.GetInfrastructureOverviewHandler.#ctor(webapp.Database.IJosekiDatabase,webapp.Database.IInfrastructureScoreCache)">
+        <member name="M:webapp.Handlers.GetInfrastructureOverviewHandler.#ctor(webapp.Database.IJosekiDatabase,webapp.Database.Cache.IInfrastructureScoreCache)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Handlers.GetInfrastructureOverviewHandler"/> class.
             </summary>
@@ -2000,7 +2023,7 @@
             Common Infra-Score extensions.
             </summary>
         </member>
-        <member name="M:webapp.Handlers.InfraScoreExtensions.GetInfrastructureOverview(webapp.Database.IInfrastructureScoreCache,System.DateTime,webapp.Database.Models.Audit[])">
+        <member name="M:webapp.Handlers.InfraScoreExtensions.GetInfrastructureOverview(webapp.Database.Cache.IInfrastructureScoreCache,System.DateTime,webapp.Database.Models.Audit[])">
             <summary>
             Composes an infrastructure overview object for a requested date and provided audits.
             </summary>
@@ -2009,7 +2032,7 @@
             <param name="audits">List of audits to include into overview.</param>
             <returns>Complete infrastructure-overview object.</returns>
         </member>
-        <member name="M:webapp.Handlers.InfraScoreExtensions.GetInfrastructureHistory(webapp.Database.IInfrastructureScoreCache,System.String,System.String)">
+        <member name="M:webapp.Handlers.InfraScoreExtensions.GetInfrastructureHistory(webapp.Database.Cache.IInfrastructureScoreCache,System.String,System.String)">
             <summary>
             Composes a component history array.
             </summary>

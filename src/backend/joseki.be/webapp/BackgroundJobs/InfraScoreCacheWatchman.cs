@@ -6,6 +6,7 @@ using Serilog;
 
 using webapp.Configuration;
 using webapp.Database;
+using webapp.Database.Cache;
 using webapp.Infrastructure;
 
 namespace webapp.BackgroundJobs

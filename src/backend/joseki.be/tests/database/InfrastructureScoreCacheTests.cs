@@ -8,11 +8,13 @@ using FluentAssertions;
 
 using joseki.db.entities;
 
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Moq;
 
 using webapp.Database;
+using webapp.Database.Cache;
 using webapp.Database.Models;
 using webapp.Models;
 
@@ -63,7 +65,7 @@ namespace tests.database
                 }
             }
 
-            cache = new InfrastructureScoreCache(dbMock.Object);
+            cache = new InfrastructureScoreCache(dbMock.Object, new MemoryCache(new MemoryCacheOptions()));
             await cache.ReloadEntireCache();
             dbMock.Verify();
         }
