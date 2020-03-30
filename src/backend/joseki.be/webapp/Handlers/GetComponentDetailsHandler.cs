@@ -9,6 +9,7 @@ using joseki.db.entities;
 using Microsoft.EntityFrameworkCore;
 
 using webapp.Database;
+using webapp.Database.Cache;
 using webapp.Models;
 
 namespace webapp.Handlers
