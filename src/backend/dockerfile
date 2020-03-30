@@ -20,7 +20,7 @@ COPY --from=publish /app/publish .
 
 # Disable invariant mode due SqlClient exceptions
 # https://github.com/dotnet/SqlClient/issues/220
-RUN apk add --no-cache icu-libs=64.2-r0
+RUN apk add --no-cache icu-libs=64.2-r1
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 
 # Change to 8080 because 80 requires elevated privileges

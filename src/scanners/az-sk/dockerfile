@@ -30,7 +30,7 @@ RUN apk add --no-cache \
     tzdata=2019c-r0 \
     userspace-rcu=0.11.1-r0 \
     zlib=1.2.11-r3 \
-    icu-libs=64.2-r0 \
+    icu-libs=64.2-r1 \
     curl=7.67.0-r0
 
 # Download the powershell '.tar.gz' archive
