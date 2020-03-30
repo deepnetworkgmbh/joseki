@@ -144,8 +144,10 @@ namespace webapp.Audits.Processors.trivy
             // Keep track of severity-counters and entities separately to avoid blowing out memory usage
             // Some images might have hundreds of different CVEs.
             // If we keep the entire CVE object in memory - the service would consume much more resources than it needs.
+            // NOTE: the same CVE could be in several packages. HashSet helps avoiding double-counting
             var entities = new List<ImageScanToCve>();
             var countersDict = new Dictionary<CveSeverity, int>();
+            var countedCve = new HashSet<int>();
 
             // trivy is able to scan OS Packages and some Application Dependencies, each of which is named "target"
             // each audit could consist of 1..N targets and each target could have 0..M CVEs
@@ -174,14 +176,18 @@ namespace webapp.Audits.Processors.trivy
                         });
 
                         // calculate issues by severity to compose a right Check Result message
-                        var severity = this.ToSeverity(vulnerability["Severity"].Value<string>());
-                        if (countersDict.TryGetValue(severity, out var counter))
+                        if (!countedCve.Contains(internalCveId))
                         {
-                            countersDict[severity]++;
-                        }
-                        else
-                        {
-                            countersDict.Add(severity, 1);
+                            countedCve.Add(internalCveId);
+                            var severity = this.ToSeverity(vulnerability["Severity"].Value<string>());
+                            if (countersDict.TryGetValue(severity, out var counter))
+                            {
+                                countersDict[severity]++;
+                            }
+                            else
+                            {
+                                countersDict.Add(severity, 1);
+                            }
                         }
                     }
                 }
