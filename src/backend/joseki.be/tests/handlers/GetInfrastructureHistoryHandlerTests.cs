@@ -11,6 +11,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
 using webapp.Database;
+using webapp.Database.Cache;
 using webapp.Database.Models;
 using webapp.Exceptions;
 using webapp.Handlers;

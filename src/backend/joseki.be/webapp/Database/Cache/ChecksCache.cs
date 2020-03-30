@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
 using joseki.db;
 using joseki.db.entities;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 using Serilog;
 
@@ -14,7 +14,7 @@ using webapp.Database.Models;
 
 using CheckSeverity = webapp.Database.Models.CheckSeverity;
 
-namespace webapp.Database
+namespace webapp.Database.Cache
 {
     /// <summary>
     /// Keeps track of Check items to reduce amount of interactions with real database.
@@ -38,20 +38,21 @@ namespace webapp.Database
 
         private static readonly ILogger Logger = Log.ForContext<ChecksCache>();
 
-        private static readonly ConcurrentDictionary<string, CheckCacheItem> Cache = new ConcurrentDictionary<string, CheckCacheItem>();
-
         private readonly JosekiConfiguration config;
         private readonly JosekiDbContext db;
+        private readonly IMemoryCache cache;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ChecksCache"/> class.
         /// </summary>
         /// <param name="config">Joseki configuration object.</param>
         /// <param name="db">Joseki database instance.</param>
-        public ChecksCache(ConfigurationParser config, JosekiDbContext db)
+        /// <param name="cache">In-memory cache.</param>
+        public ChecksCache(ConfigurationParser config, JosekiDbContext db, IMemoryCache cache)
         {
             this.config = config.Get();
             this.db = db;
+            this.cache = cache;
         }
 
         /// <summary>
@@ -68,7 +69,7 @@ namespace webapp.Database
         public async Task<int> GetOrAddItem(string id, Func<Check> checkFactory)
         {
             // if item is not in cache - get it from db or add a new one;
-            if (!Cache.TryGetValue(id, out var item))
+            if (!this.cache.TryGetValue<CheckCacheItem>(id, out var item))
             {
                 var entity = await this.db.Set<CheckEntity>().AsNoTracking().FirstOrDefaultAsync(e => e.CheckId == id);
 
@@ -81,12 +82,13 @@ namespace webapp.Database
                     entity = addedEntity.Entity;
                 }
 
-                item = Cache.GetOrAdd(id, new CheckCacheItem
+                var cacheItem = new CheckCacheItem
                 {
                     CheckId = id,
                     Id = entity.Id,
                     UpdatedAt = entity.DateUpdated,
-                });
+                };
+                item = this.cache.Set(cacheItem.Key, cacheItem);
             }
 
             var threshold = DateTime.UtcNow.AddDays(-this.GetItemTtl(id));
@@ -144,5 +146,12 @@ namespace webapp.Database
         public string CheckId { get; set; }
 
         public DateTime UpdatedAt { get; set; }
+
+        public string Key => GetKey(this.CheckId);
+
+        public static string GetKey(string checkId)
+        {
+            return $"{CacheGroup.Check}_{checkId}";
+        }
     }
 }

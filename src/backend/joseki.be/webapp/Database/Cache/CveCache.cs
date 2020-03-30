@@ -1,18 +1,18 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
 using joseki.db;
 using joseki.db.entities;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 using Serilog;
 
 using webapp.Configuration;
 using webapp.Database.Models;
 
-namespace webapp.Database
+namespace webapp.Database.Cache
 {
     /// <summary>
     /// Keeps track of CVE items to reduce amount of interactions with real database.
@@ -24,20 +24,21 @@ namespace webapp.Database
     {
         private static readonly ILogger Logger = Log.ForContext<CveCache>();
 
-        private static readonly ConcurrentDictionary<string, CveCacheItem> Cache = new ConcurrentDictionary<string, CveCacheItem>();
-
         private readonly JosekiConfiguration config;
         private readonly JosekiDbContext db;
+        private readonly IMemoryCache cache;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CveCache"/> class.
         /// </summary>
         /// <param name="config">Joseki configuration object.</param>
         /// <param name="db">Joseki database instance.</param>
-        public CveCache(ConfigurationParser config, JosekiDbContext db)
+        /// <param name="cache">In-memory cache.</param>
+        public CveCache(ConfigurationParser config, JosekiDbContext db, IMemoryCache cache)
         {
             this.config = config.Get();
             this.db = db;
+            this.cache = cache;
         }
 
         /// <summary>
@@ -54,7 +55,7 @@ namespace webapp.Database
         public async Task<int> GetOrAddItem(string id, Func<CVE> cveFactory)
         {
             // if item is not in cache - get it from db or add a new one;
-            if (!Cache.TryGetValue(id, out var item))
+            if (!this.cache.TryGetValue<CveCacheItem>(id, out var item))
             {
                 var entity = await this.db.Set<CveEntity>().AsNoTracking().FirstOrDefaultAsync(e => e.CveId == id);
 
@@ -67,12 +68,13 @@ namespace webapp.Database
                     entity = addedEntity.Entity;
                 }
 
-                item = Cache.GetOrAdd(id, new CveCacheItem
+                var cacheItem = new CveCacheItem
                 {
                     CveId = id,
                     Id = entity.Id,
                     UpdatedAt = entity.DateUpdated,
-                });
+                };
+                item = this.cache.Set(cacheItem.Key, cacheItem);
             }
 
             var threshold = DateTime.UtcNow.AddDays(-this.config.Cache.CveTtl);
@@ -105,5 +107,12 @@ namespace webapp.Database
         public string CveId { get; set; }
 
         public DateTime UpdatedAt { get; set; }
+
+        public string Key => GetKey(this.CveId);
+
+        public static string GetKey(string cveId)
+        {
+            return $"{CacheGroup.Cve}_{cveId}";
+        }
     }
 }

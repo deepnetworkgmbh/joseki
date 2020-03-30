@@ -1,34 +1,37 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+
+using Microsoft.Extensions.Caching.Memory;
 
 using Serilog;
 
 using webapp.Database.Models;
 using webapp.Models;
 
-namespace webapp.Database
+namespace webapp.Database.Cache
 {
     /// <summary>
     /// Takes care of keeping pre-calculated counter-summaries.
     /// </summary>
     public class InfrastructureScoreCache : IInfrastructureScoreCache
     {
-        private static readonly ConcurrentDictionary<string, CacheItem> Cache = new ConcurrentDictionary<string, CacheItem>();
         private static readonly ILogger Logger = Log.ForContext<InfrastructureScoreCache>();
 
         private readonly IInfraScoreDbWrapper db;
+        private readonly IMemoryCache cache;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InfrastructureScoreCache"/> class.
         /// </summary>
         /// <param name="db">Joseki database.</param>
-        public InfrastructureScoreCache(IInfraScoreDbWrapper db)
+        /// <param name="cache">In-memory cache.</param>
+        public InfrastructureScoreCache(IInfraScoreDbWrapper db, IMemoryCache cache)
         {
             this.db = db;
+            this.cache = cache;
         }
 
         /// <inheritdoc />
@@ -38,6 +41,7 @@ namespace webapp.Database
             var sw = new Stopwatch();
             sw.Start();
 
+            var allItems = new List<CacheItem>();
             var components = await this.db.GetAllComponentsIds();
             foreach (var component in components)
             {
@@ -51,12 +55,14 @@ namespace webapp.Database
                         ComponentId = auditEntity.ComponentId,
                         Summary = summary,
                     };
-                    Cache.AddOrUpdate(cacheItem.Key, key => cacheItem, (key, old) => cacheItem);
+
+                    this.InsertIntoCache(cacheItem);
+                    allItems.Add(cacheItem);
                 }
             }
 
             // calculate overall-infrastructure summaries
-            foreach (var grouping in Cache.Values.GroupBy(i => i.AuditDate))
+            foreach (var grouping in allItems.GroupBy(i => i.AuditDate))
             {
                 var summary = new CountersSummary();
                 foreach (var item in grouping)
@@ -70,7 +76,8 @@ namespace webapp.Database
                     ComponentId = Audit.OverallId,
                     Summary = summary,
                 };
-                Cache.AddOrUpdate(cacheItem.Key, key => cacheItem, (key, old) => cacheItem);
+
+                this.InsertIntoCache(cacheItem);
             }
 
             sw.Stop();
@@ -81,16 +88,38 @@ namespace webapp.Database
         public async Task<CountersSummary> GetCountersSummary(string componentId, DateTime date)
         {
             var cacheKey = CacheItem.GetKey(componentId, date);
-            if (Cache.TryGetValue(cacheKey, out var cachedItem))
+            if (this.cache.TryGetValue<CacheItem>(cacheKey, out var cachedItem))
             {
-                return cachedItem.RequiresUpdate
-                    ? await this.ReloadCacheItem(componentId, date)
-                    : cachedItem.Summary;
+                return cachedItem.Summary;
             }
             else
             {
                 return await this.ReloadCacheItem(componentId, date);
             }
+        }
+
+        private static DateTimeOffset GetExpirationTime(CacheItem item)
+        {
+            var now = DateTime.UtcNow;
+
+            // Update empty items after 15 minutes
+            if (item.Summary.Total == 0)
+            {
+                return now.AddMinutes(15);
+            }
+
+            // Update _recent_ items in cache after 1 hour
+            if ((now - item.AuditDate).TotalDays < 2)
+            {
+                return now.AddHours(1);
+            }
+
+            return now.AddDays(1);
+        }
+
+        private void InsertIntoCache(CacheItem item)
+        {
+            this.cache.Set(item.Key, item, absoluteExpiration: GetExpirationTime(item));
         }
 
         private async Task<CountersSummary> ReloadCacheItem(string componentId, DateTime date)
@@ -115,7 +144,7 @@ namespace webapp.Database
                         ComponentId = componentId,
                         Summary = new CountersSummary(),
                     };
-                    Cache.AddOrUpdate(emptyItem.Key, key => emptyItem, (key, old) => emptyItem);
+                    this.InsertIntoCache(emptyItem);
 
                     return emptyItem.Summary;
                 }
@@ -127,11 +156,13 @@ namespace webapp.Database
                     ComponentId = auditEntity.ComponentId,
                     Summary = summary,
                 };
-                Cache.AddOrUpdate(cacheItem.Key, key => cacheItem, (key, old) => cacheItem);
 
-                if (Cache.TryGetValue(CacheItem.GetKey(Audit.OverallId, date), out var overallItem))
+                this.InsertIntoCache(cacheItem);
+
+                // forcing reload of the overall entry
+                if (this.cache.TryGetValue(CacheItem.GetKey(Audit.OverallId, date), out var _))
                 {
-                    overallItem.ForceReload();
+                    this.cache.Remove(CacheItem.GetKey(Audit.OverallId, date));
                 }
 
                 return summary;
@@ -155,7 +186,8 @@ namespace webapp.Database
                     ComponentId = Audit.OverallId,
                     Summary = new CountersSummary(),
                 };
-                Cache.AddOrUpdate(emptyItem.Key, key => emptyItem, (key, old) => emptyItem);
+
+                this.InsertIntoCache(emptyItem);
 
                 return emptyItem.Summary;
             }
@@ -172,7 +204,7 @@ namespace webapp.Database
                     Summary = summary,
                 };
 
-                Cache.AddOrUpdate(cacheItem.Key, (key) => cacheItem, (key, old) => cacheItem);
+                this.InsertIntoCache(cacheItem);
             }
 
             // calculate overall-infrastructure summaries
@@ -189,65 +221,24 @@ namespace webapp.Database
                 Summary = overallSummary,
             };
 
-            Cache.AddOrUpdate(overallCacheItem.Key, key => overallCacheItem, (key, old) => overallCacheItem);
+            this.InsertIntoCache(overallCacheItem);
 
             return overallSummary;
         }
 
         private class CacheItem
         {
-            private bool needsUpdate;
-
-            public CacheItem()
-            {
-                this.CachedAt = DateTime.UtcNow;
-            }
-
             public CountersSummary Summary { get; set; }
 
             public string ComponentId { get; set; }
 
             public DateTime AuditDate { get; set; }
 
-            public DateTime CachedAt { get; set; }
-
-            public bool RequiresUpdate
-            {
-                get
-                {
-                    if (this.needsUpdate)
-                    {
-                        return true;
-                    }
-
-                    var now = DateTime.UtcNow;
-
-                    // Update empty items after 15 minutes
-                    if (this.Summary.Total == 0)
-                    {
-                        return (now - this.CachedAt).TotalMinutes >= 15;
-                    }
-
-                    // Update _recent_ items in cache after 1 hour
-                    if ((now - this.AuditDate).TotalDays < 2)
-                    {
-                        return (now - this.CachedAt).TotalHours >= 1;
-                    }
-
-                    return (now - this.CachedAt).TotalDays >= 1;
-                }
-            }
-
             public string Key => GetKey(this.ComponentId, this.AuditDate);
 
             public static string GetKey(string componentId, DateTime date)
             {
-                return $"{componentId}__{date:yyyyMMdd}";
-            }
-
-            public void ForceReload()
-            {
-                this.needsUpdate = true;
+                return $"{CacheGroup.InfraScore}_{componentId}__{date:yyyyMMdd}";
             }
         }
     }

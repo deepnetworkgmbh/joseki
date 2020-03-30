@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -25,6 +26,7 @@ using webapp.BackgroundJobs;
 using webapp.BlobStorage;
 using webapp.Configuration;
 using webapp.Database;
+using webapp.Database.Cache;
 using webapp.Handlers;
 using webapp.Infrastructure;
 using webapp.Queues;
@@ -129,7 +131,7 @@ namespace webapp
                         .EnableRetryOnFailure());
             });
 
-            // TODO: consider switching cache objects to IMemoryCache
+            services.AddSingleton<IMemoryCache, MemoryCache>();
             services.AddScoped<IJosekiDatabase, MssqlJosekiDatabase>();
             services.AddTransient<ChecksCache>();
             services.AddTransient<CveCache>();
