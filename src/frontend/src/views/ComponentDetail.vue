@@ -65,12 +65,12 @@
       <div v-for="(category,i) in getResultsByCategory(data)" :key="`category${i}`" class="zigzag">
         <ul>
           <li style="margin-left:10px;min-height:30px;padding-top:3px;">
+            <StatusBar :counters="category.counters" style="float:right;margin-top:-17px;" />
             <input type="checkbox" v-bind:id="`cat${i}`" />
             <label class="text-base" v-bind:for="`cat${i}`">
               <strong>{{category.category}}</strong>
               <Score :label='`Score`' :score='category.score' />              
             </label>
-            <div style="float:right;"><StatusBar :counters="category.counters" /></div>
             <ul>
                <div style="padding:4px;padding-left:10px;padding-right:220px;text-align:justify" 
                    v-html="getCategoryMeta(category.category)" v-linkified:options="{ className: 'external-link' }" />              
@@ -86,13 +86,13 @@
 
       <ul v-for="(collection,i) in getResultsByCollection(data)" :key="`collection${i}`"  class="zigzag">
           <li style="margin-left:10px;min-height:30px;">
+            <StatusBar :counters="collection.counters" style="float:right;margin-top:-15px;" />
             <input type="checkbox" :id="`target${i}`" checked />
             <label :for="`target${i}`">
                <strong>{{ collection.type }} :</strong>
                <Score :label='`Score`' :score='collection.score' />             
                 {{ collection.name }}
             </label>
-            <div style="float:right;margin-top:3px;"><StatusBar :counters="collection.counters" /></div>
             <ul v-for="(obj, g) in collection.objects" :key="`obj${i}-${g}`">
               <li style="margin-left:15px;">
                 <input type="checkbox" :id="`obj${i}-${g}`" />
