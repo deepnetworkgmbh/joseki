@@ -57,7 +57,7 @@
       <div v-if="!nochanges" class="w-full" style="min-height:80px;">
         <ul v-for="(row, i) in data.results" :key="`collection1${i}`">
           <li v-if="row.operation !== 'SAME'" :class='getWrapperClass(row)'>
-            <input type="checkbox" :id="`target${i}`" v-model="row.checked"  />
+            <input class="expand" type="checkbox" :id="`target${i}`" v-model="row.checked"  />
             <label :for="`target${i}`" class='diff-row-label'>
               <strong>{{ row.type }} : {{ row.name }} </strong> 
               <span class='diff-row-change-text'>{{ row.operation }}</span>
@@ -66,7 +66,7 @@
               <div class="diff-cell">
                 <ul v-for="(obj, g) in row.left.objects" :key="`left${i}-${g}`" :class="getWrapperClass(obj)">
                   <li v-if="obj.operation !== 'SAME'" :class='getObjectContainerClass(obj)'>
-                    <input type="checkbox" :id="`left-obj-${obj.id}`" v-model="obj.checked" 
+                    <input class="expand" type="checkbox" :id="`left-obj-${obj.id}`" v-model="obj.checked" 
                           @click="toggleOther(`left-obj-${obj.id}`, row.key, obj.id)" />
                     <label :for='`left-obj-${obj.id}`'>
                       <span v-if='!obj.empty'><strong>{{ obj.type }} :</strong> {{ obj.name }} </span>                     
@@ -86,7 +86,7 @@
               <div class="diff-cell">
                 <ul v-for="(obj, g) in row.right.objects" :key="`right${i}-${g}`" :class="getWrapperClass(obj)">
                   <li v-if="obj.operation !== 'SAME'" :class='getObjectContainerClass(obj)'>
-                    <input type="checkbox" :id="`right-obj-${obj.id}`" v-model="obj.checked" 
+                    <input class="expand" type="checkbox" :id="`right-obj-${obj.id}`" v-model="obj.checked" 
                           @click="toggleOther(`right-obj-${obj.id}`, row.key, obj.id)" />
                     <label :for='`right-obj-${obj.id}`'>                        
                       <span v-if='!obj.empty'><strong>{{ obj.type }} :</strong> {{ obj.name }}</span>       
