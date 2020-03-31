@@ -3,15 +3,18 @@ import { ChartService } from "@/services/ChartService"
 import Spinner from "@/components/spinner/Spinner.vue";
 import StatusBar from "@/components/statusbar/StatusBar.vue";
 import Score from "@/components/score/Score.vue";
+import ResultFilter from "@/components/filter/ResultFilter.vue";
+
 import { DataService } from '@/services/DataService';
 import { InfrastructureComponentSummary, ScoreHistoryItem } from '@/models';
 import { ScoreService } from '@/services/ScoreService';
 import router from '@/router';
 import { MappingService } from '@/services/MappingService';
 import { DateTime } from 'luxon';
+import { SeverityFilter } from '@/models/SeverityFilter';
 
 @Component({
-    components: { Spinner, StatusBar, Score }
+    components: { Spinner, StatusBar, Score, ResultFilter }
 })
 export default class ComponentDetail extends Vue {
 
@@ -21,6 +24,7 @@ export default class ComponentDetail extends Vue {
     @Prop({ default: null })
     date!: string;
 
+    severityFilter: SeverityFilter = new SeverityFilter();
     selectedDate?: DateTime;
     loaded: boolean = false;
     service: DataService = new DataService();
@@ -105,7 +109,7 @@ export default class ComponentDetail extends Vue {
     getScoreIconClass(score: number) { return ScoreService.getScoreIconClass(score); }
     getGrade(score: number) { return ScoreService.getGrade(score); }
     getResultsByCategory(data: InfrastructureComponentSummary) { return MappingService.getResultsByCategory(data.checks); }
-    getResultsByCollection(data: InfrastructureComponentSummary) { return MappingService.getResultsByCollection(data.checks); }
+    getResultsByCollection(data: InfrastructureComponentSummary) { return MappingService.getResultsByCollection(data.checks, this.severityFilter); }
 
     getCategoryMeta(category: string) {
         let index = this.data.categorySummaries.findIndex(x => x.category === category);
@@ -120,4 +124,5 @@ export default class ComponentDetail extends Vue {
         }
         return scan.recordedAt.startsWith(this.selectedDate!.toISODate()) ? 'history-selected' : 'history';
     }
+
 }

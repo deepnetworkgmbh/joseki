@@ -1,6 +1,7 @@
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import { CountersSummary } from '@/models';
 import { MetaService } from '@/services/MetaService';
+import { SeverityFilter } from '@/models/SeverityFilter';
 
 @Component
 export default class StatusBar extends Vue {
@@ -10,8 +11,9 @@ export default class StatusBar extends Vue {
   @Prop({ default: false })
   mini!: boolean
 
-  private useNoData = true;
-  
+  @Prop({ default: ()=> new SeverityFilter() })
+  severities!: SeverityFilter;
+
   private starts: boolean[] = [false, false, false, false];
   private ends: boolean[] = [false, false, false, false];
   private classes: string[] = ["nodata", "failed", "warning", "passed"]
@@ -19,8 +21,20 @@ export default class StatusBar extends Vue {
 
   // {{ counters.noData }}, {{ counters.failed }}, {{ counters.warning }}, {{ counters.passed }}
   created() {
+    //this.renderPortions();
+  }
 
-    let arr = [ (this.useNoData ? this.counters.noData : 0) , this.counters.failed, this.counters.warning, this.counters.passed];
+  renderPortions() {
+    this.starts = [false, false, false, false];
+    this.ends = [false, false, false, false];
+    this.widths = [0,0,0,0];
+
+    let arr = [ 
+      (this.severities.nodata ? this.counters.noData : 0) , 
+      (this.severities.failed ? this.counters.failed : 0), 
+      (this.severities.warning ? this.counters.warning : 0),
+      (this.severities.success ? this.counters.passed : 0)
+    ];
 
     // calculate start-ends
     for(let i=0;i<arr.length;i++) {
@@ -60,7 +74,6 @@ export default class StatusBar extends Vue {
         this.widths[minIndex] += (200 - widthSum);
       }
     }
-
   }
 
   getWidth(i: number) {
@@ -79,4 +92,8 @@ export default class StatusBar extends Vue {
   }
   meta(key: string) { return MetaService.Get(key) }
 
+  @Watch('severities', {immediate:true, deep: true})
+  onSeverityFilterChanged(newValue: SeverityFilter) {
+    this.renderPortions();
+  }
 }
