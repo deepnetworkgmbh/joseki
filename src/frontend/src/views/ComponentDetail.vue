@@ -66,7 +66,7 @@
         <ul>
           <li style="margin-left:10px;min-height:30px;padding-top:3px;">
             <StatusBar :counters="category.counters" style="float:right;margin-top:-17px;" />
-            <input type="checkbox" v-bind:id="`cat${i}`" />
+            <input class="expand" type="checkbox" v-bind:id="`cat${i}`" />
             <label class="text-base" v-bind:for="`cat${i}`">
               <strong>{{category.category}}</strong>
               <Score :label='`Score`' :score='category.score' />              
@@ -81,24 +81,24 @@
     </div>
     <div v-show="loaded" class="segment shadow" style="flex-direction:column">
       <div class="segment-header">
+        <ResultFilter :severities='severityFilter' />
         <h1 class="mb-2">Results by Resources</h1>
       </div>
-
       <ul v-for="(collection,i) in getResultsByCollection(data)" :key="`collection${i}`"  class="zigzag">
           <li style="margin-left:10px;min-height:30px;">
-            <StatusBar :counters="collection.counters" style="float:right;margin-top:-15px;" />
-            <input type="checkbox" :id="`target${i}`" checked />
+            <StatusBar :counters="collection.counters" :severities='severityFilter' style="float:right;margin-top:-15px;" />
+            <input class="expand" type="checkbox" :id="`target${i}`" checked />
             <label :for="`target${i}`">
                <strong>{{ collection.type }} :</strong>
-               <Score :label='`Score`' :score='collection.score' />             
+               <Score v-if="severityFilter.AllChecked()" :label='`Score`' :score='collection.score' />             
                 {{ collection.name }}
             </label>
             <ul v-for="(obj, g) in collection.objects" :key="`obj${i}-${g}`">
               <li style="margin-left:15px;">
-                <input type="checkbox" :id="`obj${i}-${g}`" />
+                <input class="expand" type="checkbox" :id="`obj${i}-${g}`" />
                 <label :for="`obj${i}-${g}`" class="limited-label">
                    <strong>{{ obj.type }} :</strong>
-                   <Score :label='`Score`' :score='obj.score' />         
+                   <Score v-if="severityFilter.AllChecked()" :label='`Score`' :score='obj.score' />         
                    {{ obj.name }}
                 </label>
                 <!-- <StatusBar :mini='false' :counters="obj.counters" style="margin-right:-5px;margin-top:-27px;" />  -->

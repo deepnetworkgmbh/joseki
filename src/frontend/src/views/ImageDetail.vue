@@ -27,18 +27,18 @@
       <div v-if="data.scanResult === 'Succeeded'" class="p-2">
         <ul v-for="(target,i) in data.targets" :key="target.target">
           <li>
-            <input type="checkbox" :id="`target${i}`" checked />
+            <input class="expand" type="checkbox" :id="`target${i}`" checked />
             <label :for="`target${i}`" class="target">Target: {{ target.target }}</label>
             <ul v-for="(vul, g) in target.vulnerabilities" :key="`${vul.Severity}${i}`">
               <li>
-                <input type="checkbox" :id="`t${i}g${g}`" checked />
+                <input class="expand" type="checkbox" :id="`t${i}g${g}`" checked />
                 <label :for="`t${i}g${g}`" class="text-base">
                   {{ vul.Count }} issues with
                   <strong :class="`severity-${vul.Severity}`">{{ vul.Severity }}</strong> severity
                 </label>
                 <ul v-for="(cve, c) in vul.CVEs" :key="`${vul.Severity}${i}-${c}`">
                   <li>
-                    <input type="checkbox" :id="`t${i}g${g}${c}`" checked />
+                    <input class="expand" type="checkbox" :id="`t${i}g${g}${c}`" checked />
                     <label :for="`t${i}g${g}${c}`" class="text-sm">
                       <i>{{ cve.vulnerabilityID }}</i> in
                       <strong>{{ cve.pkgName }}</strong>
@@ -54,7 +54,7 @@
                             {{ cve.remediation }}
                           </p>
                           <div v-if="cve.references.length>0" style="margin-top:5px;">
-                            <input type="checkbox" :id="`t${i}g${g}${c}ref`" />
+                            <input class="expand" type="checkbox" :id="`t${i}g${g}${c}ref`" />
                             <label :for="`t${i}g${g}${c}ref`" class="references-title">References ({{cve.references.length}})</label>
                             <ul>
                               <li

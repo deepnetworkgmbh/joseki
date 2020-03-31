@@ -1,6 +1,7 @@
 import { Check, CountersSummary, CheckSeverity, Collection } from '@/models'
 import { CheckCollection, CheckControl, CheckControlGroup, CheckObject } from './DiffService'
 import { DateTime } from 'luxon'
+import { SeverityFilter } from '@/models/SeverityFilter'
 
 export class MappingService {
     public static getResultsByCategory(checks: Check[]): any[] {
@@ -48,12 +49,14 @@ export class MappingService {
         return results
     }
 
-    public static getResultsByCollection(checks: Check[]): CheckCollection[] {
+    public static getResultsByCollection(checks: Check[], severityFilter?: SeverityFilter): CheckCollection[] {
         var results: CheckCollection[] = []
 
         // walk over all checks and group them by collections.
         for (let i = 0; i < checks.length; i++) {
             let check = checks[i];
+
+            if (severityFilter && !severityFilter.Check(check.result)) continue;
 
             if (results.findIndex(x => x.name === check.collection.name) === -1) {
                 let date = DateTime.fromISO(check.date.toString());
@@ -79,7 +82,7 @@ export class MappingService {
             }
 
             const objectIndex = results[collectionIndex].objects.findIndex(x => x.id == check.resource.id);
-
+            
             switch (check.result.toString()) {
                 case 'Failed':
                     results[collectionIndex].counters.failed += 1

@@ -55,7 +55,7 @@ body {
 	@apply antialiased;
 }
 
-.btn {
+.button {
 	@apply text-center;
 	@apply bg-gray-300;
 	@apply text-black;
@@ -65,8 +65,13 @@ body {
 	@apply rounded;
 	@apply text-xs;
 	@apply ml-1;
-	min-width: 100px;
+	@apply shadow;
+}
 
+.btn {
+	@apply button;
+	min-width: 100px;
+	
 	&-selected {
 		@apply text-center;
 		@apply bg-green-300;
@@ -79,6 +84,19 @@ body {
 		@apply ml-1;
 	}
 }
+
+.btn-mini {
+	@apply button;
+	min-width: 30px;
+	height: 25px;
+}
+
+.btn-short {
+	@apply button;
+	height: 20px;
+	padding-top: 0;
+}
+
 
 .small-link {
 	color:#0066aa;
@@ -138,3 +156,13 @@ h5 {
 	color: #444;
 	margin-top: -2px;
 }
+
+.noselect {
+	-webkit-touch-callout: none; /* iOS Safari */
+	  -webkit-user-select: none; /* Safari */
+	   -khtml-user-select: none; /* Konqueror HTML */
+		 -moz-user-select: none; /* Old versions of Firefox */
+		  -ms-user-select: none; /* Internet Explorer/Edge */
+			  user-select: none; /* Non-prefixed version, currently
+									supported by Chrome, Opera and Firefox */
+  }

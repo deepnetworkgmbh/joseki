@@ -12,16 +12,16 @@ li {
 	padding: 0px;
 	margin: 0px 15px 0px 15px;
 }
-input[type="checkbox"] {
+input[type="checkbox"].expand {
 	visibility: hidden;
 }
-input[type="checkbox"] ~ ul,
-input[type="checkbox"] ~ label > .diff-row {
+input[type="checkbox"].expand ~ ul,
+input[type="checkbox"].expand ~ label > .diff-row {
 	visibility: hidden;
 	display: none;
 }
 
-input[type="checkbox"]:checked ~ ul 
+input[type="checkbox"].expand:checked ~ ul 
 {
 	visibility: visible;
 	display: block;
@@ -30,14 +30,14 @@ input[type="checkbox"]:checked ~ ul
 	margin-right: -10px;
 }
 
-input[type="checkbox"]:checked ~ label > .diff-row {
+input[type="checkbox"].expand:checked ~ label > .diff-row {
 	visibility: visible;
 	display: flex;	
 	margin-left: 7px;
 	margin-right: -10px;
 }
 
-input[type="checkbox"] + label:before {
+input[type="checkbox"].expand + label:before {
 	width: 0;
 	height: 0;
 	display: inline-block;
@@ -51,7 +51,7 @@ input[type="checkbox"] + label:before {
 	font-weight: 900;
 	font-size: 19px;
 }
-input[type="checkbox"]:checked + label:before {
+input[type="checkbox"].expand:checked + label:before {
 	content: "\e906";
 	font-family: "icomoon";
 	font-weight: 900;
