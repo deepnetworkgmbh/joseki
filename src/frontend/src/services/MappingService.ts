@@ -49,14 +49,14 @@ export class MappingService {
         return results
     }
 
-    public static getResultsByCollection(checks: Check[], severityFilter: SeverityFilter): CheckCollection[] {
+    public static getResultsByCollection(checks: Check[], severityFilter?: SeverityFilter): CheckCollection[] {
         var results: CheckCollection[] = []
 
         // walk over all checks and group them by collections.
         for (let i = 0; i < checks.length; i++) {
             let check = checks[i];
 
-            if (!severityFilter.Check(check.result)) continue;
+            if (severityFilter && !severityFilter.Check(check.result)) continue;
 
             if (results.findIndex(x => x.name === check.collection.name) === -1) {
                 let date = DateTime.fromISO(check.date.toString());
