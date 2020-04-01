@@ -77,6 +77,7 @@ export class DataService {
     function processData(data: any): ImageScanDetailModel {
       console.log(`[] processing`, data);
       let result = new ImageScanDetailModel();
+      result.date = data.date.split('T')[0];
       result.description = data.description
       result.scanResult = data.scanResult
       result.image = data.image
