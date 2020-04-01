@@ -9,28 +9,38 @@
 }
 
 .target, .target-severities {
-  font-size:15px;
-}
-
-.severity {
-  font-size:14px;
-}
-
-.cve-title {
-  font-size:14px;
-  font-weight: bold;
-  text-decoration: underline;
-}
-.cve-desc {
   font-size:13px;
 }
 
-.references-title {
+.severity {
+  font-size:13px;
+}
+
+.cve-title {
+  font-size:13px;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.cve-desc,
+.cve-dependencies {
+  margin-top:3px;
+  font-size:13px;
+  line-height: 15px;
+  padding-bottom: 3px;
+  text-align: justify;
+}
+
+
+
+.references-title, 
+.dependencies-title,
+.remediation-title {
   font-size:13px;
   font-weight: bold;
 }
 .reference {
-  font-size:12px;
+  font-size:13px;
   line-height: 12px;
 }
 
