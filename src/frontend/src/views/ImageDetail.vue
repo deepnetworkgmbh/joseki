@@ -8,6 +8,8 @@
           <h1 class="image-name text-gray-700">{{ imageid }}</h1>
         </div>
         <div class="w-2/12 flex flex-row justify-end m-2 mr-4">
+          <h3 class="scanStatus mr-1">Date:</h3>
+          <h3 :class="`scanStatus image-result-${data.scanResult} mr-1`">{{ data.date }}</h3>
           <h3 class="scanStatus mr-1">Scan:</h3>
           <h3 :class="`scanStatus image-result-${data.scanResult}`">{{ data.scanResult }}</h3>
         </div>
@@ -36,38 +38,38 @@
                   {{ vul.Count }} issues with
                   <strong :class="`severity-${vul.Severity}`">{{ vul.Severity }}</strong> severity
                 </label>
-                <ul v-for="(cve, c) in vul.CVEs" :key="`${vul.Severity}${i}-${c}`">
+                <ul v-for="(cve, c) in vul.CVEs" :key="`${vul.Severity}${i}-${c}`" style="margin-bottom:5px;">
                   <li>
                     <input class="expand" type="checkbox" :id="`t${i}g${g}${c}`" checked />
-                    <label :for="`t${i}g${g}${c}`" class="text-sm">
-                      <i>{{ cve.vulnerabilityID }}</i> in
+                    <label :for="`t${i}g${g}${c}`" style="font-size:13px;">
+                      <strong class="ml-1">{{ cve.vulnerabilityID }}</strong> in
                       <strong>{{ cve.pkgName }}</strong>
-                      version {{ cve.installedVersion }}
+                      (version <strong>{{ cve.installedVersion }}</strong>)
                     </label>
                     <ul>
                       <li>
-                        <div class="text-sm">
                           <p v-if="cve.title" class="cve-title">{{ cve.Title }}</p>
-                          <p class="cve-desc">{{ cve.description }}</p>
-                          <p v-if="cve.remediation">
-                            <strong>Remediation:</strong>
-                            {{ cve.remediation }}
+                          <p class="cve-desc">                            
+                            <strong class="remediation-title">Description: </strong>
+                            {{ cve.description }}
                           </p>
-                          <div v-if="cve.references.length>0" style="margin-top:5px;">
+                          <p v-if="cve.remediation">
+                            <strong class="remediation-title">Remediation: </strong>
+                            {{ cve.remediation }}
+                          </p>                          
+                          <p v-if="cve.dependenciesWithCVE.length>0">
+                            <strong class="dependencies-title">Dependencies: </strong>
+                            <span class="cve-dependencies">{{ cve.dependenciesWithCVE.join(', ') }}</span>
+                          </p>
+                          <div v-if="cve.references.length>0" style="margin-top:0px;">
                             <input class="expand" type="checkbox" :id="`t${i}g${g}${c}ref`" />
-                            <label :for="`t${i}g${g}${c}ref`" class="references-title">References ({{cve.references.length}})</label>
+                            <label :for="`t${i}g${g}${c}ref`" class="references-title">References:</label>
                             <ul>
-                              <li
-                                v-for="(ref, ri) in cve.references"
-                                :key="`ref${ri}`"
-                                class="text-xs"
-                              >
-                                &bull;&nbsp;
-                                <a :href="ref" class='external-link' target="_blank">{{ ref }}</a>
+                              <li v-for="(ref, ri) in cve.references" :key="`ref${ri}`" style="font-size:12px;">
+                                &bull;&nbsp;<a :href="ref" class='external-link' target="_blank">{{ ref }}</a>
                               </li>
                             </ul>
-                          </div>
-                        </div>
+                          </div>                        
                       </li>
                     </ul>
                   </li>
