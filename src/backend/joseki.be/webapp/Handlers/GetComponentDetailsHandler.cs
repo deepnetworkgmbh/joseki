@@ -8,8 +8,8 @@ using joseki.db.entities;
 
 using Microsoft.EntityFrameworkCore;
 
-using webapp.Database;
 using webapp.Database.Cache;
+using webapp.Exceptions;
 using webapp.Models;
 
 namespace webapp.Handlers
@@ -49,6 +49,26 @@ namespace webapp.Handlers
                 .OrderByDescending(i => i.Date)
                 .FirstOrDefaultAsync();
 
+            // 1.1. try to get InfrastructureComponent if no audit fo a requested date
+            string componentName;
+            if (audit == null)
+            {
+                var component = await this.db.Set<InfrastructureComponentEntity>()
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(i => i.ComponentId == componentId);
+
+                if (component == null)
+                {
+                    throw new JosekiException($"Unknown componentId: {componentId}");
+                }
+
+                componentName = component.ComponentName;
+            }
+            else
+            {
+                componentName = audit.InfrastructureComponent.ComponentName;
+            }
+
             // 2. prepare history for the last month
             var today = DateTime.UtcNow.Date;
             var componentHistory = new List<ScoreHistoryItem>();
@@ -66,11 +86,19 @@ namespace webapp.Handlers
                 Component = new InfrastructureComponent(componentId)
                 {
                     Category = InfraScoreExtensions.GetCategory(componentId),
-                    Name = audit.InfrastructureComponent.ComponentName,
+                    Name = componentName,
                 },
                 Current = currentSummary,
                 ScoreHistory = componentHistory.OrderBy(i => i.RecordedAt).ToArray(),
             };
+
+            // if no audit for a given date - return result
+            if (audit == null)
+            {
+                componentDetails.Checks = new Check[0];
+                componentDetails.CategorySummaries = new CheckCategorySummary[0];
+                return componentDetails;
+            }
 
             // 4. Get all the check details
             var checkResults = await this.db.Set<CheckResultEntity>()
