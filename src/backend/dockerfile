@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1.200-alpine3.11 AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1.201-alpine3.11 AS build
 WORKDIR /app/src
 COPY ./joseki.be .
 RUN dotnet build joseki.be.sln -c Release
@@ -14,7 +14,7 @@ WORKDIR /app/src
 RUN dotnet publish webapp/webapp.csproj -c Release -o /app/publish --no-restore --no-build
 
 
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1.2-alpine3.11 AS webapp
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1.3-alpine3.11 AS webapp
 WORKDIR /app
 COPY --from=publish /app/publish .
 
