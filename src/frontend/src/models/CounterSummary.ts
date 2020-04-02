@@ -16,6 +16,15 @@ export class CountersSummary {
   /// NoData checks are excluded, Passed and Failed has doubled weight.
   public score: number = 0;
 
+  constructor(data: any) {
+    this.passed = data === undefined ? 0 : data.passed;
+    this.failed = data === undefined ? 0 : data.failed;
+    this.warning = data === undefined ? 0 : data.warning;
+    this.noData = data === undefined ? 0 : data.noData;
+    this.total = data === undefined ? 0 : data.total;
+    this.score = this.calculateScore();
+  }
+
   public calculateScore(): number {
     var result = Math.round(100 * this.passed * 2 / ((this.failed * 2) + (this.passed * 2) + this.warning));
     return isNaN(result) ? 0 : result;
@@ -38,6 +47,34 @@ export class CountersSummary {
     }
     return result.join(", ");
 
+  }
+
+
+  public getSeries(): number[] {
+    let result: number[] = [];
+    if(this.noData>0) { result.push(this.noData); }
+    if(this.failed>0) { result.push(this.failed); }
+    if(this.warning>0) { result.push(this.warning); }
+    if(this.passed>0) { result.push(this.passed); }
+    return result;
+  }
+
+  public getLabels(): string[] {
+    let result: string[] = [];
+    if(this.noData>0) { result.push('No Data'); }
+    if(this.failed>0) { result.push('Failed'); }
+    if(this.warning>0) { result.push('Warning'); }
+    if(this.passed>0) { result.push('Success'); }
+    return result;    
+  }
+
+  public getColors(): string[] {
+    let result: string[] = [];
+    if(this.noData>0) { result.push('#B7B8A8'); }
+    if(this.failed>0) { result.push('#E33035'); }
+    if(this.warning>0) { result.push('#F8A462'); }
+    if(this.passed>0) { result.push('#41C6B9'); }
+    return result;    
   }
 
 }

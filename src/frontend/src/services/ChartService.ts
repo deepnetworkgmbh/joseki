@@ -1,117 +1,8 @@
-import { BarChartOptions, PieChartOptions, AreaChartOptions } from '@/types/';
 import { CountersSummary, ScoreHistoryItem } from '@/models';
 import { DateTime } from 'luxon';
 
 export class ChartService {
 	public static groupColors = ['#B7B8A8', '#E33035', '#F8A462', '#41C6B9'];
-
-	public static drawPieChart(summary: CountersSummary, key: string, height: number = 320) {
-
-		let element = document.getElementById(key) as any;
-
-		var data = google.visualization.arrayToDataTable([
-			['Severity', 'Number'],
-			['No Data', Math.round(summary.noData)],
-			['Failed', Math.round(summary.failed)],
-			['Warning', Math.round(summary.warning)],
-			['Success', Math.round(summary.passed)]
-		]);
-
-		var options: PieChartOptions = {
-			titlePosition: 'none',
-			//width:400,
-			height: height,
-			slices: {
-				0: { color: this.groupColors[0] },
-				1: { color: this.groupColors[1] },
-				2: { color: this.groupColors[2] },
-				3: { color: this.groupColors[3] }
-			},
-			pieHole: 0.3,
-			chartArea: { top: 50, width: '100%', height: '70%' },
-			legend: {
-				position: 'top',
-				alignment: 'center',
-				textStyle: {
-					fontSize: 9
-				}
-			}
-		};
-
-		var chart = new google.visualization.PieChart(element);
-		chart.draw(data, options);
-	}
-
-	public static drawBarChart(
-		data: ScoreHistoryItem[],
-		key: string,
-		selected: DateTime,
-		cb?: Function,
-		height: number = 100,
-		selected2: DateTime = DateTime.fromJSDate(new Date(1970,1,1,0,0,0,0)),
-		gridlines: number = 0,
-		componentId: string = '') {
-
-		let element = document.getElementById(key) as any;
-
-		var chart_data = new google.visualization.DataTable();
-		chart_data.addColumn('date', 'X');
-		chart_data.addColumn('number', 'Score');
-		chart_data.addColumn({ type: 'string', role: 'style' });
-		
-		for (let i = 0; i < data.length; i++) {
-			const rowdate = data[i].recordedAt.toString().split('T')[0];
-			let isSelected = selected.toISODate() === rowdate || selected2.toISODate() === rowdate;
-			let color = isSelected ? '#4AF0C0' : '#31B6A9';
-			chart_data.addRow([new Date(rowdate), data[i].score, color]);
-		}
-
-		var options: BarChartOptions = {
-			//width: 300,
-			height: height,
-			hAxis: {
-				title: '',
-				gridlines: { count: 0 },
-				//gridlineColor: '#fff',
-			},
-			vAxis: {
-				baselineColor: '#ccc',
-				format: '',
-				gridlineColor: '#eee',
-				textPosition: gridlines === 0 ? 'none' : 'left',
-				viewWindow: {
-					max: 100,
-					min: 0
-				},
-				gridlines: { count: gridlines }
-			},
-			series: {
-				0: { color: '#41C6B9' }
-			},
-			backgroundColor: 'transparent',
-			legend: { position: 'none' },
-			orientation: 'horizontal',
-			chartArea: {
-				width: '85%',
-				height: '90%'
-			},
-		};
-		var chart = new google.visualization.BarChart(element);
-
-		function selectHandler() {
-			var selectedItem = chart.getSelection()[0];
-			if (selectedItem && cb) {
-				let row = selectedItem.row as number;
-				var selectedDate = DateTime.fromJSDate(chart_data.getValue(row, 0)).toISODate(); 
-				cb(selectedDate, componentId);				
-			}
-		}
-
-		if (cb !== undefined) {
-			google.visualization.events.addListener(chart, 'select', selectHandler);
-		}
-		chart.draw(chart_data, options);
-	}
 
 	private static getSeverityColor(severity: string) {
 		switch (severity) {
@@ -123,6 +14,245 @@ export class ChartService {
 				return ChartService.groupColors[3];
 			case 'NODATA':
 				return ChartService.groupColors[0];
+		}
+	}
+
+
+	private static get animationOptions() {
+		return {
+			enabled: true,
+			easing: 'linear',
+			speed: 10,
+			dynamicAnimation: {
+				enabled: true,
+				speed: 150
+			}
+		}
+	}
+
+	private static get noAnimation() {
+		return {
+			enabled: false
+		}
+	}
+
+	public static AreaChartOptions(id:string,scoreHistory: ScoreHistoryItem[], dates: DateTime[], scores: number[], cb: Function) : ApexCharts.ApexOptions {
+
+		const xAxisAnnotations: any[] = [];
+		xAxisAnnotations.push({
+			x: new Date(dates[0].toISODate()).getTime(),
+			borderWidth: 1,
+			borderColor: '#775DD0',
+			label: {
+				borderWidth:0,
+				style: {              
+					background: 'transparent',
+					color: '#444',
+					fontSize: '9px'
+				},
+				text: `${scores[0]} %`
+			},
+		})
+		if (dates.length === 2 && scores.length === 2) {
+			xAxisAnnotations.push({
+				x: new Date(dates[1].toISODate()).getTime(),
+				borderWidth: 1,
+				borderColor: '#775DD0',
+				label: {
+					borderWidth:0,
+					style: {              
+						background: 'transparent',
+						color: '#444',
+						fontSize: '9px'
+					},
+					text: `${scores[1]} %`
+				},
+			})	
+		}
+
+		return <ApexCharts.ApexOptions>{
+			chart: {
+				id: id,
+				type: 'area',
+				sparkline: { enabled: true },
+				events: {
+					dataPointSelection: function(event, chartContext, config) {
+						//console.log(event, chartContext, config);
+					},
+					selection: function(chartContext, { xaxis, yaxis }) {
+						//console.log(chartContext, xaxis, yaxis);
+					},
+					click: function(event, chartContext, config) {
+						//console.log(event, chartContext, config);					
+					},
+					markerClick: function(event, chartContext, { seriesIndex, dataPointIndex, config}) {
+						//console.log(event, chartContext, seriesIndex, dataPointIndex, config);	
+						//console.log(scoreHistory[dataPointIndex].recordedAt);
+						const index = scoreHistory.length - dataPointIndex - 1;
+						const datestr = scoreHistory[index].recordedAt.split('T')[0];
+						scores[0] = scoreHistory[index].score;
+						if(scores[0]>0) {
+							// dont call on score=0
+							cb(datestr, scores[0]);						
+						}
+					}
+				},
+				animations: ChartService.animationOptions
+			},
+			stroke: { width: 1 },
+			yaxis: {
+				type: 'numeric',
+				labels: {
+					formatter: (value) => { return value + "%" },
+					show: false,
+				}        
+			},
+			xaxis: {
+				type: 'datetime',
+				crosshairs: { width: 1 },
+			},
+			tooltip: {
+				fixed: {
+					enabled: false
+				},
+				x: {
+					show: true
+				},
+				y: {
+					title: {
+						formatter: function (value) {
+							return 'Score'
+						}
+					}
+				},
+				marker: {
+					show: false
+				}
+			},
+			grid: {
+				row: {
+					colors: ['#e5e5e5', 'transparent'],
+					opacity: 0.5
+				}, 
+				xaxis: {
+					lines: {
+						show: true
+					}
+				}
+			},
+			annotations: {
+				xaxis: xAxisAnnotations
+			}
+		}
+
+	}
+
+	public static DonutChartOptions(id:string, summary: CountersSummary) : ApexCharts.ApexOptions {
+
+		return <ApexCharts.ApexOptions>{
+			chart: {
+				type: 'donut',
+				sparkline: {
+					enabled: true
+				},
+				dropShadow: {
+					enabled: true,
+					top: 0,
+					left: 0,
+					blur: 2,
+					opacity: 0.1
+				},
+				animations: ChartService.animationOptions
+			},
+			labels: summary.getLabels(),
+			colors: summary.getColors(),			  
+			stroke: {
+				width: 1
+			},
+			tooltip: {
+				fixed: {
+					enabled: false
+				},
+			},
+			plotOptions: {
+				pie: {
+					donut: {
+						labels: {
+							show: true,
+							showAlways: true,
+							name: {
+								show: true,
+								offsetY: 5
+							},
+							value: {
+								show: false
+							},
+							total: {
+								show: true,
+								showAlways: true,
+								label: summary.score + '%',
+								fontSize: '13px'
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public static PieChartOptions(id:string, summary: CountersSummary) : ApexCharts.ApexOptions {
+
+		return <ApexCharts.ApexOptions>{
+			chart: {
+				type: 'pie',
+				dropShadow: {
+					enabled: true,
+					top: 10,
+					left: 10,
+					blur: 10,
+					opacity: 0.1
+				},
+				animations: ChartService.animationOptions
+			},
+			labels: summary.getLabels(),
+			colors: summary.getColors(),
+			plotOptions: {
+				pie: {
+					expandOnClick: false, 
+					offsetX: 45,
+					customScale: 0.8,
+					dataLabels: {
+						offset:-10
+					}
+				},
+			},
+			stroke: {
+				show: true,
+				width: 1
+			}
+		}
+
+	}
+
+	public static DiffAreaChartOptions(id:string, labels: string[]) : ApexCharts.ApexOptions {
+		
+		return <ApexCharts.ApexOptions>{
+			chart: {
+				id: id,
+				type: 'area',
+				stacked: true,
+				toolbar: false,
+				animations: ChartService.noAnimation
+			},
+			fill: {
+				type: 'solid',
+				opacity: 1
+			},
+			labels: labels,
+			stroke: { width: 1 },
+			yaxis: {
+				show: false
+			}
 		}
 	}
 }

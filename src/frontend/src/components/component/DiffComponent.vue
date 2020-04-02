@@ -10,7 +10,9 @@
           <div class="inf-component-diff-category">{{component.category}}</div>
         </div>
       </div>
-      <div class="inf-component-diff-histogram" :id="`bar${index}`"></div>
+      <div class="inf-component-diff-histogram">
+          <apexchart height="50" :options="areaOptions" :series="areaSeries"></apexchart>
+      </div>
     </div>
     <div class="inf-component-diff-right">
       <div class='inf-component-diff-buttons'>
@@ -26,13 +28,13 @@
       <div class="inf-component-diff-pies">
         <div>
           <div class="inf-component-diff-pie">
-              <vc-donut :sections="sections" :size="60" unit="px" :auto-adjust-text-size="false" :total="total" :text="`${score}%`" :thickness="25"></vc-donut>
+              <apexchart height="60" :options="donutOptions1" :series="donutSeries1"></apexchart>
           </div>
         </div>
         <div class="inf-component-diff-arrow">►</div>
         <div>
           <div class="inf-component-diff-pie">
-              <vc-donut :sections="sections2" :size="60" unit="px" :auto-adjust-text-size="false" :total="total2" :text="`${score2}%`" :thickness="25"></vc-donut>
+              <apexchart height="60" :options="donutOptions2" :series="donutSeries2"></apexchart>
           </div>
         </div>
       </div>

@@ -10,7 +10,9 @@
           <div class="inf-component-category">{{component.category}}</div>
         </div>
       </div>
-      <div class="inf-component-histogram" :id="`bar${index}`"></div>
+      <div class="inf-component-histogram" :id="`bar${index}`">
+        <apexchart height="50" :options="areaOptions" :series="areaSeries"></apexchart>
+      </div>
     </div>
     <div class="inf-component-right">
       <div class='inf-component-buttons'>
@@ -18,7 +20,8 @@
         <button @click="goComponentDetail(component)"><span class="icon-search"></span> Detail</button>
       </div>
       <div class="inf-component-pie">
-        <vc-donut :sections="sections" :size="60" unit="px" :auto-adjust-text-size="false" :text="`${this.score}%`" :total="total" :thickness="25"></vc-donut>
+        <apexchart height="60" :options="donutOptions" :series="donutSeries"></apexchart>
+        <!-- <vc-donut :sections="sections" :size="60" unit="px" :auto-adjust-text-size="false" :text="`${this.score}%`" :total="total" :thickness="25"></vc-donut> -->
       </div>
     </div>
   </div>

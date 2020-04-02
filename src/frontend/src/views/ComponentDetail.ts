@@ -26,11 +26,10 @@ export default class ComponentDetail extends Vue {
 
     severityFilter: SeverityFilter = new SeverityFilter();
     selectedDate?: DateTime;
+    selectedScore: number = 0;
     loaded: boolean = false;
     service: DataService = new DataService();
     data: InfrastructureComponentSummary = new InfrastructureComponentSummary();
-    panelOpen: boolean = false;
-    checkedScans: any[] = [];
 
     loadData() {
         this.selectedDate = (this.date === null) ? undefined : DateTime.fromISO(this.date);
@@ -40,40 +39,36 @@ export default class ComponentDetail extends Vue {
             .then(response => {
                 if (response) {
                     this.data = response;
-                    this.$emit('componentChanged', this.data.component);
-                    this.setupCharts();
+                    let index = this.data.scoreHistory.findIndex(x=>x.recordedAt.startsWith(this.date));
+                    if(index<0) { index = 0; }
+                    this.selectedDate = DateTime.fromISO(this.data.scoreHistory[index].recordedAt);
+                    this.selectedScore = this.data.scoreHistory[index].score;
+                    this.$emit('dateChanged', this.selectedDate.toISODate())
+                    this.$emit('componentChanged', this.data.component)
                     this.loaded = true;
                     this.$forceUpdate();
                 }
             });
     }
 
-    created() {
-        window.addEventListener("resize", this.setupCharts);
+    getAreaSeries() {
+        return [{ data: this.data.scoreHistory.map((item)=> ({ x: item.recordedAt.split('T')[0] , y: item.score })).reverse() }]
+    }
+    
+    getAreaChartOptions() : ApexCharts.ApexOptions {
+        return ChartService.AreaChartOptions("overviewchart", this.data.scoreHistory, [this.selectedDate!], [this.selectedScore], this.dayClicked);
     }
 
-    destroyed() {
-        window.removeEventListener("resize", this.setupCharts);
+    getPieChartSeries() {
+        return this.data.current.getSeries()
     }
 
-    setupCharts() {
-        google.charts.load('current', { 'packages': ['corechart'] });
-        google.charts.setOnLoadCallback(this.drawCharts);
-    }
-
-    drawCharts() {
-        if(this.selectedDate === undefined) {
-            this.selectedDate = DateTime.fromISO(this.data.scoreHistory[0].recordedAt);
-            this.$emit('dateChanged', this.selectedDate.toISODate())
-        }       
-        ChartService.drawPieChart(this.data.current, "overall_pie", 300);
-        ChartService.drawBarChart(this.data.scoreHistory, "overall_bar", this.selectedDate, this.dayClicked, 100, undefined, 4, this.data.component.id);
-        this.$forceUpdate();
+    getPieChartOptions() : ApexCharts.ApexOptions {
+        return ChartService.PieChartOptions("pie-overall", this.data.current)
     }
 
     dayClicked(date: string, component: string) {
-        //this.selectedDate = date;
-        router.push('/component-detail/' + encodeURIComponent(component) + '/' + date);
+        router.push('/component-detail/' + encodeURIComponent(this.data.component.id) + '/' + date);
     }
 
     goComponentHistory() {
@@ -95,10 +90,6 @@ export default class ComponentDetail extends Vue {
         return this.data.scoreHistory.slice(0, 5);
     }
 
-    onHistoryClicked() {
-        router.push('/overview-history/');
-    }
-
     @Watch('date', { immediate: true })
     private onDateChanged(newValue: string) {
         this.selectedDate = DateTime.fromISO(newValue);
@@ -108,7 +99,7 @@ export default class ComponentDetail extends Vue {
 
     getScoreIconClass(score: number) { return ScoreService.getScoreIconClass(score); }
     getGrade(score: number) { return ScoreService.getGrade(score); }
-    getResultsByCategory(data: InfrastructureComponentSummary) { return MappingService.getResultsByCategory(data.checks); }
+    getResultsByCategory(data: InfrastructureComponentSummary) { return MappingService.getResultsByCategory(this.data.checks); }
     getResultsByCollection(data: InfrastructureComponentSummary) { return MappingService.getResultsByCollection(data.checks, this.severityFilter); }
 
     getCategoryMeta(category: string) {

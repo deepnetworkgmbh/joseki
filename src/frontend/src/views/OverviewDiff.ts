@@ -25,7 +25,6 @@ export default class OverviewDiff extends Vue {
     checkedScans: any[] = [];
 
     created() {
-        window.addEventListener("resize", this.setupCharts);
         this.loadData();
     }
 
@@ -35,42 +34,43 @@ export default class OverviewDiff extends Vue {
                 if(response) {
                     this.data = response;
                     this.loaded = true;
-                    this.setupCharts();    
                 }
-            }).catch(error => {
-                console.log(error);
-            });
+            }).catch(error => console.log(error));
     }
 
-    destroyed() {
-        window.removeEventListener("resize", this.setupCharts);
+    getDiffAreaChartOptions() {
+        return ChartService.DiffAreaChartOptions('diffchart', [this.date, this.date2]);
     }
 
-    setupCharts() {
-        google.charts.load('current', { 'packages': ['corechart'] });
-        google.charts.setOnLoadCallback(this.drawCharts);
+    getDiffAreaSeries() {
+        return [
+            {
+                name: 'No Data',
+                data: [this.data.summary1.overall.current.noData, this.data.summary2.overall.current.noData]
+            },
+            {
+                name: 'Failed',
+                data: [this.data.summary1.overall.current.failed, this.data.summary2.overall.current.failed]
+            },
+            {
+                name: 'Warning',
+                data: [this.data.summary1.overall.current.warning, this.data.summary2.overall.current.warning]
+            },
+            {
+                name: 'Success',
+                data: [this.data.summary1.overall.current.passed, this.data.summary2.overall.current.passed]
+            }
+        ]
     }
 
     goDiffPage(component: InfrastructureComponent) {
         router.push('/component-diff/' + component.id + '/' + this.date + '/' + this.date2);
     }
 
-    drawCharts() {
-        ChartService.drawPieChart(this.data.summary1.overall.current, "overall_pie1", 200)
-        ChartService.drawPieChart(this.data.summary2.overall.current, "overall_pie2", 200)
-        let date = DateTime.fromISO(this.date);
-        let date2 = DateTime.fromISO(this.date2);
-        for (let i = 0; i < this.data.summary1.components.length; i++) {
-            if(this.data.summary2.components[i]) {
-                ChartService.drawBarChart(this.data.summary1.components[i].scoreHistory, 'bar' + i, date, undefined, 48, date2);
-            }
-        }
-    }
-
     getClusters1() { return this.data.summary1.components.filter(x => x.component.category === 'Kubernetes').length; }
-    getSubscriptions1() { return this.data.summary1.components.filter(x => x.component.category === 'Subscription').length; }
+    getSubscriptions1() { return this.data.summary1.components.filter(x => x.component.category === 'Azure Subscription').length; }
     getClusters2() { return this.data.summary2.components.filter(x => x.component.category === 'Kubernetes').length; }
-    getSubscriptions2() { return this.data.summary2.components.filter(x => x.component.category === 'Subscription').length; }
+    getSubscriptions2() { return this.data.summary2.components.filter(x => x.component.category === 'Azure Subscription').length; }
     getScoreIconClass(score: number) { return ScoreService.getScoreIconClass(score); }
     getGrade(score: number) { return ScoreService.getGrade(score); }
 }

@@ -3,8 +3,7 @@
     <Spinner v-if="!loaded" />
     <div v-if="loaded" class="segment shadow" style="min-height:300px;padding:0;">
       <div class="w-1/4 border-r border-gray-300 flex flex-col justify-center content-center top-left-panel" style="background-color:#eee;">
-        <div class="status-icon"><i :class="getScoreIconClass(data.overall.current.score)"></i></div>
-        <div class="status-text p-5 pl-6 pt-16">
+        <div class="p-5 pl-6 pt-4">
           <div class="mb-3 info-tag-date">
             <h5>Date</h5>
             <h1 class="info">{{ selectedDate | formatDate }}</h1>
@@ -27,11 +26,15 @@
           </div>
         </div>
       </div>
-      <div class="w-2/4 pt-8"><div id="overall_pie" class="w-auto" style="z-index:0;"></div></div>
+      <div class="w-2/4">
+        <apexchart :options="getPieChartOptions()" :series="getPieChartSeries()"></apexchart>
+      </div>
       <div class="w-1/4 border-l border-gray-300 top-right-panel" style="z-index:10;">
         <div class="w-auto p-2 ml-1 mb-2">
           <div class='text-center text-xs font-bold'>Scan History</div>
-          <div id="overall_bar" style="width:100%;"></div>
+          <div style="width:100%;height:70px;">
+            <apexchart height="70" :options="getAreaChartOptions()" :series="getAreaSeries()"></apexchart>
+          </div>
         </div>
         <div class="m-3 mt-0">
           <div class='text-center text-xs font-bold border-b border-gray-500'>Last 5 scans</div>
@@ -60,7 +63,9 @@
           :total="c.current.total"
           :date="selectedDate"
           :index="i"
-        ></InfComponent>        
+          :scoreHistory="data.components[i].scoreHistory"
+          :summary="data.components[i].current"
+          @dateChanged="dayClicked"></InfComponent>        
       </div>
     </div>
     
