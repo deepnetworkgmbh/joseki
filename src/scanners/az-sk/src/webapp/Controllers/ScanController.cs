@@ -39,7 +39,7 @@ namespace webapp.Controllers
         {
             try
             {
-                var result = await this.scanner.Scan(subscription);
+                var result = await this.scanner.Scan(subscription, DateTime.UtcNow);
                 return this.StatusCode(201, result);
             }
             catch (Exception ex)

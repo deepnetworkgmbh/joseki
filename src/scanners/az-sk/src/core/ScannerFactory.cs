@@ -26,6 +26,7 @@ namespace core
         /// <summary>
         /// Gets scanner implementation.
         /// </summary>
+        /// <param name="scanDate">Date to scan.</param>
         /// <returns>At the moment, only azsk is supported, so returns azsk scanner object.</returns>
         public IScanner GetScanner()
         {
@@ -33,8 +34,9 @@ namespace core
 
             return scannerConfiguration.Scanner switch
             {
-                AzSkConfiguration _ => new AzSk(this.configuration),
-                _ => throw new NotImplementedException("At the moment only azsk scanner is supported")
+                AzSkConfiguration scannerConfig => new AzSk(scannerConfig),
+                FakeAzSkConfiguration fakeScannerConfig => new FakeAzSk(fakeScannerConfig),
+                _ => throw new NotImplementedException("Requested scanner is not supported")
             };
         }
 
