@@ -9,6 +9,7 @@ import { ScoreService } from '@/services/ScoreService';
 import ControlList from "@/components/controllist/ControlList.vue";
 import ControlGroup from "@/components/controlgroup/ControlGroup.vue";
 import { CheckObject, DiffCounters, DiffOperation } from '@/services/DiffService';
+import { DateTime } from 'luxon';
 
 @Component({
     components: { Spinner, StatusBar, Score, ControlList, ControlGroup }
@@ -36,15 +37,38 @@ export default class ComponentDiff extends Vue {
                     this.data = response;
                     this.nochanges = this.data.results.length === this.data.results.filter(x=>x.operation === DiffOperation.Same).length;
                     this.$emit('componentChanged', this.data.summary1.component);
-                    console.info(JSON.parse(JSON.stringify(this.data.results)));
-                    this.setupCharts();
+                    // console.info(JSON.parse(JSON.stringify(this.data.results)));
                     this.loaded = true;
                 }
             });
     }
 
+    getDiffAreaChartOptions() {
+        return ChartService.DiffAreaChartOptions('diffchart', [this.date, this.date2]);
+    }
+
+    getDiffAreaSeries() {
+        return [
+            {
+                name: 'No Data',
+                data: [this.data.summary1.current.noData, this.data.summary2.current.noData]
+            },
+            {
+                name: 'Failed',
+                data: [this.data.summary1.current.failed, this.data.summary2.current.failed]
+            },
+            {
+                name: 'Warning',
+                data: [this.data.summary1.current.warning, this.data.summary2.current.warning]
+            },
+            {
+                name: 'Success',
+                data: [this.data.summary1.current.passed, this.data.summary2.current.passed]
+            }
+        ]
+    }
+
     created() {
-        window.addEventListener("resize", this.setupCharts);
         this.loadData();
     }
 
@@ -83,16 +107,6 @@ export default class ComponentDiff extends Vue {
         }
     }
 
-
-    destroyed() {
-        window.removeEventListener("resize", this.setupCharts);
-    }
-
-    setupCharts() {
-        google.charts.load('current', { 'packages': ['corechart'] });
-        google.charts.setOnLoadCallback(this.drawCharts);
-    }
-
     sleep(milliseconds) {
         const date = Date.now();
         let currentDate;
@@ -100,11 +114,6 @@ export default class ComponentDiff extends Vue {
           currentDate = Date.now();
         } while (currentDate - date < milliseconds);
       }
-
-    drawCharts() {
-        ChartService.drawPieChart(this.data.summary1.current, "overall_pie1", 200)
-        ChartService.drawPieChart(this.data.summary2.current, "overall_pie2", 200)
-    }
 
     getScoreIconClass(score: number) { return ScoreService.getScoreIconClass(score); }
     getGrade(score: number) { return ScoreService.getGrade(score); }

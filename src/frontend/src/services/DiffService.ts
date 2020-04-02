@@ -117,7 +117,7 @@ export class DiffCollection {
 
 export class CheckCollection {
     score: number = 0
-    counters: CountersSummary = new CountersSummary()
+    counters: CountersSummary = new CountersSummary(undefined)
     objects: CheckObject[] = []
     operation?: DiffOperation = DiffOperation.Same;
     empty: boolean = false;
@@ -201,7 +201,7 @@ export class CheckObject {
     type: string = ''
     name: string = ''
     score: number = 0
-    counters: CountersSummary = new CountersSummary()
+    counters: CountersSummary = new CountersSummary(undefined)
     controls: CheckControl[] = []
     controlGroups: CheckControlGroup[] = []
     operation?: DiffOperation = DiffOperation.Same;

@@ -1,4 +1,5 @@
-import { InfrastructureComponentSummary } from '@/models';
+import { InfrastructureComponentSummary, InfrastructureComponent } from '@/models';
+import { CountersSummary } from './CounterSummary';
 
 export class InfrastructureOverview {
     /// Overall infrastructure summary.
@@ -15,21 +16,23 @@ export class InfrastructureOverview {
 
     public static GenerateFromData(data: any): InfrastructureOverview {
       let result = new InfrastructureOverview();
-      result.overall = data.overall;
+      result.overall = <InfrastructureComponentSummary>data.overall;
+      result.overall.current = new CountersSummary(data.overall.current);
+
       // reverse and slice overall history
       if(result.overall.scoreHistory) {
-        result.overall.scoreHistory = result.overall.scoreHistory.reverse().slice(0, 14);
+        result.overall.scoreHistory = result.overall.scoreHistory.reverse();//.slice(0, 14);
       }
       result.components = data.components;
 
       // generate sections for components
       for (let i = 0; i < result.components.length; i++) {
-
         if (result.components[i].component.category === 'Subscription') {
           result.components[i].component.category = 'Azure Subscription';
         }
         result.components[i].sections = InfrastructureComponentSummary.getSections(result.components[i].current);
-        result.components[i].scoreHistory = result.components[i].scoreHistory.reverse().slice(0, 14);
+        result.components[i].scoreHistory = result.components[i].scoreHistory.reverse(); //.slice(0, 14);
+        result.components[i].current = new CountersSummary(data.components[i].current);
       }
 
       return result;

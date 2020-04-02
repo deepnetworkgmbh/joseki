@@ -1,5 +1,5 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { InfrastructureComponent } from '@/models';
+import { InfrastructureComponent, ScoreHistoryItem, CountersSummary } from '@/models';
 import router from '@/router';
 import { ChartService } from '@/services/ChartService';
 import { DateTime } from 'luxon';
@@ -24,6 +24,32 @@ export default class InfComponent extends Vue {
 
   @Prop()
   private date?: DateTime;
+  
+  @Prop()
+  private scoreHistory!: ScoreHistoryItem[];
+
+  @Prop()
+  private summary!: CountersSummary;
+
+  get areaSeries() {
+    return [{ data: this.scoreHistory.map((item)=> ({ x: item.recordedAt.split('T')[0] , y: item.score })).reverse() }]
+  }
+
+  get areaOptions() : ApexCharts.ApexOptions {
+    return ChartService.AreaChartOptions(this.component.id, this.scoreHistory, [this.date!], [this.score], this.areaCallback);
+  }
+
+  get donutSeries() {
+    return this.summary.getSeries();
+  }
+
+  get donutOptions(): ApexCharts.ApexOptions {
+    return ChartService.DonutChartOptions(this.component.id + '_donut', this.summary);
+  }
+
+  areaCallback(date: string) {
+    this.$emit('dateChanged', date);
+   }
   
   getComponentIcon() {
     if(this.component.category === 'Azure Subscription') {

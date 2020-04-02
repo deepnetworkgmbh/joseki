@@ -3,10 +3,6 @@ import App from "./App.vue";
 import router from "./router";
 import "@/styles/main.scss";
 
-import Donut from 'vue-css-donut-chart';
-import 'vue-css-donut-chart/dist/vcdonut.css';
-Vue.use(Donut);
-
 import moment from 'moment';
 
 Vue.filter('formatDate', function (value) {
@@ -17,6 +13,11 @@ import linkify from 'vue-linkify'
 import { MetaService } from './services/MetaService';
 import { ConfigService } from './services/ConfigService';
 Vue.directive('linkified', linkify);
+
+// // @ts-ignore
+import VueApexCharts from 'vue-apexcharts'
+Vue.use(VueApexCharts);
+Vue.component('apexchart', VueApexCharts);
 
 (async()=>{
 

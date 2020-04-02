@@ -1,5 +1,5 @@
 import axios from "axios";
-import { VulnerabilityGroup, TargetGroup, ImageScanDetailModel, InfrastructureOverview, InfrastructureComponentSummary, InfrastructureComponentDiff, InfrastructureOverviewDiff, MetaData } from "@/models";
+import { VulnerabilityGroup, TargetGroup, ImageScanDetailModel, InfrastructureOverview, InfrastructureComponentSummary, InfrastructureComponentDiff, InfrastructureOverviewDiff, MetaData, CountersSummary } from "@/models";
 import { ScoreService } from './ScoreService';
 import { DateTime } from 'luxon';
 import { ConfigService } from './ConfigService';
@@ -56,7 +56,8 @@ export class DataService {
         result.component.category = 'Azure Subscription';
       }
       result.sections = InfrastructureComponentSummary.getSections(result.current);
-      result.scoreHistory = result.scoreHistory.reverse().slice(0, 14);
+      result.scoreHistory = result.scoreHistory.reverse(); //.slice(0, 14);
+      result.current = new CountersSummary(data.current);
       console.log(`[] result`, result);
       return result;
     }
@@ -162,7 +163,10 @@ export class DataService {
     console.log(`[] calling ${url}`);
     return axios
       .get(url)
-      .then((response) => response.data)
+      .then((response) => { 
+        console.log(response.data);
+        return response.data;
+      })
       .then((data) => processData(data))
       .catch((error) => console.log(error))
       .finally(() => console.log("component history request finished."));
@@ -175,7 +179,7 @@ export class DataService {
   }
 
   public async getComponentDiffData(id: string, date1: string, date2: string): Promise<void | InfrastructureComponentDiff> {
-    let suffix = '?id=' + id + '&date1=' + encodeURIComponent(date1) + '&date2=' + encodeURIComponent(date2) + '&api-version=' + this.apiVersion;
+    let suffix = '?id=' + encodeURIComponent(id) + '&date1=' + date1 + '&date2=' + date2 + '&api-version=' + this.apiVersion;
     let url = this.baseUrl + "/audits/component/diff" + suffix;
     console.log(`[] calling ${url}`)
 
