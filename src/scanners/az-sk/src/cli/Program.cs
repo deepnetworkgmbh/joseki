@@ -25,6 +25,12 @@ namespace cli
             [Option('s', "subscriptions", Required = true, Min = 1, HelpText = "Azure Subscription identifiers to be audited")]
             public IEnumerable<string> Subscriptions { get; set; }
 
+            [Option("from", Required = false, HelpText = "Audit infrastructure since this date")]
+            public DateTime? From { get; set; }
+
+            [Option("to", Required = false, HelpText = "Audit infrastructure till this date")]
+            public DateTime? To { get; set; }
+
             [Option('v', "verbose", Default = false, HelpText = "Verbose log level.")]
             public bool Verbose { get; set; }
         }
@@ -46,6 +52,21 @@ namespace cli
 
         private static async Task RunScanWith(Options opts)
         {
+            if (opts.From.HasValue != opts.To.HasValue)
+            {
+                Log.Error("Specifying the only one From or To dates is not supported. Both values should be set or removed");
+                return;
+            }
+            else if (opts.From.HasValue && opts.From > opts.To)
+            {
+                Log.Error("From date should be behind To date");
+                return;
+            }
+
+            var today = DateTime.UtcNow.Date;
+            var startDate = opts.From ?? today;
+            var endDate = opts.To ?? today;
+
             if (opts.Verbose)
             {
                 loggingLevelSwitch.MinimumLevel = LogEventLevel.Verbose;
@@ -61,11 +82,17 @@ namespace cli
             {
                 try
                 {
-                    var subscriptionScanner = new SubscriptionScanner(factory.GetScanner(), factory.GetExporter());
-                    var result = await subscriptionScanner.Scan(subscription);
-                    Log
-                        .ForContext<Program>()
-                        .Information("Subscription {Subscription} was scanned with result: {ScanResult}", subscription, result.ScanResult);
+                    var scanDate = startDate;
+                    while (scanDate <= endDate)
+                    {
+                        var subscriptionScanner = new SubscriptionScanner(factory.GetScanner(), factory.GetExporter());
+                        var result = await subscriptionScanner.Scan(subscription, scanDate);
+                        Log
+                            .ForContext<Program>()
+                            .Information("Subscription {Subscription} was scanned with result: {ScanResult} at {ScanDate}", subscription, result.ScanResult, scanDate);
+
+                        scanDate = scanDate.AddDays(1);
+                    }
 
                 }
                 catch (Exception ex)

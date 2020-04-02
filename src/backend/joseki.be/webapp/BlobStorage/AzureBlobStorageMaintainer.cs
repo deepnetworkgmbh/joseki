@@ -46,6 +46,8 @@ namespace webapp.BlobStorage
             Logger.Information("Archive processed audits was started");
             var archiveContainerClient = this.storageClient.GetBlobContainerClient(ArchiveContainerName);
 
+            await archiveContainerClient.CreateIfNotExistsAsync(cancellationToken: cancellation);
+
             var blobsToCopy = new List<(AuditBlob blob, CopyFromUriOperation copyOperation)>();
 
             await foreach (var container in this.storageClient.GetBlobContainersAsync(cancellationToken: cancellation))
@@ -160,6 +162,8 @@ namespace webapp.BlobStorage
             var deletedBlobs = 0;
 
             var archiveContainerClient = this.storageClient.GetBlobContainerClient(ArchiveContainerName);
+
+            await archiveContainerClient.CreateIfNotExistsAsync(cancellationToken: cancellation);
 
             var expirationTime = DateTimeOffset
                 .UtcNow

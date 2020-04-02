@@ -23,14 +23,14 @@ namespace core.exporters.azure
     {
         private static readonly ILogger Logger = Log.ForContext<AzureBlobExporter>();
         private readonly AzBlobExporterConfiguration blobCfg;
-        private readonly AzSkConfiguration scannerCfg;
+        private readonly IScannerConfiguration scannerCfg;
         private readonly string scannerVersion;
         private readonly string azskVersion;
 
         public AzureBlobExporter(ConfigurationParser config)
         {
             this.blobCfg = config.GetAzBlobConfig();
-            this.scannerCfg = config.GetScannerConfig();
+            this.scannerCfg = config.Get().Scanner;
             this.scannerVersion = config.ScannerVersion;
             this.azskVersion = config.AzskVersion;
         }
