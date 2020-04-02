@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "cli": {
+      "commandName": "Project",
+      "commandLineArgs": "-c PATH_TO_CONFIG -s 5720db52-2fb2-4568-bb63-20c7c0dd0a3e --from 2020-03-01 --to 2020-03-31",
+      "environmentVariables": {
+        "SCANNER_VERSION": "0.2.1",
+        "AZSK_VERSION": "4.7.0"
+      }
+    }
+  }
+}

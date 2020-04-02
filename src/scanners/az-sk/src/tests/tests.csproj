@@ -29,6 +29,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="fake-config-sample.az.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="config-sample.az.yaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
