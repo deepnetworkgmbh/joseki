@@ -21,6 +21,15 @@
     /// </summary>
     public interface IScannerConfiguration
     {
+        /// <summary>
+        /// Scanner identifier.
+        /// </summary>
+        string Id { get; set; }
+
+        /// <summary>
+        /// How often the scanner is scheduled to run.
+        /// </summary>
+        string Periodicity { get; set; }
     }
 
     /// <summary>

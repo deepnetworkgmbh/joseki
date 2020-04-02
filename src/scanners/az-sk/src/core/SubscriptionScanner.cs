@@ -26,11 +26,11 @@ namespace core
             this.exporter = exporter;
         }
 
-        public async Task<SubscriptionScanDetails> Scan(string subscription)
+        public async Task<SubscriptionScanDetails> Scan(string subscription, DateTime scanDate)
         {
             try
             {
-                var details = await this.scanner.Scan(subscription);
+                var details = await this.scanner.Scan(subscription, scanDate);
                 await this.exporter.UploadAsync(details, CancellationToken.None);
                 return details;
             }
