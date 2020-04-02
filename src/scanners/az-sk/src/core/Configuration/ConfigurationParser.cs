@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 
+using core.Exceptions;
+
 using Serilog;
 
 using YamlDotNet.Serialization;
@@ -24,6 +26,7 @@ namespace core.Configuration
             Deserializer = new DeserializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .WithTypeResolver(new DynamicTypeResolver())
+                .WithTagMapping("!fake-azsk-scanner", typeof(FakeAzSkConfiguration))
                 .WithTagMapping("!azsk-scanner", typeof(AzSkConfiguration))
                 .WithTagMapping("!file-exporter", typeof(FileExporterConfiguration))
                 .WithTagMapping("!az-blob", typeof(AzBlobExporterConfiguration))
@@ -39,13 +42,13 @@ namespace core.Configuration
             if (string.IsNullOrEmpty(configFilePath))
             {
                 Logger.Fatal("Provided config filepath is empty");
-                throw new Exception("Provided config filepath is empty");
+                throw new ScannerException("Provided config filepath is empty");
             }
 
             if (!File.Exists(configFilePath))
             {
                 Logger.Fatal("az-sk Scanner config file does not exist at {ConfigFilePath}", configFilePath);
-                throw new Exception($"az-sk Scanner config file does not exist at {configFilePath}");
+                throw new ScannerException($"az-sk Scanner config file does not exist at {configFilePath}");
             }
 
             this.scannerConfig = new Lazy<ScannerConfiguration>(() => this.Init(configFilePath));
@@ -57,14 +60,14 @@ namespace core.Configuration
             if (string.IsNullOrEmpty(this.AzskVersion))
             {
                 Logger.Fatal("There is no {EnvVar} environment variable", azskVersionEnvVar);
-                throw new Exception(azskVersionEnvVar);
+                throw new ScannerException(azskVersionEnvVar);
             }
 
             this.ScannerVersion = Environment.GetEnvironmentVariable(versionEnvVar);
             if (string.IsNullOrEmpty(this.ScannerVersion))
             {
                 Logger.Fatal("There is no {EnvVar} environment variable", versionEnvVar);
-                throw new Exception(versionEnvVar);
+                throw new ScannerException(versionEnvVar);
             }
         }
 

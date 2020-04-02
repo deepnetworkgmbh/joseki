@@ -37,12 +37,12 @@ namespace core.scanners
         /// Initializes a new instance of the <see cref="AzSk"/> class.
         /// </summary>
         /// <param name="config">The scanner configuration.</param>
-        public AzSk(ConfigurationParser config)
+        public AzSk(AzSkConfiguration config)
         {
-            this.scannerCfg = config.GetScannerConfig();
+            this.scannerCfg = config;
         }
 
-        public async Task<SubscriptionScanDetails> Scan(string subscription)
+        public async Task<SubscriptionScanDetails> Scan(string subscription, DateTime scanDate)
         {
             Logger.Information("{AzureSubscription} scan was started", subscription);
 
