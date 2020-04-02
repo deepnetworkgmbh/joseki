@@ -53,7 +53,7 @@
                             <strong class="remediation-title">Description: </strong>
                             {{ cve.description }}
                           </p>
-                          <p v-if="cve.remediation">
+                          <p v-if="cve.remediation" style="font-size:13px;">
                             <strong class="remediation-title">Remediation: </strong>
                             {{ cve.remediation }}
                           </p>                          

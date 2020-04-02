@@ -14,7 +14,7 @@ export class MappingService {
             if (results.findIndex(x => x.category === check.category) === -1) {
                 results.push({
                     category: check.category,
-                    counters: new CountersSummary(),
+                    counters: new CountersSummary(undefined),
                 })
             }
 
@@ -75,7 +75,7 @@ export class MappingService {
                 checkObject.score = 0,
                 checkObject.controls = [],           // for flat control list
                 checkObject.controlGroups = [],      // for grouped control list
-                checkObject.counters = new CountersSummary(),
+                checkObject.counters = new CountersSummary(undefined),
                 checkObject.checked = false
 
                 results[collectionIndex].objects.push(checkObject)

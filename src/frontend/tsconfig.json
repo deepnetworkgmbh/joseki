@@ -13,8 +13,7 @@
     "baseUrl": ".",
     "noImplicitAny": false,
     "types": [
-      "webpack-env",
-      "google.visualization"
+      "webpack-env"
     ],
     "paths": {
       "@/*": [

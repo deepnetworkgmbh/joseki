@@ -1,13 +1,10 @@
 <template>
   <div>
     <Spinner v-if="!loaded" />
-    <div v-show="loaded" class="segment shadow" style="min-height:300px;padding:0">
+    <div v-if="loaded" class="segment shadow" style="min-height:300px;padding:0">
       <div class="w-1/4 border-r border-gray-300 flex flex-col justify-center content-center top-left-panel"
         style="overflow:hidden;">
-        <div class="status-icon">
-          <i :class="getScoreIconClass(data.current.score)"></i>
-        </div>
-        <div class="status-text p-5 pl-4 pt-16">
+        <div class="status-text p-5 pl-4 pt-4">
           <div class="mb-3 info-tag-date">
             <h5>Date</h5>
             <h1 class="info">{{ selectedDate | formatDate }}</h1>
@@ -30,13 +27,15 @@
           </div>
         </div>
       </div>
-      <div class="w-2/4 pt-8">
-        <div id="overall_pie" class="w-auto" style="z-index:0;"></div>
+      <div class="w-2/4">
+        <apexchart :options="getPieChartOptions()" :series="getPieChartSeries()"></apexchart>
       </div>
       <div class="w-1/4 border-l border-gray-300 top-right-panel" style="z-index:10;">
         <div class="w-auto p-2 ml-1 mb-2">
           <div class='text-center text-sm font-bold'>Scan History</div>
-          <div id="overall_bar" style="width:100%"></div>
+          <div style="width:100%;height:70px;">
+            <apexchart height="70" :options="getAreaChartOptions()" :series="getAreaSeries()"></apexchart>
+          </div>
         </div>
         <div class="m-3 mt-0">
           <div class='text-center text-sm font-bold border-b border-gray-500'>Last 5 scans</div>
@@ -58,11 +57,11 @@
         </div>
       </div>
     </div>
-    <div v-show="loaded" class="segment shadow" style="flex-direction:column">
+    <div v-if="loaded" class="segment shadow" style="flex-direction:column">
        <div class="segment-header">
         <h1 class="mb-2">Results by Category</h1>
       </div>
-      <div v-for="(category,i) in getResultsByCategory(data)" :key="`category${i}`" class="zigzag">
+      <div v-for="(category,i) in getResultsByCategory()" :key="`category${i}`" class="zigzag">
         <ul>
           <li style="margin-left:10px;min-height:30px;padding-top:3px;">
             <StatusBar :counters="category.counters" style="float:right;margin-top:-17px;" />
@@ -101,8 +100,6 @@
                    <Score v-if="severityFilter.AllChecked()" :label='`Score`' :score='obj.score' />         
                    {{ obj.name }}
                 </label>
-                <!-- <StatusBar :mini='false' :counters="obj.counters" style="margin-right:-5px;margin-top:-27px;" />  -->
-                <!-- list with subgroup -->
                 <ul v-for="(control, c) in obj.controlGroups" 
                   :key="`control${i}-${g}-${c}`" class="scan-control">
                   <li style="padding:2px;padding-left:0;margin-left:5px;margin-top:0px;margin-bottom:2px;">
@@ -121,7 +118,6 @@
                     </div>
                   </li>
                 </ul>
-                <!-- list with no subgroup -->
                 <ul v-for="(control, c) in obj.controls" 
                   :key="`control${i}-${g}-${c}`" class="scan-control">
                   <li style="padding:2px;padding-left:0;margin-left:5px;margin-top:0px;margin-bottom:2px;">

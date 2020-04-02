@@ -17,6 +17,7 @@ export default class Overview extends Vue {
     @Prop({ default: null })
     date!: string;
 
+    selectedScore: number = 0;
     selectedDate?: DateTime = undefined;
     loaded: boolean = false;
     service: DataService = new DataService();
@@ -29,46 +30,38 @@ export default class Overview extends Vue {
             .then(response => {
                 if (response) {
                     this.data = response;
-                    if(this.selectedDate === undefined) {
-                        this.selectedDate = DateTime.fromISO(this.data.overall.scoreHistory[0].recordedAt);
-                        this.$emit('dateChanged', this.selectedDate.toISODate())
-                    }       
+                    let index = this.data.overall.scoreHistory.findIndex(x=>x.recordedAt.startsWith(this.date));
+                    if(index<0) { index = 0; }
+                    this.selectedDate = DateTime.fromISO(this.data.overall.scoreHistory[index].recordedAt);
+                    this.selectedScore = this.data.overall.scoreHistory[index].score;
+                    this.$emit('dateChanged', this.selectedDate.toISODate())
                     this.$emit('componentChanged', this.data.overall.component)
-                    this.setupCharts();
                     this.loaded = true;
                     this.$forceUpdate();
                 }
             });
     }
 
-    created() { 
-        window.addEventListener("resize", this.setupCharts); 
-        this.loadData();
+    getAreaSeries() {
+        return [{ data: this.data.overall.scoreHistory.map((item)=> ({ x: item.recordedAt.split('T')[0] , y: item.score })).reverse() }]
+    }
+    
+    getAreaChartOptions() : ApexCharts.ApexOptions {
+        return ChartService.AreaChartOptions("overviewchart", this.data.overall.scoreHistory, [this.selectedDate!], [this.selectedScore], this.dayClicked);
     }
 
-    destroyed() { window.removeEventListener("resize", this.setupCharts); }
-
-    setupCharts() {
-        google.charts.load('current', { 'packages': ['corechart'] });
-        google.charts.setOnLoadCallback(this.drawCharts);
+    getPieChartSeries() {
+        return this.data.overall.current.getSeries()
     }
 
-    drawCharts() {
-        ChartService.drawPieChart(this.data.overall.current, "overall_pie", 300)
-        ChartService.drawBarChart(this.data.overall.scoreHistory, "overall_bar", this.selectedDate!, this.dayClicked, 100, undefined, 4)
-        for (let i = 0; i < this.data.components.length; i++) {
-            ChartService.drawBarChart(this.data.components[i].scoreHistory, 'bar' + i, this.selectedDate!, this.goComponentDetail, 52, undefined, 0, this.data.components[i].component.id);
-        }
-        this.$forceUpdate();
+    getPieChartOptions() : ApexCharts.ApexOptions {
+        return ChartService.PieChartOptions("pie-overall", this.data.overall.current)
     }
-
+  
     dayClicked(date: string) {
         this.selectedDate = DateTime.fromISO(date);
         router.push('/overview/' + date);
-    }
-
-    goComponentDetail(date: string, componentId: string) {
-        router.push('/component-detail/' + componentId + '/' + date);
+        this.$forceUpdate();
     }
 
     goComponentHistory(component: InfrastructureComponent) {
@@ -79,18 +72,12 @@ export default class Overview extends Vue {
         }
     }
 
-    get shortHistory() {
-        return this.data.overall.scoreHistory.slice(0, 5);
-    }
-
+    get shortHistory() { return this.data.overall.scoreHistory.slice(0, 5); }
+    getGrade(score: number) { return ScoreService.getGrade(score); }
     getClusters() { return this.data.components.filter(x => x.component.category === 'Kubernetes').length; }
     getSubscriptions() { return this.data.components.filter(x => x.component.category === 'Azure Subscription').length; }
     getHistoryClass(scan: ScoreHistoryItem) {
         return scan.recordedAt.startsWith(this.selectedDate!.toISODate()) ? 'history-selected' : 'history';
-    }
-
-    onHistoryClicked() {
-        router.push('/overview-history/');
     }
 
     @Watch('date', { immediate: true })
@@ -99,8 +86,4 @@ export default class Overview extends Vue {
         this.$emit('dateChanged', this.selectedDate.toISODate())
         this.loadData();
     }
-
-    getScoreIconClass(score: number) { return ScoreService.getScoreIconClass(score); }
-    getGrade(score: number) { return ScoreService.getGrade(score); }
-
 }

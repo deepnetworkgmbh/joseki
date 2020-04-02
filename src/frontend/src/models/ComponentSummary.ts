@@ -6,7 +6,7 @@ export class InfrastructureComponentSummary {
   // the component of the summary
   component: InfrastructureComponent = new InfrastructureComponent()
   /// Latest known check-result counters.
-  current: CountersSummary = new CountersSummary()
+  current!: CountersSummary
   /// Holds Scores per last 30 days.
   /// If no data for a day - places 0.
   scoreHistory: ScoreHistoryItem[] = []

@@ -71,7 +71,8 @@ body {
 .btn {
 	@apply button;
 	min-width: 100px;
-	
+	background: linear-gradient(0deg, rgba(210,254,243,1) 0%, rgba(255,255,255,1) 100%);
+
 	&-selected {
 		@apply text-center;
 		@apply bg-green-300;
@@ -104,6 +105,9 @@ body {
 	cursor: pointer;
 }
 
+button {
+	background: linear-gradient(0deg, rgba(210,254,243,1) 0%, rgba(255,255,255,1) 100%);
+}
 button:disabled,
 button[disabled] {
 	background-color: #cccccc;

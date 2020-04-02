@@ -1,5 +1,5 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { InfrastructureComponent } from '@/models';
+import { InfrastructureComponent, ScoreHistoryItem, CountersSummary } from '@/models';
 import router from '@/router';
 import { ChartService } from '@/services/ChartService';
 import { DateTime } from 'luxon';
@@ -11,34 +11,55 @@ export default class DiffComponent extends Vue {
   private component: any;
 
   @Prop()
-  private sections: any;
-
-  @Prop()
-  private score: any;
-
-  @Prop()
-  private total: any;
-
-  @Prop()
   private index: any;
 
   @Prop()
   private date!: string;
 
   @Prop()
-  private sections2: any;
-
-  @Prop()
-  private score2: any;
-
-  @Prop()
-  private total2: any;
-
-  @Prop()
   private date2!: string;
 
   @Prop()
   private notLoaded!: boolean;
+
+  @Prop()
+  private scoreHistory!: ScoreHistoryItem[];
+
+  @Prop()
+  private summary1!: CountersSummary;
+
+  @Prop()
+  private summary2!: CountersSummary;
+
+  get areaSeries() {
+    return [{ data: this.scoreHistory.map((item)=> ({ x: item.recordedAt.split('T')[0] , y: item.score })).reverse() }]
+  }
+
+  get areaOptions() : ApexCharts.ApexOptions {
+    const dates = [DateTime.fromISO(this.date), DateTime.fromISO(this.date2)]
+    const scores= [this.summary1.score, this.summary2.score]
+    return ChartService.AreaChartOptions(this.component.id, this.scoreHistory, dates, scores, this.areaCallback);
+  }
+
+  get donutSeries1() {
+    return this.summary1.getSeries();
+  }
+
+  get donutOptions1(): ApexCharts.ApexOptions {
+    return ChartService.DonutChartOptions(this.component.id + '_donut1', this.summary1);
+  }
+
+  get donutSeries2() {
+    return this.summary2.getSeries();
+  }
+
+  get donutOptions2(): ApexCharts.ApexOptions {
+    return ChartService.DonutChartOptions(this.component.id + '_donut2', this.summary2);
+  }
+
+  areaCallback(){
+
+  }
 
   getComponentIcon() {
     if(this.component.category === 'Azure Subscription') {
