@@ -1,5 +1,7 @@
+@import "../../styles/colors.scss";
+
 .link {
-    color:#08c;
+    color:$color-link;
     cursor: pointer;
 }
 .link:hover {
@@ -7,7 +9,7 @@
 }
 
 .breadcrumbs {
-    background-color: #eee;
+    background-color: $color-content-bg;
     height:26px;
     border-radius: 6px;
     margin-bottom: 4px;

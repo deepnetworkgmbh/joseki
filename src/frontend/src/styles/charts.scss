@@ -29,13 +29,6 @@
   background-color: yellow;
 }
 
-svg > g:last-child > g:last-child {
-  pointer-events: none;
-}
-svg > g > g.google-visualization-tooltip {
-  pointer-events: none;
-}
-
 .tabulator-col-title {
   text-align: center;
 }
@@ -105,4 +98,9 @@ svg > g > g.google-visualization-tooltip {
 .tabulator-row .tabulator-cell {
   padding: 6px 4px;
   font-size: 12px;
+}
+
+
+.apexcharts-svg {
+  cursor: pointer;
 }
