@@ -1,0 +1,13 @@
+resources:
+- testdata_generator.yaml
+generatorOptions:
+  labels: 
+    app: fake-scanner-azsk
+    module: scanners
+    version: '#{azsk.imageTag}#'
+configMapGenerator:
+- name: fake-scanner-azsk-cfg
+  namespace: joseki
+  behavior: replace
+  files:
+  - fake-scanner-azsk-config.yaml
