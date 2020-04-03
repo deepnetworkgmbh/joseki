@@ -2,10 +2,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 
+using Microsoft.Extensions.DependencyInjection;
+
 using Serilog;
 
 using webapp.Configuration;
-using webapp.Database;
 using webapp.Database.Cache;
 using webapp.Infrastructure;
 
@@ -18,18 +19,15 @@ namespace webapp.BackgroundJobs
     {
         private static readonly ILogger Logger = Log.ForContext<InfraScoreCacheWatchman>();
 
-        private readonly IInfrastructureScoreCache cache;
-        private readonly JosekiConfiguration config;
+        private readonly IServiceProvider services;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InfraScoreCacheWatchman"/> class.
         /// </summary>
-        /// <param name="cache">The cache.</param>
-        /// <param name="config">Joseki Backend configuration.</param>
-        public InfraScoreCacheWatchman(IInfrastructureScoreCache cache, ConfigurationParser config)
+        /// <param name="services">DI container.</param>
+        public InfraScoreCacheWatchman(IServiceProvider services)
         {
-            this.cache = cache;
-            this.config = config.Get();
+            this.services = services;
         }
 
         /// <summary>
@@ -45,9 +43,13 @@ namespace webapp.BackgroundJobs
                 {
                     Logger.Information("InfraScoreCache watchman is going out.");
 
+                    using var scope = this.services.CreateScope();
+                    var cache = scope.ServiceProvider.GetRequiredService<IInfrastructureScoreCache>();
+                    var config = scope.ServiceProvider.GetRequiredService<ConfigurationParser>().Get();
+
                     try
                     {
-                        await this.cache.ReloadEntireCache();
+                        await cache.ReloadEntireCache();
 
                         if (!initialized)
                         {
@@ -61,7 +63,7 @@ namespace webapp.BackgroundJobs
                     }
 
                     Logger.Information("InfraScoreCache watchman finished the detour.");
-                    await Task.Delay(TimeSpan.FromHours(this.config.Watchmen.InfraScorePeriodicityHours), cancellation);
+                    await Task.Delay(TimeSpan.FromHours(config.Watchmen.InfraScorePeriodicityHours), cancellation);
                 }
                 catch (TaskCanceledException ex)
                 {
