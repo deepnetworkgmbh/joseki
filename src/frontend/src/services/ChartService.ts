@@ -94,7 +94,7 @@ export class ChartService {
 				offsetX:-1,
 				style: {
 					background: '#F8A462', //transparent',
-					fontSize: '8px',
+					fontSize: '7px',
 					color:'#fff',
 					padding: {
 						left:3,
@@ -118,7 +118,7 @@ export class ChartService {
 					offsetX:-1,
 					style: {
 						background: '#F8A462', //transparent',
-						fontSize: '8px',
+						fontSize: '7px',
 						color:'#fff',
 						padding: {
 							left:3,
@@ -160,7 +160,7 @@ export class ChartService {
 				},
 				animations: ChartService.animationOptions
 			},
-			colors: ['#41C6B9'],
+			colors: [ChartService.colorSuccess, ChartService.colorWarning, ChartService.colorFailed],
 			stroke: { width: 1 },
 			yaxis: {
 				type: 'numeric',

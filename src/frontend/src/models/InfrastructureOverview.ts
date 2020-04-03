@@ -30,9 +30,8 @@ export class InfrastructureOverview {
         if (result.components[i].component.category === 'Subscription') {
           result.components[i].component.category = 'Azure Subscription';
         }
-        result.components[i].sections = InfrastructureComponentSummary.getSections(result.components[i].current);
         result.components[i].scoreHistory = result.components[i].scoreHistory.reverse(); //.slice(0, 14);
-        result.components[i].current = new CountersSummary(data.components[i].current);
+        result.components[i].current = new CountersSummary(result.components[i].current);
       }
 
       return result;
