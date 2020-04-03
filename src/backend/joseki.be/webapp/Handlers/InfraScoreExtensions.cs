@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using webapp.Database;
 using webapp.Database.Cache;
 using webapp.Database.Models;
 using webapp.Exceptions;
@@ -68,15 +67,17 @@ namespace webapp.Handlers
             // 2. Calculate each component data
             // The code expects that each date has only unique component-identifiers
             // Thus, iterating only over requested date - gives unique components
+            var today = DateTime.UtcNow.Date;
+            var month = Enumerable.Range(-30, 31).Select(i => today.AddDays(i)).ToArray();
             var components = new List<InfrastructureComponentSummaryWithHistory>();
             foreach (var audit in audits.Where(i => i.Date.Date == date.Date))
             {
-                // first, find all audits for the particular component and prepare history items for it
+                // first, get counters for each date during last month
                 var componentHistory = new List<ScoreHistoryItem>();
-                foreach (var historyAudit in audits.Where(i => i.ComponentId == audit.ComponentId))
+                foreach (var summaryDate in month)
                 {
-                    var historyItem = await cache.GetCountersSummary(historyAudit.ComponentId, historyAudit.Date);
-                    componentHistory.Add(new ScoreHistoryItem(historyAudit.Date, historyItem.Score));
+                    var historyItem = await cache.GetCountersSummary(audit.ComponentId, summaryDate);
+                    componentHistory.Add(new ScoreHistoryItem(summaryDate, historyItem.Score));
                 }
 
                 // when the history is ready, calculate summary for the requested date.
