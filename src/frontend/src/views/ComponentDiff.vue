@@ -21,9 +21,15 @@
           </div>       
         </div>
       </div>
-      <div class="w-2/4">
-         <apexchart :options="getDiffAreaChartOptions()" :series="getDiffAreaSeries()"></apexchart>
+      <div class="w-1/4 pt-4">
+        <apexchart :options="getPieChartOptions1()" :series="getPieChartSeries1()"></apexchart>
       </div>
+      <div class="w-1/4 pt-4 top-seperator">
+        <apexchart :options="getPieChartOptions2()" :series="getPieChartSeries2()"></apexchart>
+      </div>
+      <!-- <div class="w-2/4">
+         <apexchart :options="getDiffAreaChartOptions()" :series="getDiffAreaSeries()"></apexchart>
+      </div> -->
       <div class="w-1/4 border-l border-gray-300 flex flex-col justify-center content-center top-right-panel" style="overflow:hidden;">
         <div class="status-text p-5 pl-4 pt-4">
           <div class="mb-3 info-tag-date">

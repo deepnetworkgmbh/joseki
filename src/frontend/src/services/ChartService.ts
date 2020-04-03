@@ -200,7 +200,32 @@ export class ChartService {
 		}
 	}
 
-	public static PieChartOptions(id:string, summary: CountersSummary) : ApexCharts.ApexOptions {
+	public static PieChartOptions(id:string, summary: CountersSummary, small:boolean = false) : ApexCharts.ApexOptions {
+
+		if (small) return <ApexCharts.ApexOptions>{
+			chart: {
+				type: 'pie',
+				animations: ChartService.animationOptions
+			},
+			labels: summary.getLabels(),
+			colors: summary.getColors(),
+			legend: { 
+				show: false
+			},
+			plotOptions: {
+				pie: {
+					expandOnClick: false, 
+					offsetX: 0,
+					offsetY: 20,
+					customScale: 1,
+					dataLabels: { offset:-10 }
+				},
+			},
+			stroke: {
+				show: true,
+				width: 1
+			}
+		} 		
 
 		return <ApexCharts.ApexOptions>{
 			chart: {

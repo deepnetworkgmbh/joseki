@@ -72,6 +72,22 @@ export default class ComponentDiff extends Vue {
         this.loadData();
     }
 
+    getPieChartSeries1() {
+        return this.data.summary1.current.getSeries()
+    }
+
+    getPieChartSeries2() {
+        return this.data.summary2.current.getSeries()
+    }
+
+    getPieChartOptions1() : ApexCharts.ApexOptions {
+        return ChartService.PieChartOptions("pie-overall1", this.data.summary1.current, true)
+    }
+
+    getPieChartOptions2() : ApexCharts.ApexOptions {
+        return ChartService.PieChartOptions("pie-overall2", this.data.summary2.current, true)
+    }
+
     toggleOther(id:string, rowkey: string, objid: string) {
         let element:HTMLInputElement | null = <HTMLInputElement>document.getElementById(id);
         let rowIndex = this.data.results.findIndex(x=>x.key === rowkey);
