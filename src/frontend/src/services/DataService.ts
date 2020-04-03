@@ -55,7 +55,6 @@ export class DataService {
       if (result.component.category === 'Subscription') {
         result.component.category = 'Azure Subscription';
       }
-      result.sections = InfrastructureComponentSummary.getSections(result.current);
       result.scoreHistory = result.scoreHistory.reverse(); //.slice(0, 14);
       result.current = new CountersSummary(data.current);
       console.log(`[] result`, result);
@@ -137,20 +136,21 @@ export class DataService {
       .catch((error) => console.log(error));
 
     function processData(data:any) : InfrastructureOverviewDiff {
-      console.log(`[]data`, data);
+      console.log(`[]data`, JSON.parse(JSON.stringify(data)));
       let result = new InfrastructureOverviewDiff();
       result.summary1 = InfrastructureOverview.GenerateFromDiff(data.overall1, data.components1);
       result.summary2 = InfrastructureOverview.GenerateFromDiff(data.overall2, data.components2);
-      for(let i=0;i<result.summary1.components.length;i++) {
-        let id = result.summary1.components[i].component.id;
-        let index = result.summary2.components.findIndex(x=>x.component.id == id);
-        if (index === -1) {
-          // clone the component summary not to break the view
-          result.summary2.components.push(result.summary1.components[i]);   
-          // but mark as not loaded
-          result.summary1.components[i].notLoaded = true;       
-        }
-      }
+     
+      // for(let i=0;i<result.summary1.components.length;i++) {
+      //   let id = result.summary1.components[i].component.id;
+      //   let index = result.summary2.components.findIndex(x=>x.component.id == id);
+      //   if (index === -1) {
+      //     // clone the component summary not to break the view
+      //     result.summary2.components.push(result.summary1.components[i]);   
+      //     // but mark as not loaded
+      //     result.summary1.components[i].notLoaded = true;       
+      //   }
+      // }
 
       return result;
     }
@@ -186,7 +186,10 @@ export class DataService {
     return axios
       .get(url)
       .then((response) => response.data)
-      .then((data) => InfrastructureComponentDiff.CreateFromData(data))
+      .then((data) => {
+        console.log(JSON.parse(JSON.stringify(data)));
+        return InfrastructureComponentDiff.CreateFromData(data)
+      })
       .catch((error) => console.log(error));
 
   }

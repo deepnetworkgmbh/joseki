@@ -1,3 +1,4 @@
+import { ChartService } from '@/services/ChartService';
 
 /// Represents short summary of check-result counters.
 export class CountersSummary {
@@ -70,10 +71,10 @@ export class CountersSummary {
 
   public getColors(): string[] {
     let result: string[] = [];
-    if(this.noData>0) { result.push('#B7B8A8'); }
-    if(this.failed>0) { result.push('#E33035'); }
-    if(this.warning>0) { result.push('#F8A462'); }
-    if(this.passed>0) { result.push('#41C6B9'); }
+    if(this.noData>0) { result.push(ChartService.colorNoData); }
+    if(this.failed>0) { result.push(ChartService.colorFailed); }
+    if(this.warning>0) { result.push(ChartService.colorWarning); }
+    if(this.passed>0) { result.push(ChartService.colorSuccess); }
     return result;    
   }
 

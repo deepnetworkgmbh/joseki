@@ -63,20 +63,14 @@
     <div v-if="loaded" class="segment shadow">
       <div class="w-full flex flex-wrap pt-2 pl-1 justify-center">
         <DiffComponent v-for="(c, i) in data.summary1.components" :key="`scan${i}`"
-          :component="c.component"
-          :sections="c.sections"
-          :score="c.current.score"
-          :total="c.current.total"
           :notLoaded="c.notLoaded"
+          :component="c.component"
           :date="date"
-          :index="i"
-          :sections2="data.summary2.components[i].sections"
-          :score2="data.summary2.components[i].current.score"
-          :total2="data.summary2.components[i].current.total"          
           :date2="date2"
-          :scoreHistory="data.summary1.components[i].scoreHistory"
-          :summary1="data.summary1.components[i].current"
-          :summary2="data.summary2.components[i].current"
+          :index="i"
+          :scoreHistory="data.summary2.components[i].scoreHistory"
+          :summary1="getCurrentFromSummary(data.summary1, c.component.id)"
+          :summary2="getCurrentFromSummary(data.summary2, c.component.id)"
         ></DiffComponent>        
       </div>
     </div>    

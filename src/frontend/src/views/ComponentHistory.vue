@@ -64,7 +64,7 @@
         </div>
         <div class="subscription-history-buttons">
             <button class="btn" @click="CompareScans()" :disabled='canCompare()'>
-              <span class="icon-compare pr-1"></span>Compare
+              <span class="icon-copy pr-1"></span>Compare
             </button>
         </div>
       </div>

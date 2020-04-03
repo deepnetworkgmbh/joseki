@@ -58,7 +58,6 @@
       <div class="w-full flex flex-wrap pt-2 pl-1 justify-center">
         <InfComponent v-for="(c, i) in data.components" :key="`scan${i}`"
           :component="c.component"
-          :sections="c.sections"
           :score="c.current.score"
           :total="c.current.total"
           :date="selectedDate"

@@ -18,8 +18,6 @@ export class InfrastructureComponentDiff {
     let diff = new InfrastructureComponentDiff();
     diff.summary1 = data.summary1;
     diff.summary2 = data.summary2;
-    diff.summary1.sections = InfrastructureComponentSummary.getSections(diff.summary1.current);
-    diff.summary2.sections = InfrastructureComponentSummary.getSections(diff.summary2.current);
     diff.summary1.current = new CountersSummary(data.summary1.current)
     diff.summary2.current = new CountersSummary(data.summary2.current)
 

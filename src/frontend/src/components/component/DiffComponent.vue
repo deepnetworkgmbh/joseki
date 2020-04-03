@@ -23,7 +23,7 @@
             Compare<i class="icon-help-circle tip-icon" style="font-size:9px;"></i>
          </span></button>
         <button v-if="!notLoaded" @click="goComponentDiff(component)" :disabled="notLoaded">
-          <i class="icon-compare pr-1"></i>Differences</button>
+          <i class="icon-copy pr-1"></i>Differences</button>
       </div>
       <div class="inf-component-diff-pies">
         <div>
