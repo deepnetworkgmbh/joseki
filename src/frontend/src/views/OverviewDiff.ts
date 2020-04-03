@@ -63,6 +63,22 @@ export default class OverviewDiff extends Vue {
         ]
     }
 
+    getPieChartSeries1() {
+        return this.data.summary1.overall.current.getSeries()
+    }
+
+    getPieChartSeries2() {
+        return this.data.summary2.overall.current.getSeries()
+    }
+
+    getPieChartOptions1() : ApexCharts.ApexOptions {
+        return ChartService.PieChartOptions("pie-overall1", this.data.summary1.overall.current, true)
+    }
+
+    getPieChartOptions2() : ApexCharts.ApexOptions {
+        return ChartService.PieChartOptions("pie-overall2", this.data.summary2.overall.current, true)
+    }
+
     goDiffPage(component: InfrastructureComponent) {
         router.push('/component-diff/' + component.id + '/' + this.date + '/' + this.date2);
     }

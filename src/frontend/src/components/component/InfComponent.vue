@@ -21,7 +21,6 @@
       </div>
       <div class="inf-component-pie">
         <apexchart height="60" :options="donutOptions" :series="donutSeries"></apexchart>
-        <!-- <vc-donut :sections="sections" :size="60" unit="px" :auto-adjust-text-size="false" :text="`${this.score}%`" :total="total" :thickness="25"></vc-donut> -->
       </div>
     </div>
   </div>

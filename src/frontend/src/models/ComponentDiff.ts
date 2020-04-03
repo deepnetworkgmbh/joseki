@@ -3,6 +3,7 @@ import { MappingService } from '@/services/MappingService';
 import { DiffCollection, CheckCollection, DiffOperation, CheckObject, CheckControlGroup, CheckControl } from '@/services/DiffService';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
+import { CountersSummary } from './CounterSummary';
 
 export class InfrastructureComponentDiff {
   /// Components of first summary.
@@ -19,6 +20,8 @@ export class InfrastructureComponentDiff {
     diff.summary2 = data.summary2;
     diff.summary1.sections = InfrastructureComponentSummary.getSections(diff.summary1.current);
     diff.summary2.sections = InfrastructureComponentSummary.getSections(diff.summary2.current);
+    diff.summary1.current = new CountersSummary(data.summary1.current)
+    diff.summary2.current = new CountersSummary(data.summary2.current)
 
     let left: CheckCollection[] = MappingService.getResultsByCollection(diff.summary1.checks);
     let right: CheckCollection[] = MappingService.getResultsByCollection(diff.summary2.checks)
