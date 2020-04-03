@@ -133,10 +133,10 @@ namespace webapp
 
             services.AddSingleton<IMemoryCache, MemoryCache>();
             services.AddScoped<IJosekiDatabase, MssqlJosekiDatabase>();
-            services.AddTransient<ChecksCache>();
-            services.AddTransient<CveCache>();
             services.AddScoped<IInfraScoreDbWrapper, InfraScoreDbWrapper>();
             services.AddTransient<IInfrastructureScoreCache, InfrastructureScoreCache>();
+            services.AddTransient<ChecksCache>();
+            services.AddTransient<CveCache>();
 
             services.AddTransient<AzskAuditProcessor>();
             services.AddTransient<PolarisAuditProcessor>();
@@ -150,7 +150,7 @@ namespace webapp
             services.AddTransient<GetKnowledgebaseItemsHandler>();
 
             services.AddScoped<ScannerContainersWatchman>();
-            services.AddSingleton<SchedulerAssistant>();
+            services.AddScoped<SchedulerAssistant>();
             services.AddScoped<ArchiveWatchman>();
             services.AddScoped<InfraScoreCacheWatchman>();
 

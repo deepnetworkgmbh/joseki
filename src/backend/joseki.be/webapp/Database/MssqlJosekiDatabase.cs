@@ -141,6 +141,7 @@ namespace webapp.Database
             var theDay = date.Date;
             var theNextDay = theDay.AddDays(1);
             var componentIds = await this.db.Set<AuditEntity>()
+                .AsNoTracking()
                 .Where(i => i.Date >= theDay && i.Date < theNextDay)
                 .Select(i => i.ComponentId)
                 .Distinct()
