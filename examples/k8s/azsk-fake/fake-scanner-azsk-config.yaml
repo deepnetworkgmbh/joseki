@@ -1,0 +1,11 @@
+scanner:
+  !fake-azsk-scanner
+  id: d3cf9345-b20d-4701-af37-6cc021df3244
+  periodicity: 0 2 * * *
+  fakeResultsFolderPath: /usr/share/azsk_test_data
+
+exporter:
+  !az-blob
+  basePath: https://STORAGE_ACCOUNT_NAME.blob.core.windows.net/azsk-d3cf9345
+  sas: TOKEN
+  heartbeatPeriodicity: 86400
