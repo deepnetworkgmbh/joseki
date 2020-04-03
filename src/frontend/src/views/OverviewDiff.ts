@@ -3,7 +3,7 @@ import { ChartService } from "@/services/ChartService"
 import Spinner from "@/components/spinner/Spinner.vue";
 import StatusBar from "@/components/statusbar/StatusBar.vue";
 import { DataService } from '@/services/DataService';
-import { InfrastructureComponentSummary, InfrastructureOverviewDiff, InfrastructureComponent } from '@/models';
+import { InfrastructureComponentSummary, InfrastructureOverviewDiff, InfrastructureComponent, InfrastructureOverview, CountersSummary } from '@/models';
 import { ScoreService } from '@/services/ScoreService';
 import DiffComponent from '@/components/component/DiffComponent.vue';
 import router from '@/router';
@@ -81,6 +81,14 @@ export default class OverviewDiff extends Vue {
 
     goDiffPage(component: InfrastructureComponent) {
         router.push('/component-diff/' + component.id + '/' + this.date + '/' + this.date2);
+    }
+
+    getCurrentFromSummary(summary: InfrastructureOverview, componentId: string) : CountersSummary | undefined {
+        const index = summary.components.findIndex(x=>x.component.id === componentId);
+        if(index === -1) {
+            return undefined;
+        }
+        return summary.components[index].current;
     }
 
     getClusters1() { return this.data.summary1.components.filter(x => x.component.category === 'Kubernetes').length; }
