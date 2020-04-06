@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Spinner v-if="!loaded" />
+    <Spinner v-if="!loaded" :loadFailed="loadFailed" @reload="loadData" />
     <div v-show="loaded" class="flex flex-col justify-around border rounded-lg mb-3 shadow">
       <div class="bg-gray-200 border-b border-gray-400 rounded-t-lg flex flex-row">
         <div class="w-10/12 flex flex-row m-2 ml-4">

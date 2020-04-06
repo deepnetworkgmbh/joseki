@@ -18,6 +18,7 @@ export default class ComponentDetail extends Vue {
     selectedDate?: DateTime;
     selectedScore: number = 0;
     loaded: boolean = false;
+    loadFailed: boolean = false;
     service: DataService = new DataService();
     data: InfrastructureComponentSummary = new InfrastructureComponentSummary();
 
@@ -42,7 +43,8 @@ export default class ComponentDetail extends Vue {
                     this.loaded = true;
                     this.$forceUpdate();
                 }
-            });
+            })
+            .catch(()=> { this.loadFailed = true; });
     }
 
     /**

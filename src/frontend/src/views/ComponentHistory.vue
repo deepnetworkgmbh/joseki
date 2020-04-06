@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Spinner v-if="!loaded" />
+    <Spinner v-if="!loaded" :loadFailed="loadFailed" @reload="loadData" />
     <div v-if="loaded" class="segment shadow" style="min-height:300px;background-color:#eee;">  
       <div style="display:flex;flex-direction:column;width:100%;">
         <div class='subscription-history-header'>

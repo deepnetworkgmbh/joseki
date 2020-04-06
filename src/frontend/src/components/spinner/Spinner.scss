@@ -85,3 +85,24 @@
 		transform: rotate(360deg);
 	}
 }
+.spinner-container {
+	min-height:650px;
+	border: solid 1px #eee;
+}
+
+.load-failed {
+	cursor: pointer;
+	position: absolute;
+	top:380px;
+	left: 360px;
+	border:solid 1px #ccc;
+	width:310px;
+	height: 25px;
+	font-size:12px;
+	margin-top:10px;
+	background-color: #a00;
+	color:#fff;
+	border-radius: 3px;
+	padding:2px 4px 2px 4px;
+	text-align: center;
+  }

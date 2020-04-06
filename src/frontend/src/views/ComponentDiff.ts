@@ -23,6 +23,7 @@ export default class ComponentDiff extends Vue {
 
     nochanges: boolean = false;
     loaded: boolean = false;
+    loadFailed: boolean = false;
     service: DataService = new DataService();
     data: InfrastructureComponentDiff = new InfrastructureComponentDiff();
     checkedScans: any[] = [];
@@ -51,7 +52,8 @@ export default class ComponentDiff extends Vue {
                     this.$emit('componentChanged', this.data.summary1.component);
                     this.loaded = true;
                 }
-            });
+            })
+            .catch(()=> { this.loadFailed = true; });
     }
 
 
