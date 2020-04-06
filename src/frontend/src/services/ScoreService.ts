@@ -1,5 +1,65 @@
-export class ScoreService {
+import { CheckSeverity } from '@/models/CheckSeverity'
 
+/**
+ * Score service contains methods related with score calculations, ordering or view icon
+ *
+ * @export
+ * @class ScoreService
+ */
+export class ScoreService {
+  
+  /**
+   * return class for CheckSeverity
+   * 
+   * @static
+   * @param {CheckSeverity} severity
+   * @returns {string}
+   * @memberof ScoreService
+   */
+  public static getControlIcon(severity: CheckSeverity): string {
+    switch (severity.toString()) {
+      case 'NoData':
+        return 'icon-x-circle nodata-icon'
+      case 'Failed':
+        return 'icon-x-circle failed-icon'
+      case 'Warning':
+        return 'icon-alert-triangle warning-icon'
+      case 'Success':
+        return 'icon-check-circle noissues-icon'
+    }
+    return ''
+  }
+
+  /**
+   * return severity score, used for ordering
+   *
+   * @static
+   * @param {CheckSeverity} severity
+   * @returns {number}
+   * @memberof ScoreService
+   */
+  public static getSeverityScore(severity: CheckSeverity): number {
+    switch (severity.toString()) {
+      case 'Success':
+        return 1
+      case 'NoData':
+        return 10
+      case 'Warning':
+        return 50
+      case 'Failed':
+        return 100
+    }
+    return 0;
+  }
+
+  /**
+   * returns severity order
+   *
+   * @static
+   * @param {string} severity
+   * @returns {number}
+   * @memberof ScoreService
+   */
   public static getOrderBySeverity(severity: string): number {
     switch (severity) {
       case 'Critical': return 10;
@@ -11,6 +71,14 @@ export class ScoreService {
     return 0;
   }
 
+  /**
+   * calculates grade using score
+   *
+   * @static
+   * @param {number} score
+   * @returns {string}
+   * @memberof ScoreService
+   */
   public static getGrade(score: number): string {
 
     if (score > 97) {
@@ -42,21 +110,4 @@ export class ScoreService {
     }
   }
 
-  public static getScoreIconClass(score: number): string {
-    let result = '';
-
-    if (score > 0 && score <= 25) {
-      result = "fa fa-poo-storm";
-    }
-    if (score > 25 && score <= 50) {
-      result = "fa fa-cloud-rain"
-    }
-    if (score > 50 && score <= 75) {
-      result = "fa fa-cloud-sun"
-    }
-    if (score > 75) {
-      result = "fa fa-sun";
-    }
-    return result;
-  }
 }
