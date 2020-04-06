@@ -15,6 +15,7 @@ import { TargetGroup } from './TargetGroup';
 import { Vulnerability } from './Vulnerability';
 import { VulnerabilityGroup } from './VulnerabilityGroup';
 import { MetaData } from './MetaData';
+import { SeverityFilter } from './SeverityFilter';
 
 export {
   Check, CheckControl, CheckSeverity,
@@ -25,5 +26,6 @@ export {
   InfrastructureOverview, InfrastructureOverviewDiff,
   Resource, ScoreHistoryItem,
   TargetGroup, Vulnerability, VulnerabilityGroup,
-  MetaData
+  MetaData,
+  SeverityFilter
 }

@@ -19,6 +19,27 @@ import VueApexCharts from 'vue-apexcharts'
 Vue.use(VueApexCharts);
 Vue.component('apexchart', VueApexCharts);
 
+import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs.vue';
+Vue.component('Breadcrumbs', Breadcrumbs);
+import InfComponent from '@/components/component/InfComponent.vue';
+Vue.component('InfComponent', InfComponent);
+import DiffComponent from '@/components/component/DiffComponent.vue';
+Vue.component('DiffComponent', DiffComponent);
+import ControlGroup from '@/components/controlgroup/ControlGroup.vue';
+Vue.component('ControlGroup', ControlGroup);
+import ControlList from '@/components/controllist/ControlList.vue';
+Vue.component('ControlList', ControlList);
+import StatusBar from '@/components/statusbar/StatusBar.vue';
+Vue.component('StatusBar', StatusBar);
+import Score from '@/components/score/Score.vue';
+Vue.component('Score', Score);
+import ResultFilter from '@/components/filter/ResultFilter.vue';
+Vue.component('ResultFilter', ResultFilter);
+import Navigation from '@/components/navigation/Navigation.vue';
+Vue.component('Navigation', Navigation);
+import Spinner from '@/components/spinner/Spinner.vue';
+Vue.component('Spinner', Spinner);
+
 (async()=>{
 
   await ConfigService.Init();

@@ -1,8 +1,9 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { InfrastructureComponent, ScoreHistoryItem, CountersSummary } from '@/models';
 import router from '@/router';
-import { ChartService } from '@/services/ChartService';
 import { DateTime } from 'luxon';
+
+import { ChartService } from '@/services/';
+import { InfrastructureComponent, ScoreHistoryItem, CountersSummary } from '@/models';
 
 @Component
 export default class InfComponent extends Vue {

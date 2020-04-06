@@ -2,6 +2,7 @@ import { Check, CountersSummary, CheckSeverity, Collection } from '@/models'
 import { CheckCollection, CheckControl, CheckControlGroup, CheckObject } from './DiffService'
 import { DateTime } from 'luxon'
 import { SeverityFilter } from '@/models/SeverityFilter'
+import { ScoreService } from './ScoreService'
 
 export class MappingService {
     public static getResultsByCategory(checks: Check[]): any[] {
@@ -109,8 +110,8 @@ export class MappingService {
             control.id = check.control.id;
             control.text = check.control.message;
             control.result = check.result;
-            control.icon = this.getControlIcon(check.result);
-            control.order = this.getSeverityScore(check.result);
+            control.icon = ScoreService.getControlIcon(check.result);
+            control.order = ScoreService.getSeverityScore(check.result);
             control.tags = check.tags;
 
             if (check.tags.subGroup) {
@@ -151,32 +152,6 @@ export class MappingService {
         return results
     }
 
-    public static getControlIcon(severity: CheckSeverity): string {
-        switch (severity.toString()) {
-            case 'NoData':
-                return 'icon-x-circle nodata-icon'
-            case 'Failed':
-                return 'icon-x-circle failed-icon'
-            case 'Warning':
-                return 'icon-alert-triangle warning-icon'
-            case 'Success':
-                return 'icon-check-circle noissues-icon'
-        }
-        return ''
-    }
 
-    public static getSeverityScore(severity: CheckSeverity): number {
-        switch (severity.toString()) {
-            case 'Success':
-                return 1
-            case 'NoData':
-                return 10
-            case 'Warning':
-                return 50
-            case 'Failed':
-                return 100
-        }
-        return 0;
-    }
 }
 
