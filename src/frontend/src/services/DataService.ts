@@ -32,7 +32,7 @@ export class DataService {
       .get(url)
       .then((response) => response.data)
       .then((data) => InfrastructureOverview.GenerateFromData(data))
-      .catch((error) => console.log(error));
+      //.catch((error) => console.log(error));
   }
 
   public async getComponentDetailData(id: string, date?: DateTime): Promise<void | InfrastructureComponentSummary> {
@@ -47,7 +47,7 @@ export class DataService {
       .get(url)
       .then((response) => response.data)
       .then((data) => processData(data))
-      .catch((error) => console.log(error));
+      //.catch((error) => console.log(error)) ;
 
     // TODO: move this method to InfrastructureComponentSummary() 
     function processData(data): InfrastructureComponentSummary {
@@ -72,7 +72,7 @@ export class DataService {
       .get(url)
       .then((response) => response.data)
       .then((data) => processData(data))
-      .catch((error) => console.log(error));
+      //.catch((error) => console.log(error));
 
     function processData(data: any): ImageScanDetailModel {
       console.log(`[] processing`, data);
@@ -133,7 +133,7 @@ export class DataService {
       .get(url)
       .then((response) => response.data)
       .then((data) => processData(data))
-      .catch((error) => console.log(error));
+      //.catch((error) => console.log(error));
 
     function processData(data:any) : InfrastructureOverviewDiff {
       console.log(`[]input`, JSON.parse(JSON.stringify(data)));
@@ -176,8 +176,8 @@ export class DataService {
         return response.data;
       })
       .then((data) => processData(data))
-      .catch((error) => console.log(error))
-      .finally(() => console.log("component history request finished."));
+      //.catch((error) => console.log(error))
+      //.finally(() => console.log("component history request finished."));
 
     function processData(data): InfrastructureComponentSummary[] {
       let result = data.reverse();
@@ -198,7 +198,7 @@ export class DataService {
         console.log(JSON.parse(JSON.stringify(data)));
         return InfrastructureComponentDiff.CreateFromData(data)
       })
-      .catch((error) => console.log(error));
+      //.catch((error) => console.log(error));
 
   }
 
@@ -209,7 +209,7 @@ export class DataService {
       .get(url)
       .then((response) => response.data)
       .then((data) => data)
-      .catch((error) => console.log(error));
+      //.catch((error) => console.log(error));
   }
 
 }
