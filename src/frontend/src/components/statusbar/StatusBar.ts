@@ -19,11 +19,6 @@ export default class StatusBar extends Vue {
   private classes: string[] = ["nodata", "failed", "warning", "passed"]
   private widths: number[] = [0,0,0,0]
 
-  // {{ counters.noData }}, {{ counters.failed }}, {{ counters.warning }}, {{ counters.passed }}
-  created() {
-    //this.renderPortions();
-  }
-
   renderPortions() {
     this.starts = [false, false, false, false];
     this.ends = [false, false, false, false];

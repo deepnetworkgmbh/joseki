@@ -1,36 +1,38 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
-import Navigation from "@/components/navigation/Navigation.vue";
-import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs.vue';
 import { InfrastructureComponent } from './models';
 
-@Component({
-  components: {
-    Navigation, Breadcrumbs
-  }
-})
+@Component
 export default class App extends Vue {
 
   date: string = '';
   component: InfrastructureComponent = new InfrastructureComponent();
-
   sideWindowOpen: boolean = true;
 
+  /**
+   * Method for component change (for breadcrumb).
+   *
+   * @param {InfrastructureComponent} component
+   * @memberof App
+   */
   componentChanged(component: InfrastructureComponent) {
-    console.log(`[P] component changed: ${component.id}`);
     this.component = component;
   }
 
+  /**
+   * Method for date change (for breadcrumb).
+   *
+   * @param {string} date
+   * @memberof App
+   */
   dateChanged(date: string) {
-    console.log(`[P] date changed: ${date}`);
     this.date = date;
   }
 
-  getWrapperClass() {
-    const bareClass = 'container mx-auto '
-    return bareClass + (this.sideWindowOpen ? 'wrapper-shring' : 'wrapper');
-  }
-
-  // always scroll to top when navigation occurs
+  /**
+   * Always scroll to top when navigation occurs.
+   *
+   * @memberof App
+   */
   @Watch('$route.name')
   onRouteChanged() {
     var element = <HTMLElement>document.getElementById("nav");

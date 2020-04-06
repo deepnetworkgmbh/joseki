@@ -1,5 +1,4 @@
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
-import router from '@/router';
 import { InfrastructureComponent } from '@/models';
 
 @Component

@@ -171,9 +171,7 @@ export class ChartService {
 			},
 			xaxis: {
 				type: 'datetime',
-				crosshairs: { width: 1 },
-				// max: dates.length === 1 ? null : new Date(dates[1].toISODate()).getTime() + (24*60*60*1000),
-				// min: dates.length === 1 ? null : new Date(dates[0].toISODate()).getTime() - (24*60*60*1000 * 3)
+				crosshairs: { width: 1 }
 			},
 			tooltip: {
 				fixed: {
@@ -201,7 +199,7 @@ export class ChartService {
 
 	}
 
-	public static DonutChartOptions(id:string, summary: CountersSummary) : ApexCharts.ApexOptions {
+	public static DonutChartOptions(id:string, summary?: CountersSummary) : ApexCharts.ApexOptions {
 
 		return <ApexCharts.ApexOptions>{
 			chart: {
@@ -218,8 +216,8 @@ export class ChartService {
 				},
 				animations: ChartService.animationOptions
 			},
-			labels: summary.getLabels(),
-			colors: summary.getColors(),			  
+			labels: summary === undefined ? ['a'] : summary.getLabels(),
+			colors: summary === undefined ? [ChartService.colorNoData] : summary.getColors(),			  
 			stroke: {
 				width: 1
 			},
@@ -242,10 +240,10 @@ export class ChartService {
 								show: false
 							},
 							total: {
-								color: ChartService.getColorByScore(summary.score),
+								color: summary === undefined ? ChartService.colorNoData : ChartService.getColorByScore(summary.score),
 								show: true,
 								showAlways: true,
-								label: summary.score + '%',
+								label: summary === undefined ? '0' : summary.score + '%',
 								fontSize: '13px'
 							}
 						}
