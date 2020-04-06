@@ -22,6 +22,7 @@ export default class Overview extends Vue {
     selectedScore: number = 0;
     selectedDate?: DateTime = undefined;
     loaded: boolean = false;
+    loadFailed: boolean = false;
     service: DataService = new DataService();
     data!: InfrastructureOverview;
 
@@ -31,6 +32,7 @@ export default class Overview extends Vue {
      * @memberof Overview
      */
     loadData() {
+        this.loadFailed = false;
         this.selectedDate = (this.date === null) ? undefined : DateTime.fromISO(this.date);
         this.service
             .getGeneralOverviewData(this.selectedDate)
@@ -46,7 +48,8 @@ export default class Overview extends Vue {
                     this.loaded = true;
                     this.$forceUpdate();
                 }
-            });
+            })
+            .catch(()=> { this.loadFailed = true; });
     }
  
     /**
