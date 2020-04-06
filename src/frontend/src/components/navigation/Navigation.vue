@@ -1,15 +1,10 @@
 <template>
-  <div id="nav" class='flex flex-row p-2'>
-    <div class="logo" style="cursor:pointer">
+  <div id="nav">
+    <div class="logo" style="cursor:pointer;">
       <router-link to="/">
         <span class="icon-shield" style="font-size:19px;"></span>Joseki
       </router-link>
-    </div>
-    <!-- <div class="links flex-grow justify-end text-right pt-1">
-      <router-link to="/" :active-class="returnClusterOverviewActive()">Cluster Overview</router-link>
-      <router-link to="/image-overview" :active-class="returnImageOverviewActive()">Image Overview</router-link>
-      <router-link to="/docs">Documentation</router-link>
-    </div> -->
+    </div>    
   </div>
 </template>
 <script lang="ts" src="./Navigation.ts"></script>

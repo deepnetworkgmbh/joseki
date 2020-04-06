@@ -20,6 +20,7 @@ export default class OverviewDiff extends Vue {
     date2!: string;
 
     loaded: boolean = false;
+    loadFailed: boolean = false;
     service: DataService = new DataService();
     data!: InfrastructureOverviewDiff;
     checkedScans: any[] = [];
@@ -47,7 +48,8 @@ export default class OverviewDiff extends Vue {
                    this.loaded = true;
                 }
             })
-            .catch(error => console.log(error));
+            .catch(()=> { this.loadFailed = true; });
+           
     }
     
     /**
