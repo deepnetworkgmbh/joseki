@@ -1,5 +1,5 @@
 import axios from "axios";
-import { VulnerabilityGroup, TargetGroup, ImageScanDetailModel, InfrastructureOverview, InfrastructureComponentSummary, InfrastructureComponentDiff, InfrastructureOverviewDiff, MetaData, CountersSummary } from "@/models";
+import { VulnerabilityGroup, TargetGroup, ImageScanDetailModel, InfrastructureOverview, InfrastructureComponentSummary, InfrastructureComponentDiff, InfrastructureOverviewDiff, MetaData, CountersSummary, InfrastructureComponent } from "@/models";
 import { ScoreService } from './ScoreService';
 import { DateTime } from 'luxon';
 import { ConfigService } from './ConfigService';
@@ -136,25 +136,33 @@ export class DataService {
       .catch((error) => console.log(error));
 
     function processData(data:any) : InfrastructureOverviewDiff {
-      console.log(`[]data`, JSON.parse(JSON.stringify(data)));
+      console.log(`[]input`, JSON.parse(JSON.stringify(data)));
       let result = new InfrastructureOverviewDiff();
       result.summary1 = InfrastructureOverview.GenerateFromDiff(data.overall1, data.components1);
       result.summary2 = InfrastructureOverview.GenerateFromDiff(data.overall2, data.components2);
-     
-      // for(let i=0;i<result.summary1.components.length;i++) {
-      //   let id = result.summary1.components[i].component.id;
-      //   let index = result.summary2.components.findIndex(x=>x.component.id == id);
-      //   if (index === -1) {
-      //     // clone the component summary not to break the view
-      //     result.summary2.components.push(result.summary1.components[i]);   
-      //     // but mark as not loaded
-      //     result.summary1.components[i].notLoaded = true;       
-      //   }
-      // }
+      result.compositeComponents = [];
+      
+      let cc:InfrastructureComponentSummary[] = []
 
+      for(let i=0;i<result.summary1.components.length;i++) {
+        let id = result.summary1.components[i].component.id;
+        let index = cc.findIndex(x=>x.component.id === id);
+        if(index === -1) {
+          cc.push(result.summary1.components[i]);
+        }
+      }
+      for(let i=0;i<result.summary2.components.length;i++) {
+        let id = result.summary2.components[i].component.id;
+        let index = cc.findIndex(x=>x.component.id === id);
+        if(index === -1) {
+          cc.push(result.summary2.components[i]);
+        }
+      }
+
+      result.compositeComponents = cc;   
+      console.log(`[]output`, JSON.parse(JSON.stringify(result)));      
       return result;
     }
-
   }
 
   public async getComponentHistoryData(id: string): Promise<void | InfrastructureComponentSummary[]> {

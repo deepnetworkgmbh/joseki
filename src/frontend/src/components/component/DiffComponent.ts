@@ -1,8 +1,9 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { InfrastructureComponent, ScoreHistoryItem, CountersSummary } from '@/models';
 import router from '@/router';
-import { ChartService } from '@/services/ChartService';
 import { DateTime } from 'luxon';
+
+import { InfrastructureComponent, ScoreHistoryItem, CountersSummary } from '@/models';
+import { ChartService } from '@/services/';
 
 @Component
 export default class DiffComponent extends Vue {
@@ -37,11 +38,15 @@ export default class DiffComponent extends Vue {
 
   get areaOptions() : ApexCharts.ApexOptions {
     const dates = [DateTime.fromISO(this.date), DateTime.fromISO(this.date2)]
-    const scores= [this.summary1.score, this.summary2.score]
+    const scores= [
+      this.summary1 === undefined ? 0 : this.summary1.score, 
+      this.summary2 === undefined ? 0 : this.summary2.score    
+    ]
     return ChartService.AreaChartOptions(this.component.id, this.scoreHistory, dates, scores, this.areaCallback);
   }
 
   get donutSeries1() {
+    if(this.summary1 === undefined) return [1];
     return this.summary1.getSeries();
   }
 
@@ -50,6 +55,7 @@ export default class DiffComponent extends Vue {
   }
 
   get donutSeries2() {
+    if(this.summary2 === undefined) return [1];
     return this.summary2.getSeries();
   }
 
