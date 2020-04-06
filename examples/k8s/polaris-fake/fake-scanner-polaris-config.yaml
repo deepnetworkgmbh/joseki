@@ -1,0 +1,14 @@
+scanner:
+  id: 480e3d1f-ccba-499d-bbf1-b98925d806ad
+  cluster-id: 480e3d1f-ccba-499d-bbf1-b98925d806ad
+  periodicity: "0 2 * * *"
+  heartbeat-periodicity: 86400
+  isFake: true
+  fakeResultsPath: /usr/share/polaris_test_data
+polaris:
+  configPath: /app/polaris-config.yaml
+blobStorageType: azure-blob-storage
+azureBlob:
+  storageBaseUrl: https://BLOB_NAME.blob.core.windows.net/CONTAINER_NAME
+  sasToken: insert-sas-token-here
+logFormat: plain-text

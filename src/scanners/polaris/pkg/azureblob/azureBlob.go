@@ -59,16 +59,15 @@ const (
 	UploadFailed             = "upload-failed"
 )
 
-func (client *Client) UploadAuditResult(polarisResult scanner.PolarisAudit) (err error) {
-	now := time.Now().UTC()
+func (client *Client) UploadAuditResult(polarisResult scanner.PolarisAudit, scanDate time.Time) (err error) {
 	result := normalizeResult(polarisResult.Result)
-	folderName := GenerateAuditFolderName(now)
+	folderName := GenerateAuditFolderName(scanDate)
 
 	auditMeta := AuditMetadata{
 		Id:                 uuid.New().String(),
 		ClusterId:          client.config.Scanner.ClusterId,
 		ScannerVersion:     client.config.GetScannerVersion(),
-		Timestamp:          now.Unix(),
+		Timestamp:          scanDate.Unix(),
 		Result:             result,
 		FailureDescription: polarisResult.FailureDescription,
 		PolarisVersion:     client.config.GetPolarisVersion(),
