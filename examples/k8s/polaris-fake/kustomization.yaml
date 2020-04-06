@@ -1,0 +1,14 @@
+resources:
+- testdata_generator.yaml
+generatorOptions:
+  labels: 
+    app: fake-scanner-polaris
+    module: scanners
+    version: '#{polaris.imageTag}#'
+configMapGenerator:
+- name: fake-scanner-polaris-cfg
+  namespace: joseki
+  behavior: replace
+  files:
+  - fake-scanner-polaris-config.yaml
+  - polaris-config.yaml
