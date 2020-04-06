@@ -20,7 +20,7 @@
         <button @click="goComponentDetail(component)"><span class="icon-search"></span> Detail</button>
       </div>
       <div class="inf-component-pie">
-        <apexchart height="60" :options="donutOptions" :series="donutSeries"></apexchart>
+        <apexchart height="70" :options="donutOptions" :series="donutSeries"></apexchart>
       </div>
     </div>
   </div>

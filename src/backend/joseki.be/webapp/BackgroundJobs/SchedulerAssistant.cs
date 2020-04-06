@@ -73,12 +73,17 @@ namespace webapp.BackgroundJobs
                             await Task.Delay(delay, cancellation);
                         }
 
-                        using (var serviceScope = this.services.CreateScope())
+                        try
                         {
+                            using var serviceScope = this.services.CreateScope();
                             var auditProcessor = GetProcessor(serviceScope, item.Container.Metadata);
                             await auditProcessor.Process(item.Container, cancellation);
 
                             item.LastProcessed = DateTime.UtcNow;
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Warning(ex, "Scheduler Assistant encountered unexpected exception during processing {ContainerName}", item.Container.Name);
                         }
 
                         Logger.Write(item.GetLogEventLevel(), "Scheduler has processed {ContainerName}", item.Container.Name);

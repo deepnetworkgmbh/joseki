@@ -1,0 +1,59 @@
+
+.button {
+	@apply text-center;
+	@apply bg-gray-300;
+	@apply text-black;
+	@apply p-1;
+	@apply border;
+	@apply border-gray-600;
+	@apply rounded;
+	@apply text-xs;
+	@apply ml-1;
+	@apply shadow;
+}
+
+.btn {
+	@apply button;
+	min-width: 100px;
+    background: linear-gradient(0deg, rgba(220,220,225 ,1) 0%, rgba(255,255,255,1) 100%);
+    
+	&-selected {
+		@apply text-center;
+		@apply bg-green-300;
+		@apply text-white;
+		@apply p-1;
+		@apply border;
+		@apply border-gray-600;
+		@apply rounded;
+		@apply text-xs;
+		@apply ml-1;
+	}
+}
+
+.btn-mini {
+	@apply button;
+	min-width: 30px;
+	height: 25px;
+}
+
+.btn-short {
+	@apply button;
+	height: 20px;
+	padding-top: 0;
+}
+
+
+.small-link {
+	color:#0066aa;
+	border-bottom:dashed 1px #0066aa;
+	cursor: pointer;
+}
+
+button {
+	background: linear-gradient(0deg, rgba(220,220,225 ,1) 0%, rgba(255,255,255,1) 100%);
+}
+button:disabled,
+button[disabled] {
+	background-color: #cccccc;
+	color: #888;
+}

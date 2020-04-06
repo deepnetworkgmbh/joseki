@@ -362,12 +362,11 @@
             Regularly reloads Infrastructure Score cache items.
             </summary>
         </member>
-        <member name="M:webapp.BackgroundJobs.InfraScoreCacheWatchman.#ctor(webapp.Database.Cache.IInfrastructureScoreCache,webapp.Configuration.ConfigurationParser)">
+        <member name="M:webapp.BackgroundJobs.InfraScoreCacheWatchman.#ctor(System.IServiceProvider)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.BackgroundJobs.InfraScoreCacheWatchman"/> class.
             </summary>
-            <param name="cache">The cache.</param>
-            <param name="config">Joseki Backend configuration.</param>
+            <param name="services">DI container.</param>
         </member>
         <member name="M:webapp.BackgroundJobs.InfraScoreCacheWatchman.Watch(System.Threading.CancellationToken)">
             <summary>

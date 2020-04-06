@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Serilog;
@@ -34,9 +33,7 @@ namespace webapp.BackgroundJobs
             {
                 Logger.Information("Starting infra-score cache-reloader job");
 
-                using var scope = this.services.CreateScope();
-                var watchman = scope.ServiceProvider.GetRequiredService<InfraScoreCacheWatchman>();
-
+                var watchman = new InfraScoreCacheWatchman(this.services);
                 await watchman.Watch(stoppingToken);
 
                 Logger.Information("Infra-score cache-reloader job was finished");

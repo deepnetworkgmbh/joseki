@@ -2,7 +2,12 @@ import { CountersSummary, ScoreHistoryItem } from '@/models';
 import { DateTime } from 'luxon';
 
 export class ChartService {
-	public static groupColors = ['#B7B8A8', '#E33035', '#F8A462', '#41C6B9'];
+	public static colorNoData = '#B7B8A8';
+	public static colorFailed = '#E33035';
+	public static colorWarning = '#F8A462';
+	public static colorSuccess = '#41C6B9';
+
+	public static groupColors = [ChartService.colorNoData, ChartService.colorFailed, ChartService.colorWarning, ChartService.colorSuccess];
 
 	private static getSeverityColor(severity: string) {
 		switch (severity) {
@@ -17,6 +22,43 @@ export class ChartService {
 		}
 	}
 
+	private static getColorByScore(score: number) {
+		if (score>75) return ChartService.colorSuccess;
+		if (score>50) return ChartService.colorWarning;
+		return ChartService.colorFailed;
+	}
+
+	private static get thresholdAnnotation() {
+		return [{
+			y: 75,
+			y2: null,
+			strokeDashArray: 3,
+			borderColor: '#ccc',
+			fillColor: '#d2d2d2',
+			opacity: 0.3,
+			offsetX: 0,
+			yAxisIndex: 0,
+			label: {
+				borderWidth: 0,
+				text: '75%',
+				textAnchor: 'start',
+				position: 'left',
+				offsetY:6,
+				offsetX:100,
+				style: {
+					background: '#ddd', //transparent',
+					fontSize: '8px',
+					color:'#888',
+					padding: {
+						left:0,
+						right:0,
+						top:0,
+						bottom:0
+					}
+				}
+			}
+		}]
+	}
 
 	private static get animationOptions() {
 		return {
@@ -41,31 +83,50 @@ export class ChartService {
 		const xAxisAnnotations: any[] = [];
 		xAxisAnnotations.push({
 			x: new Date(dates[0].toISODate()).getTime(),
+			x2: (dates.length === 2 && scores.length === 2) ? new Date(dates[1].toISODate()).getTime() : null,
+			offsetX:-1,
+			strokeDashArray: 0,
 			borderWidth: 1,
-			borderColor: '#775DD0',
+			borderColor: '#F8A462',
 			label: {
 				borderWidth:0,
-				style: {              
-					background: 'transparent',
-					color: '#444',
-					fontSize: '9px'
-				},
-				text: `${scores[0]} %`
+				text: `${scores[0]} %`,
+				offsetX:-1,
+				style: {
+					background: '#F8A462', //transparent',
+					fontSize: '7px',
+					color:'#fff',
+					padding: {
+						left:3,
+						right:3,
+						top:1,
+						bottom:0
+					}
+				}
 			},
 		})
 		if (dates.length === 2 && scores.length === 2) {
 			xAxisAnnotations.push({
 				x: new Date(dates[1].toISODate()).getTime(),
+				offsetX:-1,
 				borderWidth: 1,
-				borderColor: '#775DD0',
+				borderColor: '#F8A462',
+				strokeDashArray: 0,
 				label: {
 					borderWidth:0,
-					style: {              
-						background: 'transparent',
-						color: '#444',
-						fontSize: '9px'
-					},
-					text: `${scores[1]} %`
+					text: `${scores[1]} %`,
+					offsetX:-1,
+					style: {
+						background: '#F8A462', //transparent',
+						fontSize: '7px',
+						color:'#fff',
+						padding: {
+							left:3,
+							right:3,
+							top:1,
+							bottom:0
+						}
+					}	
 				},
 			})	
 		}
@@ -99,17 +160,20 @@ export class ChartService {
 				},
 				animations: ChartService.animationOptions
 			},
+			colors: [ChartService.colorSuccess, ChartService.colorWarning, ChartService.colorFailed],
 			stroke: { width: 1 },
 			yaxis: {
 				type: 'numeric',
 				labels: {
 					formatter: (value) => { return value + "%" },
 					show: false,
-				}        
+				}								
 			},
 			xaxis: {
 				type: 'datetime',
 				crosshairs: { width: 1 },
+				// max: dates.length === 1 ? null : new Date(dates[1].toISODate()).getTime() + (24*60*60*1000),
+				// min: dates.length === 1 ? null : new Date(dates[0].toISODate()).getTime() - (24*60*60*1000 * 3)
 			},
 			tooltip: {
 				fixed: {
@@ -129,19 +193,9 @@ export class ChartService {
 					show: false
 				}
 			},
-			grid: {
-				row: {
-					colors: ['#e5e5e5', 'transparent'],
-					opacity: 0.5
-				}, 
-				xaxis: {
-					lines: {
-						show: true
-					}
-				}
-			},
 			annotations: {
-				xaxis: xAxisAnnotations
+				xaxis: xAxisAnnotations,
+				yaxis: ChartService.thresholdAnnotation,
 			}
 		}
 
@@ -188,6 +242,7 @@ export class ChartService {
 								show: false
 							},
 							total: {
+								color: ChartService.getColorByScore(summary.score),
 								show: true,
 								showAlways: true,
 								label: summary.score + '%',

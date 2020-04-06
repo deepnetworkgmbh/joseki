@@ -1,8 +1,10 @@
+@import "../../styles/colors.scss";
+
 .inf-component {
 	width: 315px;
 	height: 100px;
-	background-color: #eee;
-	border: solid 1px #aaa;
+	background-color: $color-content-bg;
+	border: solid 1px $color-content-border;
 	margin-bottom: 10px;
 	margin-right: 10px;
 	border-radius: 5px;
@@ -50,7 +52,7 @@
 		white-space: nowrap;
 		overflow: hidden;
 		font-size: 11px;
-		color: #444;
+		color: $color-text-light;
 	}
 
 	&-icon {
@@ -62,7 +64,7 @@
 		border-radius: 5px;
 		padding: 2px;
 		padding-top: 4px;
-		border: solid 1px #ccc;
+		border: solid 1px $color-content-border;
 	}
 
 	&-buttons {
@@ -88,8 +90,8 @@
 
 	&-pie {
 		position: relative;
-		top: 0px;
+		top: -3px;
 		z-index: 0;
-		left: 5px;
+		left: 5px;		
 	}
 }

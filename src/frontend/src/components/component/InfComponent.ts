@@ -11,9 +11,6 @@ export default class InfComponent extends Vue {
   private component!: InfrastructureComponent;
 
   @Prop()
-  private sections: any;
-
-  @Prop()
   private score: any;
 
   @Prop()
