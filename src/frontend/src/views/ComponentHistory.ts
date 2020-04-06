@@ -20,6 +20,7 @@ export default class ComponentHistory extends Vue {
 
     component?: InfrastructureComponent;
     loaded: boolean = false;
+    loadFailed: boolean = false;
     service: DataService = new DataService();
     data: InfrastructureComponentSummary[] = [];
     checkedScans: any[] = [];
@@ -48,7 +49,8 @@ export default class ComponentHistory extends Vue {
                     this.$emit('componentChanged', this.component);
                     this.loaded = true;
                 }
-            });
+            })
+            .catch(()=> { this.loadFailed = true; });
     }
 
     /**

@@ -22,6 +22,7 @@ export default class ImageDetail extends Vue {
   component?: InfrastructureComponent
 
   loaded: boolean = false;
+  loadFailed: boolean = false;
   service: DataService = new DataService();
   data: ImageScanDetailModel = new ImageScanDetailModel();
 
@@ -31,15 +32,21 @@ export default class ImageDetail extends Vue {
    * @memberof ImageDetail
    */
   created() {
-    this.service.getImageScanResultData(this.imageid, this.date)
-      .then(response => {
-        if (response) {
-          this.data = response;
-          this.loaded = true;
-        }
-      });
+    this.loadData();
     if(this.component) {
       this.$emit('componentChanged', this.component);
     }
+  }
+
+  loadData() {
+    this.service
+        .getImageScanResultData(this.imageid, this.date)
+        .then(response => {
+          if (response) {
+            this.data = response;
+            this.loaded = true;
+          }
+        })
+        .catch(()=> { this.loadFailed = true; });
   }
 }
