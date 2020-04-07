@@ -8,7 +8,7 @@ metadata:
     app: fake-scanner-polaris
     module: scanners
 data:
-  scanner-polaris-config.yaml:  |
+  fake-scanner-polaris-config.yaml:  |
     to-be-replaced
   polaris-config.yaml:  |
     to-be-replaced
@@ -17,7 +17,7 @@ data:
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: scanner-polaris
+  name: fake-scanner-polaris
   namespace: joseki
   labels:
     app: fake-scanner-polaris
@@ -56,7 +56,7 @@ spec:
               volumeMounts:
                 - name: config
                   mountPath: /app/scanner-polaris-config.yaml
-                  subPath: scanner-polaris-config.yaml
+                  subPath: fake-scanner-polaris-config.yaml
                   readOnly: true
                 - name: config
                   mountPath: /app/polaris-config.yaml
