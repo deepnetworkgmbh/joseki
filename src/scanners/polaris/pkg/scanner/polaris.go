@@ -8,13 +8,6 @@ import (
 	"log"
 )
 
-type PolarisAudit struct {
-	Result             string
-	FailureDescription string
-	Audit              interface{}
-	KubeMetadata       interface{}
-}
-
 func Audit(configPath string) (PolarisAudit){
 	audit := PolarisAudit{}
 

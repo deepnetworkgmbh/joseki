@@ -25,6 +25,10 @@ type Scanner struct {
 	ClusterId            string `json:"cluster-id"`
 	Periodicity          string `json:"periodicity"`
 	HeartbeatPeriodicity int64  `json:"heartbeat-periodicity"`
+	IsFake               bool   `json:"isFake,omitempty"`
+	FakeResultsPath      string `json:"fakeResultsPath,omitempty"`
+	From                 string `json:"from,omitempty"`
+	To                   string `json:"to,omitempty"`
 }
 
 type Polaris struct {
@@ -71,9 +75,24 @@ func Parse(path string) (Config, error) {
 	for {
 		if err := d.Decode(&conf); err != nil {
 			if err == io.EOF {
+
+				if conf.Scanner.IsFake {
+					if (len(conf.Scanner.From) > 0) != (len(conf.Scanner.To) > 0) {
+						return conf, fmt.Errorf("from and To dates should both have values, or both be empty")
+					}
+
+					if len(conf.Scanner.FakeResultsPath) == 0 {
+						return conf, fmt.Errorf("missing config value: FakeResultsPath")
+					}
+				} else {
+					if len(conf.Scanner.To) > 0 || len(conf.Scanner.From) > 0 {
+						return conf, fmt.Errorf("from and To dates are supported only for fake scanner")
+					}
+				}
+
 				return conf, nil
 			}
-			return conf, fmt.Errorf("Decoding config failed: %v", err)
+			return conf, fmt.Errorf("decoding config failed: %v", err)
 		}
 	}
 }
