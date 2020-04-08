@@ -2,7 +2,7 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  namespace: joseki
+  namespace: '${joseki.namespace}'
   name: scanner-trivy-storage
 spec:
   accessModes:
@@ -10,25 +10,25 @@ spec:
   resources:
     requests:
       storage: 32Gi
- 
+
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: scanner-trivy-cfg
-  namespace: joseki
+  namespace: '${joseki.namespace}'
   labels:
     app: scanner-trivy
     module: scanners
 data:
-  scanner-trivy-config.yaml:  |-
+  config_scanner.yaml:  |
     to-be-replaced
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: joseki
+  namespace: '${joseki.namespace}'
   name: scanner-trivy
 spec:
   replicas: 1
@@ -50,7 +50,7 @@ spec:
     spec:
       containers:
       - name: scanner-trivy
-        image: 'deepnetwork/joseki-scanner-trivy:#{trivy.imageTag}#'
+        image: 'deepnetwork/joseki-scanner-trivy:${trivy.imageTag}'
         imagePullPolicy: Always
         resources:
           requests:
@@ -88,15 +88,15 @@ spec:
           readOnlyRootFilesystem: false
         volumeMounts:
           - name: scanner-cfg-volume
-            mountPath: /app/scanner-trivy-config.yaml
-            subPath: scanner-trivy-config.yaml
+            mountPath: /app/config_scanner.yaml
+            subPath: config_scanner.yaml
           - name: storage-volume
             mountPath: "/app/.cache"
         env:
           - name: IMAGE_SCANNER_CONFIG_FILE_PATH
-            value: "/app/scanner-trivy-config.yaml"
+            value: "/app/config_scanner.yaml"
           - name: SCANNER_VERSION
-            value: "#{trivy.imageTag}#"
+            value: "${trivy.imageTag}"
       securityContext:
         fsGroup: 10001
       volumes:
@@ -105,8 +105,8 @@ spec:
             name: scanner-trivy-cfg
             defaultMode: 0777
             items:
-              - key: scanner-trivy-config.yaml
-                path: scanner-trivy-config.yaml
+              - key: config_scanner.yaml
+                path: config_scanner.yaml
         - name: storage-volume
           persistentVolumeClaim:
             claimName: scanner-trivy-storage

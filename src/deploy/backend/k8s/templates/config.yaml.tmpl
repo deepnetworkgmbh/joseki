@@ -1,0 +1,28 @@
+database:
+  connectionString: Server=tcp:${be.sqlServer}.database.windows.net,1433;Initial Catalog=${be.sqlDb};Persist Security Info=False;User ID=${be.sqlUsername};Password=${be.sqlPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
+
+cache:
+   polarisCheckTtl: 7
+   azureCheckTtl: 7
+   cveTtl: 7
+   defaultTtl: 10
+   imageScanTtl: 14
+
+watchmen:
+   scannerContainersPeriodicitySeconds: 1800
+   archiverPeriodicityHours: 24
+   archiveTtlDays: 90
+   infraScorePeriodicityHours: 12
+
+azureBlob:
+  basePath: https://${be.blobStorageName}.blob.core.windows.net 
+  sas: ${be.blobStorageSas}
+  connectionString: DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};EndpointSuffix=core.windows.net
+  accountName: ${be.blobStorageName}
+  accountKey: ${be.blobStorageKey}
+
+azureQueue:
+  connectionString: DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};EndpointSuffix=core.windows.net
+  imageScanRequestsQueue: image-scan-requests
+  accountName: ${be.blobStorageName}
+  accountKey: ${be.blobStorageKey}

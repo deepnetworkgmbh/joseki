@@ -1,0 +1,79 @@
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  namespace: '${joseki.namespace}'
+  labels:
+    app: joseki-frontend
+data:
+  config.json: |-
+    to-be-replaced
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: joseki-fe
+  namespace: '${joseki.namespace}'
+  labels:
+    app: joseki-frontend
+  annotations:
+spec:
+  ports:
+  - name: joseki-fe
+    port: 80
+    protocol: TCP
+    targetPort: main-http
+  selector:
+    app: joseki-frontend
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: joseki-fe
+  namespace: '${joseki.namespace}'
+  labels:
+    app: joseki-frontend
+    version: '${fe.imageTag}'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: joseki-frontend
+  template:
+    metadata:
+      labels:
+        app: joseki-frontend
+    spec:
+      containers:
+      - name: joseki-fe
+        image: 'deepnetwork/joseki-frontend:${fe.imageTag}'
+        imagePullPolicy: 'Always'
+        ports:
+        - name: main-http
+          containerPort: 8080
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        volumeMounts:
+          - name: frontend-config-volume
+            mountPath: /usr/share/nginx/html/config.json
+            subPath: config.json
+      serviceAccountName: joseki-fe
+      volumes:
+        - name: frontend-config-volume
+          configMap:
+            name: frontend-config
+            defaultMode: 0777
+            items:
+              - key: config.json
+                path: config.json

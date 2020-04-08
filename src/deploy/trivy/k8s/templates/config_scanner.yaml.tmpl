@@ -1,0 +1,27 @@
+scanner:
+  !trivy-scanner
+  id: ${trivy.scannerId}
+  cachePath: /app/image-scanner-cache/.trivy
+  registries:
+    - name: deepnetwork
+      address: https://registry.hub.docker.com
+      username:
+      password:
+    - name: acr.azurecr.io
+      address: acr.azurecr.io
+      username: acr
+      password: ...
+
+exporter:
+  !az-blob
+  basePath: https://${trivy.storageAccountName}.blob.core.windows.net/${trivy.containerName}
+  sas: ${trivy.storageAccountSas}
+  heartbeatPeriodicity: 600
+
+queue:
+  !az-storage-queue
+  basePath: https://${trivy.storageAccountName}.queue.core.windows.net
+  mainQueue: image-scan-requests
+  mainQueueSas: ${trivy.mainQueueSas}
+  quarantineQueue: image-scan-requests-quarantine
+  quarantineQueueSas: ${trivy.quarantineQueueSas}
