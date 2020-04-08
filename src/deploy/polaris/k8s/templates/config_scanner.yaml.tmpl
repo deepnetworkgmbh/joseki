@@ -1,0 +1,12 @@
+scanner:
+  id: ${SCANNER_ID}
+  cluster-id: ${SCANNER_ID}
+  periodicity: "0 2 * * *"
+  heartbeat-periodicity: 86400
+polaris:
+  configPath: /app/config_polaris.yaml
+blobStorageType: azure-blob-storage
+azureBlob:
+  storageBaseUrl: https://${BLOB_NAME}.blob.core.windows.net/${CONTAINER_NAME}
+  sasToken: ${SAS_TOKEN}
+logFormat: plain-text

@@ -1,0 +1,36 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: scanner-azsk
+  namespace: ${joseki.namespace}
+  labels:
+    app: scanner-azsk
+    module: scanners
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: scanner-azsk
+  labels:
+    app: scanner-azsk
+    module: scanners
+
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: scanner-azsk
+  labels:
+    app: scanner-azsk
+    module: scanners
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: scanner-azsk
+subjects:
+  - kind: ServiceAccount
+    name: scanner-azsk
+    namespace: ${joseki.namespace}

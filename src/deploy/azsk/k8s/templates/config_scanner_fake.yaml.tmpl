@@ -1,0 +1,11 @@
+scanner:
+  !fake-azsk-scanner
+  id: ${azsk.scannerId}
+  periodicity: 0 2 * * *
+  fakeResultsFolderPath: /usr/share/azsk_test_data
+
+exporter:
+  !az-blob
+  basePath: https://${azsk.storageAccountName}.blob.core.windows.net/${azsk.containerName}
+  sas: ${azsk.storageAccountSas}
+  heartbeatPeriodicity: 86400
