@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -370,6 +371,92 @@ namespace webapp.Controllers.v0._1
             {
                 Logger.Error(ex, "Failed to get Image Scan {ImageTag} diff between {AuditDate1} and {AuditDate2}", unescapedTag, date1, date2);
                 return this.StatusCode(500, $"Failed to get Image Scan {unescapedTag} diff between {date1} and {date2}");
+            }
+        }
+
+        /// <summary>
+        /// Returns the overview summary detail.
+        /// </summary>
+        /// <returns>the overview summary detail.</returns>
+        [HttpGet]
+        [Route("overview/detail", Name = "get-overview-detail")]
+        [ProducesResponseType(200, Type = typeof(CheckResultSet))]
+        [ProducesResponseType(400, Type = typeof(string))]
+        [ProducesResponseType(500, Type = typeof(string))]
+        public async Task<ObjectResult> GetOverviewDetail(string sortBy, string filterBy, DateTime? date = null, int pageSize = 50, int pageIndex = 0)
+        {
+            #region input validation
+
+            var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-30);
+            if (date.HasValue)
+            {
+                if (date < oneMonthAgo)
+                {
+                    return this.BadRequest($"Requested date {date} is more than one month ago. Joseki supports only 31 days.");
+                }
+                else if (date >= DateTime.UtcNow.Date.AddDays(1))
+                {
+                    return this.BadRequest($"Requested date {date} is in future. Unfortunately, Joseki could not see future yet.");
+                }
+            }
+
+            #endregion
+
+            var detailsDate = date?.Date ?? DateTime.UtcNow.Date;
+            try
+            {
+                var handler = this.services.GetService<GetOverviewDetailsHandler>();
+
+                var details = await handler.GetDetails(sortBy, filterBy, detailsDate, pageSize, pageIndex);
+                return this.StatusCode(200, details);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Failed to get overview details on {OverviewDate}", detailsDate);
+                return this.StatusCode(500, $"Failed to get overview details on {detailsDate}");
+            }
+        }
+
+        /// <summary>
+        /// Returns autocomplete data.
+        /// </summary>
+        /// <returns>the autocomplete data.</returns>
+        [HttpGet]
+        [Route("overview/search", Name = "get-overview-autocomplete")]
+        [ProducesResponseType(200, Type = typeof(Dictionary<string, string[]>))]
+        [ProducesResponseType(400, Type = typeof(string))]
+        [ProducesResponseType(500, Type = typeof(string))]
+        public async Task<ObjectResult> GetOverviewSearch(string sortBy, string filterBy, DateTime? date = null)
+        {
+            #region input validation
+
+            var oneMonthAgo = DateTime.UtcNow.Date.AddDays(-30);
+            if (date.HasValue)
+            {
+                if (date < oneMonthAgo)
+                {
+                    return this.BadRequest($"Requested date {date} is more than one month ago. Joseki supports only 31 days.");
+                }
+                else if (date >= DateTime.UtcNow.Date.AddDays(1))
+                {
+                    return this.BadRequest($"Requested date {date} is in future. Unfortunately, Joseki could not see future yet.");
+                }
+            }
+
+            #endregion
+
+            var detailsDate = date?.Date ?? DateTime.UtcNow.Date;
+            try
+            {
+                var handler = this.services.GetService<GetOverviewDetailsHandler>();
+
+                var details = await handler.GetAutoCompleteData(filterBy, detailsDate);
+                return this.StatusCode(200, details);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Failed to get overview search on {OverviewDate}", detailsDate);
+                return this.StatusCode(500, $"Failed to get overview search on {detailsDate}");
             }
         }
     }

@@ -2,6 +2,7 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 
 import { DataService } from '@/services/';
 import { ImageScanDetailModel, InfrastructureComponent } from '@/models';
+import { DateTime } from 'luxon';
 
 /**
  * Image detail is a view to display the details of an image scan
@@ -33,6 +34,7 @@ export default class ImageDetail extends Vue {
    */
   created() {
     this.loadData();
+    this.$emit('dateChanged', DateTime.fromISO(this.date!).toISODate())
     if(this.component) {
       this.$emit('componentChanged', this.component);
     }

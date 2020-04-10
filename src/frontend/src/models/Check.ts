@@ -1,4 +1,4 @@
-import { Collection, CheckControl, CheckSeverity, Resource } from '@/models';
+import { Collection, CheckControl, CheckSeverity, Resource, InfrastructureComponent } from '@/models';
 
 export class Check {
 
@@ -28,4 +28,10 @@ export class Check {
 
   /// Tag for check
   public tags: any;
+}
+
+export class OverviewCheck extends Check {
+
+  public component!: InfrastructureComponent;
+
 }

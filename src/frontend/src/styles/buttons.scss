@@ -36,6 +36,14 @@
 	height: 25px;
 }
 
+.btn-xs {
+	@apply button;
+	min-width: 20px;
+	height: 20px;
+	padding-top:1px;
+}
+
+
 .btn-short {
 	@apply button;
 	height: 20px;
@@ -45,7 +53,8 @@
 
 .small-link {
 	color:#0066aa;
-	border-bottom:dashed 1px #0066aa;
+	text-decoration: none;;
+	//border-bottom:dashed 1px #0066aa;
 	cursor: pointer;
 }
 

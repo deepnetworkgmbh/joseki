@@ -3,6 +3,7 @@ import { VulnerabilityGroup, TargetGroup, ImageScanDetailModel, InfrastructureOv
 import { ScoreService } from './ScoreService';
 import { DateTime } from 'luxon';
 import { ConfigService } from './ConfigService';
+import { CheckResultSet } from '@/models/CheckResultSet';
 
 export class DataService {
 
@@ -30,9 +31,52 @@ export class DataService {
 
     return axios
       .get(url)
-      .then((response) => response.data)
+      .then((response) => {
+         console.log(response.data);
+         return response.data
+      })
       .then((data) => InfrastructureOverview.GenerateFromData(data))
       //.catch((error) => console.log(error));
+  }
+
+  public async getGeneralOverviewDetail(pageSize: number, pageIndex: number, date?: DateTime, filterBy?: string, sortBy?: string) : Promise<void | CheckResultSet> {
+    let suffix = (date === undefined) ? '?api-version=' + this.apiVersion 
+                                      : '?date=' + date!.toISODate() + '&api-version=' + this.apiVersion;
+
+    if (filterBy && filterBy.length > 0) {
+      suffix += '&filterBy=' + filterBy;
+    }else{
+      suffix += '&filterBy=*';
+    }
+    if (sortBy && sortBy.length > 0 ) {
+      suffix += '&sortBy=' + sortBy;
+    }
+    suffix += '&pageSize=' + pageSize;
+    suffix += '&pageIndex=' + pageIndex;
+   
+    let url = this.baseUrl + "/audits/overview/detail/" + suffix;
+    console.log(`[] calling ${url}`);
+
+    return axios.get(url)
+            .then((response) => response.data)
+            .then((data) => <CheckResultSet>data);
+  }
+
+  public async getGeneralOverviewSearch(date?: DateTime, filterBy?: string) : Promise<void | any> {
+    let suffix = (date === undefined) ? '?api-version=' + this.apiVersion 
+                                      : '?date=' + date!.toISODate() + '&api-version=' + this.apiVersion;
+
+    if (filterBy && filterBy.length > 0) {
+      suffix += '&filterBy=' + filterBy;
+    }else{
+      suffix += '&filterBy=*';
+    }  
+    let url = this.baseUrl + "/audits/overview/search/" + suffix;
+    console.log(`[] calling ${url}`);
+
+    return axios.get(url)
+            .then((response) => response.data)
+            //.then((data) => <CheckResultSet>data);
   }
 
   public async getComponentDetailData(id: string, date?: DateTime): Promise<void | InfrastructureComponentSummary> {

@@ -23,6 +23,13 @@
             <span class="slash">/</span>
             <span><i class="icon-target" /> Image: {{ imageid }}</span>
         </p>
+        <p v-if="showFilter">
+            <span class="slash">/</span>
+            <span>
+                <i class="icon-filter" /> 
+                {{ filter === '*' ? 'Show All' : '' }}
+            </span>
+        </p>
     </div>
 </template>
 <script lang="ts" src="./Breadcrumbs.ts"></script>

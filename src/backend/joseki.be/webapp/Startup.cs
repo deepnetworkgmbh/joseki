@@ -148,6 +148,7 @@ namespace webapp
             services.AddTransient<GetComponentDetailsHandler>();
             services.AddTransient<GetImageScanHandler>();
             services.AddTransient<GetKnowledgebaseItemsHandler>();
+            services.AddTransient<GetOverviewDetailsHandler>();
 
             services.AddScoped<ScannerContainersWatchman>();
             services.AddScoped<SchedulerAssistant>();

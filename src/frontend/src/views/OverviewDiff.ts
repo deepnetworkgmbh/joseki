@@ -44,8 +44,8 @@ export default class OverviewDiff extends Vue {
             .getGeneralOverviewDiffData(this.date, this.date2)
             .then(response => {
                 if (response) {
-                   this.data = response;
-                   this.loaded = true;
+                    this.data = response;
+                    this.loaded = true;
                 }
             })
             .catch(()=> { this.loadFailed = true; });
@@ -98,14 +98,14 @@ export default class OverviewDiff extends Vue {
      *
      * @memberof OverviewDiff
      */
-    getPieChartOptions1() { return ChartService.PieChartOptions("pie-overall1", this.data.summary1.overall.current, true) }
+    getPieChartOptions1() { return ChartService.PieChartOptions("pie-overall1", this.data.summary1.overall.current, ()=>{}, true) }
 
     /**
      * Chart options for pie2
      *
      * @memberof OverviewDiff
      */
-    getPieChartOptions2() { return ChartService.PieChartOptions("pie-overall2", this.data.summary2.overall.current, true) }
+    getPieChartOptions2() { return ChartService.PieChartOptions("pie-overall2", this.data.summary2.overall.current, ()=>{}, true) }
         
     /**
      * Number of clusters on scan 1
