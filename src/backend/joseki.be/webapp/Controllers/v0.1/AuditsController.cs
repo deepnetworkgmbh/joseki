@@ -423,10 +423,10 @@ namespace webapp.Controllers.v0._1
         /// <returns>the autocomplete data.</returns>
         [HttpGet]
         [Route("overview/search", Name = "get-overview-autocomplete")]
-        [ProducesResponseType(200, Type = typeof(Dictionary<string, string[]>))]
+        [ProducesResponseType(200, Type = typeof(Dictionary<string, CheckFilter[]>))]
         [ProducesResponseType(400, Type = typeof(string))]
         [ProducesResponseType(500, Type = typeof(string))]
-        public async Task<ObjectResult> GetOverviewSearch(string sortBy, string filterBy, DateTime? date = null)
+        public async Task<ObjectResult> GetOverviewSearch(string filterBy, DateTime? date = null)
         {
             #region input validation
 

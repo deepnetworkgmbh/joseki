@@ -294,7 +294,7 @@ export class ChartService {
 				events: {
 					dataPointSelection: function name(event, chartContext, config) {
 						let index = config.dataPointIndex;
-						let value = summary.getLabels()[index].replace(" ", "").toLowerCase();
+						let value = summary.getLabels()[index].replace(" ", "");
 						cb(value);
 					}
 				}

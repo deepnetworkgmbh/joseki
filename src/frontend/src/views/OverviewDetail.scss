@@ -1,5 +1,5 @@
 .checkrow {
-    font-size: 9px;
+    font-size: 10px;
     line-height: 10px;
 }
 
@@ -68,4 +68,10 @@
 
 .option-dimmed > label {
     color:#777;
+}
+
+.table tr td {
+    text-overflow: ellipsis; 
+    overflow-x: hidden; 
+    white-space:nowrap;
 }

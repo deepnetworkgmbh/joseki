@@ -17,14 +17,15 @@ export default class StatusBar extends Vue {
   private starts: boolean[] = [false, false, false, false];
   private ends: boolean[] = [false, false, false, false];
   private classes: string[] = ["nodata", "failed", "warning", "passed"]
-  private widths: number[] = [0,0,0,0]
+  public widths: number[] = [0,0,0,0];
+  public array: number[] = [0,0,0,0];
 
   renderPortions() {
     this.starts = [false, false, false, false];
     this.ends = [false, false, false, false];
     this.widths = [0,0,0,0];
 
-    let arr = [ 
+    this.array = [ 
       (this.severities.nodata ? this.counters.noData : 0) , 
       (this.severities.failed ? this.counters.failed : 0), 
       (this.severities.warning ? this.counters.warning : 0),
@@ -32,18 +33,18 @@ export default class StatusBar extends Vue {
     ];
 
     // calculate start-ends
-    for(let i=0;i<arr.length;i++) {
-      if(arr[i]>0) { this.starts[i] = true; break;}
+    for(let i=0;i<this.array.length;i++) {
+      if(this.array[i]>0) { this.starts[i] = true; break;}
     }
-    for(let i=0;i<arr.length;i++) {
-      if(arr[i] > 0) { for(let j=0;j<i;j++){ this.ends[j]=false;} this.ends[i] = true;}
+    for(let i=0;i<this.array.length;i++) {
+      if(this.array[i] > 0) { for(let j=0;j<i;j++){ this.ends[j]=false;} this.ends[i] = true;}
     }
 
-    let sum = arr.reduce((a,b)=> a+b);
+    let sum = this.array.reduce((a,b)=> a+b);
     // calculate widths
-    for(let i=0;i<arr.length;i++) {
-        if(arr[i]>0) {
-          let width = Math.ceil(200 * arr[i] / sum);
+    for(let i=0;i<this.array.length;i++) {
+        if(this.array[i]>0) {
+          let width = Math.ceil(200 * this.array[i] / sum);
           if(width>2) {
             width-=1;
           }
@@ -85,6 +86,11 @@ export default class StatusBar extends Vue {
     }
     return result;
   }
+
+  getLabel(i:number): string {
+    return this.widths[i]> 10 ? this.array[i].toString() : '';
+  }
+
   meta(key: string) { return MetaService.Get(key) }
 
   @Watch('severities', {immediate:true, deep: true})

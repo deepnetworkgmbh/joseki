@@ -2,14 +2,21 @@
     <div>
         <Spinner v-if="!loaded" :loadFailed="loadFailed" @reload="loadData" />
         <div v-if="loaded" class="shadow" style="min-height:300px;padding:4px">
-           <table class="table">
+           <table class="table">                
+                <col style="width:11%">
+                <col style="width:8%">
+                <col style="width:24%">
+                <col style="width:29%">
+                <col style="width:20%">
+                <col style="width:8%">
+
                 <thead style="width:100%">
                     <tr class="table-header">
                         <td v-for="(col,i) in headers" :key="`col${i}`" :style="getColumnWidth(i)">
-                            <span class="filter-button noselect" @click="toggleColumnFilter(i)"><i class="icon-filter" />
-                                <span v-if="col.checkedCount()>0">({{ col.checkedCount() }})</span>
+                            <span class="filter-button noselect" @click="toggleColumnFilter(i)" style="float:left;">
+                                <i class="icon-filter" :style="{ color: col.checkedCount()>0 ? '#3182ce': 'gray' }" />
                             </span>
-                            <span style="cursor:pointer" class="noselect" @click="changeOrdering(i)">
+                            <span style="cursor:pointer;float:left;" class="noselect" @click="changeOrdering(i)">
                                 {{ col.label }}
                                 <i v-if="col.sortable" :class="getHeaderClass(i)" />         
                             </span>
@@ -20,14 +27,13 @@
                                     </li>
                                 </ul>
                             </div>
-                        </td>
-                        <AdvancedFilter :filter="filter" @filterUpdated="onFilterUpdated" />
+                        </td>                       
                     </tr>
                 </thead>
                 <tbody style="width:100%">
                     <tr v-for="(item,i) in data.checks" :key="`item${i}`" class="checkrow">                    
-                        <td>{{ item.category }}</td>
                         <td><i :class="getComponentIcon(item.component.category)" /> {{ item.component.name }}</td>
+                        <td>{{ item.category }}</td>
                         <td>{{ item.collection.type }}:{{ item.collection.name }}</td>
                         <td v-if="item.control.id === 'container_image.CVE_scan' && item.control.message !== 'No issues'">
                             <router-link class='small-link' :to="{ name: 'ImageDetail', params: { imageid: item.tags.imageTag, date: date, component: item.component }}">

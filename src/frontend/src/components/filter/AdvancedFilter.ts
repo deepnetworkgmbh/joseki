@@ -9,20 +9,18 @@ export default class AdvancedFilter extends Vue {
     filter!:string;
 
     menuOpen: boolean = false;
-    addFilterOpen: boolean = false;
-    filterinput: string = '';
-
     filterContainer!: FilterContainer;
 
     deleteFilter(index: number) {
+        this.menuOpen = false;
         this.filterContainer.removeFilterByIndex(index);
         this.$emit('filterUpdated', this.filterContainer.getFilterString());
-        this.menuOpen = false;
     }
 
     @Watch('filter', { immediate: true }) 
     onFilterChanged(newValue: string) {
         this.filterContainer = new FilterContainer(this.filter);
+        this.menuOpen = false;
         this.$forceUpdate();
     }
 

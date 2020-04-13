@@ -42,45 +42,31 @@ export default class OverviewDetail extends Vue {
     pageButtons: number[] = [];
 
     headers: TableColumn[] = [
-        new TableColumn('Category', 'category', 90),
         new TableColumn('Component', 'component'),
+        new TableColumn('Category', 'category', 90),
         new TableColumn('Collection', 'collection'),
         new TableColumn('Control', 'control'),
         new TableColumn('Resource', 'resource'),
         new TableColumn('Result', 'result', 80)
     ]
     headerData: any;
-    filteredHeaderData: any;
-
+    
     /**
      * load data when component is created.
      *
      * @memberof OverviewDetail
      */
     created() {
-        this.loadColumnData();        
+        //this.loadColumnData();        
         window.addEventListener('resize', this.onResize);
         this.onResize();
-    }
-
-    loadColumnData() {
-        this.selectedDate = DateTime.fromISO(this.date);
-        this.filterContainer = new FilterContainer(this.filter);
-        this.service.getGeneralOverviewSearch(this.selectedDate, 'Kg==')  //
-            .then(headerData => {
-                if (headerData) {   
-                    this.headerData = headerData;
-                    this.paintHeaders();
-                    this.loadData();
-                }
-        })
     }
 
     paintHeaders() {
         if (!this.headerData) return;
         for(let h=0;h< this.headers.length;h++) {
             let header = this.headers[h];                   
-            let options = this.headerData[header.tag].map((data) => new FilterCheck(data));
+            let options = this.headerData[header.tag].map((data) => new FilterCheck(data.name));
             
             // search within options and mark them as checked if exists in the current filter
             for(let j=0;j<this.filterContainer.filters.length; j++) {    
@@ -100,10 +86,11 @@ export default class OverviewDetail extends Vue {
     }
     
     checkIfOptionExistsInFilter(tag: string, filter: FilterCheck): boolean {
-        if (this.filteredHeaderData === undefined) return false;
-        if (this.filteredHeaderData[tag].length === 0) return true;
-        if (this.filteredHeaderData[tag].indexOf(filter.label) === -1) return true;
-        return false;
+        if (this.headerData === undefined) return true;
+        if (this.headerData[tag].length === 0) return true;
+        const index = this.headerData[tag].findIndex(x=>x.name === filter.label);
+        if (index === -1) return true;
+        return this.headerData[tag][index].filteredOut;
     }
 
     /**
@@ -112,6 +99,10 @@ export default class OverviewDetail extends Vue {
      * @memberof Overview
      */
     loadData() {
+        if (this.pageSize === 0) {
+            console.log(`[ld] pagesize not determined yet, exiting.`)
+            return;
+        }
         this.loadFailed = false;
         this.selectedDate = DateTime.fromISO(this.date);
         this.service
@@ -129,8 +120,7 @@ export default class OverviewDetail extends Vue {
                     this.service.getGeneralOverviewSearch(this.selectedDate, this.filter)  //
                                 .then(newHeaderData => {
                                     if (newHeaderData) {   
-                                        this.filteredHeaderData = newHeaderData;
-                                        console.log(`[filteredHeader]`, newHeaderData);
+                                        this.headerData = newHeaderData;
                                         console.log(`[header]`, this.headerData);
                                         this.paintHeaders();
                                         this.$forceUpdate();
@@ -167,12 +157,12 @@ export default class OverviewDetail extends Vue {
     }
 
     removeFilter(label: string, value: string) {
-        this.filterContainer.removeFilterValue(label, value.toLowerCase());
+        this.filterContainer.removeFilterValue(label, value);
         this.onFilterUpdated(this.filterContainer.getFilterString());
     }
 
     addFilter(label: string, value: string) {
-        this.filterContainer.addFilter(label, value.toLowerCase());
+        this.filterContainer.addFilter(label, value);
         this.onFilterUpdated(this.filterContainer.getFilterString());
     }
 
@@ -199,7 +189,7 @@ export default class OverviewDetail extends Vue {
 
     onResize() {
         this.windowHeight = window.innerHeight
-        this.pageSize = Math.floor((this.windowHeight-140)/22);       
+        this.pageSize = Math.floor((this.windowHeight-160)/22);       
         console.log(`[pagesize=${this.pageSize}]`)
     }
 
@@ -273,7 +263,7 @@ export default class OverviewDetail extends Vue {
 
     @Watch('pageSize')
     private onPageSizeChanged(newValue: number) {
-        //this.loadData();
+        this.loadData();
     }
 
     @Watch('sort')

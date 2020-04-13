@@ -1,8 +1,8 @@
 @import "../../styles/colors.scss";
 
 .inf-component {
-	width: 315px;
-	height: 100px;
+	width: 365px;
+	min-height: 100px;
 	background-color: $color-content-bg;
 	border: solid 1px $color-content-border;
 	margin-bottom: 10px;
@@ -11,28 +11,27 @@
 	padding: 5px;
 	display: flex;
 	flex-direction: row;
-	align-content: stretch;
-
+	
 	&-left {
 		display: flex;
-		flex-direction: column;
 		flex: 1 1 auto;
+		flex-direction: column;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	&-right {
-		min-width: 105px;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
+		min-width: 110px;
 	}
 
 	&-info {
-		max-width: 110px;
 		padding-left: 4px;
 	}
 
 	&-left-top {
 		display: flex;
+		flex-direction: row;
 	}
 
 	&-histogram {
@@ -41,16 +40,10 @@
 	}
 
 	&-name {
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		overflow: hidden;
 		font-size: 12px;
 	}
 
 	&-category {
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		overflow: hidden;
 		font-size: 11px;
 		color: $color-text-light;
 	}
@@ -69,8 +62,8 @@
 
 	&-buttons {
 		position: relative;
-		top: -5px;
-		right: 0px;
+		display: block;
+		top:-5px;
 		padding: 0;
 		margin: 0;
 
@@ -90,7 +83,7 @@
 
 	&-pie {
 		position: relative;
-		top: -3px;
+		top: -2px;
 		z-index: 0;
 		left: 5px;		
 	}

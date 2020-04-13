@@ -86,43 +86,74 @@ namespace webapp.Handlers
         /// <param name="filterBy">The filtering parameters as a string, concated by ,.</param>
         /// <param name="date">The date to get details for.</param>
         /// <returns>string array.</returns>
-        public async Task<Dictionary<string, string[]>> GetAutoCompleteData(string filterBy, DateTime date)
+        public async Task<Dictionary<string, CheckFilter[]>> GetAutoCompleteData(string filterBy, DateTime date)
         {
-            var checks = await this.GetChecks(date);
+            // get all scan results
+            var allChecks = await this.GetChecks(date);
 
             if (!string.IsNullOrEmpty(filterBy))
             {
                 filterBy = Base64Decode(filterBy);
             }
 
-            checks = FilterCheckList(checks, filterBy);
+            // get filtered scan results
+            var filteredChecks = FilterCheckList(allChecks, filterBy);
 
-            var results = new Dictionary<string, string[]>();
+            // construct the result set using both [all/filtered] scan results.
+            var results = new Dictionary<string, CheckFilter[]>();
 
-            results.TryAdd("category", checks.GroupBy(x => x.Category)
-                                             .Select(x => x.First().Category)
-                                             .OrderBy(x => x)
-                                             .ToArray());
-            results.TryAdd("component", checks.GroupBy(x => x.Component.Name)
-                                             .Select(x => x.First().Component.Name)
-                                             .OrderBy(x => x)
-                                             .ToArray());
-            results.TryAdd("collection", checks.GroupBy(x => x.Collection.Type + " " + x.Collection.Name)
-                                            .Select(x => x.First().Collection.Type + ":" + x.First().Collection.Name)
-                                            .OrderBy(x => x)
-                                            .ToArray());
-            results.TryAdd("control", checks.GroupBy(x => x.Control.Id)
-                                            .Select(x => x.First().Control.Id)
-                                            .OrderBy(x => x)
-                                            .ToArray());
-            results.TryAdd("resource", checks.GroupBy(x => x.Resource.Type + " " + x.Resource.Name)
-                                            .Select(x => x.First().Resource.Type + ":" + x.First().Resource.Name)
-                                            .OrderBy(x => x)
-                                            .ToArray());
-            results.TryAdd("result", checks.GroupBy(x => x.Result.ToString())
-                                            .Select(x => x.First().Result.ToString())
-                                            .OrderBy(x => x)
-                                            .ToArray());
+            results.TryAdd("category", allChecks.GroupBy(x => x.Category)
+                        .Select(x => x.First().Category)
+                        .OrderBy(x => x)
+                        .Select(filter => new CheckFilter(filter, !filteredChecks.Any(c => c.Category == filter)))
+                        .ToArray());
+
+            results.TryAdd("component", allChecks.GroupBy(x => x.Component.Name)
+                        .Select(x => x.First().Component.Name)
+                        .OrderBy(x => x)
+                        .Select(filter => new CheckFilter(filter, !filteredChecks.Any(c => c.Component.Name == filter)))
+                        .ToArray());
+
+            results.TryAdd("collection", allChecks.GroupBy(x => x.Collection.Type + " " + x.Collection.Name)
+                        .Select(x => new
+                        {
+                            type = x.First().Collection.Type,
+                            name = x.First().Collection.Name,
+                            str = x.First().Collection.Type + ":" + x.First().Collection.Name,
+                        })
+                        .OrderBy(x => x.str)
+                        .Select(filter =>
+                            new CheckFilter(
+                                filter.str,
+                                !filteredChecks.Any(c => c.Collection.Type == filter.type && c.Collection.Name == filter.name)))
+                        .ToArray());
+
+            results.TryAdd("control", allChecks.GroupBy(x => x.Control.Id)
+                        .Select(x => x.First().Control.Id)
+                        .OrderBy(x => x)
+                        .Select(filter => new CheckFilter(filter, !filteredChecks.Any(c => c.Control.Id == filter)))
+                        .ToArray());
+
+            results.TryAdd("resource", allChecks.GroupBy(x => x.Resource.Type + " " + x.Resource.Name)
+                        .Select(x => new
+                        {
+                            type = x.First().Resource.Type,
+                            name = x.First().Resource.Name,
+                            str = x.First().Resource.Type + ":" + x.First().Resource.Name,
+                        })
+                        .OrderBy(x => x.str)
+                        .Select(filter =>
+                            new CheckFilter(
+                                filter.str,
+                                !filteredChecks.Any(c => c.Resource.Type == filter.type && c.Resource.Name == filter.name)))
+                        .ToArray());
+
+            results.TryAdd("result", allChecks.GroupBy(x => x.Result.ToString())
+                        .Select(x => x.First().Result.ToString())
+                        .OrderBy(x => x)
+                        .Select(filter => new CheckFilter(filter, !filteredChecks.Any(c => c.Result.ToString() == filter)))
+                        .ToArray());
+
             return results;
         }
 

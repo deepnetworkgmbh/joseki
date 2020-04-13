@@ -1,5 +1,5 @@
 <template>
-  <div class="advanced-filter noselect">
+  <div class="advanced-filter noselect"  @mouseleave="menuOpen=false">
     <div :class="menuOpen ? 'advanced-filter-menu-open': 'advanced-filter-menu-closed'" @mouseleave="menuOpen=false">
         <div class="advanced-filter-container" @click="menuOpen=!menuOpen">            
             <div v-for="(filter,i) in filterContainer.filters" :key="`filter${i}`">

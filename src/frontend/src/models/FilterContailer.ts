@@ -46,7 +46,7 @@ export class FilterContainer {
     }
 
     public addFilter(label: string, value: string) {
-        let existingIndex = this.filters.findIndex(x=>x.label === label.toLowerCase());
+        let existingIndex = this.filters.findIndex(x=>x.label === label);
         if(existingIndex !== -1) {
             //check if value exists
             let existingValueIndex = this.filters[existingIndex].values.indexOf(value);
@@ -57,8 +57,8 @@ export class FilterContainer {
             }
         }else {
             let newFilter = new Filter();
-            newFilter.label = label.toLowerCase(),
-            newFilter.values = [value.toLowerCase()]
+            newFilter.label = label,
+            newFilter.values = [value]
             this.filters.push(newFilter);
         }
     }

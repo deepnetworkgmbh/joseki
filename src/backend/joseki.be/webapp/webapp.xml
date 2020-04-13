@@ -882,7 +882,7 @@
             </summary>
             <returns>the overview summary detail.</returns>
         </member>
-        <member name="M:webapp.Controllers.v0._1.AuditsController.GetOverviewSearch(System.String,System.String,System.Nullable{System.DateTime})">
+        <member name="M:webapp.Controllers.v0._1.AuditsController.GetOverviewSearch(System.String,System.Nullable{System.DateTime})">
             <summary>
             Returns autocomplete data.
             </summary>
@@ -2312,6 +2312,28 @@
             </summary>
             <param name="id">id of control.</param>
             <param name="message">message of control.</param>
+        </member>
+        <member name="T:webapp.Models.CheckFilter">
+            <summary>
+            A view model for overview scan result page to return autocomplete items.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.CheckFilter.Name">
+            <summary>
+            Name of the filter.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.CheckFilter.FilteredOut">
+            <summary>
+            Handles if it exist on subsequent searches.
+            </summary>
+        </member>
+        <member name="M:webapp.Models.CheckFilter.#ctor(System.String,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Models.CheckFilter"/> class.
+            </summary>
+            <param name="name">name of the filter.</param>
+            <param name="filteredOut">does the filter exist on subsequent searches.</param>
         </member>
         <member name="T:webapp.Models.CheckResult">
             <summary>

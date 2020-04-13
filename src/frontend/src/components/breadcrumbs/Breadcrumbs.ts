@@ -1,5 +1,6 @@
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import { InfrastructureComponent } from '@/models';
+import router from '@/router';
 
 @Component
 export default class Breadcrumbs extends Vue {
@@ -51,6 +52,11 @@ export default class Breadcrumbs extends Vue {
         return ''
     }
 
+    onFilterChangedFromAF(filter: string) {
+        this.filter = filter;
+        this.$router.push({ name: router.currentRoute!.name!.toString(), params: { date: this.date, filter: filter }})
+    }
+
     @Watch("date")
     onDateChanged(date: string) {
         this.$forceUpdate();
@@ -72,7 +78,7 @@ export default class Breadcrumbs extends Vue {
     }
 
     @Watch("filter", { immediate: true})
-    onFilterChanged(newPath: string) {        
+    onFilterChanged(newfilter: string) {                
         this.handleRouteChange();
     }
 
@@ -140,8 +146,7 @@ export default class Breadcrumbs extends Vue {
                     this.diffdates = '';
                     this.showImage = false;                 
                     this.showFilter = this.$route.params.filter !== undefined;
-                    this.filter = this.$route.params.filter;
-                    console.log(`[my filter is ${this.filter}]`);
+                    this.filter = this.$route.params.filter;                    
                     break;
                 }
             case 'ImageDetail':
