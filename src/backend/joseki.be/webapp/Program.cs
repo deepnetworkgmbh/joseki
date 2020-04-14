@@ -1,5 +1,11 @@
+using System;
+
+using joseki.db;
+
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Serilog;
@@ -13,6 +19,8 @@ namespace webapp
     /// </summary>
     public class Program
     {
+        private static bool shouldRunDbMigrations;
+
         internal static LoggingLevelSwitch LoggingLevelSwitch { get; set; } = new LoggingLevelSwitch();
 
         /// <summary>
@@ -21,7 +29,13 @@ namespace webapp
         /// <param name="args">Input arguments.</param>
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+            if (shouldRunDbMigrations)
+            {
+                RunDbMigrations(host.Services);
+            }
+
+            host.Run();
         }
 
         /// <summary>
@@ -33,7 +47,16 @@ namespace webapp
             Host
                 .CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); })
-                .ConfigureAppConfiguration((hostingContext, config) => { config.AddEnvironmentVariables(); })
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    config.AddEnvironmentVariables();
+
+                    var configuration = config.Build();
+                    shouldRunDbMigrations = string.Equals(
+                        configuration["ASPNETCORE_ENVIRONMENT"],
+                        Environments.Production,
+                        StringComparison.OrdinalIgnoreCase);
+                })
                 .UseSerilog((ctx, config) =>
                 {
                     config
@@ -44,5 +67,20 @@ namespace webapp
 
                     config.WriteTo.Console();
                 });
+
+        /// <summary>
+        /// Apply database schema migrations on service startup.
+        /// </summary>
+        /// <param name="services">An instance of <see cref="IServiceProvider"/>.</param>
+        private static void RunDbMigrations(IServiceProvider services)
+        {
+            Log.Information("DB migrations started");
+
+            using var serviceScope = services.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            using var context = serviceScope.ServiceProvider.GetService<JosekiDbContext>();
+            context.Database.Migrate();
+
+            Log.Information("DB migrations finished");
+        }
     }
 }
