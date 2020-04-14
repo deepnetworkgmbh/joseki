@@ -8,6 +8,11 @@ namespace webapp.BlobStorage
     public class ScannerContainer
     {
         /// <summary>
+        /// Represents empty container.
+        /// </summary>
+        public static readonly ScannerContainer Empty = new ScannerContainer(string.Empty);
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ScannerContainer"/> class.
         /// </summary>
         /// <param name="name">Scanner container name.</param>
