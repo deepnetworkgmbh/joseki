@@ -609,6 +609,11 @@
             Describes a single root-level container object of Blob Storage.
             </summary>
         </member>
+        <member name="F:webapp.BlobStorage.ScannerContainer.Empty">
+            <summary>
+            Represents empty container.
+            </summary>
+        </member>
         <member name="M:webapp.BlobStorage.ScannerContainer.#ctor(System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.BlobStorage.ScannerContainer"/> class.
