@@ -53,19 +53,26 @@ namespace webapp.BackgroundJobs
                 {
                     Logger.Information("Scanner Containers watchman is going out.");
 
-                    var containers = await this.blobStorage.ListAllContainers();
-                    var metadataTasks = containers
-                        .Select(this.DownloadAndParseMetadata)
-                        .ToArray();
-                    await Task.WhenAll(metadataTasks);
-
-                    var schedulerItems = metadataTasks.Select(t => t.Result).ToArray();
-                    this.scheduler.UpdateWorkingItems(schedulerItems);
-
-                    if (!initialized)
+                    try
                     {
-                        JosekiStateManager.ScannerContainersIsInitialized();
-                        initialized = true;
+                        var containers = await this.blobStorage.ListAllContainers();
+                        var metadataTasks = containers
+                            .Select(this.DownloadAndParseMetadata)
+                            .ToArray();
+                        await Task.WhenAll(metadataTasks);
+
+                        var schedulerItems = metadataTasks.Select(t => t.Result).ToArray();
+                        this.scheduler.UpdateWorkingItems(schedulerItems);
+
+                        if (!initialized)
+                        {
+                            JosekiStateManager.ScannerContainersIsInitialized();
+                            initialized = true;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex, "Scanner Containers watchman failed now, but they comes back later");
                     }
 
                     Logger.Information("Scanner Containers watchman finished the detour.");
