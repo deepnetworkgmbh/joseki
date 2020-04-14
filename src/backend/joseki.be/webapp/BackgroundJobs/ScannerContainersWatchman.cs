@@ -11,6 +11,7 @@ using Serilog;
 using webapp.Audits;
 using webapp.BlobStorage;
 using webapp.Configuration;
+using webapp.Exceptions;
 using webapp.Infrastructure;
 
 namespace webapp.BackgroundJobs
@@ -61,7 +62,10 @@ namespace webapp.BackgroundJobs
                             .ToArray();
                         await Task.WhenAll(metadataTasks);
 
-                        var schedulerItems = metadataTasks.Select(t => t.Result).ToArray();
+                        ScannerContainer[] schedulerItems = metadataTasks
+                            .Select(t => t.Result)
+                            .Where(i => i != ScannerContainer.Empty)
+                            .ToArray();
                         this.scheduler.UpdateWorkingItems(schedulerItems);
 
                         if (!initialized)
@@ -89,32 +93,40 @@ namespace webapp.BackgroundJobs
         {
             const int oneHourSeconds = 3600;
 
-            var stream = await this.blobStorage.DownloadFile(container.MetadataFilePath);
-
-            using var sr = new StreamReader(stream);
-            var metadataString = sr.ReadToEnd();
-
-            container.Metadata = JsonConvert.DeserializeObject<ScannerMetadata>(metadataString);
-
-            var unixNow = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            var delta = unixNow - container.Metadata.Heartbeat;
-
-            if (delta < container.Metadata.HeartbeatPeriodicity)
+            try
             {
-                // do nothing
-            }
-            else if (delta < oneHourSeconds || delta < container.Metadata.HeartbeatPeriodicity * 2)
-            {
-                var lastExecution = DateTimeOffset.FromUnixTimeSeconds(container.Metadata.Heartbeat);
-                Logger.Warning("Scanner {ScannerContainer} keeps silence since {LastExecution}", container.Name, lastExecution);
-            }
-            else
-            {
-                var lastExecution = DateTimeOffset.FromUnixTimeSeconds(container.Metadata.Heartbeat);
-                Logger.Error("Scanner {ScannerContainer} keeps silence since {LastExecution}", container.Name, lastExecution);
-            }
+                var stream = await this.blobStorage.DownloadFile(container.MetadataFilePath);
 
-            return container;
+                using var sr = new StreamReader(stream);
+                var metadataString = sr.ReadToEnd();
+
+                container.Metadata = JsonConvert.DeserializeObject<ScannerMetadata>(metadataString);
+
+                var unixNow = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                var delta = unixNow - container.Metadata.Heartbeat;
+
+                if (delta < container.Metadata.HeartbeatPeriodicity)
+                {
+                    // do nothing
+                }
+                else if (delta < oneHourSeconds || delta < container.Metadata.HeartbeatPeriodicity * 2)
+                {
+                    var lastExecution = DateTimeOffset.FromUnixTimeSeconds(container.Metadata.Heartbeat);
+                    Logger.Warning("Scanner {ScannerContainer} keeps silence since {LastExecution}", container.Name, lastExecution);
+                }
+                else
+                {
+                    var lastExecution = DateTimeOffset.FromUnixTimeSeconds(container.Metadata.Heartbeat);
+                    Logger.Error("Scanner {ScannerContainer} keeps silence since {LastExecution}", container.Name, lastExecution);
+                }
+
+                return container;
+            }
+            catch (JosekiException ex)
+            {
+                Logger.Warning(ex, "Failed to download amd parse metadata of {ScannerContainer}", container.Name);
+                return ScannerContainer.Empty;
+            }
         }
     }
 }

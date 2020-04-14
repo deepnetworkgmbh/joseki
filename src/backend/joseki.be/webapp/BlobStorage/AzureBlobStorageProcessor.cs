@@ -3,9 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
+using Azure;
+using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 
+using Serilog;
+
 using webapp.Configuration;
+using webapp.Exceptions;
 
 namespace webapp.BlobStorage
 {
@@ -18,6 +23,8 @@ namespace webapp.BlobStorage
         /// Metadata tag name for "processed" audits.
         /// </summary>
         public const string ProcessedMetadataKey = "processed";
+
+        private static readonly ILogger Logger = Log.ForContext<AzureBlobStorageProcessor>();
 
         private readonly JosekiConfiguration config;
 
@@ -52,11 +59,19 @@ namespace webapp.BlobStorage
         /// <inheritdoc />
         public async Task<Stream> DownloadFile(string relativePath)
         {
-            var uri = new Uri($"{this.config.AzureBlob.BasePath}/{relativePath}?{this.config.AzureBlob.Sas}");
-            var client = new Azure.Storage.Blobs.BlobClient(uri);
+            try
+            {
+                var uri = new Uri($"{this.config.AzureBlob.BasePath}/{relativePath}?{this.config.AzureBlob.Sas}");
+                var client = new BlobClient(uri);
 
-            var blob = await client.DownloadAsync();
-            return blob.Value.Content;
+                var blob = await client.DownloadAsync();
+                return blob.Value.Content;
+            }
+            catch (RequestFailedException ex)
+            {
+                Logger.Warning(ex, "Failed to download file from {BlobRelativePath}", relativePath);
+                throw new JosekiException(ex, $"Failed to download file from {relativePath}");
+            }
         }
 
         /// <inheritdoc />
