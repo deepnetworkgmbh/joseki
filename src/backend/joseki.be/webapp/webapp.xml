@@ -2753,6 +2753,12 @@
             <param name="args">Arguments.</param>
             <returns>HostBuilder object.</returns>
         </member>
+        <member name="M:webapp.Program.RunDbMigrations(System.IServiceProvider)">
+            <summary>
+            Apply database schema migrations on service startup.
+            </summary>
+            <param name="services">An instance of <see cref="T:System.IServiceProvider"/>.</param>
+        </member>
         <member name="T:webapp.Queues.AzureStorageQueue">
             <summary>
             Azure Storage Queue implementation of Queue Service.
@@ -2858,12 +2864,6 @@
             <param name="app">Builder object.</param>
             <param name="env">Environment configuration.</param>
             <param name="provider">API version provider.</param>
-        </member>
-        <member name="M:webapp.Startup.RunDbMigrations(Microsoft.AspNetCore.Builder.IApplicationBuilder)">
-            <summary>
-            Apply database schema migrations on service startup.
-            </summary>
-            <param name="app">A instance of <see cref="T:Microsoft.AspNetCore.Builder.IApplicationBuilder"/>.</param>
         </member>
     </members>
 </doc>
