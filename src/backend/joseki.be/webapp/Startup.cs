@@ -181,11 +181,6 @@ namespace webapp
             app.UseHealthChecks("/health/liveness", CreateHealthCheckOptions("liveness"));
             app.UseHealthChecks("/health/readiness", CreateHealthCheckOptions("readiness"));
 
-            if (env.IsProduction())
-            {
-                RunDbMigrations(app);
-            }
-
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -216,17 +211,6 @@ namespace webapp
             {
                 Predicate = x => x.Tags.Contains(tag),
             };
-        }
-
-        /// <summary>
-        /// Apply database schema migrations on service startup.
-        /// </summary>
-        /// <param name="app">A instance of <see cref="IApplicationBuilder"/>.</param>
-        private static void RunDbMigrations(IApplicationBuilder app)
-        {
-            using var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
-            using var context = serviceScope.ServiceProvider.GetService<JosekiDbContext>();
-            context.Database.Migrate();
         }
     }
 }
