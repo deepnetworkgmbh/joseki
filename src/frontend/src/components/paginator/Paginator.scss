@@ -1,0 +1,27 @@
+.paginator {
+    padding: 0;
+    height: 20px;
+}
+
+.pagebutton {
+    width:16px;
+    height:16px;
+    border: solid 1px #ccc;    
+    margin-left:4px;
+    font-size:9px;
+    position: relative;
+    top:-2px;
+}
+
+
+.pagebutton-selected {
+    width:16px;
+    height:16px;
+    border: solid 1px #ccc;    
+    margin-left:4px;
+    font-size:9px;
+    position: relative;
+    top:-2px;
+    color:#0c0;
+    font-weight: bold;
+}

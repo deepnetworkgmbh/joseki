@@ -1,8 +1,9 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Overview from "@/views/Overview.vue";
-import ImageDetail from "@/views/ImageDetail.vue";
+import OverviewDetail from '@/views/OverviewDetail.vue';
 import OverviewDiff from '@/views/OverviewDiff.vue';
+import ImageDetail from "@/views/ImageDetail.vue";
 import ComponentHistory from '@/views/ComponentHistory.vue';
 import ComponentDetail from '@/views/ComponentDetail.vue';
 import ComponentDiff from '@/views/ComponentDiff.vue';
@@ -18,6 +19,12 @@ const routes = [
     path: "/overview/:date?",
     name: "GeneralOverview",
     component: Overview,
+    props: true
+  },
+  {
+    path: "/overview-detail/:date?/:filter?/:sort?",
+    name: "OverviewDetail",
+    component: OverviewDetail,
     props: true
   },
   {

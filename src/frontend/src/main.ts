@@ -35,10 +35,14 @@ import Score from '@/components/score/Score.vue';
 Vue.component('Score', Score);
 import ResultFilter from '@/components/filter/ResultFilter.vue';
 Vue.component('ResultFilter', ResultFilter);
+import AdvancedFilter from '@/components/filter/AdvancedFilter.vue';
+Vue.component('AdvancedFilter', AdvancedFilter);
 import Navigation from '@/components/navigation/Navigation.vue';
 Vue.component('Navigation', Navigation);
 import Spinner from '@/components/spinner/Spinner.vue';
 Vue.component('Spinner', Spinner);
+import Paginator from '@/components/paginator/Paginator.vue';
+Vue.component('Paginator', Paginator);
 
 (async()=>{
 

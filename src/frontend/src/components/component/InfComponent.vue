@@ -12,7 +12,7 @@
       </div>
       <div class="inf-component-histogram" :id="`bar${index}`">
         <apexchart height="50" :options="areaOptions" :series="areaSeries"></apexchart>
-      </div>
+      </div> 
     </div>
     <div class="inf-component-right">
       <div class='inf-component-buttons'>

@@ -2,19 +2,6 @@
   <div>
     <Spinner v-if="!loaded" :loadFailed="loadFailed" @reload="loadData" />
     <div v-show="loaded" class="flex flex-col justify-around border rounded-lg mb-3 shadow">
-      <div class="bg-gray-200 border-b border-gray-400 rounded-t-lg flex flex-row">
-        <div class="w-10/12 flex flex-row m-2 ml-4">
-          <h3 class="mr-1">Image:</h3>
-          <h1 class="image-name text-gray-700">{{ imageid }}</h1>
-        </div>
-        <div class="w-2/12 flex flex-row justify-end m-2 mr-4">
-          <h3 class="scanStatus mr-1">Date:</h3>
-          <h3 :class="`scanStatus image-result-${data.scanResult} mr-1`">{{ data.date }}</h3>
-          <h3 class="scanStatus mr-1">Scan:</h3>
-          <h3 :class="`scanStatus image-result-${data.scanResult}`">{{ data.scanResult }}</h3>
-        </div>
-      </div>
-
       <div v-if="data.scanResult === 'Failed'" class="p-2">
         <h3>Image vulnerabilities scan failed</h3>
         <span>{{ data.description }}</span>
