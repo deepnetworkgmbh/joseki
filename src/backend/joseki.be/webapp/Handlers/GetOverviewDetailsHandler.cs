@@ -47,16 +47,6 @@ namespace webapp.Handlers
         {
             var checks = await this.GetChecks(date);
 
-            if (!string.IsNullOrEmpty(filterBy))
-            {
-                filterBy = Base64Decode(filterBy);
-            }
-
-            if (!string.IsNullOrEmpty(sortBy))
-            {
-                sortBy = Base64Decode(sortBy);
-            }
-
             var result = new CheckResultSet();
             try
             {
@@ -90,11 +80,6 @@ namespace webapp.Handlers
         {
             // get all scan results
             var allChecks = await this.GetChecks(date);
-
-            if (!string.IsNullOrEmpty(filterBy))
-            {
-                filterBy = Base64Decode(filterBy);
-            }
 
             // get filtered scan results
             var filteredChecks = FilterCheckList(allChecks, filterBy);
@@ -237,18 +222,6 @@ namespace webapp.Handlers
             }
 
             return checks;
-        }
-
-        private static string Base64Decode(string base64EncodedData)
-        {
-            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
-            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
-        }
-
-        private static string Base64Encode(string plainText)
-        {
-            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
-            return System.Convert.ToBase64String(plainTextBytes);
         }
 
         private static List<OverviewCheck> FilterCheckList(List<OverviewCheck> list, string filterBy)

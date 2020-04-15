@@ -403,10 +403,20 @@ namespace webapp.Controllers.v0._1
             #endregion
 
             var detailsDate = date?.Date ?? DateTime.UtcNow.Date;
+
+            if (!string.IsNullOrEmpty(filterBy))
+            {
+                filterBy = Base64Decode(filterBy);
+            }
+
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                sortBy = Base64Decode(sortBy);
+            }
+
             try
             {
                 var handler = this.services.GetService<GetOverviewDetailsHandler>();
-
                 var details = await handler.GetDetails(sortBy, filterBy, detailsDate, pageSize, pageIndex);
                 return this.StatusCode(200, details);
             }
@@ -446,10 +456,14 @@ namespace webapp.Controllers.v0._1
             #endregion
 
             var detailsDate = date?.Date ?? DateTime.UtcNow.Date;
+            if (!string.IsNullOrEmpty(filterBy))
+            {
+                filterBy = Base64Decode(filterBy);
+            }
+
             try
             {
                 var handler = this.services.GetService<GetOverviewDetailsHandler>();
-
                 var details = await handler.GetAutoCompleteData(filterBy, detailsDate);
                 return this.StatusCode(200, details);
             }
@@ -458,6 +472,18 @@ namespace webapp.Controllers.v0._1
                 Logger.Error(ex, "Failed to get overview search on {OverviewDate}", detailsDate);
                 return this.StatusCode(500, $"Failed to get overview search on {detailsDate}");
             }
+        }
+
+        private static string Base64Decode(string base64EncodedData)
+        {
+            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
+            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+        }
+
+        private static string Base64Encode(string plainText)
+        {
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+            return System.Convert.ToBase64String(plainTextBytes);
         }
     }
 }
