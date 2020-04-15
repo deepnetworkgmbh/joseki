@@ -240,6 +240,16 @@
             Human-friendly Unknown-OS message.
             </summary>
         </member>
+        <member name="F:webapp.Audits.Processors.trivy.TrivyScanDescriptionNormalizer.FailedToGetPackages">
+            <summary>
+            Human-friendly FailedToAnalyzePackages message.
+            </summary>
+        </member>
+        <member name="F:webapp.Audits.Processors.trivy.TrivyScanDescriptionNormalizer.NoPackages">
+            <summary>
+            Human-friendly NoPackages message.
+            </summary>
+        </member>
         <member name="F:webapp.Audits.Processors.trivy.TrivyScanDescriptionNormalizer.UnknownError">
             <summary>
             Human-friendly Unknown-Error message.
