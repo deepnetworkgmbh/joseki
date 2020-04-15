@@ -150,13 +150,18 @@ namespace webapp.Handlers
         /// <returns>string array.</returns>
         public async Task<List<OverviewCheck>> GetChecks(DateTime date)
         {
-            // 1. get audit which represents the "date".
-            var audits = await this.db.Set<AuditEntity>()
+            var theDay = date.Date;
+            var theNextDay = theDay.AddDays(1);
+            var oneDayAudits = await this.db.Set<AuditEntity>()
                 .Include(i => i.InfrastructureComponent)
                 .AsNoTracking()
-                .Where(i => i.Date.Date == date.Date)
-                .OrderByDescending(i => i.Date)
+                .Where(i => i.Date >= theDay && i.Date < theNextDay)
                 .ToArrayAsync();
+
+            var audits = oneDayAudits
+                .GroupBy(i => i.ComponentId)
+                .Select(i => i.OrderByDescending(a => a.Date).First())
+                .ToArray();
 
             // 4. Get all the check details
             var checkResults = await this.db.Set<CheckResultEntity>()
