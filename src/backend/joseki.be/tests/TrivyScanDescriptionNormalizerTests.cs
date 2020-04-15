@@ -33,6 +33,16 @@ namespace tests
         }
 
         [TestMethod]
+        public void FailedToGetPackages()
+        {
+            var sampleNotAuthorized = @"\u001b[0m\terror in image scan: failed analysis: analyze error: failed to analyze layer: sha256:d6caf8e15a64c3d070d838348e7dc70d065bd7bcab2077d133345aa2c74b60bb : failed to get packages: failed to get packages: failed to parse the pkg info: no rpm command";
+
+            var actualResponse = TrivyScanDescriptionNormalizer.ToHumanReadable(sampleNotAuthorized);
+
+            actualResponse.Should().Be(TrivyScanDescriptionNormalizer.FailedToGetPackages);
+        }
+
+        [TestMethod]
         public void UnknownError()
         {
             var sampleNotAuthorized = @"\u001b[0m\terror in image scan: failed to analyze image: failed to extract files: failed to extract files: failed to extract the archive: unexpected EOF";
