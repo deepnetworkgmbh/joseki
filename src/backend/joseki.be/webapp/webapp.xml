@@ -2031,26 +2031,25 @@
         </member>
         <member name="T:webapp.Handlers.GetOverviewDetailsHandler">
             <summary>
-            Prepares response to get-component-details request.
-            </summary>0
+            Prepares response to get-overview-details request.
+            </summary>
         </member>
-        <member name="M:webapp.Handlers.GetOverviewDetailsHandler.#ctor(joseki.db.JosekiDbContext,webapp.Database.Cache.IInfrastructureScoreCache)">
+        <member name="M:webapp.Handlers.GetOverviewDetailsHandler.#ctor(joseki.db.JosekiDbContext)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Handlers.GetOverviewDetailsHandler"/> class.
             </summary>
             <param name="db">Joseki database object.</param>
-            <param name="cache">Score cache.</param>
         </member>
         <member name="M:webapp.Handlers.GetOverviewDetailsHandler.GetDetails(System.String,System.String,System.DateTime,System.Int32,System.Int32)">
             <summary>
-            Returns infrastructure history for requested component.
+            Returns CheckResult set for requested date, filtered and sorted.
             </summary>
             <param name="sortBy">The ordering parameters as a string, concated by ,.</param>
             <param name="filterBy">The filtering parameters as a string, concated by ,.</param>
             <param name="date">The date to get details for.</param>
             <param name="pageSize">Size of each result set.</param>
             <param name="pageIndex">Index of each result set.</param>
-            <returns>Component details.</returns>
+            <returns>list of CheckResultSet.</returns>
         </member>
         <member name="M:webapp.Handlers.GetOverviewDetailsHandler.GetAutoCompleteData(System.String,System.DateTime)">
             <summary>
@@ -2066,6 +2065,15 @@
             </summary>
             <param name="date">The date to get details for.</param>
             <returns>string array.</returns>
+        </member>
+        <member name="M:webapp.Handlers.GetOverviewDetailsHandler.SortCheckList(System.Collections.Generic.List{webapp.Models.OverviewCheck},System.String)">
+            <summary>
+            Sorts check list according to sortBy.
+            (currently only sorted by one column).
+            </summary>
+            <param name="checks">List of OverviewChecks.</param>
+            <param name="sortBy">string containing sort information.</param>
+            <returns>Sorted list of OverviewChecks.</returns>
         </member>
         <member name="T:webapp.Handlers.InfraScoreExtensions">
             <summary>
