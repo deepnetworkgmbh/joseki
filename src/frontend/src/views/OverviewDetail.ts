@@ -190,13 +190,16 @@ export default class OverviewDetail extends Vue {
 
     onResize() {
         this.windowHeight = window.innerHeight
-        this.pageSize = Math.floor((this.windowHeight-160)/22);       
-        this.windowWidth = document.getElementById('footer').clientWidth;
-        let sum = 0;
-        for(let i=0;i<this.headers.length;i++) {
-            this.headers[i].width = Math.floor(this.windowWidth * this.headers[i].percentage / 100) 
-            sum+= this.headers[i].width;
-        }
+        this.pageSize = Math.floor((this.windowHeight-160)/22);  
+        let footerElement = document.getElementById('footer');
+        if (footerElement) {
+            this.windowWidth = footerElement.clientWidth;
+            let sum = 0;
+            for(let i=0;i<this.headers.length;i++) {
+                this.headers[i].width = Math.floor(this.windowWidth * this.headers[i].percentage / 100) 
+                sum+= this.headers[i].width;
+            }    
+        }     
     }
 
     changePageIndex(index: number) {
