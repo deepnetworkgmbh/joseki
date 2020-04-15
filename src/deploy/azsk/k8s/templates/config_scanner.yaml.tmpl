@@ -1,0 +1,14 @@
+scanner:
+  !azsk-scanner
+  id: ${azsk.scannerId}
+  periodicity: 0 2 * * *
+  auditScriptPath: /app/azsk.ps1
+  tenantId: ${azsk.tennantId}
+  servicePrincipalId: ${azsk.spId}
+  servicePrincipalPassword: ${azsk.spPassword}
+
+exporter:
+  !az-blob
+  basePath: https://${azsk.storageAccountName}.blob.core.windows.net/${azsk.containerName}
+  sas: ${azsk.storageAccountSas}
+  heartbeatPeriodicity: 86400

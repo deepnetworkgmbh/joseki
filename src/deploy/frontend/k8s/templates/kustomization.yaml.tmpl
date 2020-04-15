@@ -1,0 +1,13 @@
+resources:
+- fe.yaml
+generatorOptions:
+  labels: 
+    app: joseki-frontend
+    version: '${fe.imageTag}'
+configMapGenerator:
+- name: frontend-config
+  namespace: '${joseki.namespace}'
+  behavior: replace
+  files:
+  - config.json
+
