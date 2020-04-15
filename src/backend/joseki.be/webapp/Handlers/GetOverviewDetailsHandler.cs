@@ -16,8 +16,8 @@ using webapp.Models;
 namespace webapp.Handlers
 {
     /// <summary>
-    /// Prepares response to get-component-details request.
-    /// </summary>0
+    /// Prepares response to get-overview-details request.
+    /// </summary>
     public class GetOverviewDetailsHandler
     {
         private readonly JosekiDbContext db;
@@ -35,14 +35,14 @@ namespace webapp.Handlers
         }
 
         /// <summary>
-        /// Returns infrastructure history for requested component.
+        /// Returns CheckResult set for requested date, filtered and sorted.
         /// </summary>
         /// <param name="sortBy">The ordering parameters as a string, concated by ,.</param>
         /// <param name="filterBy">The filtering parameters as a string, concated by ,.</param>
         /// <param name="date">The date to get details for.</param>
         /// <param name="pageSize">Size of each result set.</param>
         /// <param name="pageIndex">Index of each result set.</param>
-        /// <returns>Component details.</returns>
+        /// <returns>list of CheckResultSet.</returns>
         public async Task<CheckResultSet> GetDetails(string sortBy, string filterBy, DateTime date, int pageSize, int pageIndex)
         {
             var checks = await this.GetChecks(date);
@@ -299,6 +299,13 @@ namespace webapp.Handlers
             return checks.ToList();
         }
 
+        /// <summary>
+        /// Sorts check list according to sortBy.
+        /// (currently only sorted by one column).
+        /// </summary>
+        /// <param name="checks">List of OverviewChecks.</param>
+        /// <param name="sortBy">string containing sort information.</param>
+        /// <returns>Sorted list of OverviewChecks.</returns>
         private static List<OverviewCheck> SortCheckList(List<OverviewCheck> checks, string sortBy)
         {
             if (string.IsNullOrEmpty(sortBy))
