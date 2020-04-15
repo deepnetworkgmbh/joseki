@@ -51,6 +51,16 @@
     padding:3px;
     margin-left:-20px;
 
+    & ul {
+        margin: 0;
+
+        & label {
+            margin: 0;     
+            padding: 0;
+            cursor: pointer;
+        }
+    }
+
     & ul li {
         margin: 0;     
         white-space: nowrap;
@@ -69,12 +79,6 @@
     &-right-aligned {
         margin-left:40px;
     }
-}
-
-
-
-.option-dimmed > label {
-    color:#777;
 }
 
 .checkrow > td {
