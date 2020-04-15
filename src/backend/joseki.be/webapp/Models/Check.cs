@@ -53,6 +53,14 @@ namespace webapp.Models
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Check"/> class.
+        ///  Empty constructor.
+        /// </summary>
+        public Check()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Check"/> class.
         /// create unique id on constructor.
         /// </summary>
         public Check(DateTime date, Collection collection, Resource resource, string category, CheckControl control, CheckResult result)
@@ -64,6 +72,27 @@ namespace webapp.Models
             this.Result = result;
             this.Resource = resource;
             this.Tags = new Dictionary<string, string>();
+        }
+    }
+
+    /// <summary>
+    /// Check used in Overview detail.
+    /// </summary>
+    public class OverviewCheck : Check
+    {
+        /// <summary>
+        /// Component of the check.
+        /// </summary>
+        public InfrastructureComponent Component { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OverviewCheck"/> class.
+        /// create unique id on constructor.
+        /// </summary>
+        public OverviewCheck(DateTime date, Collection collection, Resource resource, string category, CheckControl control, CheckResult result, InfrastructureComponent component)
+            : base(date, collection, resource, category, control, result)
+        {
+            this.Component = component;
         }
     }
 }

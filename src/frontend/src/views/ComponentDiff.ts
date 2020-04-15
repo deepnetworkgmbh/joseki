@@ -84,7 +84,7 @@ export default class ComponentDiff extends Vue {
      * @memberof ComponentDiff
      */
     getPieChartOptions1() : ApexCharts.ApexOptions {
-        return ChartService.PieChartOptions("pie-overall1", this.data.summary1.current, true)
+        return ChartService.PieChartOptions("pie-overall1", this.data.summary1.current, ()=>{}, true)
     }
 
     /**
@@ -94,7 +94,7 @@ export default class ComponentDiff extends Vue {
      * @memberof ComponentDiff
      */
     getPieChartOptions2() : ApexCharts.ApexOptions {
-        return ChartService.PieChartOptions("pie-overall2", this.data.summary2.current, true)
+        return ChartService.PieChartOptions("pie-overall2", this.data.summary2.current, ()=>{},true)
     }
 
     /**

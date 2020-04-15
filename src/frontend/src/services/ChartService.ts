@@ -253,7 +253,7 @@ export class ChartService {
 		}
 	}
 
-	public static PieChartOptions(id:string, summary: CountersSummary, small:boolean = false) : ApexCharts.ApexOptions {
+	public static PieChartOptions(id:string, summary: CountersSummary, cb: Function, small:boolean = false) : ApexCharts.ApexOptions {
 
 		if (small) return <ApexCharts.ApexOptions>{
 			chart: {
@@ -290,7 +290,14 @@ export class ChartService {
 					blur: 10,
 					opacity: 0.1
 				},
-				animations: ChartService.animationOptions
+				animations: ChartService.animationOptions,
+				events: {
+					dataPointSelection: function name(event, chartContext, config) {
+						let index = config.dataPointIndex;
+						let value = summary.getLabels()[index].replace(" ", "");
+						cb(value);
+					}
+				}
 			},
 			labels: summary.getLabels(),
 			colors: summary.getColors(),

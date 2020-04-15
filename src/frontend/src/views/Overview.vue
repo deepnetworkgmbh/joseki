@@ -3,7 +3,7 @@
     <Spinner v-if="!loaded" :loadFailed="loadFailed" @reload="loadData" />
     <div v-if="loaded" class="segment shadow" style="min-height:300px;padding:0;">
       <div class="w-1/4 border-r border-gray-300 flex flex-col justify-center content-center top-left-panel" style="background-color:#eee;">
-        <div class="p-5 pl-6 pt-4">
+        <div class="p-5 pl-6">
           <div class="mb-3 info-tag-date">
             <h5>Date</h5>
             <h1 class="info">{{ selectedDate | formatDate }}</h1>

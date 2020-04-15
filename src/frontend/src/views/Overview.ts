@@ -39,17 +39,25 @@ export default class Overview extends Vue {
             .then(response => {
                 if (response) {
                     this.data = response;
-                    let index = this.data.overall.scoreHistory.findIndex(x=>x.recordedAt.startsWith(this.date));
-                    if(index<0) { index = 0; }
-                    this.selectedDate = DateTime.fromISO(this.data.overall.scoreHistory[index].recordedAt);
-                    this.selectedScore = this.data.overall.scoreHistory[index].score;
-                    this.$emit('dateChanged', this.selectedDate.toISODate())
-                    this.$emit('componentChanged', this.data.overall.component)
+                    if(this.data.components.length>0) {
+                        let index = this.data.overall.scoreHistory.findIndex(x=>x.recordedAt.startsWith(this.date));
+                        if(index<0) { index = 0; }
+                        this.selectedDate = DateTime.fromISO(this.data.overall.scoreHistory[index].recordedAt);
+                        this.selectedScore = this.data.overall.scoreHistory[index].score;
+                        this.$emit('dateChanged', this.selectedDate.toISODate())
+                        this.$emit('componentChanged', this.data.overall.component)
+                    }else {
+                        this.selectedScore = 0;
+                        this.selectedDate = DateTime.utc();
+                    }
                     this.loaded = true;
                     this.$forceUpdate();
                 }
             })
-            .catch(()=> { this.loadFailed = true; });
+            .catch((error)=> { 
+                console.log(error);
+                this.loadFailed = true; 
+            });
     }
  
     /**
@@ -59,6 +67,9 @@ export default class Overview extends Vue {
      * @memberof Overview
      */
     getAreaSeries() {
+        if(this.data.components.length == 0) {
+            return [{ data: [{x: this.selectedDate, y: 0}]}]
+        }
         return [{ data: this.data.overall.scoreHistory.map((item)=> ({ x: item.recordedAt.split('T')[0] , y: item.score })).reverse() }] 
     }
 
@@ -89,7 +100,18 @@ export default class Overview extends Vue {
      * @memberof Overview
      */
     getPieChartOptions() : ApexCharts.ApexOptions {
-        return ChartService.PieChartOptions("pie-overall", this.data.overall.current)
+        return ChartService.PieChartOptions("pie-overall", this.data.overall.current, this.pieClicked)
+    }
+
+    /**
+     * Handle click segment on pie chart in the middle.
+     *
+     * @param {string} status
+     * @memberof Overview
+     */
+    pieClicked(status: string) {
+        let filterBy = btoa(`result=${status}`);
+        router.push(`/overview-detail/${this.selectedDate!.toISODate()}/${filterBy}`); 
     }
 
     /**
