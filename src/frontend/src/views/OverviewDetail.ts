@@ -99,6 +99,7 @@ export default class OverviewDetail extends Vue {
      * @memberof Overview
      */
     loadData() {
+        this.onResize();
         if (this.pageSize === 0) {
             console.log(`[ld] pagesize not determined yet, exiting.`)
             return;
