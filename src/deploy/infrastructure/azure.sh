@@ -7,18 +7,16 @@ set -e
 
 LOCATION=westeurope
 BASE_NAME=""
-SUBSCRIPTIONS=""
 SQL_ADMIN=""
 ENV_FILE="./joseki.env"
 
 usage() {
-  echo "Usage: $0 -b BASE_NAME -s SUBSCRIPTIONS -n K8S_SUBNET_ID [ -l LOCATION ] [ -a SQL_ADMIN ] [ -f ENV_FILE] " 1>&2 
+  echo "Usage: $0 -b BASE_NAME -n K8S_SUBNET_ID [ -l LOCATION ] [ -a SQL_ADMIN ] [ -f ENV_FILE] " 1>&2 
   echo ""
   echo "-b (required) - common part of name used in each created resource. ONLY ALPHANUMERIC VALUES are supported. It's used as:"
   echo "    * 'rg-$BASE_NAME' for resource group"
   echo "    * 'sql-$BASE_NAME-$SALT' for sql server"
   echo "    * and others."
-  echo "-s (required) - list of Azure subscription identifiers separated by whitespace, for example 'subscription1 subscription2 subscription3'"
   echo "-n (required) - Kubernetes cluster Azure VNet subnet identifier in format '/subscriptions/{SubID}/resourceGroups/{ResourceGroup}/providers/Microsoft.Network/virtualNetworks/{VNETName}/subnets/{SubnetName}'"
   echo "-l (optional) - if is not given, default value is 'westeurope'"
   echo "-a (optional) - if is not given, value is randomly generated"
@@ -30,12 +28,11 @@ exit_abnormal() {
   exit 1
 }
 
-while getopts b:l:s:a:n:f: option
+while getopts b:l:a:n:f: option
 do
     case "${option}" in
         b) BASE_NAME=${OPTARG};;
         l) LOCATION=${OPTARG};;
-        s) SUBSCRIPTIONS=${OPTARG};;
         a) SQL_ADMIN=${OPTARG};;
         n) K8S_SUBNET_ID=${OPTARG};;
         f) ENV_FILE=${OPTARG};;
@@ -53,11 +50,6 @@ else
     echo ""
     exit_abnormal
   fi
-fi
-
-if [ "$SUBSCRIPTIONS" = "" ]; then
-  echo "SUBSCRIPTIONS list is required"
-  exit_abnormal
 fi
 
 if [ "$K8S_SUBNET_ID" = "" ]; then
@@ -83,24 +75,6 @@ QUEUE_SCAN_REQUEST="image-scan-requests"
 QUEUE_SCAN_REQUEST_QUARANTINE="image-scan-requests-quarantine"
 
 KEY_VAULT_NAME="kv-$BASE_NAME-$SALT"
-
-
-### SERVICE PRINCIPAL
-
-# shellcheck disable=SC2206
-IDS=(${SUBSCRIPTIONS})
-SCOPES=""
-for id in "${IDS[@]}"
-do
-  SCOPES="$SCOPES/subscriptions/$id "
-done
-
-echo "Creating 'azsk-scanner-$SALT' Service Principal within scope '$SCOPES'"
-create_sp_cmd="az ad sp create-for-rbac -n azsk-scanner-$SALT --role Reader --scopes $SCOPES -o tsv"
-SP=$($create_sp_cmd)
-SP_ID=$(echo "$SP" | cut -f1)
-SP_PASSWORD=$(echo "$SP" | cut -f4)
-TENANT_ID=$(echo "$SP" | cut -f5)
 
 
 ### RESOURCE GROUP
@@ -132,20 +106,15 @@ echo "Creating Key Vault $KEY_VAULT_NAME and saving sql-username and sql-passwor
 az keyvault create --resource-group "$RG_NAME" --location "$LOCATION" --name "$KEY_VAULT_NAME" --enable-soft-delete false --tags "$TAGS"
 az keyvault secret set --vault-name "$KEY_VAULT_NAME" --name "SQLADMIN" --value "$SQL_ADMIN"
 az keyvault secret set --vault-name "$KEY_VAULT_NAME" --name "SQLPASSWORD" --value "$SQL_PASSWORD"
-az keyvault secret set --vault-name "$KEY_VAULT_NAME" --name "SP-ID" --value "$SP_ID"
-az keyvault secret set --vault-name "$KEY_VAULT_NAME" --name "SP-PASSWORD" --value "$SP_PASSWORD"
-az keyvault secret set --vault-name "$KEY_VAULT_NAME" --name "TENANT-ID" --value "$TENANT_ID"
 
 
 ### SAVES ENV_FILE
 touch "$ENV_FILE"
 {
-  echo "
-RG_NAME $RG_NAME
+  echo "RG_NAME $RG_NAME
 SQLSERVER_NAME $SQLSERVER_NAME
 SQLDB_NAME $SQLDB_NAME
 STORAGE_ACCOUNT_NAME $STORAGE_ACCOUNT_NAME
-KEY_VAULT_NAME $KEY_VAULT_NAME
-"
+KEY_VAULT_NAME $KEY_VAULT_NAME"
 } > "$ENV_FILE"
 
