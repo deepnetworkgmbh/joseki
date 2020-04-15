@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 using core.Configuration;
@@ -66,7 +67,9 @@ namespace core.scanners
                     Arguments = arguments,
                 };
 
-                var processResults = await ProcessEx.RunAsync(processStartInfo);
+                var cts = new CancellationTokenSource(TimeSpan.FromMinutes(60));
+
+                var processResults = await ProcessEx.RunAsync(processStartInfo, cts.Token);
 
                 if (processResults.StandardError != null && processResults.StandardError.Length > 0)
                 {
