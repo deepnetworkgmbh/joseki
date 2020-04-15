@@ -46,8 +46,8 @@ export default class OverviewDetail extends Vue {
         new TableColumn('Component', 'component', 11, 'left'),
         new TableColumn('Category', 'category', 8, 'left'),     
         new TableColumn('Collection', 'collection', 24, 'left'),
-        new TableColumn('Control', 'control', 29, 'left'),
         new TableColumn('Resource', 'resource', 20, 'left'),    
+        new TableColumn('Control', 'control', 29, 'left'),
         new TableColumn('Result', 'result', 8, 'right')
     ]
     headerData: any;
@@ -99,11 +99,11 @@ export default class OverviewDetail extends Vue {
      * @memberof Overview
      */
     loadData() {
-        this.onResize();
         if (this.pageSize === 0) {
             console.log(`[ld] pagesize not determined yet, exiting.`)
             return;
         }
+        this.onResize();
         this.loadFailed = false;
         this.selectedDate = DateTime.fromISO(this.date);
         this.service
@@ -290,6 +290,7 @@ export class TableColumn {
     sortable: boolean = true
     options: FilterCheck[] = []
     optionsMenuShown: boolean = false
+    selectAll: boolean = false;
     width: number = 0;
     constructor(public label: string, public tag: string, public percentage: number = 0, public textAlign: string = 'left') {
 

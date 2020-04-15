@@ -15,7 +15,9 @@
                             </span>
                             <div v-if="col.optionsMenuShown" @mouseleave="col.optionsMenuShown=false" :class="i===5 ? 'filter-checks filter-checks-right-aligned':'filter-checks'">
                                 <ul style="padding:0;text-align:left">
-                                    <li v-for="(option,j) in col.options" :key="`opt${i}-${j}`" style="padding:0" :class="option.dimmed ? 'option-dimmed': ''">
+                                    <!-- <label><input type="checkbox" v-model="col.selectAll" @change.stop="toggleFilterSelection(i, j)" /> Select All</label>
+                                    <hr class="mb-1"> -->
+                                    <li v-for="(option,j) in col.options" :key="`opt${i}-${j}`" style="padding:0">
                                         <label><input type="checkbox" v-model="option.checked" @change.stop="toggleFilterSelection(i, j)" /> {{ option.label }}</label>
                                     </li>
                                 </ul>
@@ -34,22 +36,28 @@
                         <td :style="getColumnWidth(2)">
                             {{ item.collection.type }}:{{ item.collection.name }}
                         </td>
-                        <td v-if="item.control.id === 'container_image.CVE_scan' && item.control.message !== 'No issues'" :style="getColumnWidth(3)">
-                            <router-link class='small-link' :to="{ name: 'ImageDetail', params: { imageid: item.tags.imageTag, date: date, component: item.component }}">
-                                {{ item.control.id }}</router-link>                            
-                            <span v-if="item.control.message" class="table-tooltip" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="item.control.message">
-                            <span class="icon-help-circle tip-icon" style="font-size:9px;"></span>
-                            </span>
-                        </td>
-                        <td v-else :style="getColumnWidth(3)">
-                            {{ item.control.id }}
-                            <span v-if="item.control.message" class="table-tooltip" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="item.control.message">
-                            <span class="icon-help-circle tip-icon" style="font-size:9px;"></span>
-                            </span>
-                        </td>
-                        <td :style="getColumnWidth(4)">
+                        <td :style="getColumnWidth(3)">
                             {{ item.resource.type }}:{{ item.resource.name }}
                         </td>                    
+                        <td v-if="item.control.id === 'container_image.CVE_scan' && item.control.message !== 'No issues'" :style="getColumnWidth(4)">
+                            <router-link class='small-link' :to="{ name: 'ImageDetail', params: { imageid: item.tags.imageTag, date: date, component: item.component }}">
+                                {{ item.control.id }}</router-link>                            
+                            <span v-if="item.tags.imageTag" class="table-tooltip" data-balloon-length="large" data-balloon-pos="up" :aria-label="item.tags.imageTag">
+                                <span class="icon-target tip-icon" style="font-size:9px;" />
+                            </span>
+                            <span v-if="item.control.message" class="table-tooltip" data-balloon-length="large" data-balloon-pos="up" :aria-label="item.control.message">
+                                <span class="icon-help-circle tip-icon" style="font-size:9px;"></span>
+                            </span>
+                        </td>
+                        <td v-else :style="getColumnWidth(4)">
+                            {{ item.control.id }}
+                            <span v-if="item.tags.imageTag" class="table-tooltip" data-balloon-length="large" data-balloon-pos="up" :aria-label="item.tags.imageTag">
+                                <span class="icon-target tip-icon" style="font-size:9px;" />
+                            </span>
+                            <span v-if="item.control.message && item.control.message !== 'No issues'" class="table-tooltip" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="item.control.message">
+                                <span class="icon-help-circle tip-icon" style="font-size:9px;"></span>
+                            </span>
+                        </td>
                         <td :class='getResultClass(item.result)' :style="getColumnWidth(5)">
                             {{ item.result }}
                         </td>                   
