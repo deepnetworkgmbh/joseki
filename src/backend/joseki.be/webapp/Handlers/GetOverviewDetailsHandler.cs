@@ -84,14 +84,16 @@ namespace webapp.Handlers
             // construct the result set using both [all/filtered] scan results.
             var results = new Dictionary<string, CheckFilter[]>();
 
-            results.TryAdd("category", allChecks.GroupBy(x => x.Category)
-                        .Select(x => x.First().Category)
+            results.TryAdd("category", allChecks
+                        .Select(x => x.Category)
+                        .Distinct()
                         .OrderBy(x => x)
                         .Select(filter => new CheckFilter(filter, !filteredChecks.Any(c => c.Category == filter)))
                         .ToArray());
 
-            results.TryAdd("component", allChecks.GroupBy(x => x.Component.Name)
-                        .Select(x => x.First().Component.Name)
+            results.TryAdd("component", allChecks
+                        .Select(x => x.Component.Name)
+                        .Distinct()
                         .OrderBy(x => x)
                         .Select(filter => new CheckFilter(filter, !filteredChecks.Any(c => c.Component.Name == filter)))
                         .ToArray());
@@ -110,8 +112,9 @@ namespace webapp.Handlers
                                 !filteredChecks.Any(c => c.Collection.Type == filter.type && c.Collection.Name == filter.name)))
                         .ToArray());
 
-            results.TryAdd("control", allChecks.GroupBy(x => x.Control.Id)
-                        .Select(x => x.First().Control.Id)
+            results.TryAdd("control", allChecks
+                        .Select(x => x.Control.Id)
+                        .Distinct()
                         .OrderBy(x => x)
                         .Select(filter => new CheckFilter(filter, !filteredChecks.Any(c => c.Control.Id == filter)))
                         .ToArray());
@@ -130,8 +133,9 @@ namespace webapp.Handlers
                                 !filteredChecks.Any(c => c.Resource.Type == filter.type && c.Resource.Name == filter.name)))
                         .ToArray());
 
-            results.TryAdd("result", allChecks.GroupBy(x => x.Result.ToString())
-                        .Select(x => x.First().Result.ToString())
+            results.TryAdd("result", allChecks
+                        .Select(x => x.Result.ToString())
+                        .Distinct()
                         .OrderBy(x => x)
                         .Select(filter => new CheckFilter(filter, !filteredChecks.Any(c => c.Result.ToString() == filter)))
                         .ToArray());
