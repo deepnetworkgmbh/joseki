@@ -36,28 +36,28 @@ export default class OverviewDetail extends Vue {
     data!: CheckResultSet;
     filterContainer!: FilterContainer;
 
+    windowWidth: number = 0;
     windowHeight: number = 0;
     pageSize: number = 0;
     pageIndex: number = 0;
     pageButtons: number[] = [];
 
     headers: TableColumn[] = [
-        new TableColumn('Component', 'component'),
-        new TableColumn('Category', 'category', 90),
-        new TableColumn('Collection', 'collection'),
-        new TableColumn('Control', 'control'),
-        new TableColumn('Resource', 'resource'),
-        new TableColumn('Result', 'result', 80)
+        new TableColumn('Component', 'component', 11, 'left'),
+        new TableColumn('Category', 'category', 8, 'left'),     
+        new TableColumn('Collection', 'collection', 24, 'left'),
+        new TableColumn('Control', 'control', 29, 'left'),
+        new TableColumn('Resource', 'resource', 20, 'left'),    
+        new TableColumn('Result', 'result', 8, 'right')
     ]
     headerData: any;
-    
+
     /**
      * load data when component is created.
      *
      * @memberof OverviewDetail
      */
     created() {
-        //this.loadColumnData();        
         window.addEventListener('resize', this.onResize);
         this.onResize();
     }
@@ -99,6 +99,7 @@ export default class OverviewDetail extends Vue {
      * @memberof Overview
      */
     loadData() {
+        this.onResize();
         if (this.pageSize === 0) {
             console.log(`[ld] pagesize not determined yet, exiting.`)
             return;
@@ -189,8 +190,16 @@ export default class OverviewDetail extends Vue {
 
     onResize() {
         this.windowHeight = window.innerHeight
-        this.pageSize = Math.floor((this.windowHeight-160)/22);       
-        console.log(`[pagesize=${this.pageSize}]`)
+        this.pageSize = Math.floor((this.windowHeight-160)/22);  
+        let footerElement = document.getElementById('footer');
+        if (footerElement) {
+            this.windowWidth = footerElement.clientWidth;
+            let sum = 0;
+            for(let i=0;i<this.headers.length;i++) {
+                this.headers[i].width = Math.floor(this.windowWidth * this.headers[i].percentage / 100) 
+                sum+= this.headers[i].width;
+            }    
+        }     
     }
 
     changePageIndex(index: number) {
@@ -225,9 +234,6 @@ export default class OverviewDetail extends Vue {
                 this.headers[i].sort = Sorting.none;
             }
         }
-        // console.log(`[] date: ${this.selectedDate!.toISODate()}`)
-        // console.log(`[] filter: ${this.filter}`)
-        // console.log(`[] sort data: ${this.getSortData()}`)
         router.push(`/overview-detail/${this.date}/${this.filter}/${this.getSortData()}`)
     }
 
@@ -256,9 +262,10 @@ export default class OverviewDetail extends Vue {
     }
 
     getColumnWidth(index: number) {
-        let header = this.headers[index];
-        if (header.width === 0) return {};
-        return { width: header.width + 'px' };
+        return { 
+            maxWidth: this.headers[index].width + 'px', 
+            textAlign: this.headers[index].textAlign 
+        };
     }
 
     @Watch('pageSize')
@@ -283,7 +290,10 @@ export class TableColumn {
     sortable: boolean = true
     options: FilterCheck[] = []
     optionsMenuShown: boolean = false
-    constructor(public label: string, public tag: string, public width: number = 0) {}
+    width: number = 0;
+    constructor(public label: string, public tag: string, public percentage: number = 0, public textAlign: string = 'left') {
+
+    }
 
     checkedCount() {
         return this.options.filter(x=>x.checked === true).length;

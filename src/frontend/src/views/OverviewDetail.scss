@@ -50,6 +50,7 @@
     font-weight: normal;
     padding:3px;
     margin-left:-20px;
+
     & ul li {
         margin: 0;     
         white-space: nowrap;
@@ -64,14 +65,20 @@
     }
 
     @apply shadow;
+
+    &-right-aligned {
+        margin-left:40px;
+    }
 }
+
+
 
 .option-dimmed > label {
     color:#777;
 }
 
-.table tr td {
+.checkrow > td {
     text-overflow: ellipsis; 
     overflow-x: hidden; 
-    white-space:nowrap;
+    white-space:nowrap;    
 }
