@@ -165,9 +165,9 @@ namespace webapp.Handlers
 
             // 4. Get all the check details
             var checkResults = await this.db.Set<CheckResultEntity>()
-                .AsNoTracking()
                 .Include(i => i.Check)
                 .Include(i => i.Audit)
+                .AsNoTracking()
                 .Where(i => audits.Contains(i.Audit))
                 .Select(i => new
                 {
