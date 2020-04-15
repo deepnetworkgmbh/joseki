@@ -3,25 +3,18 @@
         <Spinner v-if="!loaded" :loadFailed="loadFailed" @reload="loadData" />
         <div v-if="loaded" class="shadow" style="min-height:300px;padding:4px">
            <table class="table">                
-                <col style="width:11%">
-                <col style="width:8%">
-                <col style="width:24%">
-                <col style="width:29%">
-                <col style="width:20%">
-                <col style="width:8%">
-
-                <thead style="width:100%">
+                <thead >
                     <tr class="table-header">
                         <td v-for="(col,i) in headers" :key="`col${i}`" :style="getColumnWidth(i)">
-                            <span class="filter-button noselect" @click="toggleColumnFilter(i)" style="float:left;">
+                            <span class="filter-button noselect" @click="toggleColumnFilter(i)">
                                 <i class="icon-filter" :style="{ color: col.checkedCount()>0 ? '#3182ce': 'gray' }" />
                             </span>
-                            <span style="cursor:pointer;float:left;" class="noselect" @click="changeOrdering(i)">
+                            <span style="cursor:pointer;" class="noselect" @click="changeOrdering(i)">
                                 {{ col.label }}
                                 <i v-if="col.sortable" :class="getHeaderClass(i)" />         
                             </span>
-                            <div v-if="col.optionsMenuShown" class="filter-checks" @mouseleave="col.optionsMenuShown=false">
-                                <ul style="padding:0">
+                            <div v-if="col.optionsMenuShown" @mouseleave="col.optionsMenuShown=false" :class="i===5 ? 'filter-checks filter-checks-right-aligned':'filter-checks'">
+                                <ul style="padding:0;text-align:left">
                                     <li v-for="(option,j) in col.options" :key="`opt${i}-${j}`" style="padding:0" :class="option.dimmed ? 'option-dimmed': ''">
                                         <label><input type="checkbox" v-model="option.checked" @change.stop="toggleFilterSelection(i, j)" /> {{ option.label }}</label>
                                     </li>
@@ -30,30 +23,40 @@
                         </td>                       
                     </tr>
                 </thead>
-                <tbody style="width:100%">
+                <tbody>
                     <tr v-for="(item,i) in data.checks" :key="`item${i}`" class="checkrow">                    
-                        <td><i :class="getComponentIcon(item.component.category)" /> {{ item.component.name }}</td>
-                        <td>{{ item.category }}</td>
-                        <td>{{ item.collection.type }}:{{ item.collection.name }}</td>
-                        <td v-if="item.control.id === 'container_image.CVE_scan' && item.control.message !== 'No issues'">
+                        <td :style="getColumnWidth(0)">
+                            <i :class="getComponentIcon(item.component.category)" /> {{ item.component.name }}
+                        </td>
+                        <td :style="getColumnWidth(1)">
+                            {{ item.category }}
+                        </td>
+                        <td :style="getColumnWidth(2)">
+                            {{ item.collection.type }}:{{ item.collection.name }}
+                        </td>
+                        <td v-if="item.control.id === 'container_image.CVE_scan' && item.control.message !== 'No issues'" :style="getColumnWidth(3)">
                             <router-link class='small-link' :to="{ name: 'ImageDetail', params: { imageid: item.tags.imageTag, date: date, component: item.component }}">
                                 {{ item.control.id }}</router-link>                            
                             <span v-if="item.control.message" class="table-tooltip" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="item.control.message">
                             <span class="icon-help-circle tip-icon" style="font-size:9px;"></span>
                             </span>
                         </td>
-                        <td v-else>
+                        <td v-else :style="getColumnWidth(3)">
                             {{ item.control.id }}
                             <span v-if="item.control.message" class="table-tooltip" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="item.control.message">
                             <span class="icon-help-circle tip-icon" style="font-size:9px;"></span>
                             </span>
                         </td>
-                        <td>{{ item.resource.type }}:{{ item.resource.name }}</td>                    
-                        <td :class='getResultClass(item.result)'>{{ item.result }}</td>                   
+                        <td :style="getColumnWidth(4)">
+                            {{ item.resource.type }}:{{ item.resource.name }}
+                        </td>                    
+                        <td :class='getResultClass(item.result)' :style="getColumnWidth(5)">
+                            {{ item.result }}
+                        </td>                   
                     </tr> 
                 </tbody>
             </table>
-            <div class="table-footer">                    
+            <div id="footer" class="table-footer">                    
                 <Paginator :pageIndex="data.pageIndex" :pageSize="pageSize" :totalRows="data.totalResults" @pageChanged="changePageIndex" />
             </div>
         </div>
