@@ -1,0 +1,77 @@
+.checkrow {
+    font-size: 10px;
+    line-height: 10px;
+}
+
+
+.table {
+    border: solid 1px #eee;
+    width: 100%;
+
+}
+
+.table-header {
+    font-size:10px;font-weight:bold;background-color:#eee;
+}
+
+.table-footer {
+    position: relative;
+    width: 100%;
+    background-color: #eee;
+    height: 25px;
+    padding:0;
+    text-align: center;
+}
+
+.table-tooltip {
+    font-size: 10px;
+    color:red;
+    --balloon-font-size: 8px;
+    --balloon-color: #666;
+}
+
+.filter-button {
+    cursor: pointer;
+}
+.filter-button:hover {
+    color:#080;
+}
+
+.filter-checks {
+    position: absolute;
+    z-index: 10;
+    min-width: 20px;
+    min-height: 20px;
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: #fff;
+    border: solid 1px #aaa;
+    font-style: 10px;
+    font-weight: normal;
+    padding:3px;
+    margin-left:-20px;
+    & ul li {
+        margin: 0;     
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;   
+
+        & label {
+            margin: 0;     
+            padding: 0;
+            cursor: pointer;
+        }
+    }
+
+    @apply shadow;
+}
+
+.option-dimmed > label {
+    color:#777;
+}
+
+.table tr td {
+    text-overflow: ellipsis; 
+    overflow-x: hidden; 
+    white-space:nowrap;
+}

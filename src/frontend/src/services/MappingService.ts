@@ -148,7 +148,7 @@ export class MappingService {
         // sort groups by name
         results.sort((a, b) => (a.score < b.score ? 1 : a.score > b.score ? -1 : 0))
 
-        console.log(`[] collections result `, results)
+        //console.log(`[] collections result `, results)
         return results
     }
 

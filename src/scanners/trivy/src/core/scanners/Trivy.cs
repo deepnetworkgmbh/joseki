@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using core.core;
 using Newtonsoft.Json.Linq;
@@ -94,7 +95,8 @@ namespace core.scanners
                     Logger.Information("Scanning {Image} from {RegistryAddress}", request.Image, "Default Docker Hub");
                 }
 
-                var processResults = await ProcessEx.RunAsync(processStartInfo);
+                var cts = new CancellationTokenSource(TimeSpan.FromMinutes(15));
+                var processResults = await ProcessEx.RunAsync(processStartInfo, cts.Token);
 
                 var scanOutput = processResults.ExitCode != 0
                     ? "[]"

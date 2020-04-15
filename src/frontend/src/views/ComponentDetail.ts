@@ -84,7 +84,13 @@ export default class ComponentDetail extends Vue {
      * @memberof ComponentDetail
      */
     getPieChartOptions() : ApexCharts.ApexOptions {
-        return ChartService.PieChartOptions("pie-overall", this.data.current)
+        return ChartService.PieChartOptions("pie-overall", this.data.current, this.pieClicked)
+    }
+
+    pieClicked(status: string) {
+        let filterBy = btoa(`result=${status}&component=${this.data.component.name}`);
+        let date = this.selectedDate!.toISODate();
+        router.push({ name: 'OverviewDetail', params: { date: date, filter: filterBy, sort: '' } });
     }
 
     /**

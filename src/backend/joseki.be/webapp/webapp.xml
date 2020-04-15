@@ -609,6 +609,11 @@
             Describes a single root-level container object of Blob Storage.
             </summary>
         </member>
+        <member name="F:webapp.BlobStorage.ScannerContainer.Empty">
+            <summary>
+            Represents empty container.
+            </summary>
+        </member>
         <member name="M:webapp.BlobStorage.ScannerContainer.#ctor(System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.BlobStorage.ScannerContainer"/> class.
@@ -875,6 +880,18 @@
             <param name="date1">The first date to compare.</param>
             <param name="date2">The second date to compare.</param>
             <returns>The Image Scan diff.</returns>
+        </member>
+        <member name="M:webapp.Controllers.v0._1.AuditsController.GetOverviewDetail(System.String,System.String,System.Nullable{System.DateTime},System.Int32,System.Int32)">
+            <summary>
+            Returns the overview summary detail.
+            </summary>
+            <returns>the overview summary detail.</returns>
+        </member>
+        <member name="M:webapp.Controllers.v0._1.AuditsController.GetOverviewSearch(System.String,System.Nullable{System.DateTime})">
+            <summary>
+            Returns autocomplete data.
+            </summary>
+            <returns>the autocomplete data.</returns>
         </member>
         <member name="T:webapp.Controllers.v0._1.KnowledgebaseController">
             <summary>
@@ -2017,6 +2034,52 @@
             </summary>
             <returns>Metadata items.</returns>
         </member>
+        <member name="T:webapp.Handlers.GetOverviewDetailsHandler">
+            <summary>
+            Prepares response to get-overview-details request.
+            </summary>
+        </member>
+        <member name="M:webapp.Handlers.GetOverviewDetailsHandler.#ctor(joseki.db.JosekiDbContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Handlers.GetOverviewDetailsHandler"/> class.
+            </summary>
+            <param name="db">Joseki database object.</param>
+        </member>
+        <member name="M:webapp.Handlers.GetOverviewDetailsHandler.GetDetails(System.String,System.String,System.DateTime,System.Int32,System.Int32)">
+            <summary>
+            Returns CheckResult set for requested date, filtered and sorted.
+            </summary>
+            <param name="sortBy">The ordering parameters as a string, concated by ,.</param>
+            <param name="filterBy">The filtering parameters as a string, concated by ,.</param>
+            <param name="date">The date to get details for.</param>
+            <param name="pageSize">Size of each result set.</param>
+            <param name="pageIndex">Index of each result set.</param>
+            <returns>list of CheckResultSet.</returns>
+        </member>
+        <member name="M:webapp.Handlers.GetOverviewDetailsHandler.GetAutoCompleteData(System.String,System.DateTime)">
+            <summary>
+            Returns autocomplete data for selected date.
+            </summary>
+            <param name="filterBy">The filtering parameters as a string, concated by ,.</param>
+            <param name="date">The date to get details for.</param>
+            <returns>string array.</returns>
+        </member>
+        <member name="M:webapp.Handlers.GetOverviewDetailsHandler.GetChecks(System.DateTime)">
+            <summary>
+            Returns autocomplete data for selected field.
+            </summary>
+            <param name="date">The date to get details for.</param>
+            <returns>string array.</returns>
+        </member>
+        <member name="M:webapp.Handlers.GetOverviewDetailsHandler.SortCheckList(System.Collections.Generic.List{webapp.Models.OverviewCheck},System.String)">
+            <summary>
+            Sorts check list according to sortBy.
+            (currently only sorted by one column).
+            </summary>
+            <param name="checks">List of OverviewChecks.</param>
+            <param name="sortBy">string containing sort information.</param>
+            <returns>Sorted list of OverviewChecks.</returns>
+        </member>
         <member name="T:webapp.Handlers.InfraScoreExtensions">
             <summary>
             Common Infra-Score extensions.
@@ -2211,9 +2274,31 @@
             Key-value pairs with custom labels/tags/attributes.
             </summary>
         </member>
+        <member name="M:webapp.Models.Check.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Models.Check"/> class.
+             Empty constructor.
+            </summary>
+        </member>
         <member name="M:webapp.Models.Check.#ctor(System.DateTime,webapp.Models.Collection,webapp.Models.Resource,System.String,webapp.Models.CheckControl,webapp.Models.CheckResult)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Models.Check"/> class.
+            create unique id on constructor.
+            </summary>
+        </member>
+        <member name="T:webapp.Models.OverviewCheck">
+            <summary>
+            Check used in Overview detail.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.OverviewCheck.Component">
+            <summary>
+            Component of the check.
+            </summary>
+        </member>
+        <member name="M:webapp.Models.OverviewCheck.#ctor(System.DateTime,webapp.Models.Collection,webapp.Models.Resource,System.String,webapp.Models.CheckControl,webapp.Models.CheckResult,webapp.Models.InfrastructureComponent)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Models.OverviewCheck"/> class.
             create unique id on constructor.
             </summary>
         </member>
@@ -2241,6 +2326,28 @@
             <param name="id">id of control.</param>
             <param name="message">message of control.</param>
         </member>
+        <member name="T:webapp.Models.CheckFilter">
+            <summary>
+            A view model for overview scan result page to return autocomplete items.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.CheckFilter.Name">
+            <summary>
+            Name of the filter.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.CheckFilter.FilteredOut">
+            <summary>
+            Handles if it exist on subsequent searches.
+            </summary>
+        </member>
+        <member name="M:webapp.Models.CheckFilter.#ctor(System.String,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Models.CheckFilter"/> class.
+            </summary>
+            <param name="name">name of the filter.</param>
+            <param name="filteredOut">does the filter exist on subsequent searches.</param>
+        </member>
         <member name="T:webapp.Models.CheckResult">
             <summary>
             Severity of the check.
@@ -2264,6 +2371,46 @@
         <member name="F:webapp.Models.CheckResult.Success">
             <summary>
             Enum value when a scan succeeded
+            </summary>
+        </member>
+        <member name="T:webapp.Models.CheckResultSet">
+            <summary>
+            Model for returning check resultset on overview detail.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.CheckResultSet.Checks">
+            <summary>
+            List of checks in resultset.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.CheckResultSet.PageSize">
+            <summary>
+            Pagination size of the resultset.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.CheckResultSet.PageIndex">
+            <summary>
+            Current pagination index of the resultset.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.CheckResultSet.SortBy">
+            <summary>
+            Current resultset sorted by.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.CheckResultSet.FilterBy">
+            <summary>
+            Current resultset filtered by.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.CheckResultSet.TotalResults">
+            <summary>
+            Number of total results in the result set.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.CheckResultSet.Error">
+            <summary>
+            Error message for the query.
             </summary>
         </member>
         <member name="T:webapp.Models.Collection">
@@ -2679,6 +2826,39 @@
             Knowledgebase entry content.
             </summary>
         </member>
+        <member name="T:webapp.Models.PredicateBuilder">
+            <summary>
+            A Linq predicate builder to support dynamic query concatenation.
+            </summary>
+        </member>
+        <member name="M:webapp.Models.PredicateBuilder.True``1">
+            <summary>
+            returns a true expression.
+            </summary>
+            <typeparam name="T">Type used by the expression.</typeparam>
+            <returns>true.</returns>
+        </member>
+        <member name="M:webapp.Models.PredicateBuilder.False``1">
+            <summary>
+            returns a false expression.
+            </summary>
+            <typeparam name="T">Type used by the expression.</typeparam>
+            <returns>false.</returns>
+        </member>
+        <member name="M:webapp.Models.PredicateBuilder.Or``1(System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}})">
+            <summary>
+            Invokes an OR operator using the provided expresion with parameters.
+            </summary>
+            <typeparam name="T">Type used by the expression.</typeparam>
+            <returns>boolean.</returns>
+        </member>
+        <member name="M:webapp.Models.PredicateBuilder.And``1(System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}})">
+            <summary>
+            Invokes an AND operator using the provided expresion with parameters.
+            </summary>
+            <typeparam name="T">Type used by the expression.</typeparam>
+            <returns>boolean.</returns>
+        </member>
         <member name="T:webapp.Models.Resource">
             <summary>
             Resource of a check.
@@ -2752,6 +2932,12 @@
             </summary>
             <param name="args">Arguments.</param>
             <returns>HostBuilder object.</returns>
+        </member>
+        <member name="M:webapp.Program.RunDbMigrations(System.IServiceProvider)">
+            <summary>
+            Apply database schema migrations on service startup.
+            </summary>
+            <param name="services">An instance of <see cref="T:System.IServiceProvider"/>.</param>
         </member>
         <member name="T:webapp.Queues.AzureStorageQueue">
             <summary>
@@ -2858,12 +3044,6 @@
             <param name="app">Builder object.</param>
             <param name="env">Environment configuration.</param>
             <param name="provider">API version provider.</param>
-        </member>
-        <member name="M:webapp.Startup.RunDbMigrations(Microsoft.AspNetCore.Builder.IApplicationBuilder)">
-            <summary>
-            Apply database schema migrations on service startup.
-            </summary>
-            <param name="app">A instance of <see cref="T:Microsoft.AspNetCore.Builder.IApplicationBuilder"/>.</param>
         </member>
     </members>
 </doc>

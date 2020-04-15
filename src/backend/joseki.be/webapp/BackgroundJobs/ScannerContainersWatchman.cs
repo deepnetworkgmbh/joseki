@@ -11,6 +11,7 @@ using Serilog;
 using webapp.Audits;
 using webapp.BlobStorage;
 using webapp.Configuration;
+using webapp.Exceptions;
 using webapp.Infrastructure;
 
 namespace webapp.BackgroundJobs
@@ -53,19 +54,29 @@ namespace webapp.BackgroundJobs
                 {
                     Logger.Information("Scanner Containers watchman is going out.");
 
-                    var containers = await this.blobStorage.ListAllContainers();
-                    var metadataTasks = containers
-                        .Select(this.DownloadAndParseMetadata)
-                        .ToArray();
-                    await Task.WhenAll(metadataTasks);
-
-                    var schedulerItems = metadataTasks.Select(t => t.Result).ToArray();
-                    this.scheduler.UpdateWorkingItems(schedulerItems);
-
-                    if (!initialized)
+                    try
                     {
-                        JosekiStateManager.ScannerContainersIsInitialized();
-                        initialized = true;
+                        var containers = await this.blobStorage.ListAllContainers();
+                        var metadataTasks = containers
+                            .Select(this.DownloadAndParseMetadata)
+                            .ToArray();
+                        await Task.WhenAll(metadataTasks);
+
+                        ScannerContainer[] schedulerItems = metadataTasks
+                            .Select(t => t.Result)
+                            .Where(i => i != ScannerContainer.Empty)
+                            .ToArray();
+                        this.scheduler.UpdateWorkingItems(schedulerItems);
+
+                        if (!initialized)
+                        {
+                            JosekiStateManager.ScannerContainersIsInitialized();
+                            initialized = true;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex, "Scanner Containers watchman failed now, but they comes back later");
                     }
 
                     Logger.Information("Scanner Containers watchman finished the detour.");
@@ -82,32 +93,40 @@ namespace webapp.BackgroundJobs
         {
             const int oneHourSeconds = 3600;
 
-            var stream = await this.blobStorage.DownloadFile(container.MetadataFilePath);
-
-            using var sr = new StreamReader(stream);
-            var metadataString = sr.ReadToEnd();
-
-            container.Metadata = JsonConvert.DeserializeObject<ScannerMetadata>(metadataString);
-
-            var unixNow = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            var delta = unixNow - container.Metadata.Heartbeat;
-
-            if (delta < container.Metadata.HeartbeatPeriodicity)
+            try
             {
-                // do nothing
-            }
-            else if (delta < oneHourSeconds || delta < container.Metadata.HeartbeatPeriodicity * 2)
-            {
-                var lastExecution = DateTimeOffset.FromUnixTimeSeconds(container.Metadata.Heartbeat);
-                Logger.Warning("Scanner {ScannerContainer} keeps silence since {LastExecution}", container.Name, lastExecution);
-            }
-            else
-            {
-                var lastExecution = DateTimeOffset.FromUnixTimeSeconds(container.Metadata.Heartbeat);
-                Logger.Error("Scanner {ScannerContainer} keeps silence since {LastExecution}", container.Name, lastExecution);
-            }
+                var stream = await this.blobStorage.DownloadFile(container.MetadataFilePath);
 
-            return container;
+                using var sr = new StreamReader(stream);
+                var metadataString = sr.ReadToEnd();
+
+                container.Metadata = JsonConvert.DeserializeObject<ScannerMetadata>(metadataString);
+
+                var unixNow = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                var delta = unixNow - container.Metadata.Heartbeat;
+
+                if (delta < container.Metadata.HeartbeatPeriodicity)
+                {
+                    // do nothing
+                }
+                else if (delta < oneHourSeconds || delta < container.Metadata.HeartbeatPeriodicity * 2)
+                {
+                    var lastExecution = DateTimeOffset.FromUnixTimeSeconds(container.Metadata.Heartbeat);
+                    Logger.Warning("Scanner {ScannerContainer} keeps silence since {LastExecution}", container.Name, lastExecution);
+                }
+                else
+                {
+                    var lastExecution = DateTimeOffset.FromUnixTimeSeconds(container.Metadata.Heartbeat);
+                    Logger.Error("Scanner {ScannerContainer} keeps silence since {LastExecution}", container.Name, lastExecution);
+                }
+
+                return container;
+            }
+            catch (JosekiException ex)
+            {
+                Logger.Warning(ex, "Failed to download amd parse metadata of {ScannerContainer}", container.Name);
+                return ScannerContainer.Empty;
+            }
         }
     }
 }

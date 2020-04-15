@@ -1,5 +1,6 @@
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import { InfrastructureComponent } from '@/models';
+import router from '@/router';
 
 @Component
 export default class Breadcrumbs extends Vue {
@@ -12,11 +13,14 @@ export default class Breadcrumbs extends Vue {
 
     diffdates: string = ''
     imageid: string = '';
+    filter: string = '';
+
     showDate: boolean = true;
     showComponent: boolean = false;
     showHistory: boolean = false;
     showDiff: boolean = false;
     showImage: boolean = false;
+    showFilter: boolean = false;
 
     getIcon(): string {
         if(this.component) {
@@ -48,6 +52,11 @@ export default class Breadcrumbs extends Vue {
         return ''
     }
 
+    onFilterChangedFromAF(filter: string) {
+        this.filter = filter;
+        this.$router.push({ name: router.currentRoute!.name!.toString(), params: { date: this.date, filter: filter }})
+    }
+
     @Watch("date")
     onDateChanged(date: string) {
         this.$forceUpdate();
@@ -63,6 +72,16 @@ export default class Breadcrumbs extends Vue {
         this.handleRouteChange();
     }
 
+    @Watch("$route.params", { immediate: true})
+    onRouteParamsChanged(newPath: string) {        
+        this.handleRouteChange();
+    }
+
+    @Watch("filter", { immediate: true})
+    onFilterChanged(newfilter: string) {                
+        this.handleRouteChange();
+    }
+
     handleRouteChange() {
         switch(this.$route.name) {
             case 'GeneralOverview': 
@@ -73,6 +92,7 @@ export default class Breadcrumbs extends Vue {
                     this.showHistory = false;
                     this.showDiff = false;
                     this.showImage = false;
+                    this.showFilter = false;
                     break;            
                 }
             case 'ComponentDetail': 
@@ -82,6 +102,7 @@ export default class Breadcrumbs extends Vue {
                     this.showHistory = false;
                     this.showDiff = false;
                     this.showImage = false;
+                    this.showFilter = false;
                     break;
                 }
             case 'ComponentHistory': 
@@ -91,6 +112,7 @@ export default class Breadcrumbs extends Vue {
                     this.showHistory = true;
                     this.showDiff = false;
                     this.showImage = false;
+                    this.showFilter = false;
                     break;
                 }
             case 'ComponentDiff': 
@@ -101,6 +123,7 @@ export default class Breadcrumbs extends Vue {
                     this.showDiff = true;
                     this.diffdates = this.$route.params.date + ' / ' + this.$route.params.date2;
                     this.showImage = false;
+                    this.showFilter = false;
                     break;
                 }
             case 'OverviewDiff': 
@@ -111,6 +134,19 @@ export default class Breadcrumbs extends Vue {
                     this.showDiff = true;
                     this.diffdates = this.$route.params.date + ' / ' + this.$route.params.date2;
                     this.showImage = false;                 
+                    this.showFilter = false;
+                    break;
+                }
+            case 'OverviewDetail': 
+                {
+                    this.showDate = true;
+                    this.showComponent = true;
+                    this.showHistory = false;
+                    this.showDiff = false;
+                    this.diffdates = '';
+                    this.showImage = false;                 
+                    this.showFilter = this.$route.params.filter !== undefined;
+                    this.filter = this.$route.params.filter;                    
                     break;
                 }
             case 'ImageDetail':
@@ -121,6 +157,7 @@ export default class Breadcrumbs extends Vue {
                     this.showDiff = false;
                     this.showImage = true;
                     this.imageid = this.$route.params.imageid;
+                    this.showFilter = false;
                     break;
                 }
             default:
@@ -130,6 +167,7 @@ export default class Breadcrumbs extends Vue {
                     this.showHistory = false;
                     this.showDiff = false;
                     this.showImage = false;
+                    this.showFilter = false;
                     break;
                 }
         }
