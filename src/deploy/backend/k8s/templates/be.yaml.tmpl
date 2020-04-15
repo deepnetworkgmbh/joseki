@@ -1,0 +1,110 @@
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: ${joseki.namespace}
+  labels:
+    app: joseki-backend
+data:
+  config.yaml: |-
+    to-be-replaced
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: joseki-be
+  namespace: ${joseki.namespace}
+  labels:
+    app: joseki-backend
+  annotations:
+spec:
+  ports:
+  - name: joseki-be
+    port: 80
+    protocol: TCP
+    targetPort: main-http
+  selector:
+    app: joseki-backend
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: joseki-be
+  namespace: ${joseki.namespace}
+  labels:
+    app: joseki-backend 
+    version: '${be.imageTag}'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: joseki-backend
+  template:
+    metadata:
+      labels:
+        app: joseki-backend
+    spec:
+      containers:
+      - name: joseki-be
+        image: 'deepnetwork/joseki-backend:${be.imageTag}'
+        imagePullPolicy: 'Always'
+        name: joseki-be
+        ports:
+        - name: main-http
+          containerPort: 8080
+        resources:
+          requests:
+            memory: "200M"
+            cpu: "500m"
+          limits:
+            memory: "500M"
+            cpu: "1000m"
+        readinessProbe:
+          httpGet:
+            path: /health/readiness
+            port: 8080
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 5
+        livenessProbe:
+          httpGet:
+            path: /health/liveness
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 3
+        volumeMounts:
+          - name: backend-config-volume
+            mountPath: /app/config.yaml
+            subPath: config.yaml
+        securityContext:
+          runAsUser: 10001
+          runAsGroup: 10001
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          readOnlyRootFilesystem: false
+        env:
+          - name: JOSEKI_CONFIG_FILE_PATH
+            value: "/app/config.yaml"
+          - name: SCANNER_VERSION
+            value: "${be.imageTag}"
+      serviceAccountName: joseki-be
+      securityContext:
+        fsGroup: 10001
+      volumes:
+        - name: backend-config-volume
+          configMap:
+            name: backend-config
+            defaultMode: 0777
+            items:
+              - key: config.yaml
+                path: config.yaml

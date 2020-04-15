@@ -1,0 +1,14 @@
+resources:
+- scanner_azsk.yaml
+generatorOptions:
+  labels: 
+    app: '${azsk.scannerName}'
+    module: scanners
+    version: '${azsk.imageTag}'
+configMapGenerator:
+- name: '${azsk.scannerName}-cfg'
+  namespace: '${joseki.namespace}'
+  behavior: replace
+  files:
+  - config_scanner.yaml
+
