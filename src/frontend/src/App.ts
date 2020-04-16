@@ -6,7 +6,9 @@ export default class App extends Vue {
 
   date: string = '';
   component: InfrastructureComponent = new InfrastructureComponent();
-  sideWindowOpen: boolean = true;
+  wide: boolean = false;
+  // list of views that use full-width
+  wideControls = ['OverviewDetail'];
 
   /**
    * Method for component change (for breadcrumb).
@@ -29,14 +31,25 @@ export default class App extends Vue {
   }
 
   /**
+   * Return full width class if current route is in wideControls list.
+   *
+   * @returns
+   * @memberof App
+   */
+  getWrapperClass() {
+    return this.wide ? 'wrapper-full' : 'wrapper';
+  }
+
+  /**
    * Always scroll to top when navigation occurs.
    *
    * @memberof App
    */
   @Watch('$route.name')
-  onRouteChanged() {
+  onRouteChanged(routename: string) {
     var element = <HTMLElement>document.getElementById("nav");
     var top = element.offsetTop;
     window.scrollTo(0, top);
+    this.wide = this.wideControls.indexOf(routename) !== -1;
   }
 }

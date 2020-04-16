@@ -20,3 +20,11 @@ body {
 	width: 100%;
 	height: 30px;
 }
+
+.wrapper-full {
+	position: relative;
+	min-height: calc(100vh - 30px);
+	margin-bottom: 30px;
+	padding: 10px;
+	margin: auto;
+}

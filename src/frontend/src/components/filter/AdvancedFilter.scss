@@ -11,26 +11,7 @@
     position: relative;
     left:0;
 
-
-    &-menu-open {
-        position: absolute;        
-        background-color: $color-content-bg;
-        display: inline-block;
-        font-size: 12px;
-        z-index: 8;
-        top:7px;
-        left:-1px;
-        width: 920px;
-        min-height: 25px;        
-        margin-top:-10px;    
-        opacity: 1;
-        transition: all .1s ease-in-out;        
-        overflow: hidden;
-        @apply border;
-        //@apply shadow;
-    }
-
-    &-menu-closed {
+    &-menu {
         position: absolute;        
         display: inline-block;
         font-size: 12px;
@@ -41,30 +22,37 @@
         height: 22px;        
         opacity: 1;
         transition: all .1s ease-in-out;        
-        overflow: hidden;
-        cursor: pointer;
+        //overflow: hidden;
     }
 
     &-container {
         width:100vw;
-        text-overflow: ellipsis;
-		white-space: nowrap;
-		overflow: hidden;
+        // text-overflow: ellipsis;
+		// white-space: nowrap;
+		// overflow: hidden;
         padding:0px;
         padding-top: 2px;
-        z-index: 300;
+        z-index: 0;
     }
 
     &-tag {
         float: left;
-        border: solid 1px #ccc;
+        border: solid 1px #bbb;
         font-size: 10px;
-        border-radius: 2px;
+        border-radius: 10px;
         margin-left:2px;
         margin-top:1px;
         margin-bottom:2px;
         padding-top:0px;
         padding-bottom: 0px;
+        padding-left:4px;
+        padding-right:4px;
+        @apply shadow;
+    }
+
+
+    &-tag:hover {
+        background-color: #efe;
     }
 
     &-delete-tag {
@@ -74,9 +62,121 @@
         margin-top:2px;
     }
 
+    &-input {
+        caret-color: transparent;
+        cursor: pointer;
+        padding:3px;
+        margin-right: 3px;        
+        border-radius: 2px;
+    }
+
     &-selector {
-        background-color: #ccc;
+        background-color: #ddd;
         padding:2px;
         border-radius: 3px;
+        margin-right: 2px;
     }
+
+    &-add-menu-show {
+        padding:4px;
+        z-index: 0;
+        position: absolute;
+        width:417px;
+        height: 200px;
+        border-radius: 4px;
+        border: solid 1px #aaa;
+        background-color: #eee;
+        top:25px;
+        left:calc(25vw - 200px);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        @apply shadow;
+    }
+
+    &-add-menu-hide {
+        z-index: 0;
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+        border: solid 1px #aaa;
+        background-color: #eee;
+        top:20px;
+        left:125px;
+        opacity: 0;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+}
+
+option {
+    padding:3px;
+    margin:3px;
+    font-size: 11px;
+}
+
+.adv-filter-checks {
+    background-color: #fff;
+    position: absolute;
+    z-index: 10;
+    min-height: 0;
+    max-height: 300px;    
+    border: solid 1px #aaa;
+    font-style: 11px;
+    font-weight: normal;
+    padding:3px 5px 0 5px;
+    left: 0px;
+    
+    & ul li:hover {
+        cursor: pointer;
+        background-color: #91FFC9;
+    }
+
+    & ul li {
+        margin: 0;     
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;   
+
+        & label {
+            margin: 0;     
+            padding: 0;
+            cursor: pointer;
+        }
+    }
+
+    &-left {
+        width:90px;
+        height:170px;
+        margin-left:4px;
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+    }
+
+    &-right {
+        width:318px;
+        height:170px;
+        margin:0;
+        margin-left:92px;        
+        padding:0;        
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;        
+    }
+}
+
+.adv-filter-selected {
+    background-color: #61C6C9;
+}
+
+.filter-form-button {
+    float:right;
+    margin-right:3px;
+    margin-top:4px;
+    min-width: 80px;
+}
+
+.tag-hover-clickable {
+    cursor:pointer;
+    padding-left:2px;
+    padding-right:2px;
+    font-size:9px;
 }

@@ -9,13 +9,13 @@
 	@apply rounded;
 	@apply text-xs;
 	@apply ml-1;
-	@apply shadow;
 }
 
 .btn {
 	@apply button;
 	min-width: 100px;
     background: linear-gradient(0deg, rgba(220,220,225 ,1) 0%, rgba(255,255,255,1) 100%);
+	@apply shadow;
     
 	&-selected {
 		@apply text-center;
@@ -31,6 +31,7 @@
 }
 
 .btn-mini {
+	@apply shadow;
 	@apply button;
 	min-width: 30px;
 	height: 25px;
@@ -41,6 +42,14 @@
 	min-width: 20px;
 	height: 20px;
 	padding-top:1px;
+}
+
+.btn-xxs {
+	@apply button;
+	min-width: 20px;
+	height: 18px;
+	padding:0 3px 0 3px;
+	font-size: 9px;
 }
 
 

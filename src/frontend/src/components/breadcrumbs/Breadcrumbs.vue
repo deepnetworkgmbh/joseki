@@ -1,5 +1,5 @@
 <template>
-    <div class="segment breadcrumbs">
+    <div id="header-bar" class="segment breadcrumbs">
         <p style="float:left">
             <a class="link" href="/"><i class="icon-home" /> Home</a>
         </p>
