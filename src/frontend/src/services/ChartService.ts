@@ -199,7 +199,7 @@ export class ChartService {
 
 	}
 
-	public static DonutChartOptions(id:string, summary?: CountersSummary) : ApexCharts.ApexOptions {
+	public static DonutChartOptions(id:string, summary?: CountersSummary, cb?: Function) : ApexCharts.ApexOptions {
 
 		return <ApexCharts.ApexOptions>{
 			chart: {
@@ -213,6 +213,15 @@ export class ChartService {
 					left: 0,
 					blur: 2,
 					opacity: 0.1
+				},
+				events: {
+					dataPointSelection: function name(event, chartContext, config) {
+						if(cb && summary) {
+							let index = config.dataPointIndex;
+							let value = summary.getLabels()[index].replace(" ", "");
+							cb(value);	
+						}
+					}
 				},
 				animations: ChartService.animationOptions
 			},
