@@ -47,12 +47,8 @@
         padding-bottom: 0px;
         padding-left:4px;
         padding-right:4px;
-        @apply shadow;
-    }
-
-
-    &-tag:hover {
-        background-color: #efe;
+        // @apply shadow;
+        cursor:pointer;
     }
 
     &-delete-tag {
@@ -70,29 +66,22 @@
         border-radius: 2px;
     }
 
-    &-selector {
-        background-color: #ddd;
-        padding:2px;
-        border-radius: 3px;
-        margin-right: 2px;
-    }
-
     &-add-menu-show {
+        position: absolute;
         padding:4px;
         z-index: 0;
-        position: absolute;
-        width:417px;
-        height: 200px;
+        width:447px;
+        height: 202px;
         border-radius: 4px;
         border: solid 1px #aaa;
         background-color: #eee;
         top:25px;
-        left:calc(25vw - 200px);
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         @apply shadow;
     }
 
     &-add-menu-hide {
+        top:20px;
         z-index: 0;
         position: absolute;
         width: 20px;
@@ -100,8 +89,6 @@
         border-radius: 4px;
         border: solid 1px #aaa;
         background-color: #eee;
-        top:20px;
-        left:125px;
         opacity: 0;
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
@@ -128,7 +115,8 @@ option {
     
     & ul li:hover {
         cursor: pointer;
-        background-color: #91FFC9;
+        background-color: #eee;
+        border-radius: 4px;
     }
 
     & ul li {
@@ -140,6 +128,7 @@ option {
         & label {
             margin: 0;     
             padding: 0;
+            padding-left: 2px;
             cursor: pointer;
         }
     }
@@ -148,12 +137,13 @@ option {
         width:90px;
         height:170px;
         margin-left:4px;
+        padding-left: 3px;
         border-top-left-radius: 4px;
         border-bottom-left-radius: 4px;
     }
 
     &-right {
-        width:318px;
+        width:348px;
         height:170px;
         margin:0;
         margin-left:92px;        
@@ -164,7 +154,12 @@ option {
 }
 
 .adv-filter-selected {
-    background-color: #61C6C9;
+    background-color: #ccc;
+    border-radius: 4px;
+}
+.adv-filter-hidden {
+    display: none;
+    visibility: hidden;
 }
 
 .filter-form-button {
@@ -179,4 +174,18 @@ option {
     padding-left:2px;
     padding-right:2px;
     font-size:9px;
+}
+
+.filter-value-filter-input {
+    //color: transparent;
+    //text-shadow: 0 0 0 #444;
+    width:90%;
+    height:22px;
+    font-size:10px;
+    padding:2px;
+    padding-left:5px;
+
+    &:focus {
+        outline: none;
+    }
 }

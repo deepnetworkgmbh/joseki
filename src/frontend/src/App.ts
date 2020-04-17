@@ -45,11 +45,13 @@ export default class App extends Vue {
    *
    * @memberof App
    */
-  @Watch('$route.name')
+  @Watch('$route.name', { immediate: true })
   onRouteChanged(routename: string) {
-    var element = <HTMLElement>document.getElementById("nav");
-    var top = element.offsetTop;
-    window.scrollTo(0, top);
     this.wide = this.wideControls.indexOf(routename) !== -1;
+    var element = <HTMLElement>document.getElementById("nav");
+    if(element) {
+      var top = element.offsetTop;
+      window.scrollTo(0, top);  
+    }
   }
 }

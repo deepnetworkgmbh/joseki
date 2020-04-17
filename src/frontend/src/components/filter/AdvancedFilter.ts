@@ -16,15 +16,19 @@ export default class AdvancedFilter extends Vue {
     headerData: any;
 
     showAddMenu: boolean = false;
+    addMenuX: number = 0;
 
     selectedFilterType?: string = ''
     selectedFilterValue?: string = ''
     
     addFilterTypes: string[] = [];   
     addFilterValues: CheckLabel[] = [];
+    addFilterSelectionCount: number = 0;
+    addFilterSelection: string[] = [];
 
     addFilterButtonEnabled = false;
-   
+    filteredValueFilter: string = '';
+    onlyWithValues: boolean = false;
 
     mode: 'edit' | 'add' = 'add';
 
@@ -41,8 +45,7 @@ export default class AdvancedFilter extends Vue {
     }
 
     @Watch('filter', { immediate: true }) 
-    onFilterChanged(newValue: string) {     
-        console.log(`[adv] filter updated ${newValue}`)   
+    onFilterChanged(newValue: string) {             
         this.filterContainer = new FilterContainer(newValue);
         this.loadData(this.filterContainer.getFilterString());
         this.$forceUpdate();
@@ -58,28 +61,27 @@ export default class AdvancedFilter extends Vue {
         }
     }
 
+    @Watch('addFilterValues', { immediate:true, deep: true })
+    onAddFilterValuesChanged(newValue: CheckLabel[]) {
+        this.addFilterSelectionCount = newValue.filter(x=>x.checked === true).length;
+    }
+
     @Watch('selectedFilterType')
     selectedFilterTypeChanged(newValue) {
-        console.log(newValue);
         if(this.selectedFilterType) {
-            console.log(this.headerData[this.selectedFilterType])
             this.resetAddFilterValues();
             this.addFilterValues = this.headerData[this.selectedFilterType]
-                                       //.filter(x=>x.filteredOut === false)
                                        .map(x=> new CheckLabel(x.name, this.filterContainer!.isInFilter(this.selectedFilterType!, x.name), x.count));
-            console.log(this.addFilterValues)
         }
     }
 
     addSelectionToFilters() {
         if (this.selectedFilterType) {
-            this.addFilterValues
+            this.getFilteredFilterValues()
             .filter(x=>x.checked === true)
             .forEach(cl=> this.filterContainer!.addFilter(this.selectedFilterType!, cl.label))
         }
-        this.selectedFilterType = ''
-        this.selectedFilterValue = ''
-        this.showAddMenu = false;
+        this.hideAddMenu();
         this.$emit('filterUpdated', this.filterContainer!.getFilterString());    
     }
 
@@ -90,8 +92,10 @@ export default class AdvancedFilter extends Vue {
     }
 
     toggleFilterValueChecked(index: number) {
-        this.addFilterValues[index].checked = !this.addFilterValues[index].checked;
-        let checkedCount = this.addFilterValues.filter(x=>x.checked === true).length;
+        this.getFilteredFilterValues()[index].checked = !this.getFilteredFilterValues()[index].checked;
+
+
+        let checkedCount = this.addFilterValues.filter(x=>x.checked === true).length;        
         this.selectedFilterValue = (checkedCount === 0) ? "No value selected" : checkedCount + " values selected";
         this.addFilterButtonEnabled = checkedCount > 0;        
     }
@@ -104,9 +108,10 @@ export default class AdvancedFilter extends Vue {
 
     closeIfEscPressed(event) {
         if (event.keyCode === 27) {
-            this.showAddMenu = false;
+            this.hideAddMenu();
         }
     }
+ 
 
     loadData(currentFilter: string, callback?: Function, omitPrevious = false) {
         this.service
@@ -114,14 +119,9 @@ export default class AdvancedFilter extends Vue {
             .then(newHeaderData => {
                 if (newHeaderData) {   
                     this.headerData = newHeaderData;
-                    console.log(`[headerData]`, JSON.parse(JSON.stringify(this.headerData)));
-                    //this.paintHeaders();
                     let currentFilterTypes = this.filterContainer!.filters.map(x=> x.label);
                     this.addFilterTypes = omitPrevious ? Object.keys(newHeaderData).filter(x=> currentFilterTypes.indexOf(x) === -1)
                                                        : Object.keys(newHeaderData);
-
-                    console.log(`[] current filter types`, currentFilterTypes);
-                    console.log(`[] add filter types`, this.addFilterTypes);
                     if(callback) {
                         callback();
                     }
@@ -130,6 +130,7 @@ export default class AdvancedFilter extends Vue {
     }
 
     showMenuInAddMode() {
+        this.getMenuXPosition(-1);
         let filterString = this.filterContainer!.getFilterString();
         this.addFilterValues = [];
         this.loadData(filterString, () => {
@@ -140,15 +141,22 @@ export default class AdvancedFilter extends Vue {
     }
 
     showMenuInEditMode(index: number) {
+        this.getMenuXPosition(index);
         let filter = this.filterContainer!.filters[index];
-        console.log(filter.label)
         let filterString = this.filterContainer!.getFilterString(index);
         this.loadData(filterString, () => {
-            console.log(`[] editing filter ${index}`);        
             this.mode = 'edit';
             this.showAddMenu = true;
             this.selectedFilterType = filter.label;
         }, false)
+    }
+
+    hideAddMenu() {
+        this.selectedFilterType = ''
+        this.selectedFilterValue = ''
+        this.showAddMenu = false;
+        this.filteredValueFilter = '';
+        this.showAddMenu = false;
     }
 
     updateFiltersSelection() {
@@ -162,6 +170,37 @@ export default class AdvancedFilter extends Vue {
         this.$emit('filterUpdated', this.filterContainer!.getFilterString());    
     }
 
+    getFilteredFilterValues() {
+        if(this.onlyWithValues) {
+            return this.addFilterValues
+            .slice()
+            .filter(x=> x.count>0 && x.label.toLowerCase().indexOf(this.filteredValueFilter.trim().toLowerCase()) > -1);
+
+        }
+        return this.addFilterValues
+                   .slice()
+                   .filter(x=> x.label.toLowerCase().indexOf(this.filteredValueFilter.trim().toLowerCase()) > -1);
+    }
+
+    getHighlightedText(txt: string) {
+        return txt.replace(new RegExp(this.filteredValueFilter, "gi"), match => {
+            return '<span class="filter-value-highlight">' + match + '</span>';
+        });
+    }
+
+    getMenuXPosition(filterIndex: number) {
+        const elementId = (filterIndex === -1) ? 'add-filter-button' : `edit-filter-button-${filterIndex}`;
+        let element = document.getElementById(elementId);
+        this.addMenuX = Math.round(element!.getBoundingClientRect().left)-400;
+        if (this.addMenuX > 430) { this.addMenuX = 430 }
+    }
+
+    getFilterTypeClass(option : string) {
+        if (this.mode === 'edit') {
+            return option === this.selectedFilterType ? 'adv-filter-selected' : 'adv-filter-hidden'
+        }
+        return option === this.selectedFilterType ? 'adv-filter-selected' : ''        
+    }
 }
 
 export class Filter {

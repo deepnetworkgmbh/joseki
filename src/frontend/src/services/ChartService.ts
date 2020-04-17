@@ -137,18 +137,7 @@ export class ChartService {
 				type: 'area',
 				sparkline: { enabled: true },
 				events: {
-					dataPointSelection: function(event, chartContext, config) {
-						//console.log(event, chartContext, config);
-					},
-					selection: function(chartContext, { xaxis, yaxis }) {
-						//console.log(chartContext, xaxis, yaxis);
-					},
-					click: function(event, chartContext, config) {
-						//console.log(event, chartContext, config);					
-					},
 					markerClick: function(event, chartContext, { seriesIndex, dataPointIndex, config}) {
-						//console.log(event, chartContext, seriesIndex, dataPointIndex, config);	
-						//console.log(scoreHistory[dataPointIndex].recordedAt);
 						const index = scoreHistory.length - dataPointIndex - 1;
 						const datestr = scoreHistory[index].recordedAt.split('T')[0];
 						scores[0] = scoreHistory[index].score;

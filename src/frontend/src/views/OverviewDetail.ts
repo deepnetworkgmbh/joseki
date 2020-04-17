@@ -101,7 +101,6 @@ export default class OverviewDetail extends Vue {
      */
     loadData() {
         if (this.pageSize === 0) {
-            console.log(`[ld] pagesize not determined yet, exiting.`)
             return;
         }
         this.loadFailed = false;
@@ -123,7 +122,6 @@ export default class OverviewDetail extends Vue {
                         .then(newHeaderData => {
                             if (newHeaderData) {   
                                 this.headerData = newHeaderData;
-                                console.log(`[header]`, this.headerData);
                                 this.paintHeaders();
                             }
                     });
@@ -208,9 +206,6 @@ export default class OverviewDetail extends Vue {
                 this.headers[i].width = Math.floor(this.windowWidth * this.headers[i].percentage / 100) 
                 sum+= this.headers[i].width;
             }    
-            console.log(`[!] headers set.`)
-        }else {
-            console.log(`[!] could not access dom, skipping.`)
         }
     }
 
