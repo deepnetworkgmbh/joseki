@@ -23,7 +23,7 @@
                 </div>               
             </div>            
             <div v-if="filterContainer.filters.length===0" style="float:left;margin-right:2px;">
-              No active filter.
+              Displaying all scan results.
             </div>
             <div v-if="filterContainer.filters.length<6" class="advanced-filter-tag gradient">
               <span id="add-filter-button" class="tag-hover-clickable" @click="showMenuInAddMode()">Add Filter</span>
@@ -51,11 +51,9 @@
                 <div style="height:142px;overflow-y: auto;margin-right:2px;margin-top:2px;">                    
                     <ul style="padding:0;text-align:left;font-size:10px;margin-left:2px;">
                         <li v-for="(option,j) in getFilteredFilterValues()" :key="`opt${j}`" @click.stop="toggleFilterValueChecked(j)">
-                            <label>
-                              <input type="checkbox" :checked="option.checked" @change="toggleFilterValueChecked(j)"  /> 
-                              <span v-html="getHighlightedText(option.label)"></span>
-                              <span v-if="selectedFilterType!=='component'" style="color:#777">({{ option.count }})</span>
-                            </label>
+                            <input type="checkbox" :checked="option.checked" /> 
+                            <span v-html="getHighlightedText(option.label)" style="margin-left:2px"></span>
+                            <span v-if="selectedFilterType!=='component'" style="color:#777">({{ option.count }})</span>
                         </li>
                         <li v-if="addFilterValues.length===0" style="padding:5px;">Please make a selection</li>
                     </ul>

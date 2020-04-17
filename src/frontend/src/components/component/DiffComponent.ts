@@ -65,12 +65,12 @@ export default class DiffComponent extends Vue {
 
   donutCallback1(status: string) {
     let filterBy = btoa(`result=${status}&component=${this.component.name}`);
-    router.push({ name: 'OverviewDetail', params: { date: this.date, filter: filterBy, sort: '' } });
+    router.push(`/overview-detail/${this.date}/${filterBy}`); 
   }
 
   donutCallback2(status: string) {
     let filterBy = btoa(`result=${status}&component=${this.component.name}`);
-    router.push({ name: 'OverviewDetail', params: { date: this.date2, filter: filterBy, sort: '' } });
+    router.push(`/overview-detail/${this.date2}/${filterBy}`); 
   }
 
   areaCallback(){
