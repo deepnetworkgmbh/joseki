@@ -138,7 +138,7 @@ namespace webapp.BackgroundJobs
         {
             return metadata.Periodicity == "on-message"
                 ? TimeSpan.FromMinutes(1)
-                : TimeSpan.FromHours(1);
+                : TimeSpan.FromMinutes(10);
         }
 
         private static IAuditProcessor GetProcessor(IServiceScope scope, ScannerMetadata metadata)

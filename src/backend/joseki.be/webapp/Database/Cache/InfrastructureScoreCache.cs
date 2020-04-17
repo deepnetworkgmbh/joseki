@@ -105,7 +105,7 @@ namespace webapp.Database.Cache
             // Update empty items after 15 minutes
             if (item.Summary.Total == 0)
             {
-                return now.AddMinutes(15);
+                return now.AddMinutes(10);
             }
 
             // Update _recent_ items in cache after 1 hour
