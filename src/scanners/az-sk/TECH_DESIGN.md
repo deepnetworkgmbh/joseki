@@ -11,6 +11,12 @@
     - [Scanner metadata](#scanner-metadata)
   - [Runtime](#runtime)
 
+|          |                      |
+| -------- | -------------------- |
+| Date:    | April 17th, 2020     |
+| Status:  | Obsolete (to review) |
+| Authors: | @v1r7u               |
+
 The scanner wraps [Secure DevOps Kit for Azure by Microsoft](https://azsk.azurewebsites.net/index.html) - Azure subscription security validator.
 
 The scanner itself does not add anything new to the original az-sk tool. You can consider it only as an az-sk audit data shipper:
