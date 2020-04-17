@@ -190,7 +190,7 @@ export default class OverviewDetail extends Vue {
 
     onResize() {
         this.windowHeight = window.innerHeight
-        this.pageSize = Math.floor((this.windowHeight-160)/22);  
+        this.pageSize = Math.floor((this.windowHeight-180)/22);  
     }
 
     mounted() {
