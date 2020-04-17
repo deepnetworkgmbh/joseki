@@ -42,12 +42,18 @@ export default class InfComponent extends Vue {
   }
 
   get donutOptions(): ApexCharts.ApexOptions {
-    return ChartService.DonutChartOptions(this.component.id + '_donut', this.summary);
+    return ChartService.DonutChartOptions(this.component.id + '_donut', this.summary, this.donutCallback);
   }
 
   areaCallback(date: string) {
     this.$emit('dateChanged', date);
-   }
+  }
+
+  donutCallback(status: string) {
+    let filterBy = btoa(`result=${status}&component=${this.component.name}`);
+    let dateStr = this.date!.toISODate();
+    router.push({ name: 'OverviewDetail', params: { date: dateStr, filter: filterBy, sort: '' } });
+  }
   
   getComponentIcon() {
     if(this.component.category === 'Azure Subscription') {
