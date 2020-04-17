@@ -2346,17 +2346,17 @@
             Name of the filter.
             </summary>
         </member>
-        <member name="P:webapp.Models.CheckFilter.FilteredOut">
+        <member name="P:webapp.Models.CheckFilter.Count">
             <summary>
-            Handles if it exist on subsequent searches.
+            Handles the count of subsequent searches.
             </summary>
         </member>
-        <member name="M:webapp.Models.CheckFilter.#ctor(System.String,System.Boolean)">
+        <member name="M:webapp.Models.CheckFilter.#ctor(System.String,System.Int32)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Models.CheckFilter"/> class.
             </summary>
             <param name="name">name of the filter.</param>
-            <param name="filteredOut">does the filter exist on subsequent searches.</param>
+            <param name="count">handles the count of subsequent searches.</param>
         </member>
         <member name="T:webapp.Models.CheckResult">
             <summary>

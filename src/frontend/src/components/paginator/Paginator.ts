@@ -50,8 +50,11 @@ export default class Paginator extends Vue {
         return rangeWithDots;
     }
 
-    getButtonClass(index: number) {
-        return index === this.pageIndex ? 'pagebutton-selected' : 'pagebutton';
+    getButtonClass(btn) {
+        if (btn === '...') {
+            return 'pagebutton-delimeter';
+        }
+        return (btn-1) === this.pageIndex ? 'pagebutton-selected gradient' : 'pagebutton gradient';
     }
 
     changePageIndex(index) {

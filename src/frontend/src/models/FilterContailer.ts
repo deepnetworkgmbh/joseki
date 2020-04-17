@@ -18,6 +18,20 @@ export class FilterContainer {
             console.log(`[fc] [${obj[0]}] =`, obj[1]);
             this.filters.push(filter);
         }
+
+        // take the component to first
+        let componentIndex = this.filters.findIndex(x => x.label === 'component');
+        if (componentIndex !== -1) {
+            this.filters.splice(0, 0, this.filters.splice(componentIndex, 1)[0]);
+        }
+    }
+
+    public isInFilter(label: string, value: string): boolean {
+        let existingIndex = this.filters.findIndex(x=>x.label === label);
+        if (existingIndex === -1) {
+            return false;
+        }
+        return this.filters[existingIndex].values.indexOf(value) !== -1;
     }
 
     public removeFilterByIndex(index: number) {
@@ -52,8 +66,6 @@ export class FilterContainer {
             let existingValueIndex = this.filters[existingIndex].values.indexOf(value);
             if(existingValueIndex === -1) {
                 this.filters[existingIndex].values.push(value)
-            }else{
-                console.log(`value ${value} already exists in ${label}`);
             }
         }else {
             let newFilter = new Filter();
@@ -63,9 +75,10 @@ export class FilterContainer {
         }
     }
 
-    public getFilterString() : string {
+    public getFilterString(index: number = -1) : string {
         let result: string[] = [];
-        for(let i=0; i<this.filters.length;i++) {
+        let limit = index === -1 ? this.filters.length : index;
+        for(let i=0; i<limit;i++) {
             result.push(this.filters[i].label + "=" + this.filters[i].values.join(','));
         }
         if(result.length === 0) return btoa('*');

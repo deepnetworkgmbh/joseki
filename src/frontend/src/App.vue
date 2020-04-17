@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="wrapper">
+  <div id="app" :class="getWrapperClass()">
     <Navigation />
     <Breadcrumbs :date='date' :component='component' />
     <router-view @dateChanged='dateChanged' @componentChanged='componentChanged' />

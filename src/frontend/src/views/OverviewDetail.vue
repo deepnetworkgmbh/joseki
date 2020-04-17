@@ -1,27 +1,25 @@
 <template>
     <div>
         <Spinner v-if="!loaded" :loadFailed="loadFailed" @reload="loadData" />
-        <div v-if="loaded" class="shadow" style="min-height:300px;padding:4px">
+        <div v-if="loaded" class="shadow" style="min-height:300px;padding:4px;background-color:#fff;border-radius:4px;">
            <table class="table">                
                 <thead >
                     <tr class="table-header">
                         <td v-for="(col,i) in headers" :key="`col${i}`" :style="getColumnWidth(i)">
-                            <span class="filter-button noselect" @click="toggleColumnFilter(i)">
+                            <!-- <span class="filter-button noselect" @click="toggleColumnFilter(i)">
                                 <i class="icon-filter" :style="{ color: col.checkedCount()>0 ? '#3182ce': 'gray' }" />
-                            </span>
+                            </span> -->
                             <span style="cursor:pointer;" class="noselect" @click="changeOrdering(i)">
                                 {{ col.label }}
                                 <i v-if="col.sortable" :class="getHeaderClass(i)" />         
                             </span>
-                            <div v-if="col.optionsMenuShown" @mouseleave="col.optionsMenuShown=false" :class="i===5 ? 'filter-checks filter-checks-right-aligned':'filter-checks'">
+                            <!-- <div v-if="col.optionsMenuShown" @mouseleave="col.optionsMenuShown=false" :class="i===5 ? 'filter-checks filter-checks-right-aligned':'filter-checks'">
                                 <ul style="padding:0;text-align:left">
-                                    <!-- <label><input type="checkbox" v-model="col.selectAll" @change.stop="toggleFilterSelection(i, j)" /> Select All</label>
-                                    <hr class="mb-1"> -->
                                     <li v-for="(option,j) in col.options" :key="`opt${i}-${j}`" style="padding:0">
                                         <label><input type="checkbox" v-model="option.checked" @change.stop="toggleFilterSelection(i, j)" /> {{ option.label }}</label>
                                     </li>
                                 </ul>
-                            </div>
+                            </div> -->
                         </td>                       
                     </tr>
                 </thead>
@@ -64,7 +62,7 @@
                     </tr> 
                 </tbody>
             </table>
-            <div id="footer" class="table-footer">                    
+            <div class="table-footer">                    
                 <Paginator :pageIndex="data.pageIndex" :pageSize="pageSize" :totalRows="data.totalResults" @pageChanged="changePageIndex" />
             </div>
         </div>

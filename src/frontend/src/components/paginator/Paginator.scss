@@ -11,8 +11,9 @@
     font-size:9px;
     position: relative;
     top:-2px;
+    border-radius: 100%;
+    cursor: pointer;
 }
-
 
 .pagebutton-selected {
     width:16px;
@@ -24,4 +25,19 @@
     top:-2px;
     color:#0c0;
     font-weight: bold;
+    border-radius: 100%;
+}
+
+.pagebutton-delimeter {
+    width:16px;
+    height:16px;
+    margin-left:4px;
+    font-size:9px;
+    position: relative;
+    top:-2px;
+    border-radius: 100%;
+    opacity: 0.5;
+    background: none;
+    background-color: transparent;
+    cursor: default;
 }

@@ -13,19 +13,19 @@ namespace webapp.Models
         public string Name { get; set; }
 
         /// <summary>
-        /// Handles if it exist on subsequent searches.
+        /// Handles the count of subsequent searches.
         /// </summary>
-        public bool FilteredOut { get; set; }
+        public int Count { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CheckFilter"/> class.
         /// </summary>
         /// <param name="name">name of the filter.</param>
-        /// <param name="filteredOut">does the filter exist on subsequent searches.</param>
-        public CheckFilter(string name, bool filteredOut)
+        /// <param name="count">handles the count of subsequent searches.</param>
+        public CheckFilter(string name, int count)
         {
             this.Name = name;
-            this.FilteredOut = filteredOut;
+            this.Count = count;
         }
     }
 }

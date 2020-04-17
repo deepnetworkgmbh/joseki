@@ -51,7 +51,7 @@ export default class DiffComponent extends Vue {
   }
 
   get donutOptions1(): ApexCharts.ApexOptions {
-    return ChartService.DonutChartOptions(this.component.id + '_donut1', this.summary1);
+    return ChartService.DonutChartOptions(this.component.id + '_donut1', this.summary1, this.donutCallback1);
   }
 
   get donutSeries2() {
@@ -60,7 +60,17 @@ export default class DiffComponent extends Vue {
   }
 
   get donutOptions2(): ApexCharts.ApexOptions {
-    return ChartService.DonutChartOptions(this.component.id + '_donut2', this.summary2);
+    return ChartService.DonutChartOptions(this.component.id + '_donut2', this.summary2, this.donutCallback1);
+  }
+
+  donutCallback1(status: string) {
+    let filterBy = btoa(`result=${status}&component=${this.component.name}`);
+    router.push({ name: 'OverviewDetail', params: { date: this.date, filter: filterBy, sort: '' } });
+  }
+
+  donutCallback2(status: string) {
+    let filterBy = btoa(`result=${status}&component=${this.component.name}`);
+    router.push({ name: 'OverviewDetail', params: { date: this.date2, filter: filterBy, sort: '' } });
   }
 
   areaCallback(){

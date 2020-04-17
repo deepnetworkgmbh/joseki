@@ -58,6 +58,7 @@ export default class OverviewDetail extends Vue {
      * @memberof OverviewDetail
      */
     created() {
+        this.adjustHeaderWidths();
         window.addEventListener('resize', this.onResize);
         this.onResize();
     }
@@ -100,10 +101,8 @@ export default class OverviewDetail extends Vue {
      */
     loadData() {
         if (this.pageSize === 0) {
-            console.log(`[ld] pagesize not determined yet, exiting.`)
             return;
         }
-        this.onResize();
         this.loadFailed = false;
         this.selectedDate = DateTime.fromISO(this.date);
         this.service
@@ -118,15 +117,16 @@ export default class OverviewDetail extends Vue {
                     this.$emit('componentChanged', component)
                     this.loaded = true;
 
-                    this.service.getGeneralOverviewSearch(this.selectedDate, this.filter)  //
-                                .then(newHeaderData => {
-                                    if (newHeaderData) {   
-                                        this.headerData = newHeaderData;
-                                        console.log(`[header]`, this.headerData);
-                                        this.paintHeaders();
-                                        this.$forceUpdate();
-                                    }
-                                });
+                    this.service
+                        .getGeneralOverviewSearch(this.selectedDate, this.filter)  //
+                        .then(newHeaderData => {
+                            if (newHeaderData) {   
+                                this.headerData = newHeaderData;
+                                this.paintHeaders();
+                            }
+                    });
+                    this.adjustHeaderWidths();
+                    this.$forceUpdate();
                 }
             })
             .catch((error)=> { 
@@ -190,8 +190,15 @@ export default class OverviewDetail extends Vue {
 
     onResize() {
         this.windowHeight = window.innerHeight
-        this.pageSize = Math.floor((this.windowHeight-160)/22);  
-        let footerElement = document.getElementById('footer');
+        this.pageSize = Math.floor((this.windowHeight-180)/22);  
+    }
+
+    mounted() {
+        this.adjustHeaderWidths();
+    }
+
+    adjustHeaderWidths() {
+        let footerElement = document.getElementById('header-bar');
         if (footerElement) {
             this.windowWidth = footerElement.clientWidth;
             let sum = 0;
@@ -199,7 +206,7 @@ export default class OverviewDetail extends Vue {
                 this.headers[i].width = Math.floor(this.windowWidth * this.headers[i].percentage / 100) 
                 sum+= this.headers[i].width;
             }    
-        }     
+        }
     }
 
     changePageIndex(index: number) {
