@@ -38,6 +38,12 @@
     - [Messaging Service](#messaging-service)
       - [Enqueue image scan](#enqueue-image-scan)
 
+|          |                      |
+| -------- | -------------------- |
+| Date:    | April 17th, 2020     |
+| Status:  | Obsolete (to review) |
+| Authors: | @v1r7u               |
+
 At the very first iteration, *Joseki* is focused on Azure and Kubernetes analysis.
 
 ## Scenarious

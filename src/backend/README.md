@@ -4,6 +4,8 @@
 
 The project uses `dotnet core 3.1` and `entity framework core code first` to manage database access layer.
 
+Current `backend` version supports only `MS SQL` database.
+
 ### Code style
 
 The project uses [StyleCop](https://github.com/StyleCop/StyleCop) to enforce common styling across the project. StyleCop generates warnings, while dotnet-projects are set to treat warnings as errors, which causes build failure on styling violation.
