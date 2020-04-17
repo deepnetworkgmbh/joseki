@@ -96,14 +96,14 @@ if [ -z "$EXISTING_NS" ]; then
   kubectl create ns "$K8S_NAMESPACE"
 fi
 
-(cd ./trivy && ./deploy_trivy_scanner.sh -t "0.2.1" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -i "$TRIVY_SCANNER_ID")
+(cd ./trivy && ./deploy_trivy_scanner.sh -t "0.3.0" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -i "$TRIVY_SCANNER_ID")
 
-(cd ./azsk && ./deploy_scheduled_azsk_scanner.sh -t "0.2.2" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -k "$KEY_VAULT_NAME" -s "$SUBSCRIPTIONS" -i "$AZSK_SCANNER_ID")
-(cd ./azsk && ./deploy_azsk_scanner_job.sh -t "0.2.2" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -k "$KEY_VAULT_NAME" -s "$SUBSCRIPTIONS" -i "$AZSK_SCANNER_ID")
+(cd ./azsk && ./deploy_scheduled_azsk_scanner.sh -t "0.3.0" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -k "$KEY_VAULT_NAME" -s "$SUBSCRIPTIONS" -i "$AZSK_SCANNER_ID")
+(cd ./azsk && ./deploy_azsk_scanner_job.sh -t "0.3.0" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -k "$KEY_VAULT_NAME" -s "$SUBSCRIPTIONS" -i "$AZSK_SCANNER_ID")
 
-(cd ./polaris && ./deploy_scheduled_polaris_scanner.sh -t "0.2.2" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -i "$POLARIS_SCANNER_ID")
-(cd ./polaris && ./deploy_polaris_scanner_job.sh -t "0.2.2" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -i "$POLARIS_SCANNER_ID")
+(cd ./polaris && ./deploy_scheduled_polaris_scanner.sh -t "0.3.0" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -i "$POLARIS_SCANNER_ID")
+(cd ./polaris && ./deploy_polaris_scanner_job.sh -t "0.3.0" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -i "$POLARIS_SCANNER_ID")
 
-(cd ./backend && ./deploy_backend.sh  -t "0.2.15" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -s "$SQLSERVER_NAME" -d "$SQLDB_NAME" -k "$KEY_VAULT_NAME")
+(cd ./backend && ./deploy_backend.sh  -t "0.3.0" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -s "$SQLSERVER_NAME" -d "$SQLDB_NAME" -k "$KEY_VAULT_NAME")
 
-(cd ./frontend && ./deploy_frontend.sh -t "0.2.24" -n "$K8S_NAMESPACE")
+(cd ./frontend && ./deploy_frontend.sh -t "0.3.2" -n "$K8S_NAMESPACE")
