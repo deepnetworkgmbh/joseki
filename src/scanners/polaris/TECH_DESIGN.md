@@ -8,6 +8,12 @@
     - [Audit result format](#audit-result-format)
     - [Scanner metadata](#scanner-metadata)
 
+|          |                      |
+| -------- | -------------------- |
+| Date:    | April 17th, 2020     |
+| Status:  | Obsolete (to review) |
+| Authors: | @v1r7u               |
+
 The scanner wraps [Polaris by Fairwinds](https://github.com/FairwindsOps/polaris) - kubernetes objects best-practices validator.
 
 The scanner itself does not add anything new to the original polaris application. You can consider it only as a thin polaris audit data shipper:

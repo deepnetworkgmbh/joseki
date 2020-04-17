@@ -10,6 +10,12 @@
   - [Messaging service](#messaging-service)
     - [Azure Queue Storage](#azure-queue-storage)
 
+|          |                      |
+| -------- | -------------------- |
+| Date:    | April 17th, 2020     |
+| Status:  | Obsolete (to review) |
+| Authors: | @v1r7u               |
+
 The scanner wraps [Trivy by Aqua Security](https://github.com/aquasecurity/trivy) - vulnerability scanner for containers.
 
 The scanner itself does not add anything new to the underlying trivy application. You can consider it only as a trivy scan data shipper:
