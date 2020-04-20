@@ -83,8 +83,8 @@
         <ResultFilter :severities='severityFilter' />
         <h1 class="mb-2">Results by Resources</h1>
       </div>
-      <ul v-for="(collection,i) in getResultsByCollection(data)" :key="`collection${i}`"  class="zigzag">
-          <li style="margin-left:10px;min-height:30px;">
+      <ul v-for="(collection,i) in getResultsByCollection(data)" :key="`collection${i}`"  class="zigzag"> 
+          <li style="margin-left:15px;min-height:27px;" class="text-sm">
             <StatusBar :counters="collection.counters" :severities='severityFilter' style="float:right;margin-top:-15px;" />
             <input class="expand" type="checkbox" :id="`target${i}`" checked />
             <label :for="`target${i}`">
@@ -92,22 +92,20 @@
                <Score v-if="severityFilter.AllChecked()" :label='`Score`' :score='collection.score' />             
                 {{ collection.name }}
             </label>
-            <ul v-for="(obj, g) in collection.objects" :key="`obj${i}-${g}`">
-              <li style="margin-left:15px;">
+            <ul v-for="(obj, g) in collection.objects" :key="`obj${i}-${g}`" style="padding:0;margin:0;margin-left:5px;margin-top:5px;">
+              <li style="margin-left:15px;min-height:20px;line-height:17px;padding-top:2px;">
                 <input class="expand" type="checkbox" :id="`obj${i}-${g}`" />
                 <label :for="`obj${i}-${g}`" class="limited-label">
                    <strong>{{ obj.type }} :</strong>
                    <Score v-if="severityFilter.AllChecked()" :label='`Score`' :score='obj.score' />         
                    {{ obj.name }}
                 </label>
-                <ul v-for="(control, c) in obj.controlGroups" 
-                  :key="`control${i}-${g}-${c}`" class="scan-control">
-                  <li style="padding:2px;padding-left:0;margin-left:5px;margin-top:0px;margin-bottom:2px;">
-
+                <ul v-for="(control, c) in obj.controlGroups" :key="`control${i}-${g}-${c}`" class="scan-control" style="margin-left:8px;">
+                  <li style="padding:2px;padding-left:5px;margin-top:0px;margin-bottom:2px;line-height:20px;">
                     <b>{{control.name}} ({{ control.items.length }})</b>
-                    <div v-for="(cg, cgi) in control.items" :key='`cgi${i}-${g}-${c}-${cgi}`'>
-                      <label :for="`control${i}-${g}-${c}`" class="text-sm">
-                        <i :class="cg.icon"></i> {{ cg.result }} : {{ cg.id }}                        
+                    <div v-for="(cg, cgi) in control.items" :key='`cgi${i}-${g}-${c}-${cgi}`' style="margin-left:10px;">
+                      <label :for="`control${i}-${g}-${c}`">
+                        <span><i :class="cg.icon" style="font-size:11px"></i> {{ cg.result }} : {{ cg.id }}</span>
                         <span class="ml-1 mr-1" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="cg.text">
                           <span class="icon-help-circle tip-icon"></span>
                         </span>
@@ -121,7 +119,7 @@
                 <ul v-for="(control, c) in obj.controls" 
                   :key="`control${i}-${g}-${c}`" class="scan-control">
                   <li style="padding:2px;padding-left:0;margin-left:5px;margin-top:0px;margin-bottom:2px;">
-                      <label :for="`control${i}-${g}-${c}`" class="text-sm">
+                      <label :for="`control${i}-${g}-${c}`">
                         <i :class="control.icon"></i> {{ control.result }} : {{ control.id }}
                         <span class="ml-1 mr-1" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="control.text">
                           <span class="icon-help-circle tip-icon"></span>
@@ -135,7 +133,7 @@
               </li>
             </ul>
           </li>
-        </ul> 
+        </ul>
     </div>
   </div>
 </template>
