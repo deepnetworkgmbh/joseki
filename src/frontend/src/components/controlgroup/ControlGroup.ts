@@ -23,7 +23,6 @@ export default class ControlGroup extends Vue {
   smallWidth!: boolean
   
   get itemCount(): number {
-
     return this.items.filter(x=>x.operation !== DiffOperation.Same).length;
   }
 }

@@ -9,6 +9,15 @@ export class ChartService {
 
 	public static groupColors = [ChartService.colorNoData, ChartService.colorFailed, ChartService.colorWarning, ChartService.colorSuccess];
 
+	/**
+	 * Return severity color for charts.
+	 *
+	 * @private
+	 * @static
+	 * @param {string} severity
+	 * @returns
+	 * @memberof ChartService
+	 */
 	private static getSeverityColor(severity: string) {
 		switch (severity) {
 			case 'CRITICAL':
@@ -22,12 +31,29 @@ export class ChartService {
 		}
 	}
 
+	/**
+	 * Get color for score text.
+	 *
+	 * @private
+	 * @static
+	 * @param {number} score
+	 * @returns
+	 * @memberof ChartService
+	 */
 	private static getColorByScore(score: number) {
 		if (score>75) return ChartService.colorSuccess;
 		if (score>50) return ChartService.colorWarning;
 		return ChartService.colorFailed;
 	}
 
+	/**
+	 * Anniotation for threshold on area charts.
+	 *
+	 * @readonly
+	 * @private
+	 * @static
+	 * @memberof ChartService
+	 */
 	private static get thresholdAnnotation() {
 		return [{
 			y: 75,
@@ -60,6 +86,14 @@ export class ChartService {
 		}]
 	}
 
+	/**
+	 * Enable animation in chart.
+	 *
+	 * @readonly
+	 * @private
+	 * @static
+	 * @memberof ChartService
+	 */
 	private static get animationOptions() {
 		return {
 			enabled: true,
@@ -72,14 +106,32 @@ export class ChartService {
 		}
 	}
 
+	/**
+	 * Disable animation in chart.
+	 *
+	 * @readonly
+	 * @private
+	 * @static
+	 * @memberof ChartService
+	 */
 	private static get noAnimation() {
 		return {
 			enabled: false
 		}
 	}
 
- 
-
+	/**
+	 * Return area chart options.
+	 *
+	 * @static
+	 * @param {string} id
+	 * @param {ScoreHistoryItem[]} scoreHistory
+	 * @param {DateTime[]} dates
+	 * @param {number[]} scores
+	 * @param {Function} cb
+	 * @returns {ApexCharts.ApexOptions}
+	 * @memberof ChartService
+	 */
 	public static AreaChartOptions(id:string,scoreHistory: ScoreHistoryItem[], dates: DateTime[], scores: number[], cb: Function) : ApexCharts.ApexOptions {
 
 		const xAxisAnnotations: any[] = [];
@@ -199,67 +251,77 @@ export class ChartService {
 
 	}
 
+	/**
+	 * Return Donut chart options.
+	 *
+	 * @static
+	 * @param {string} id
+	 * @param {CountersSummary} [summary]
+	 * @param {Function} [cb]
+	 * @returns {ApexCharts.ApexOptions}
+	 * @memberof ChartService
+	 */
 	public static DonutChartOptions(id:string, summary?: CountersSummary, cb?: Function) : ApexCharts.ApexOptions {
 
-		return <ApexCharts.ApexOptions>{
-			chart: {
-				type: 'donut',
-				sparkline: {
-					enabled: true
-				},
-				dropShadow: {
-					enabled: true,
-					top: 0,
-					left: 0,
-					blur: 2,
-					opacity: 0.1
-				},
-				events: {
-					dataPointSelection: function name(event, chartContext, config) {
-						if(cb && summary) {
-							let index = config.dataPointIndex;
-							let value = summary.getLabels()[index].replace(" ", "");
-							cb(value);	
+			return <ApexCharts.ApexOptions>{
+				chart: {
+					type: 'donut',
+					sparkline: {
+						enabled: true
+					},
+					dropShadow: {
+						enabled: true,
+						top: 0,
+						left: 0,
+						blur: 2,
+						opacity: 0.1
+					},
+					events: {
+						dataPointSelection: function name(event, chartContext, config) {
+							if(cb && summary) {
+								let index = config.dataPointIndex;
+								let value = summary.getLabels()[index].replace(" ", "");
+								cb(value);	
+							}
 						}
-					}
+					},
+					animations: ChartService.animationOptions
 				},
-				animations: ChartService.animationOptions
-			},
-			labels: summary === undefined ? ['a'] : summary.getLabels(),
-			colors: summary === undefined ? [ChartService.colorNoData] : summary.getColors(),			  
-			stroke: {
-				width: 1
-			},
-			tooltip: {
-				fixed: {
-					enabled: false
+				labels: summary === undefined ? ['a'] : summary.getLabels(),
+				colors: summary === undefined ? [ChartService.colorNoData] : summary.getColors(),			  
+				stroke: {
+					width: 1
 				},
-			},
-			plotOptions: {
-				pie: {
-					donut: {
-						labels: {
-							show: true,
-							showAlways: true,
-							name: {
-								show: true,
-								offsetY: 5
-							},
-							value: {
-								show: false
-							},
-							total: {
-								color: summary === undefined ? ChartService.colorNoData : ChartService.getColorByScore(summary.score),
+				tooltip: {
+					fixed: {
+						enabled: false
+					},
+				},
+				plotOptions: {
+					pie: {
+						donut: {
+							labels: {
 								show: true,
 								showAlways: true,
-								label: summary === undefined ? '0' : summary.score + '%',
-								fontSize: '13px'
+								name: {
+									show: true,
+									offsetY: 5
+								},
+								value: {
+									show: false
+								},
+								total: {
+									color: summary === undefined ? ChartService.colorNoData : ChartService.getColorByScore(summary.score),
+									show: true,
+									showAlways: true,
+									label: summary === undefined ? '0' : summary.score + '%',
+									fontSize: '13px'
+								}
 							}
 						}
 					}
 				}
 			}
-		}
 	}
 
 	/**
@@ -318,27 +380,5 @@ export class ChartService {
 			}
 		}
 
-	}
-
-	public static DiffAreaChartOptions(id:string, labels: string[]) : ApexCharts.ApexOptions {
-		
-		return <ApexCharts.ApexOptions>{
-			chart: {
-				id: id,
-				type: 'area',
-				stacked: true,
-				toolbar: false,
-				animations: ChartService.noAnimation
-			},
-			fill: {
-				type: 'solid',
-				opacity: 1
-			},
-			labels: labels,
-			stroke: { width: 1 },
-			yaxis: {
-				show: false
-			}
-		}
 	}
 }

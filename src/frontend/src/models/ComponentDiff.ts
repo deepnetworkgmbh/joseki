@@ -13,7 +13,7 @@ export class InfrastructureComponentDiff {
   /// Computed diff result
   results: DiffCollection[] = [];
 
-  public static CreateFromData(data): InfrastructureComponentDiff {
+  public static fromData(data): InfrastructureComponentDiff {
 
     let diff = new InfrastructureComponentDiff();
     diff.summary1 = data.summary1;

@@ -59,7 +59,6 @@
         <InfComponent v-for="(c, i) in data.components" :key="`scan${i}`"
           :component="c.component"
           :score="c.current.score"
-          :total="c.current.total"
           :date="selectedDate"
           :index="i"
           :scoreHistory="data.components[i].scoreHistory"

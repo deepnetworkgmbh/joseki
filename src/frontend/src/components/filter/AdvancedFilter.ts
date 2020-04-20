@@ -57,7 +57,6 @@ export default class AdvancedFilter extends Vue {
             document.addEventListener('keyup', this.closeIfEscPressed);
         }else {            
             document.removeEventListener('keyup', this.closeIfEscPressed);
-            this.resetAddFilterValues();
         }
     }
 
@@ -69,7 +68,6 @@ export default class AdvancedFilter extends Vue {
     @Watch('selectedFilterType')
     selectedFilterTypeChanged(newValue) {
         if(this.selectedFilterType) {
-            this.resetAddFilterValues();
             this.addFilterValues = this.headerData[this.selectedFilterType]
                                        .map(x=> new CheckLabel(x.name, this.filterContainer!.isInFilter(this.selectedFilterType!, x.name), x.count));
         }
@@ -83,12 +81,6 @@ export default class AdvancedFilter extends Vue {
         }
         this.hideAddMenu();
         this.$emit('filterUpdated', this.filterContainer!.getFilterString());    
-    }
-
-    resetAddFilterValues() {
-        //this.selectedFilterType = '';
-        //this.selectedFilterValue = "No value selected";
-        //this.addFilterValues = [];
     }
 
     toggleFilterValueChecked(index: number) {
