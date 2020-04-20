@@ -146,7 +146,7 @@ export default class Overview extends Vue {
      * @returns
      * @memberof Overview
      */
-    getShortHistory() { return this.data.overall.scoreHistory.slice(0, 5); }
+    getShortHistory() { return this.data.overall.scoreHistory.slice(0, 7); }
     
     /**
      * Returns grade from score

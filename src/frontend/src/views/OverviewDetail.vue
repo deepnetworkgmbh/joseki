@@ -6,20 +6,10 @@
                 <thead >
                     <tr class="table-header">
                         <td v-for="(col,i) in headers" :key="`col${i}`" :style="getColumnWidth(i)">
-                            <!-- <span class="filter-button noselect" @click="toggleColumnFilter(i)">
-                                <i class="icon-filter" :style="{ color: col.checkedCount()>0 ? '#3182ce': 'gray' }" />
-                            </span> -->
                             <span style="cursor:pointer;" class="noselect" @click="changeOrdering(i)">
                                 {{ col.label }}
                                 <i v-if="col.sortable" :class="getHeaderClass(i)" />         
                             </span>
-                            <!-- <div v-if="col.optionsMenuShown" @mouseleave="col.optionsMenuShown=false" :class="i===5 ? 'filter-checks filter-checks-right-aligned':'filter-checks'">
-                                <ul style="padding:0;text-align:left">
-                                    <li v-for="(option,j) in col.options" :key="`opt${i}-${j}`" style="padding:0">
-                                        <label><input type="checkbox" v-model="option.checked" @change.stop="toggleFilterSelection(i, j)" /> {{ option.label }}</label>
-                                    </li>
-                                </ul>
-                            </div> -->
                         </td>                       
                     </tr>
                 </thead>

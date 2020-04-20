@@ -16,4 +16,15 @@ export class InfrastructureComponentSummary {
   notLoaded: boolean = false;
   checks: Check[] = [];
   
+
+  public static fromData(data): InfrastructureComponentSummary {
+    let result = <InfrastructureComponentSummary>data;
+    if (result.component.category === 'Subscription') {
+      result.component.category = 'Azure Subscription';
+    }
+    result.scoreHistory = result.scoreHistory.reverse();
+    result.current = new CountersSummary(data.current);
+    return result;
+  }
+
 }
