@@ -251,38 +251,25 @@ export class ChartService {
 		}
 	}
 
+	/**
+	 * Returns Piechart options.
+	 *
+	 * @static
+	 * @param {string} id Id of the element
+	 * @param {CountersSummary} summary the summary values for the pie chart
+	 * @param {Function} cb callback function when clicked on pie
+	 * @param {boolean} [small=false] if it is displayed on diff page or not
+	 * @returns {ApexCharts.ApexOptions}
+	 * @memberof ChartService
+	 */
 	public static PieChartOptions(id:string, summary: CountersSummary, cb: Function, small:boolean = false) : ApexCharts.ApexOptions {
-
-		if (small) return <ApexCharts.ApexOptions>{
-			chart: {
-				type: 'pie',
-				animations: ChartService.animationOptions
-			},
-			labels: summary.getLabels(),
-			colors: summary.getColors(),
-			legend: { 
-				show: false
-			},
-			plotOptions: {
-				pie: {
-					expandOnClick: false, 
-					offsetX: 0,
-					offsetY: 20,
-					customScale: 1,
-					dataLabels: { offset:-10 }
-				},
-			},
-			stroke: {
-				show: true,
-				width: 1
-			}
-		} 		
-
+		
 		return <ApexCharts.ApexOptions>{
 			chart: {
 				type: 'pie',
+				offsetY: small ? 10 : -20,
 				dropShadow: {
-					enabled: true,
+					enabled: small ? false : true,
 					top: 10,
 					left: 10,
 					blur: 10,
@@ -291,19 +278,24 @@ export class ChartService {
 				animations: ChartService.animationOptions,
 				events: {
 					dataPointSelection: function name(event, chartContext, config) {
+						console.log(config);
 						let index = config.dataPointIndex;
 						let value = summary.getLabels()[index].replace(" ", "");
 						cb(value);
 					}
 				}
 			},
+			legend: {
+				show: small ? false : true,
+				offsetY: 10
+			},
 			labels: summary.getLabels(),
 			colors: summary.getColors(),
 			plotOptions: {
 				pie: {
 					expandOnClick: false, 
-					offsetX: 45,
-					customScale: 0.8,
+					offsetX: small ? 0 : 45,
+					customScale: small ? 1 : 0.8,
 					dataLabels: {
 						offset:-10
 					}

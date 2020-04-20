@@ -60,7 +60,7 @@ export default class DiffComponent extends Vue {
   }
 
   get donutOptions2(): ApexCharts.ApexOptions {
-    return ChartService.DonutChartOptions(this.component.id + '_donut2', this.summary2, this.donutCallback1);
+    return ChartService.DonutChartOptions(this.component.id + '_donut2', this.summary2, this.donutCallback2);
   }
 
   donutCallback1(status: string) {

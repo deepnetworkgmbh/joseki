@@ -26,7 +26,7 @@
           </div>
         </div>
       </div>
-      <div class="w-2/4">
+      <div class="w-2/4" style="height:420px;">
         <apexchart :options="getPieChartOptions()" :series="getPieChartSeries()"></apexchart>
       </div>
       <div class="w-1/4 border-l border-gray-300 top-right-panel" style="z-index:10;">
@@ -37,7 +37,7 @@
           </div>
         </div>
         <div class="m-3 mt-0">
-          <div class='text-center text-xs font-bold border-b border-gray-500'>Last 5 scans</div>
+          <div class='text-center text-xs font-bold border-b border-gray-500'>Last 7 scans</div>
           <table class="w-full text-xs p-4">
             <tbody>
               <tr v-for="(scan,i) in getShortHistory()" :key="`scan${i}`" @click="dayClicked(scan.recordedAt.split('T')[0])" :class='getHistoryClass(scan)'>
@@ -47,7 +47,7 @@
             </tbody>
           </table>
           <div class="text-center">
-            <button class="btn mt-2" @click="goComponentHistory()">
+            <button class="btn mt-2 gradient" @click="goComponentHistory()">
               <span class="px-4"><span class="icon-more-vertical pr-1"></span>See Scan History</span>
             </button>
           </div>

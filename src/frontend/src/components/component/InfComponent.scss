@@ -1,12 +1,13 @@
 @import "../../styles/colors.scss";
 
 .inf-component {
-	width: 365px;
+	width: 368px;
 	min-height: 100px;
 	background-color: $color-content-bg;
 	border: solid 1px $color-content-border;
 	margin-bottom: 10px;
 	margin-right: 10px;
+	margin-left: 1px;
 	border-radius: 5px;
 	padding: 5px;
 	display: flex;
@@ -74,10 +75,7 @@
 			padding: 0 4px 0 4px;
 			border-radius: 3px;
 			margin-left: 3px;
-		}
-
-		& > button:hover {
-			background-color: #efe;
+			min-width: 50px;
 		}
 	}
 

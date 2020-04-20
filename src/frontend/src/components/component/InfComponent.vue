@@ -16,8 +16,8 @@
     </div>
     <div class="inf-component-right">
       <div class='inf-component-buttons'>
-        <button @click="goComponentHistory(component)"><span class="icon-more-vertical"></span> History</button>
-        <button @click="goComponentDetail(component)"><span class="icon-search"></span> Detail</button>
+        <button class="gradient" @click="goComponentHistory(component)"><span class="icon-more-vertical"></span> History</button>
+        <button class="gradient" @click="goComponentDetail(component)"><span class="icon-search"></span> Detail</button>
       </div>
       <div class="inf-component-pie">
         <apexchart height="70" :options="donutOptions" :series="donutSeries"></apexchart>

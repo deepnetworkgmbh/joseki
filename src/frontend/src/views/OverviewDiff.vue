@@ -26,10 +26,10 @@
           </div>
         </div>
       </div>
-      <div class="w-1/4 pt-10">
+      <div class="w-1/4 pt-5">
         <apexchart :options="getPieChartOptions1()" :series="getPieChartSeries1()"></apexchart>
       </div>
-      <div class="w-1/4 pt-10 top-seperator">
+      <div class="w-1/4 pt-5 top-seperator">
         <apexchart :options="getPieChartOptions2()" :series="getPieChartSeries2()"></apexchart>
       </div>
       <!-- <div class="w-2/4">
