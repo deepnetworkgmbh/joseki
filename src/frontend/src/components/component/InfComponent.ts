@@ -52,7 +52,7 @@ export default class InfComponent extends Vue {
   donutCallback(status: string) {
     let filterBy = btoa(`result=${status}&component=${this.component.name}`);
     let dateStr = this.date!.toISODate();
-    router.push({ name: 'OverviewDetail', params: { date: dateStr, filter: filterBy, sort: '' } });
+    router.push(`/overview-detail/${dateStr}/${filterBy}`); 
   }
   
   getComponentIcon() {
