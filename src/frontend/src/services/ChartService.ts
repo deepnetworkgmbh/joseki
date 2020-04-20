@@ -78,6 +78,8 @@ export class ChartService {
 		}
 	}
 
+ 
+
 	public static AreaChartOptions(id:string,scoreHistory: ScoreHistoryItem[], dates: DateTime[], scores: number[], cb: Function) : ApexCharts.ApexOptions {
 
 		const xAxisAnnotations: any[] = [];
@@ -178,6 +180,15 @@ export class ChartService {
 				},
 				marker: {
 					show: false
+				},
+				custom: function({series, seriesIndex, dataPointIndex, w}) {
+					const dateStr = scoreHistory[scoreHistory.length -1 - dataPointIndex].recordedAt.split('T')[0];
+					const scoreStr = series[seriesIndex][dataPointIndex] + '%';
+
+					return '<div style="border-radius:2px;padding:2px;font-size:9px;">' +
+					'<span style="color:#666">' + dateStr + '</span>' +
+					'<br>Score: <b>' + scoreStr + '</b>' +
+					'</div>'
 				}
 			},
 			annotations: {
