@@ -28,30 +28,35 @@
 
 
 .nodata-icon {
-  font-size: 15px;
   color: #bbb;  
+  font-size: 15px;
+  float: left;
   margin-left:-4px;
-  margin-right: 1px;
+  margin-top:4px;
 }
 
 .warning-icon {
   color: $color-high-severity;
   font-size: 14px;
-  margin-left: -4px;
+  float: left;
+  margin-left:-4px;
+  margin-top:4px;
 }
 
 .noissues-icon {
   color: $color-low-severity;
   font-size: 14px;
   float: left;
-  margin-top:5px;
-  margin-left:-2px;
+  margin-left:-4px;
+  margin-top:4px;
 }
 
 .failed-icon {
-  font-size: 14px;
   color: $color-critical;
-  margin-left:-3px;
+  font-size: 14px;
+  float: left;
+  margin-left:-4px;
+  margin-top:4px;
 }
 
 

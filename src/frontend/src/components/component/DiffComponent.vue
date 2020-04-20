@@ -3,7 +3,7 @@
     <div class="inf-component-diff-left">
       <div class="inf-component-diff-left-top">
         <div class='inf-component-diff-icon'>
-          <span :class="getComponentIcon()"></span>
+          <span :class="getComponentIcon(component.category)"></span>
         </div>
         <div class='inf-component-diff-info'>
           <div class="inf-component-diff-name">{{ component.name }}</div>
@@ -16,14 +16,14 @@
     </div>
     <div class="inf-component-diff-right">
       <div class='inf-component-diff-buttons'>
-        <button @click="goComponentHistory(component)"><span class="icon-more-vertical"></span> History</button>
+        <button class="gradient" @click="goComponentHistory()"><span class="icon-more-vertical"></span> History</button>
         <button v-if="notLoaded" :disabled="notLoaded">
          <span class='text-center' data-balloon-length="xlarge" data-balloon-pos="left" 
             aria-label="This component has no overview on one of the dates, thus cannot be compared.">
-            Compare<i class="icon-help-circle tip-icon" style="font-size:9px;"></i>
+            <i class="icon-copy pr-1"></i>Diff<i class="icon-help-circle tip-icon" style="font-size:9px;"></i>
          </span></button>
-        <button v-if="!notLoaded" @click="goComponentDiff(component)" :disabled="notLoaded">
-          <i class="icon-copy pr-1"></i>Differences</button>
+        <button v-if="!notLoaded" class="gradient" @click="goComponentDiff()" :disabled="notLoaded">
+          <i class="icon-copy pr-1"></i>Diff</button>
       </div>
       <div class="inf-component-diff-pies">
         <div>

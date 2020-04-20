@@ -2,6 +2,7 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 
 import { DataService, ScoreService, ChartService, CheckObject, DiffCounters, DiffOperation } from '@/services/';
 import { InfrastructureComponentDiff } from '@/models';
+import router from '@/router';
 
 /**
  * ComponentDiff is a view for comparing a component's scans
@@ -84,7 +85,7 @@ export default class ComponentDiff extends Vue {
      * @memberof ComponentDiff
      */
     getPieChartOptions1() : ApexCharts.ApexOptions {
-        return ChartService.PieChartOptions("pie-overall1", this.data.summary1.current, ()=>{}, true)
+        return ChartService.PieChartOptions("pie-overall1", this.data.summary1.current, this.pieCallback1, true)
     }
 
     /**
@@ -94,7 +95,17 @@ export default class ComponentDiff extends Vue {
      * @memberof ComponentDiff
      */
     getPieChartOptions2() : ApexCharts.ApexOptions {
-        return ChartService.PieChartOptions("pie-overall2", this.data.summary2.current, ()=>{},true)
+        return ChartService.PieChartOptions("pie-overall2", this.data.summary2.current, this.pieCallback2, true)
+    }
+
+    pieCallback1(status: string) {
+        let filterBy = btoa(`result=${status}&component=${this.data.summary1.component.name}`);
+        router.push(`/overview-detail/${this.date}/${filterBy}`); 
+    }
+
+    pieCallback2(status: string) {
+        let filterBy = btoa(`result=${status}&component=${this.data.summary2.component.name}`);
+        router.push(`/overview-detail/${this.date2}/${filterBy}`); 
     }
 
     /**

@@ -1,17 +1,15 @@
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
+
 import "@/styles/main.scss";
 
 import moment from 'moment';
-
-Vue.filter('formatDate', function (value) {
+Vue.filter('formatDate', (value) => {
   if (value) { return moment(String(value)).format('YYYY/MM/DD') }
 });
 
 import linkify from 'vue-linkify'
-import { MetaService } from './services/MetaService';
-import { ConfigService } from './services/ConfigService';
 Vue.directive('linkified', linkify);
 
 // // @ts-ignore
@@ -19,7 +17,7 @@ import VueApexCharts from 'vue-apexcharts'
 Vue.use(VueApexCharts);
 Vue.component('apexchart', VueApexCharts);
 
-import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs.vue';
+ import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs.vue';
 Vue.component('Breadcrumbs', Breadcrumbs);
 import InfComponent from '@/components/component/InfComponent.vue';
 Vue.component('InfComponent', InfComponent);
@@ -44,6 +42,9 @@ Vue.component('Spinner', Spinner);
 import Paginator from '@/components/paginator/Paginator.vue';
 Vue.component('Paginator', Paginator);
 
+import { MetaService } from './services/MetaService';
+import { ConfigService } from './services/ConfigService';
+
 (async()=>{
 
   await ConfigService.Init();
@@ -51,3 +52,6 @@ Vue.component('Paginator', Paginator);
   new Vue({ router, render: h => h(App) }).$mount("#app");
 
 })()
+
+
+ 
