@@ -25,7 +25,7 @@
             <span class="slash">/</span>
             <span><i class="icon-target" /> Image: {{ imageid }}</span>
         </p>
-        <p >
+        <p v-if="showFilter">
             <span class="slash">/</span>
         </p>
         <AdvancedFilter v-if="showFilter" style="float:left" :filter="filter" @filterUpdated="onFilterChangedFromAF" />

@@ -9,7 +9,7 @@
             <label class="noselect"><input type="checkbox" v-model="severities.success"> Success</label>
         </div>
     </div>
-    <button class='btn-mini' @click='menuOpen=!menuOpen' ><i class="icon-filter" /></button>
+    <button class='btn-mini gradient' @click='menuOpen=!menuOpen' ><i class="icon-filter" /></button>
   </div>
 </template>
 <script lang="ts" src="./ResultFilter.ts"></script>
