@@ -46,7 +46,7 @@
                                 <span class="icon-help-circle tip-icon" style="font-size:9px;"></span>
                             </span>
                         </td>
-                        <td :class='getResultClass(item.result)' :style="getColumnWidth(5)">
+                        <td :class='`result${item.result}`' :style="getColumnWidth(5)">
                             {{ item.result }}
                         </td>                   
                     </tr> 

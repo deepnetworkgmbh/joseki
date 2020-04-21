@@ -1,12 +1,10 @@
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import router from '@/router';
 
-import { DataService, ScoreService, ChartService } from '@/services/';
-import { InfrastructureOverviewDiff, InfrastructureComponent, InfrastructureOverview, CountersSummary } from '@/models';
+import { DataService } from '@/services/';
+import { InfrastructureComponent } from '@/models';
 import { CheckResultSet } from '@/models/CheckResultSet';
 import { DateTime } from 'luxon';
-import { PageButton } from '@/models/PageButton';
-import { Filter } from '@/components/filter/AdvancedFilter';
 import { FilterContainer } from '@/models/FilterContailer';
 
 /**
@@ -50,10 +48,10 @@ export default class OverviewDetail extends Vue {
         new TableColumn('Control', 'control', 29, 'left'),
         new TableColumn('Result', 'result', 8, 'right')
     ]
-    headerData: any;
 
     /**
-     * load data when component is created.
+     * Adjust header widths on start,
+     * add event listener for resize.
      *
      * @memberof OverviewDetail
      */
@@ -63,35 +61,22 @@ export default class OverviewDetail extends Vue {
         this.onResize();
     }
 
-    paintHeaders() {
-        if (!this.headerData) return;
-        for(let h=0;h< this.headers.length;h++) {
-            let header = this.headers[h];                   
-            let options = this.headerData[header.tag].map((data) => new FilterCheck(data.name));
-            
-            // search within options and mark them as checked if exists in the current filter
-            for(let j=0;j<this.filterContainer.filters.length; j++) {    
-                if (this.filterContainer.filters[j].label !== header.tag) continue;
-                for(let i=0;i<options.length; i++) {
-                    options[i].checked = (this.filterContainer.filters[j]
-                                              .values
-                                              .map(x=> x.toLowerCase())
-                                              .indexOf(options[i].label.toLowerCase()) !== -1);
-                }
-            }
-            for(let j=0;j<options.length;j++) {
-                options[j].dimmed = this.checkIfOptionExistsInFilter(header.tag, options[j]);
-            }
-            this.headers[h].options = options;
-        }
+    /**
+     * Adjust header widths on mounted.
+     *
+     * @memberof OverviewDetail
+     */
+    mounted() {
+        this.adjustHeaderWidths();
     }
-    
-    checkIfOptionExistsInFilter(tag: string, filter: FilterCheck): boolean {
-        if (this.headerData === undefined) return true;
-        if (this.headerData[tag].length === 0) return true;
-        const index = this.headerData[tag].findIndex(x=>x.name === filter.label);
-        if (index === -1) return true;
-        return this.headerData[tag][index].filteredOut;
+
+    /**
+     * Remove event listener for resize on destroy.
+     *
+     * @memberof OverviewDetail
+     */
+    beforeDestroy() { 
+        window.removeEventListener('resize', this.onResize); 
     }
 
     /**
@@ -109,68 +94,21 @@ export default class OverviewDetail extends Vue {
             .getGeneralOverviewDetail(this.pageSize, this.pageIndex, this.selectedDate, this.filter, this.sort)
             .then(response => {
                 if (response) {
-                    this.data = response;            
+                    this.data = <CheckResultSet>response;            
                     let component = new InfrastructureComponent();
                     component.category = 'Overall';
                     component.name = 'Scan Details'
                     this.$emit('dateChanged', this.selectedDate!.toISODate())
                     this.$emit('componentChanged', component)
                     this.loaded = true;
-
-                    this.service
-                        .getGeneralOverviewSearch(this.selectedDate, this.filter)  //
-                        .then(newHeaderData => {
-                            if (newHeaderData) {   
-                                this.headerData = newHeaderData;
-                                this.paintHeaders();
-                            }
-                    });
                     this.adjustHeaderWidths();
                     this.$forceUpdate();
                 }
             })
             .catch((error)=> { 
-                console.log(error);
+                //console.log(error);
                 this.loadFailed = true; 
             });        
-    }
-
-    toggleColumnFilter(index: number) {
-        const column = this.headers[index];
-        if (column.optionsMenuShown) {
-            column.optionsMenuShown = false;
-            return;
-        }
-        // close other menus
-        for(let i=0;i<this.headers.length;i++) {
-            this.headers[i].optionsMenuShown = (index === i);            
-        }
-    }
-
-    toggleFilterSelection(headerIndex: number, rowIndex: number) {
-        let header = this.headers[headerIndex];
-        let option = header.options[rowIndex];
-        if(option.checked) {
-            this.addFilter(header.tag, option.label);
-        }else{
-            this.removeFilter(header.tag, option.label);
-        }        
-    }
-
-    removeFilter(label: string, value: string) {
-        this.filterContainer.removeFilterValue(label, value);
-        this.onFilterUpdated(this.filterContainer.getFilterString());
-    }
-
-    addFilter(label: string, value: string) {
-        this.filterContainer.addFilter(label, value);
-        this.onFilterUpdated(this.filterContainer.getFilterString());
-    }
-
-    onFilterUpdated(updatedFilter: string) {
-        this.filterContainer = new FilterContainer(updatedFilter);
-        this.paintHeaders();
-        router.push(`/overview-detail/${this.date}/${updatedFilter}/${this.getSortData()}`)  
     }
 
     /**
@@ -184,19 +122,22 @@ export default class OverviewDetail extends Vue {
         return '/image-detail/' + encodeURIComponent(imageTag) + '/' + this.selectedDate!.toISODate();    
     }
 
-    beforeDestroy() { 
-        window.removeEventListener('resize', this.onResize); 
-    }
-
+    /**
+     * handle page size using window height.
+     *
+     * @memberof OverviewDetail
+     */
     onResize() {
         this.windowHeight = window.innerHeight
         this.pageSize = Math.floor((this.windowHeight-180)/22);  
     }
 
-    mounted() {
-        this.adjustHeaderWidths();
-    }
 
+    /**
+     * Adjust header widths using the current client width.
+     *
+     * @memberof OverviewDetail
+     */
     adjustHeaderWidths() {
         let footerElement = document.getElementById('header-bar');
         if (footerElement) {
@@ -206,14 +147,26 @@ export default class OverviewDetail extends Vue {
                 this.headers[i].width = Math.floor(this.windowWidth * this.headers[i].percentage / 100) 
                 sum+= this.headers[i].width;
             }    
-        }
+        }    
     }
 
+    /**
+     * Handle page index change.
+     *
+     * @param {number} index
+     * @memberof OverviewDetail
+     */
     changePageIndex(index: number) {
         this.pageIndex = index;
         this.loadData();
     }
 
+    /**
+     * Get sort parameter serialized.
+     *
+     * @returns {string}
+     * @memberof OverviewDetail
+     */
     getSortData(): string {
         let result: string[] = [];
         for (let i=0; i<this.headers.length; i++) {
@@ -226,6 +179,12 @@ export default class OverviewDetail extends Vue {
         return btoa(result.join(","));
     }
 
+    /**
+     * Handle sorting using selected column index.
+     *
+     * @param {number} index
+     * @memberof OverviewDetail
+     */
     changeOrdering(index: number) {
         for(let i=0;i<this.headers.length;i++) {
             if (i === index) {
@@ -244,7 +203,13 @@ export default class OverviewDetail extends Vue {
         router.push(`/overview-detail/${this.date}/${this.filter}/${this.getSortData()}`)
     }
 
-
+    /**
+     * Returns the component icon using category.
+     *
+     * @param {string} category
+     * @returns
+     * @memberof OverviewDetail
+     */
     getComponentIcon(category: string) {
         if(category === 'Subscription') {
           return 'icon-azuredevops';
@@ -255,6 +220,13 @@ export default class OverviewDetail extends Vue {
         return ''
     }
 
+    /**
+     * Returns class for sorting indicator.
+     *
+     * @param {number} index
+     * @returns
+     * @memberof OverviewDetail
+     */
     getHeaderClass(index: number) {
         let header = this.headers[index];
         switch(header.sort) {
@@ -264,10 +236,13 @@ export default class OverviewDetail extends Vue {
         }
     }
    
-    getResultClass(result: string) {
-        return `result${result}`;
-    }
-
+    /**
+     * Return inline width and text align style using header data.
+     *
+     * @param {number} index
+     * @returns
+     * @memberof OverviewDetail
+     */
     getColumnWidth(index: number) {
         return { 
             maxWidth: this.headers[index].width + 'px', 
@@ -275,16 +250,37 @@ export default class OverviewDetail extends Vue {
         };
     }
 
+    /**
+     * Handle changes on pageSize.
+     *
+     * @private
+     * @param {number} newValue
+     * @memberof OverviewDetail
+     */
     @Watch('pageSize')
     private onPageSizeChanged(newValue: number) {
         this.loadData();
     }
 
+    /**
+     * Handle changes on sorting.
+     *
+     * @private
+     * @param {string} newValue
+     * @memberof OverviewDetail
+     */
     @Watch('sort')
     private onSortChanged(newValue: string) {
         this.loadData();
     }
 
+    /**
+     * Handle changes on column filtering.
+     *
+     * @private
+     * @param {string} newValue
+     * @memberof OverviewDetail
+     */
     @Watch('filter', { immediate: true })
     private onFilterChanged(newValue: string) {
         this.filterContainer = new FilterContainer(newValue);
@@ -299,9 +295,7 @@ export class TableColumn {
     optionsMenuShown: boolean = false
     selectAll: boolean = false;
     width: number = 0;
-    constructor(public label: string, public tag: string, public percentage: number = 0, public textAlign: string = 'left') {
-
-    }
+    constructor(public label: string, public tag: string, public percentage: number = 0, public textAlign: string = 'left') {}
 
     checkedCount() {
         return this.options.filter(x=>x.checked === true).length;
