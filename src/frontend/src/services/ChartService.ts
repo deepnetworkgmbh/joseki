@@ -8,6 +8,8 @@ export class ChartService {
 	public static colorSuccess = '#41C6B9';
 
 	public static groupColors = [ChartService.colorNoData, ChartService.colorFailed, ChartService.colorWarning, ChartService.colorSuccess];
+	public static successThresholdScore = 75;
+
 
 	/**
 	 * Return severity color for charts.
@@ -41,7 +43,7 @@ export class ChartService {
 	 * @memberof ChartService
 	 */
 	private static getColorByScore(score: number) {
-		if (score>75) return ChartService.colorSuccess;
+		if (score>ChartService.successThresholdScore) return ChartService.colorSuccess;
 		if (score>50) return ChartService.colorWarning;
 		return ChartService.colorFailed;
 	}
@@ -56,7 +58,7 @@ export class ChartService {
 	 */
 	private static get thresholdAnnotation() {
 		return [{
-			y: 75,
+			y: ChartService.successThresholdScore,
 			y2: null,
 			strokeDashArray: 3,
 			borderColor: '#ccc',
@@ -66,11 +68,11 @@ export class ChartService {
 			yAxisIndex: 0,
 			label: {
 				borderWidth: 0,
-				text: '75%',
+				text: ChartService.successThresholdScore + '%',
 				textAnchor: 'start',
 				position: 'left',
 				offsetY:6,
-				offsetX:100,
+				offsetX:120,
 				style: {
 					background: '#ddd', //transparent',
 					fontSize: '8px',
@@ -201,7 +203,7 @@ export class ChartService {
 						}
 					}
 				},
-				animations: ChartService.animationOptions
+				animations: ChartService.noAnimation
 			},
 			colors: [ChartService.colorSuccess, ChartService.colorWarning, ChartService.colorFailed],
 			stroke: { width: 1 },
@@ -219,16 +221,6 @@ export class ChartService {
 			tooltip: {
 				fixed: {
 					enabled: false
-				},
-				x: {
-					show: true
-				},
-				y: {
-					title: {
-						formatter: function (value) {
-							return 'Score'
-						}
-					}
 				},
 				marker: {
 					show: false
@@ -351,7 +343,6 @@ export class ChartService {
 				animations: ChartService.animationOptions,
 				events: {
 					dataPointSelection: function name(event, chartContext, config) {
-						console.log(config);
 						let index = config.dataPointIndex;
 						let value = summary.getLabels()[index].replace(" ", "");
 						cb(value);

@@ -23,7 +23,7 @@
 	}
 
 	&-right {
-		min-width: 110px;
+		width: 110px;
 	}
 
 	&-info {
@@ -38,6 +38,7 @@
 	&-histogram {
 		height: 50px;
 		padding-top: 2px;
+		width: 100%;
 	}
 
 	&-name {
