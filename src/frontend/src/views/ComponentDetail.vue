@@ -50,7 +50,7 @@
             </tbody>
           </table>
           <div class="text-center">
-            <button class="btn mt-2" @click="goComponentHistory()">
+            <button class="btn mt-2 gradient" @click="goComponentHistory()">
               <span class="px-4"><span class="icon-more-vertical pr-1"></span>See Scan History</span>
             </button>
           </div>  
