@@ -63,7 +63,7 @@ export class DataService {
    * @returns {(Promise<void | CheckResultSet>)}
    * @memberof DataService
    */
-  public async getGeneralOverviewDetail(pageSize: number, pageIndex: number, date?: DateTime, filterBy?: string, sortBy?: string) : Promise<void | CheckResultSet> {
+  public async getGeneralOverviewDetail(pageSize: number, pageIndex: number, date?: DateTime, filterBy?: string, sortBy?: string) : Promise<void | CheckResultSet> {   
     let suffix = (date === undefined) ? '?api-version=' + this.apiVersion 
                                       : '?date=' + date!.toISODate() + '&api-version=' + this.apiVersion;
 
