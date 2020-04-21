@@ -70,7 +70,7 @@ export default class Overview extends Vue {
         if(this.data.components.length == 0) {
             return [{ data: [{x: this.selectedDate, y: 0}]}]
         }
-        return [{ data: this.data.overall.scoreHistory.map((item)=> ({ x: item.recordedAt.split('T')[0] , y: item.score })).reverse() }] 
+        return ScoreHistoryItem.getInterpolatedThresholdSeries(this.data.overall.scoreHistory);        
     }
 
     /**

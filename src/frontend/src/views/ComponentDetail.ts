@@ -54,7 +54,7 @@ export default class ComponentDetail extends Vue {
      * @memberof ComponentDetail
      */
     getAreaSeries() {
-        return [{ data: this.data.scoreHistory.map((item)=> ({ x: item.recordedAt.split('T')[0] , y: item.score })).reverse() }]
+        return ScoreHistoryItem.getInterpolatedThresholdSeries(this.data.scoreHistory);
     }
 
     /**

@@ -39,7 +39,7 @@ export default class DiffComponent extends Vue {
    * @memberof DiffComponent
    */
   get areaSeries() {
-    return [{ data: this.scoreHistory.map((item)=> ({ x: item.recordedAt.split('T')[0] , y: item.score })).reverse() }]
+    return ScoreHistoryItem.getInterpolatedThresholdSeries(this.scoreHistory);
   }
 
   /**
