@@ -17,7 +17,7 @@
             <h1 class="info">{{ getGrade(data.summary1.current.score) }}</h1>
           </div>
           <div class="text-center mt-2 pt-2">
-            <a class='btn' :href="scanDetail1url"><span class="px-2"><i class="icon-arrow-up-right pr-2"></i>Scan Detail</span></a>
+            <a class='btn gradient' :href="scanDetail1url"><span class="px-2"><i class="icon-arrow-up-right pr-2"></i>Scan Detail</span></a>
           </div>       
         </div>
       </div>
@@ -42,7 +42,7 @@
             <h1 class="info">{{ getGrade(data.summary2.current.score) }}</h1>
           </div>
           <div class="text-center mt-2 pt-2">
-            <a class='btn' :href="scanDetail2url"><span class="px-2"><i class="icon-arrow-up-right pr-2"></i>Scan Detail</span></a>
+            <a class='btn gradient' :href="scanDetail2url"><span class="px-2"><i class="icon-arrow-up-right pr-2"></i>Scan Detail</span></a>
           </div>       
         </div>
       </div>
