@@ -34,6 +34,7 @@ export default class OverviewDetail extends Vue {
     data!: CheckResultSet;
     filterContainer!: FilterContainer;
 
+    resizedFinished: any;
     windowWidth: number = 0;
     windowHeight: number = 0;
     pageSize: number = 0;
@@ -122,13 +123,28 @@ export default class OverviewDetail extends Vue {
     }
 
     /**
-     * handle page size using window height.
+     * Make sure the resize is finished.
      *
      * @memberof OverviewDetail
      */
     onResize() {
+        clearTimeout(this.resizedFinished);
+        this.resizedFinished = setTimeout(this.handleResize, 150);
+    }
+
+    /**
+     * Handle page resize using window height.
+     *
+     * @memberof OverviewDetail
+     */
+    handleResize() {
         this.windowHeight = window.innerHeight
         this.pageSize = Math.floor((this.windowHeight-180)/22);  
+        let maxPageCount = Math.floor(this.data.totalResults/this.pageSize);
+        if(this.pageIndex > maxPageCount) {
+            this.pageIndex = maxPageCount;
+        }
+        this.adjustHeaderWidths();    
     }
 
     /**

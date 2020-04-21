@@ -17,6 +17,7 @@ export default class Paginator extends Vue {
     renderButtons() {
         let numberOfPages = Math.ceil(this.totalRows / this.pageSize);
         this.pageButtons = this.pagination(this.pageIndex, numberOfPages);
+        this.$forceUpdate();
     }
 
     /// https://gist.github.com/kottenator/9d936eb3e4e3c3e02598
@@ -70,6 +71,11 @@ export default class Paginator extends Vue {
 
     @Watch('pageIndex', { immediate: true })
     private onPageIndexChanged(newValue: number) {
+        this.renderButtons();
+    }
+
+    @Watch('pageSize')
+    private onPageSizeChanged(newValue: number) {
         this.renderButtons();
     }
 }
