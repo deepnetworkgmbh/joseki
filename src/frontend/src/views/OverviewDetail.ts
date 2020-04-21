@@ -38,14 +38,13 @@ export default class OverviewDetail extends Vue {
     windowHeight: number = 0;
     pageSize: number = 0;
     pageIndex: number = 0;
-    pageButtons: number[] = [];
 
     headers: TableColumn[] = [
         new TableColumn('Component', 'component', 11, 'left'),
         new TableColumn('Category', 'category', 8, 'left'),     
         new TableColumn('Collection', 'collection', 24, 'left'),
-        new TableColumn('Resource', 'resource', 20, 'left'),    
-        new TableColumn('Control', 'control', 29, 'left'),
+        new TableColumn('Resource', 'resource', 19, 'left'),    
+        new TableColumn('Control', 'control', 30, 'left'),
         new TableColumn('Result', 'result', 8, 'right')
     ]
 
@@ -132,22 +131,18 @@ export default class OverviewDetail extends Vue {
         this.pageSize = Math.floor((this.windowHeight-180)/22);  
     }
 
-
     /**
      * Adjust header widths using the current client width.
      *
      * @memberof OverviewDetail
      */
     adjustHeaderWidths() {
-        let footerElement = document.getElementById('header-bar');
-        if (footerElement) {
-            this.windowWidth = footerElement.clientWidth;
-            let sum = 0;
-            for(let i=0;i<this.headers.length;i++) {
-                this.headers[i].width = Math.floor(this.windowWidth * this.headers[i].percentage / 100) 
-                sum+= this.headers[i].width;
-            }    
-        }    
+        let navElement = document.getElementById('nav');
+        if (!navElement) return;
+        this.windowWidth = navElement.clientWidth;
+        for(let i=0;i<this.headers.length;i++) {
+            this.headers[i].width = Math.floor(this.windowWidth * this.headers[i].percentage / 100) * 1.3
+        }        
     }
 
     /**

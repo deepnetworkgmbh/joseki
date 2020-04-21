@@ -15,16 +15,16 @@
                 </thead>
                 <tbody>
                     <tr v-for="(item,i) in data.checks" :key="`item${i}`" class="checkrow">                    
-                        <td :style="getColumnWidth(0)">
+                        <td :style="getColumnWidth(0)" class="row-ellipsis">
                             <i :class="getComponentIcon(item.component.category)" /> {{ item.component.name }}
                         </td>
-                        <td :style="getColumnWidth(1)">
+                        <td :style="getColumnWidth(1)" class="row-ellipsis">
                             {{ item.category }}
                         </td>
-                        <td :style="getColumnWidth(2)">
+                        <td :style="getColumnWidth(2)" class="row-ellipsis">
                             {{ item.collection.type }}:{{ item.collection.name }}
                         </td>
-                        <td :style="getColumnWidth(3)">
+                        <td :style="getColumnWidth(3)" class="row-ellipsis">
                             {{ item.resource.type }}:{{ item.resource.name }}
                         </td>                    
                         <td v-if="item.control.id === 'container_image.CVE_scan' && item.control.message !== 'No issues'" :style="getColumnWidth(4)">
@@ -42,11 +42,11 @@
                             <span v-if="item.tags.imageTag" class="table-tooltip" data-balloon-length="large" data-balloon-pos="up" :aria-label="item.tags.imageTag">
                                 <span class="icon-target tip-icon" style="font-size:9px;" />
                             </span>
-                            <span v-if="item.control.message && item.control.message !== 'No issues'" class="table-tooltip" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="item.control.message">
+                            <span v-if="item.control.message && item.control.message !== 'No issues'" class="table-tooltip" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="item.control.message" style="width:0;">
                                 <span class="icon-help-circle tip-icon" style="font-size:9px;"></span>
                             </span>
                         </td>
-                        <td :class='`result${item.result}`' :style="getColumnWidth(5)">
+                        <td :class='`result${item.result}`' :style="getColumnWidth(5)" class="row-ellipsis">
                             {{ item.result }}
                         </td>                   
                     </tr> 
