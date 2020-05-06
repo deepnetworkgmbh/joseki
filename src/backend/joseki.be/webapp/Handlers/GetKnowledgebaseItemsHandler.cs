@@ -12,6 +12,17 @@ namespace webapp.Handlers
     /// </summary>
     public class GetKnowledgebaseItemsHandler
     {
+        private readonly string rootPath;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GetKnowledgebaseItemsHandler"/> class.
+        /// </summary>
+        /// <param name="rootPath">Root path for the files.</param>
+        public GetKnowledgebaseItemsHandler(string rootPath = "Docs")
+        {
+            this.rootPath = rootPath;
+        }
+
         /// <summary>
         /// Tries to get item from the file identifier.
         /// </summary>
@@ -19,7 +30,7 @@ namespace webapp.Handlers
         /// <returns>Knowledgebase item content or default NotFound entity.</returns>
         public async Task<KnowledgebaseItem> GetItemById(string id)
         {
-            var path = $"Docs/{id}.md";
+            var path = $"{this.rootPath}/{id}.md";
 
             if (!File.Exists(path))
             {
@@ -60,7 +71,7 @@ namespace webapp.Handlers
         {
             var result = new List<KnowledgebaseItem>();
 
-            var files = Directory.EnumerateFiles("Docs", "*.md", SearchOption.AllDirectories);
+            var files = Directory.EnumerateFiles(this.rootPath, "*.md", SearchOption.AllDirectories);
 
             foreach (string file in files)
             {
@@ -80,7 +91,7 @@ namespace webapp.Handlers
         {
             var result = new List<KnowledgebaseItem>();
 
-            var files = Directory.EnumerateFiles("Docs", "metadata.*.md", SearchOption.AllDirectories);
+            var files = Directory.EnumerateFiles(this.rootPath, "metadata.*.md", SearchOption.AllDirectories);
 
             foreach (string file in files)
             {
@@ -93,13 +104,36 @@ namespace webapp.Handlers
         }
 
         /// <summary>
+        /// Creates a file under path for item.
+        /// </summary>
+        /// <param name="item">KnowledgebaseItem.</param>
+        public async Task AddItem(KnowledgebaseItem item)
+        {
+            var path = $"{this.rootPath}/{item.Id}.md";
+            if (!File.Exists(path))
+            {
+                await File.WriteAllTextAsync(path, item.Content);
+            }
+        }
+
+        /// <summary>
+        /// Updates a file under path for item.
+        /// </summary>
+        /// <param name="item">KnowledgebaseItem.</param>
+        public async Task UpdateItem(KnowledgebaseItem item)
+        {
+            var path = $"{this.rootPath}/{item.Id}.md";
+            await File.WriteAllTextAsync(path, item.Content);
+        }
+
+        /// <summary>
         /// Extracts id of document from requested path.
         /// </summary>
         /// <param name="path">Path of the document.</param>
         /// <returns>id of the document.</returns>
         private string ExtractIdFromPath(string path)
         {
-            Regex pattern = new Regex(@"Docs/(?<documentid>.*).md");
+            Regex pattern = new Regex(this.rootPath + "/(?<documentid>.*).md");
             Match match = pattern.Match(path);
             return match.Groups["documentid"].Value;
         }

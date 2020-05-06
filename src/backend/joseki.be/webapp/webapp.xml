@@ -1900,12 +1900,13 @@
             Prepares response to get-component-details request.
             </summary>0
         </member>
-        <member name="M:webapp.Handlers.GetComponentDetailsHandler.#ctor(joseki.db.JosekiDbContext,webapp.Database.Cache.IInfrastructureScoreCache)">
+        <member name="M:webapp.Handlers.GetComponentDetailsHandler.#ctor(joseki.db.JosekiDbContext,webapp.Database.Cache.IInfrastructureScoreCache,webapp.Handlers.GetKnowledgebaseItemsHandler)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Handlers.GetComponentDetailsHandler"/> class.
             </summary>
             <param name="db">Joseki database object.</param>
             <param name="cache">Score cache.</param>
+            <param name="docsHandler">Knowledgebase items handler.</param>
         </member>
         <member name="M:webapp.Handlers.GetComponentDetailsHandler.GetDetails(System.String,System.DateTime)">
             <summary>
@@ -2012,37 +2013,56 @@
             Encapsulates GET operations for Knowledgebase item.
             </summary>
         </member>
-        <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.#ctor(joseki.db.JosekiDbContext)">
+        <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.#ctor(System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Handlers.GetKnowledgebaseItemsHandler"/> class.
             </summary>
-            <param name="db">Joseki database object.</param>
+            <param name="rootPath">Root path for the files.</param>
         </member>
         <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.GetItemById(System.String)">
             <summary>
-            Tries to get item from the database by identifier.
+            Tries to get item from the file identifier.
             </summary>
             <param name="id">Knowledgebase item identifier.</param>
             <returns>Knowledgebase item content or default NotFound entity.</returns>
         </member>
         <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.GetItemsByIds(System.String[])">
             <summary>
-            Tries to get items from the database by their public identifiers.
+            Tries to get items from the Docs folder by their public identifiers.
             </summary>
             <param name="ids">Knowledgebase item identifiers.</param>
             <returns>Found knowledgebase items.</returns>
         </member>
         <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.GetAll">
             <summary>
-            Returns all knowledgebase items from DB.
+            Returns all knowledgebase items from Docs.
             </summary>
             <returns>All Knowledgebase items.</returns>
         </member>
         <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.GetMetadataItems">
             <summary>
-            Returns all metadata items from DB.
+            Returns all metadata items from Docs.
             </summary>
             <returns>Metadata items.</returns>
+        </member>
+        <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.AddItem(webapp.Models.KnowledgebaseItem)">
+            <summary>
+            Creates a file under path for item.
+            </summary>
+            <param name="item">KnowledgebaseItem.</param>
+        </member>
+        <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.UpdateItem(webapp.Models.KnowledgebaseItem)">
+            <summary>
+            Updates a file under path for item.
+            </summary>
+            <param name="item">KnowledgebaseItem.</param>
+        </member>
+        <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.ExtractIdFromPath(System.String)">
+            <summary>
+            Extracts id of document from requested path.
+            </summary>
+            <param name="path">Path of the document.</param>
+            <returns>id of the document.</returns>
         </member>
         <member name="T:webapp.Handlers.GetOverviewDetailsHandler">
             <summary>
