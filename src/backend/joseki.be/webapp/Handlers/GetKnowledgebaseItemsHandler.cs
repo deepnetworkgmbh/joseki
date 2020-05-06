@@ -1,10 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-
-using joseki.db;
-using joseki.db.entities;
-
-using Microsoft.EntityFrameworkCore;
 
 using webapp.Models;
 
@@ -15,81 +12,96 @@ namespace webapp.Handlers
     /// </summary>
     public class GetKnowledgebaseItemsHandler
     {
-        private readonly JosekiDbContext db;
-
         /// <summary>
-        /// Initializes a new instance of the <see cref="GetKnowledgebaseItemsHandler"/> class.
-        /// </summary>
-        /// <param name="db">Joseki database object.</param>
-        public GetKnowledgebaseItemsHandler(JosekiDbContext db)
-        {
-            this.db = db;
-        }
-
-        /// <summary>
-        /// Tries to get item from the database by identifier.
+        /// Tries to get item from the file identifier.
         /// </summary>
         /// <param name="id">Knowledgebase item identifier.</param>
         /// <returns>Knowledgebase item content or default NotFound entity.</returns>
         public async Task<KnowledgebaseItem> GetItemById(string id)
         {
-            var content = await this.db.Set<KnowledgebaseEntity>()
-                .AsNoTracking()
-                .Where(i => i.ItemId == id)
-                .Select(i => i.Content)
-                .FirstOrDefaultAsync();
+            var path = $"Docs/{id}.md";
 
-            if (content != null)
+            if (!File.Exists(path))
             {
-                return new KnowledgebaseItem
-                {
-                    Id = id,
-                    Content = content,
-                };
+                return KnowledgebaseItem.NotFound;
             }
 
-            return KnowledgebaseItem.NotFound;
+            var content = await File.ReadAllTextAsync(path);
+            return new KnowledgebaseItem
+            {
+                Id = id,
+                Content = content,
+            };
         }
 
         /// <summary>
-        /// Tries to get items from the database by their public identifiers.
+        /// Tries to get items from the Docs folder by their public identifiers.
         /// </summary>
         /// <param name="ids">Knowledgebase item identifiers.</param>
         /// <returns>Found knowledgebase items.</returns>
         public async Task<KnowledgebaseItem[]> GetItemsByIds(string[] ids)
         {
-            return await this.db.Set<KnowledgebaseEntity>()
-                .AsNoTracking()
-                .Where(i => ids.Contains(i.ItemId))
-                .Select(i => new KnowledgebaseItem(i.ItemId, i.Content))
-                .ToArrayAsync();
+            var result = new List<KnowledgebaseItem>();
+
+            foreach (string id in ids)
+            {
+                var item = await this.GetItemById(id);
+                result.Add(item);
+            }
+
+            return result.ToArray();
         }
 
         /// <summary>
-        /// Returns all knowledgebase items from DB.
+        /// Returns all knowledgebase items from Docs.
         /// </summary>
         /// <returns>All Knowledgebase items.</returns>
         public async Task<KnowledgebaseItem[]> GetAll()
         {
-            var items = await this.db.Set<KnowledgebaseEntity>()
-                .AsNoTracking()
-                .Select(i => new KnowledgebaseItem(i.ItemId, i.Content))
-                .ToArrayAsync();
+            var result = new List<KnowledgebaseItem>();
 
-            return items;
+            var files = Directory.EnumerateFiles("Docs", "*.md", SearchOption.AllDirectories);
+
+            foreach (string file in files)
+            {
+                var id = this.ExtractIdFromPath(file);
+                var item = await this.GetItemById(id);
+                result.Add(item);
+            }
+
+            return result.ToArray();
         }
 
         /// <summary>
-        /// Returns all metadata items from DB.
+        /// Returns all metadata items from Docs.
         /// </summary>
         /// <returns>Metadata items.</returns>
         public async Task<KnowledgebaseItem[]> GetMetadataItems()
         {
-            return await this.db.Set<KnowledgebaseEntity>()
-                .AsNoTracking()
-                .Where(i => i.ItemId.StartsWith("metadata."))
-                .Select(i => new KnowledgebaseItem(i.ItemId, i.Content))
-                .ToArrayAsync();
+            var result = new List<KnowledgebaseItem>();
+
+            var files = Directory.EnumerateFiles("Docs", "metadata.*.md", SearchOption.AllDirectories);
+
+            foreach (string file in files)
+            {
+                var id = this.ExtractIdFromPath(file);
+                var item = await this.GetItemById(id);
+                result.Add(item);
+            }
+
+            return result.ToArray();
+        }
+
+        /// <summary>
+        /// Extracts id of document from requested path.
+        /// </summary>
+        /// <param name="path">Path of the document.</param>
+        /// <returns>id of the document.</returns>
+        private string ExtractIdFromPath(string path)
+        {
+            Regex pattern = new Regex(@"Docs/(?<documentid>.*).md");
+            Match match = pattern.Match(path);
+            return match.Groups["documentid"].Value;
         }
     }
 }
