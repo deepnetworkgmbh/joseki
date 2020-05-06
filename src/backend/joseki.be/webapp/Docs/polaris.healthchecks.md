@@ -1,0 +1,1 @@
+Properly configured health checks can ensure the long term availability and reliability of your application running in Kubernetes. Polaris validates that health checks are configured for each pod running in your cluster.

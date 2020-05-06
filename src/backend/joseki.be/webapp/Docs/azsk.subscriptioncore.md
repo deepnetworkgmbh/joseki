@@ -1,0 +1,1 @@
+Azure subscription related checks: amount of admin accounts, permissions and users, certificates, MFA, and others. The entire list is at https://aka.ms/azsktcp/sshealth

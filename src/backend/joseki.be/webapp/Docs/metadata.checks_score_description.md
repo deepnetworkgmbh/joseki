@@ -1,0 +1,1 @@
+The audit score indicates how close the infrastructure is to known best-practices configuration. The formula excludes NoData checks, gives doubled weight to Passed and Failed results: (Passed*2)/(Failed*2 + Passed*2 + Warning)

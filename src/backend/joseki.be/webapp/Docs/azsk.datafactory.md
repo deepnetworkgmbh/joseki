@@ -1,0 +1,1 @@
+Azure Data Factory is properly configured: data is encrypted, keys are rotated, monitoring is enabled. The entire list is at https://aka.ms/azsktcp/datafactory
