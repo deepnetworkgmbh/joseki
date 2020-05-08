@@ -1,10 +1,11 @@
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import router from '@/router';
-import VueMarkdown from 'vue-markdown-v2'
 import { DateTime } from 'luxon';
 
 import { DataService, ScoreService, MappingService, ChartService } from '@/services/';
 import { InfrastructureComponentSummary, ScoreHistoryItem, SeverityFilter, InfrastructureComponent } from '@/models';
+
+import  MarkdownIt  from 'markdown-it';
 
 @Component
 export default class CheckDetail extends Vue {
@@ -25,11 +26,15 @@ export default class CheckDetail extends Vue {
     documentation: string = '';
     edit: boolean = false;
 
+    md: MarkdownIt;
+
     created() {
+        this.md = new MarkdownIt();
+        
         this.loadData();
         this.$emit('dateChanged', DateTime.fromISO(this.date!).toISODate())
         if(this.component) {
-        this.$emit('componentChanged', this.component);
+            this.$emit('componentChanged', this.component);
         }
     }
     /**
@@ -46,13 +51,14 @@ export default class CheckDetail extends Vue {
             .then(response => {
                 if (response) {
                     console.log(response);
-                    this.documentation = response[0].content;
+                    this.documentation = this.md.render(response[0].content);
                     this.loaded = true;
                     this.$forceUpdate();
                 }
             })
             .catch(() => { this.loadFailed = true; });
     }
+
 
     /**
      * Watcher for date, emits dateChanged for breadcrumbs and loads data

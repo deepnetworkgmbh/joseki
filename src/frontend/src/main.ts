@@ -18,8 +18,6 @@ Vue.use(VueApexCharts);
 Vue.component('apexchart', VueApexCharts);
 
 
-import VueMarkdown from 'vue-markdown-v2';
-Vue.component('vue-markdown', VueMarkdown);
 
 import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs.vue';
 Vue.component('Breadcrumbs', Breadcrumbs);
