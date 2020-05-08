@@ -23,7 +23,7 @@ namespace tests.handlers
         public async Task GetAllReturnsNothingForEmptyDatabase()
         {
             // Prepare
-            var (handler, path) = this.getUniqueHandler();
+            var (handler, path) = await this.getUniqueHandlerAsync();
 
             try
             {
@@ -48,7 +48,7 @@ namespace tests.handlers
         public async Task GetAllReturnsAllItemsFromTheDatabase()
         {
             // Prepare
-            var (handler, path) = this.getUniqueHandler();
+            var (handler, path) = await this.getUniqueHandlerAsync();
 
             try
             {
@@ -84,7 +84,7 @@ namespace tests.handlers
         public async Task GetItemsByIdsReturnsOnlyRequestedIds()
         {
             // Prepare
-            var (handler, path) = this.getUniqueHandler();
+            var (handler, path) = await this.getUniqueHandlerAsync();
 
             try
             {
@@ -126,7 +126,7 @@ namespace tests.handlers
         public async Task GetItemByIdReturnsCorrectEntry()
         {
             // Prepare
-            var (handler, path) = this.getUniqueHandler();
+            var (handler, path) = await this.getUniqueHandlerAsync();
 
             try
             {
@@ -166,7 +166,7 @@ namespace tests.handlers
         public async Task GetItemByIdReturnsNotFoundRecordForWrongId()
         {
             // Prepare
-            var (handler, path) = this.getUniqueHandler();
+            var (handler, path) = await this.getUniqueHandlerAsync();
 
             try
             {
@@ -204,7 +204,7 @@ namespace tests.handlers
         public async Task GetMetadataItemsReturnsOnlyMetadataRecords()
         {
             // Prepare
-            var (handler, path) = this.getUniqueHandler();
+            var (handler, path) = await this.getUniqueHandlerAsync();
 
             try
             {
@@ -248,15 +248,16 @@ namespace tests.handlers
             }
         }
 
-        private (GetKnowledgebaseItemsHandler, string) getUniqueHandler()
+        private async Task<(GetKnowledgebaseItemsHandler, string)> getUniqueHandlerAsync()
         {
+            await using var context = JosekiTestsDb.CreateUniqueContext();
             var path = Path.Combine(BaseTestPath, Guid.NewGuid().ToString());
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
             }
 
-            var handler = new GetKnowledgebaseItemsHandler(path);
+            var handler = new GetKnowledgebaseItemsHandler(context, path);
             return (handler, path);
         }
 

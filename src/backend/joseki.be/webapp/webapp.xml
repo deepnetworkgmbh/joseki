@@ -934,6 +934,12 @@
             </summary>
             <returns>Knowledgebase items.</returns>
         </member>
+        <member name="M:webapp.Controllers.v0._1.KnowledgebaseController.SetKnowledgebaseItem(webapp.Models.KnowledgebaseItem)">
+            <summary>
+            saves metadata items for UI.
+            </summary>
+            <returns>Knowledgebase items.</returns>
+        </member>
         <member name="T:webapp.Controllers.v0._2.AuditsController">
             <summary>
             Audit data endpoints.
@@ -2013,10 +2019,11 @@
             Encapsulates GET operations for Knowledgebase item.
             </summary>
         </member>
-        <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.#ctor(System.String)">
+        <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.#ctor(joseki.db.JosekiDbContext,System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Handlers.GetKnowledgebaseItemsHandler"/> class.
             </summary>
+            <param name="db">Joseki database object.</param>
             <param name="rootPath">Root path for the files.</param>
         </member>
         <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.GetItemById(System.String)">

@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-
+using joseki.db;
+using Microsoft.EntityFrameworkCore;
 using webapp.Models;
 
 namespace webapp.Handlers
@@ -12,14 +14,19 @@ namespace webapp.Handlers
     /// </summary>
     public class GetKnowledgebaseItemsHandler
     {
+        private readonly string fallbackTemplateId = "template.check.fallback";
         private readonly string rootPath;
+
+        private readonly JosekiDbContext db;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetKnowledgebaseItemsHandler"/> class.
         /// </summary>
+        /// <param name="db">Joseki database object.</param>
         /// <param name="rootPath">Root path for the files.</param>
-        public GetKnowledgebaseItemsHandler(string rootPath = "Docs")
+        public GetKnowledgebaseItemsHandler(JosekiDbContext db, string rootPath = "Docs")
         {
+            this.db = db;
             this.rootPath = rootPath;
         }
 
@@ -31,18 +38,57 @@ namespace webapp.Handlers
         public async Task<KnowledgebaseItem> GetItemById(string id)
         {
             var path = $"{this.rootPath}/{id}.md";
+            var content = string.Empty;
 
-            if (!File.Exists(path))
+            // check if md file exists
+            if (File.Exists(path))
             {
-                return KnowledgebaseItem.NotFound;
+                content = await File.ReadAllTextAsync(path);
+                return new KnowledgebaseItem
+                {
+                    Id = id,
+                    Content = content,
+                };
             }
 
-            var content = await File.ReadAllTextAsync(path);
-            return new KnowledgebaseItem
+            // if a check document is requested
+            // use db.Check from dbContext
+            else if (id.StartsWith("checks."))
             {
-                Id = id,
-                Content = content,
-            };
+                var entityCheckId = id.Replace("checks.", string.Empty).ToLower();
+
+                // check if such check exists
+                var checkEntity = this.db
+                    .Check
+                    .AsNoTracking()
+                    .FirstOrDefault(c => c.CheckId.ToLower() == entityCheckId);
+
+                if (checkEntity == null)
+                {
+                    return KnowledgebaseItem.NotFound;
+                }
+
+                // check if template path exists
+                var templatePath = $"{this.rootPath}/{this.fallbackTemplateId}.md";
+                if (!File.Exists(templatePath))
+                {
+                    return KnowledgebaseItem.NotFound;
+                }
+
+                // generate KnowledgebaseItem using fallback template
+                content = await File.ReadAllTextAsync(templatePath);
+                content = content.Replace("{checkId}", entityCheckId);
+                content = content.Replace("{description}", checkEntity.Description);
+                content = content.Replace("{remediation}", checkEntity.Remediation);
+
+                return new KnowledgebaseItem
+                {
+                    Id = entityCheckId,
+                    Content = content,
+                };
+            }
+
+            return KnowledgebaseItem.NotFound;
         }
 
         /// <summary>
