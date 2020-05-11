@@ -4,6 +4,44 @@
         <name>webapp</name>
     </assembly>
     <members>
+        <member name="T:webapp.Audits.PostProcessors.ExtractOwnershipProcessor">
+            <summary>
+            Post-processor for Audit to extract ownership information after created.
+            </summary>
+        </member>
+        <member name="M:webapp.Audits.PostProcessors.ExtractOwnershipProcessor.#ctor(joseki.db.JosekiDbContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Audits.PostProcessors.ExtractOwnershipProcessor"/> class.
+            </summary>
+            <param name="db">Joseki database implementation.</param>
+        </member>
+        <member name="M:webapp.Audits.PostProcessors.ExtractOwnershipProcessor.Process(webapp.Database.Models.Audit,System.Threading.CancellationToken)">
+            <summary>
+            Process the audit, extract ownership data and update db context.
+            </summary>
+            <param name="audit">Audit to be processed.</param>
+            <param name="token">A signal to stop processing.</param>
+        </member>
+        <member name="M:webapp.Audits.PostProcessors.ExtractOwnershipProcessor.ExtractOwnershipFromAzskAudit(webapp.Database.Models.MetadataAzure)">
+            <summary>
+            Extract ownership data from metadata JSON.
+            </summary>
+            <param name="metadata">Azsk scan metadata.</param>
+            <returns>list of new ownerships.</returns>
+        </member>
+        <member name="T:webapp.Audits.PostProcessors.IAuditPostProcessor">
+            <summary>
+            A base interface for audit post-processors.
+            </summary>
+        </member>
+        <member name="M:webapp.Audits.PostProcessors.IAuditPostProcessor.Process(webapp.Database.Models.Audit,System.Threading.CancellationToken)">
+            <summary>
+            After being saved to database, process audit data for extracting any meta.
+            </summary>
+            <param name="audit">The audit to post-process.</param>
+            <param name="token">A signal to stop processing.</param>
+            <returns>A task object, which indicates the end of the processing.</returns>
+        </member>
         <member name="T:webapp.Audits.Processors.AuditProcessorStub">
             <summary>
             Does nothing.
