@@ -14,8 +14,7 @@ export class DataService {
    * @private
    * @memberof DataService
    */
-  private get baseUrl()   
-  {    
+  private get baseUrl() {
     return ConfigService.ApiUrl;
   }
 
@@ -27,7 +26,7 @@ export class DataService {
    * @type {string}
    * @memberof DataService
    */
-  private get apiVersion():string {
+  private get apiVersion(): string {
     return '0.1'
   }
 
@@ -40,8 +39,8 @@ export class DataService {
    */
   public async getGeneralOverviewData(date?: DateTime): Promise<void | InfrastructureOverview> {
 
-    let suffix = (date === undefined) ? '?api-version=' + this.apiVersion 
-                                      : '?date=' + date!.toISODate() + '&api-version=' + this.apiVersion;
+    let suffix = (date === undefined) ? '?api-version=' + this.apiVersion
+      : '?date=' + date!.toISODate() + '&api-version=' + this.apiVersion;
 
     let url = this.baseUrl + "/audits/overview" + suffix;
     console.log(`[] calling ${url}`);
@@ -63,27 +62,27 @@ export class DataService {
    * @returns {(Promise<void | CheckResultSet>)}
    * @memberof DataService
    */
-  public async getGeneralOverviewDetail(pageSize: number, pageIndex: number, date?: DateTime, filterBy?: string, sortBy?: string) : Promise<void | CheckResultSet> {   
-    let suffix = (date === undefined) ? '?api-version=' + this.apiVersion 
-                                      : '?date=' + date!.toISODate() + '&api-version=' + this.apiVersion;
+  public async getGeneralOverviewDetail(pageSize: number, pageIndex: number, date?: DateTime, filterBy?: string, sortBy?: string): Promise<void | CheckResultSet> {
+    let suffix = (date === undefined) ? '?api-version=' + this.apiVersion
+      : '?date=' + date!.toISODate() + '&api-version=' + this.apiVersion;
 
     if (filterBy && filterBy.length > 0) {
       suffix += '&filterBy=' + filterBy;
-    }else{
+    } else {
       suffix += '&filterBy=*';
     }
-    if (sortBy && sortBy.length > 0 ) {
+    if (sortBy && sortBy.length > 0) {
       suffix += '&sortBy=' + sortBy;
     }
     suffix += '&pageSize=' + pageSize;
     suffix += '&pageIndex=' + pageIndex;
-   
+
     let url = this.baseUrl + "/audits/overview/detail/" + suffix;
     console.log(`[] calling ${url}`);
 
     return axios.get(url)
-            .then((response) => response.data)
-            .then((data) => <CheckResultSet>data);
+      .then((response) => response.data)
+      .then((data) => <CheckResultSet>data);
   }
 
   /**
@@ -94,19 +93,19 @@ export class DataService {
    * @returns {(Promise<void | any>)}
    * @memberof DataService
    */
-  public async getGeneralOverviewSearch(date?: DateTime, filterBy?: string) : Promise<void | any> {
-    let suffix = (date === undefined) ? '?api-version=' + this.apiVersion 
-                                      : '?date=' + date!.toISODate() + '&api-version=' + this.apiVersion;
+  public async getGeneralOverviewSearch(date?: DateTime, filterBy?: string): Promise<void | any> {
+    let suffix = (date === undefined) ? '?api-version=' + this.apiVersion
+      : '?date=' + date!.toISODate() + '&api-version=' + this.apiVersion;
 
     if (filterBy && filterBy.length > 0) {
       suffix += '&filterBy=' + filterBy;
-    }else{
+    } else {
       suffix += '&filterBy=*';
-    }  
+    }
     let url = this.baseUrl + "/audits/overview/search/" + suffix;
     console.log(`[] calling ${url}`);
     return axios.get(url)
-                .then((response) => response.data)
+      .then((response) => response.data)
   }
 
   /**
@@ -121,7 +120,7 @@ export class DataService {
 
     let suffix = '?id=' + encodeURIComponent(id);
     if (date !== undefined) { suffix += '&date=' + date!.toISODate(); }
-    suffix += '&api-version=' + this.apiVersion;   
+    suffix += '&api-version=' + this.apiVersion;
     let url = this.baseUrl + "/audits/component/detail" + suffix;
     console.log(`[] calling ${url}`);
 
@@ -159,7 +158,7 @@ export class DataService {
    * @memberof DataService
    */
   public async getGeneralOverviewDiffData(date1: string, date2: string): Promise<void | InfrastructureOverviewDiff> {
-    let suffix = '?date1=' + date1 + '&date2=' + date2  + '&api-version=' + this.apiVersion;
+    let suffix = '?date1=' + date1 + '&date2=' + date2 + '&api-version=' + this.apiVersion;
     let url = this.baseUrl + "/audits/overview/diff" + suffix;
     console.log(`[] calling ${url}`);
 
@@ -177,7 +176,7 @@ export class DataService {
    * @memberof DataService
    */
   public async getComponentHistoryData(id: string): Promise<void | InfrastructureComponentSummary[]> {
-    let suffix = '?id=' + encodeURIComponent(id)  + '&api-version=' + this.apiVersion;
+    let suffix = '?id=' + encodeURIComponent(id) + '&api-version=' + this.apiVersion;
     let url = this.baseUrl + "/audits/component/history" + suffix;
     console.log(`[] calling ${url}`);
     return axios
@@ -207,12 +206,27 @@ export class DataService {
   }
 
   /**
+   * Return data from knowledgebase.
+   *
+   * @returns {(Promise< void | MetaData[]>)}
+   * @memberof DataService
+   */
+  public async getKnowledgebaseData(ids: string[]): Promise<void | any[]> {
+    let params = ids.map((v, i)=> `ids[${i}]=${v}`).join('&');
+    let url = this.baseUrl + "/knowledgebase/items?" + params + "&api-version=" + this.apiVersion;
+    console.log(`[] calling ${url}`);
+    return axios
+      .get(url)
+      .then((response) => response.data );
+  }
+
+  /**
    * Return website meta data.
    *
    * @returns {(Promise< void | MetaData[]>)}
    * @memberof DataService
    */
-  public async getWebsiteMeta(): Promise< void | MetaData[]> {
+  public async getWebsiteMeta(): Promise<void | MetaData[]> {
     let url = this.baseUrl + "/knowledgebase/website-metadata?api-version=" + this.apiVersion;
     console.log(`[] calling ${url}`);
     return axios

@@ -1,0 +1,1 @@
+Groups Azure Event Hub verifications: access-control, data-encryption, logs. The entire list is at https://aka.ms/azsktcp/eventhub

@@ -1,0 +1,1 @@
+Azure Stream Analytics config: RBAC, logs, backup. The entire list is at https://aka.ms/azsktcp/streamanalytics

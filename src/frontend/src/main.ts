@@ -17,7 +17,9 @@ import VueApexCharts from 'vue-apexcharts'
 Vue.use(VueApexCharts);
 Vue.component('apexchart', VueApexCharts);
 
- import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs.vue';
+
+
+import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs.vue';
 Vue.component('Breadcrumbs', Breadcrumbs);
 import InfComponent from '@/components/component/InfComponent.vue';
 Vue.component('InfComponent', InfComponent);
@@ -45,7 +47,7 @@ Vue.component('Paginator', Paginator);
 import { MetaService } from './services/MetaService';
 import { ConfigService } from './services/ConfigService';
 
-(async()=>{
+(async () => {
 
   await ConfigService.Init();
   await MetaService.Init();
@@ -54,4 +56,3 @@ import { ConfigService } from './services/ConfigService';
 })()
 
 
- 

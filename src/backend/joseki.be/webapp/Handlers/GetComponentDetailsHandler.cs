@@ -21,16 +21,19 @@ namespace webapp.Handlers
     {
         private readonly JosekiDbContext db;
         private readonly IInfrastructureScoreCache cache;
+        private readonly GetKnowledgebaseItemsHandler docsHandler;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetComponentDetailsHandler"/> class.
         /// </summary>
         /// <param name="db">Joseki database object.</param>
         /// <param name="cache">Score cache.</param>
-        public GetComponentDetailsHandler(JosekiDbContext db, IInfrastructureScoreCache cache)
+        /// <param name="docsHandler">Knowledgebase items handler.</param>
+        public GetComponentDetailsHandler(JosekiDbContext db, IInfrastructureScoreCache cache, GetKnowledgebaseItemsHandler docsHandler)
         {
             this.db = db;
             this.cache = cache;
+            this.docsHandler = docsHandler;
         }
 
         /// <summary>
@@ -168,12 +171,9 @@ namespace webapp.Handlers
                 .ToDictionary(i => i.Id, j => j.Category);
             var ids = categories.Keys.ToArray();
 
-            var entities = await this.db.Set<KnowledgebaseEntity>()
-                .Where(i => ids.Contains(i.ItemId))
-                .ToArrayAsync();
-
-            componentDetails.CategorySummaries = entities
-                .Select(i => new CheckCategorySummary { Description = i.Content, Category = categories[i.ItemId] })
+            var docs = await this.docsHandler.GetItemsByIds(ids);
+            componentDetails.CategorySummaries = docs
+                .Select(i => new CheckCategorySummary { Description = i.Content, Category = categories[i.Id] })
                 .ToArray();
 
             return componentDetails;
