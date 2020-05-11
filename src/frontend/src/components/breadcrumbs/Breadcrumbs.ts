@@ -13,6 +13,7 @@ export default class Breadcrumbs extends Vue {
 
     diffdates: string = ''
     imageid: string = '';
+    checkid: string = '';
     filter: string = '';
 
     showDate: boolean = true;
@@ -21,6 +22,7 @@ export default class Breadcrumbs extends Vue {
     showDiff: boolean = false;
     showImage: boolean = false;
     showFilter: boolean = false;
+    showCheck: boolean = false;
 
     getIcon(): string {
         if(this.component) {
@@ -93,6 +95,7 @@ export default class Breadcrumbs extends Vue {
                     this.showDiff = false;
                     this.showImage = false;
                     this.showFilter = false;
+                    this.showCheck = false;
                     break;            
                 }
             case 'ComponentDetail': 
@@ -103,6 +106,7 @@ export default class Breadcrumbs extends Vue {
                     this.showDiff = false;
                     this.showImage = false;
                     this.showFilter = false;
+                    this.showCheck = false;
                     break;
                 }
             case 'ComponentHistory': 
@@ -113,6 +117,7 @@ export default class Breadcrumbs extends Vue {
                     this.showDiff = false;
                     this.showImage = false;
                     this.showFilter = false;
+                    this.showCheck = false;
                     break;
                 }
             case 'ComponentDiff': 
@@ -124,6 +129,7 @@ export default class Breadcrumbs extends Vue {
                     this.diffdates = this.$route.params.date + ' / ' + this.$route.params.date2;
                     this.showImage = false;
                     this.showFilter = false;
+                    this.showCheck = false;
                     break;
                 }
             case 'OverviewDiff': 
@@ -135,6 +141,7 @@ export default class Breadcrumbs extends Vue {
                     this.diffdates = this.$route.params.date + ' / ' + this.$route.params.date2;
                     this.showImage = false;                 
                     this.showFilter = false;
+                    this.showCheck = false;
                     break;
                 }
             case 'OverviewDetail': 
@@ -147,6 +154,7 @@ export default class Breadcrumbs extends Vue {
                     this.showImage = false;                 
                     this.showFilter = this.$route.params.filter !== undefined;
                     this.filter = this.$route.params.filter;                    
+                    this.showCheck = false;
                     break;
                 }
             case 'ImageDetail':
@@ -158,6 +166,19 @@ export default class Breadcrumbs extends Vue {
                     this.showImage = true;
                     this.imageid = this.$route.params.imageid;
                     this.showFilter = false;
+                    this.showCheck = false;
+                    break;
+                }
+            case 'CheckDetail':
+                {
+                    this.showDate = true;
+                    this.showComponent = true;
+                    this.showHistory = false;
+                    this.showDiff = false;
+                    this.showImage = false;
+                    this.showFilter = false;
+                    this.showCheck = true;
+                    this.checkid = this.$route.params.checkid;
                     break;
                 }
             default:
@@ -168,6 +189,7 @@ export default class Breadcrumbs extends Vue {
                     this.showDiff = false;
                     this.showImage = false;
                     this.showFilter = false;
+                    this.showCheck = false;
                     break;
                 }
         }

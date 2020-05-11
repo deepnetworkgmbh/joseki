@@ -1,0 +1,1 @@
+Kubernetes provides a great deal of configurability when it comes to the security of your workloads. A key principle here involves limiting the level of access any individual workload has. Polaris has validations for a number of best practices, mostly focused on ensuring that unnecessary access has not been granted to an application workload.

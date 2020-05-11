@@ -1,0 +1,1 @@
+NoData means one of the following: 1. Joseki is not able to perform the Check due to not sufficient permissions; 2. Docker Image scanner was not able to complete a scan; 3. the Check requires a manual step to be performed

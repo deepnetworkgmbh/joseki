@@ -7,6 +7,7 @@ import ImageDetail from "@/views/ImageDetail.vue";
 import ComponentHistory from '@/views/ComponentHistory.vue';
 import ComponentDetail from '@/views/ComponentDetail.vue';
 import ComponentDiff from '@/views/ComponentDiff.vue';
+import CheckDetail from '@/views/CheckDetail.vue';
 
 Vue.use(VueRouter);
 
@@ -50,11 +51,17 @@ const routes = [
     name: "OverviewDiff",
     component: OverviewDiff,
     props: true
-  },  
+  },
   {
     path: "/image-detail/:imageid/:date",
     name: "ImageDetail",
     component: ImageDetail,
+    props: true
+  },
+  {
+    path: "/check-detail/:checkid",
+    name: "CheckDetail",
+    component: CheckDetail,
     props: true
   }
 ];

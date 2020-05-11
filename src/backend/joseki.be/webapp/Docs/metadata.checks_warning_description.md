@@ -1,0 +1,1 @@
+Warning indicates when Joseki found, likely, a not critical issue with a particular infrastructure component

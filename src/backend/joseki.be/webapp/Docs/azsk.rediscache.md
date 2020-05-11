@@ -1,0 +1,1 @@
+Azure managed Redis cache configuration: firewall and user-access, keys rotation, vnet. The entire list is at https://aka.ms/azsktcp/rediscache

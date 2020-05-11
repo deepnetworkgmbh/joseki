@@ -1,0 +1,1 @@
+You're good ;) A component satisfies verified rule

@@ -1,0 +1,1 @@
+Azure Search service configuration: access-control, data encryption, replication. The entire list is at https://aka.ms/azsktcp/search

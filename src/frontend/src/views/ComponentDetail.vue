@@ -105,12 +105,15 @@
                     <b>{{control.name}} ({{ control.items.length }})</b>
                     <div v-for="(cg, cgi) in control.items" :key='`cgi${i}-${g}-${c}-${cgi}`' style="margin-left:10px;">
                       <label :for="`control${i}-${g}-${c}`">
-                        <span><i :class="cg.icon" style="font-size:12px"></i> {{ cg.result }} : {{ cg.id }}</span>
-                        <span class="ml-1 mr-1" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="cg.text">
-                          <span class="icon-help-circle tip-icon"></span>
-                        </span>
+                        <span><i :class="cg.icon" style="font-size:12px"></i> {{ cg.result }} : </span>
                         <span v-if="cg.id === 'container_image.CVE_scan' && cg.text !== 'No issues'">                        
                           <router-link class='small-link' :to="{ name: 'ImageDetail', params: { imageid: cg.tags.imageTag, date: date, component: data.component }}">see details</router-link>
+                        </span>
+                        <span v-else>
+                          <router-link class='small-link' :to="{ name: 'CheckDetail', params: { checkid: cg.id, date: date, component: data.component }}">{{ cg.id }}</router-link>  
+                        </span>
+                        <span class="ml-1 mr-1" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="cg.text">
+                          <span class="icon-help-circle tip-icon"></span>
                         </span>
                       </label>
                     </div>
@@ -120,12 +123,15 @@
                   :key="`control${i}-${g}-${c}`" class="scan-control" style="margin-left:8px;">
                   <li style="padding:2px;padding-left:0;margin-left:15px;margin-top:0px;margin-bottom:2px;line-height:18px;">
                       <label :for="`control${i}-${g}-${c}`">
-                        <i :class="control.icon" style="font-size:12px"></i> {{ control.result }} : {{ control.id }}
-                        <span class="ml-1 mr-1" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="control.text">
-                          <span class="icon-help-circle tip-icon"></span>
-                        </span>
+                        <i :class="control.icon" style="font-size:12px"></i> {{ control.result }} :                         
                         <span v-if="control.id === 'container_image.CVE_scan' && control.text !== 'No issues'">                        
                           <a class='small-link' :href="imageScanUrl(control.tags.imageTag)">see details</a>
+                        </span>
+                        <span v-else>
+                          <router-link class='small-link' :to="{ name: 'CheckDetail', params: { checkid: control.id, date: date, component: data.component }}">{{ control.id }}</router-link>  
+                        </span>
+                        <span class="ml-1 mr-1" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="control.text">
+                          <span class="icon-help-circle tip-icon"></span>
                         </span>
                       </label>
                   </li>

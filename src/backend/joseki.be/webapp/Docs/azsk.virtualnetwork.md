@@ -1,0 +1,1 @@
+Azure Network configuration: IPs, RBAC, security-groups. The entire list is at https://aka.ms/azsktcp/virtualnetwork

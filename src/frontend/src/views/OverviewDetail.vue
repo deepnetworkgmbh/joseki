@@ -38,13 +38,7 @@
                             </span>
                         </td>
                         <td v-else :style="getColumnWidth(4)">
-                            {{ item.control.id }}
-                            <span v-if="item.tags.imageTag" class="table-tooltip" data-balloon-length="large" data-balloon-pos="up" :aria-label="item.tags.imageTag">
-                                <span class="icon-target tip-icon" style="font-size:9px;" />
-                            </span>
-                            <span v-if="item.control.message && item.control.message !== 'No issues'" class="table-tooltip" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="item.control.message" style="width:0;">
-                                <span class="icon-help-circle tip-icon" style="font-size:9px;"></span>
-                            </span>
+                             <router-link class='small-link' :to="{ name: 'CheckDetail', params: { checkid: item.control.id, date: date, component: item.component }}">{{ item.control.id }}</router-link>   
                         </td>
                         <td :class='`result${item.result}`' :style="getColumnWidth(5)" class="row-ellipsis">
                             {{ item.result }}

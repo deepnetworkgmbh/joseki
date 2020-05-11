@@ -1,0 +1,1 @@
+Networking configuration in Kubernetes can be quite powerful. Polaris validates that pods are not configured to have access to sensitive host networking configuration. There are certain use cases such as a container overlay network like Calico, where this level of access is required, but the majority of workloads running on Kubernetes should not need this.
