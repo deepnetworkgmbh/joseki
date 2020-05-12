@@ -22,12 +22,143 @@
             <param name="audit">Audit to be processed.</param>
             <param name="token">A signal to stop processing.</param>
         </member>
-        <member name="M:webapp.Audits.PostProcessors.ExtractOwnershipProcessor.ExtractOwnershipFromAzskAudit(webapp.Database.Models.MetadataAzure)">
+        <member name="M:webapp.Audits.PostProcessors.ExtractOwnershipProcessor.ExtractOwnershipFromAzskAudit(webapp.Database.Models.MetadataAzure,System.Threading.CancellationToken)">
             <summary>
             Extract ownership data from metadata JSON.
             </summary>
             <param name="metadata">Azsk scan metadata.</param>
+            <param name="token">A signal to stop processing.</param>
             <returns>list of new ownerships.</returns>
+        </member>
+        <member name="M:webapp.Audits.PostProcessors.ExtractOwnershipProcessor.ExtractOwnershipFromK8sAudit(webapp.Database.Models.MetadataKube,System.Threading.CancellationToken)">
+            <summary>
+            Extract ownership data from metadata JSON.
+            </summary>
+            <param name="metadata">Kubernetes scan metadata.</param>
+            <param name="token">A signal to stop processing.</param>
+            <returns>list of new ownerships.</returns>
+        </member>
+        <member name="T:webapp.Audits.PostProcessors.OwnershipInfo">
+            <summary>
+            Class hosting ownership info.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.PostProcessors.OwnershipInfo.Owner">
+            <summary>
+            Name of the owner.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.PostProcessors.OwnershipInfo.ComponentId">
+            <summary>
+            Component Id of ownership.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.PostProcessors.OwnershipInfo.ChangeDate">
+            <summary>
+            Change date of ownership.
+            </summary>
+        </member>
+        <member name="T:webapp.Audits.PostProcessors.Resource">
+            <summary>
+            Class representation of an audit scan metadata.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.PostProcessors.Resource.ResourceDetails">
+            <summary>
+            ResourceDetails segment of the audit.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.PostProcessors.Resource.ResourceTypeName">
+            <summary>
+            ResourceTypeName segment of the audit.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.PostProcessors.Resource.ResourceId">
+            <summary>
+            Returns simplified ResourceId by replacing the
+            ResourceDetails.Type with ResourceTypeName
+            e.g Microsoft.ContainerService/managedClusters => KubernetesService.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.PostProcessors.Resource.Owner">
+            <summary>
+            Returns the owner of the resource, if defined.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.PostProcessors.Resource.OwnerChangeDate">
+            <summary>
+            Returns the change date of the owner, if defined.
+            </summary>
+        </member>
+        <member name="T:webapp.Audits.PostProcessors.ResourceDetails">
+            <summary>
+            Class representation of ResourceDetails in audit.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.PostProcessors.ResourceDetails.Id">
+            <summary>
+            Id of the resource.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.PostProcessors.ResourceDetails.Type">
+            <summary>
+            Type of the resource.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.PostProcessors.ResourceDetails.Tags">
+            <summary>
+            Tags for the resource.
+            </summary>
+        </member>
+        <member name="T:webapp.Audits.PostProcessors.ResourceTag">
+            <summary>
+            Class representation of ResourceTag in audit.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.PostProcessors.ResourceTag.owner">
+            <summary>
+            Owner of the resource.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.PostProcessors.ResourceTag.changedate">
+            <summary>
+            Owner change date of the resource.
+            </summary>
+        </member>
+        <member name="T:webapp.Audits.PostProcessors.metadata">
+            <summary>
+            Metadata section of the resource.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.PostProcessors.metadata.name">
+            <summary>
+            Name of the resource.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.PostProcessors.metadata._namespace">
+            <summary>
+            Namespace of the resource.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.PostProcessors.metadata.labels">
+            <summary>
+            Labels of the resource.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.PostProcessors.metadata.Owner">
+            <summary>
+            Returns owner of resource, if any.
+            </summary>
+        </member>
+        <member name="T:webapp.Audits.PostProcessors.labels">
+            <summary>
+            Labels section of metadata.
+            </summary>
+        </member>
+        <member name="P:webapp.Audits.PostProcessors.labels.owner">
+            <summary>
+            Owner of the resource.
+            </summary>
         </member>
         <member name="T:webapp.Audits.PostProcessors.IAuditPostProcessor">
             <summary>
@@ -876,6 +1007,11 @@
             Initializes a new instance of the <see cref="T:webapp.Controllers.v0._1.AuditsController"/> class.
             </summary>
             <param name="services">DI container.</param>
+        </member>
+        <member name="M:webapp.Controllers.v0._1.AuditsController.ScanOwnership(System.Int32)">
+            <summary>
+            Test controller for scanning audit ownership.
+            </summary>
         </member>
         <member name="M:webapp.Controllers.v0._1.AuditsController.GetOverview(System.Nullable{System.DateTime})">
             <summary>
