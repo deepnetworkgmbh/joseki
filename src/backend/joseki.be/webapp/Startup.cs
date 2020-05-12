@@ -141,6 +141,7 @@ namespace webapp
             services.AddTransient<AzskAuditProcessor>();
             services.AddTransient<PolarisAuditProcessor>();
             services.AddTransient<TrivyAuditProcessor>();
+            services.AddTransient<ExtractOwnershipProcessor>();
 
             services.AddTransient<GetInfrastructureOverviewHandler>();
             services.AddTransient<GetInfrastructureOverviewDiffHandler>();

@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using Serilog;
-
+using webapp.Audits.PostProcessors;
 using webapp.BlobStorage;
 using webapp.Database;
 using webapp.Database.Cache;
@@ -29,6 +29,7 @@ namespace webapp.Audits.Processors.polaris
         private readonly IJosekiDatabase db;
         private readonly ChecksCache cache;
         private readonly IQueue queue;
+        private readonly IAuditPostProcessor extractOwnershipProcessor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PolarisAuditProcessor"/> class.
@@ -37,12 +38,13 @@ namespace webapp.Audits.Processors.polaris
         /// <param name="db">Joseki database implementation.</param>
         /// <param name="cache">Checks cache object.</param>
         /// <param name="queue">Queue Service implementation.</param>
-        public PolarisAuditProcessor(IBlobStorageProcessor blobStorage, IJosekiDatabase db, ChecksCache cache, IQueue queue)
+        public PolarisAuditProcessor(IBlobStorageProcessor blobStorage, IJosekiDatabase db, ChecksCache cache, IQueue queue, IAuditPostProcessor postProcessor)
         {
             this.blobStorage = blobStorage;
             this.db = db;
             this.cache = cache;
             this.queue = queue;
+            this.extractOwnershipProcessor = postProcessor;
         }
 
         /// <inheritdoc />
@@ -124,6 +126,9 @@ namespace webapp.Audits.Processors.polaris
                         inprogress);
 
                     await this.db.SaveAuditResult(audit);
+
+                    // TODO: use a cancellation token inside this process?
+                    await this.extractOwnershipProcessor.Process(audit, CancellationToken.None);
                 }
                 catch (Exception ex)
                 {

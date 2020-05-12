@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using Serilog;
-
+using webapp.Audits.PostProcessors;
 using webapp.BlobStorage;
 using webapp.Database;
 using webapp.Database.Cache;
@@ -27,6 +27,7 @@ namespace webapp.Audits.Processors.azsk
         private readonly IBlobStorageProcessor blobStorage;
         private readonly IJosekiDatabase db;
         private readonly ChecksCache cache;
+        private readonly IAuditPostProcessor extractOwnershipProcessor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AzskAuditProcessor"/> class.
@@ -34,11 +35,12 @@ namespace webapp.Audits.Processors.azsk
         /// <param name="blobStorage">Blob Storage implementation.</param>
         /// <param name="db">Joseki database implementation.</param>
         /// <param name="cache">Checks cache object.</param>
-        public AzskAuditProcessor(IBlobStorageProcessor blobStorage, IJosekiDatabase db, ChecksCache cache)
+        public AzskAuditProcessor(IBlobStorageProcessor blobStorage, IJosekiDatabase db, ChecksCache cache, IAuditPostProcessor postProcessor)
         {
             this.blobStorage = blobStorage;
             this.db = db;
             this.cache = cache;
+            this.extractOwnershipProcessor = postProcessor;
         }
 
         /// <inheritdoc />
@@ -109,6 +111,9 @@ namespace webapp.Audits.Processors.azsk
                         audit.CheckResults.Count(i => i.Value == CheckValue.NoData));
 
                     await this.db.SaveAuditResult(audit);
+
+                    // TODO: use a cancellation token inside this process?
+                    await this.extractOwnershipProcessor.Process(audit, CancellationToken.None);
                 }
                 catch (Exception ex)
                 {
