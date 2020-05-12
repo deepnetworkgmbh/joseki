@@ -19,6 +19,7 @@ using Serilog.Events;
 
 using Swashbuckle.AspNetCore.SwaggerGen;
 
+using webapp.Audits.PostProcessors;
 using webapp.Audits.Processors.azsk;
 using webapp.Audits.Processors.polaris;
 using webapp.Audits.Processors.trivy;
