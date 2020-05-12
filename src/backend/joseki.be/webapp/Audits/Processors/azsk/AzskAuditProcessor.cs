@@ -35,6 +35,7 @@ namespace webapp.Audits.Processors.azsk
         /// <param name="blobStorage">Blob Storage implementation.</param>
         /// <param name="db">Joseki database implementation.</param>
         /// <param name="cache">Checks cache object.</param>
+        /// <param name="postProcessor">ExtractOwnershipProcessor.</param>
         public AzskAuditProcessor(IBlobStorageProcessor blobStorage, IJosekiDatabase db, ChecksCache cache, IAuditPostProcessor postProcessor)
         {
             this.blobStorage = blobStorage;
