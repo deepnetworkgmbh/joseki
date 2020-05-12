@@ -11,6 +11,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
 using webapp.Audits;
+using webapp.Audits.PostProcessors;
 using webapp.Audits.Processors.azsk;
 using webapp.BlobStorage;
 using webapp.Configuration;
@@ -36,7 +37,8 @@ namespace tests.audits
             var blobsMock = new Mock<IBlobStorageProcessor>(MockBehavior.Strict);
             var dbMock = new Mock<IJosekiDatabase>();
 
-            var processor = new AzskAuditProcessor(blobsMock.Object, dbMock.Object, checksCache);
+            var postProcessor = new Mock<IAuditPostProcessor>();
+            var processor = new AzskAuditProcessor(blobsMock.Object, dbMock.Object, checksCache, postProcessor.Object);
 
             var container = new ScannerContainer(Path.Combine("audits", "samples", "azsk"))
             {

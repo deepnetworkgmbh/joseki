@@ -615,6 +615,11 @@
             Image Scan Result to Cve table.
             </summary>
         </member>
+        <member name="P:joseki.db.JosekiDbContext.Ownership">
+            <summary>
+            Ownerships table.
+            </summary>
+        </member>
         <member name="M:joseki.db.JosekiDbContext.SaveChangesAsync(System.Threading.CancellationToken)">
             <inheritdoc />
         </member>
@@ -629,6 +634,33 @@
         </member>
         <member name="M:joseki.db.JosekiDbContext.JosekiDbContextFactory.CreateDbContext(System.String[])">
             <inheritdoc />
+        </member>
+        <member name="T:webapp.Database.Models.OwnershipEntity">
+            <summary>
+            Relation data to track down the ownership of a component.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.OwnershipEntity.Id">
+            <inheritdoc />
+        </member>
+        <member name="P:webapp.Database.Models.OwnershipEntity.DateUpdated">
+            <inheritdoc />
+        </member>
+        <member name="P:webapp.Database.Models.OwnershipEntity.DateCreated">
+            <inheritdoc />
+        </member>
+        <member name="P:webapp.Database.Models.OwnershipEntity.ChangedBy">
+            <inheritdoc />
+        </member>
+        <member name="P:webapp.Database.Models.OwnershipEntity.ComponentId">
+            <summary>
+            The component Id (path) of the ownership.
+            </summary>
+        </member>
+        <member name="P:webapp.Database.Models.OwnershipEntity.Owner">
+            <summary>
+            The owner.
+            </summary>
         </member>
     </members>
 </doc>

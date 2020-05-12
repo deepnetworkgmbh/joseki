@@ -9,6 +9,7 @@ using joseki.db.entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using webapp.Database.Models;
 
 namespace joseki.db
 {
@@ -70,6 +71,11 @@ namespace joseki.db
         /// Image Scan Result to Cve table.
         /// </summary>
         public DbSet<ImageScanToCveEntity> ImageScanResultToCve { get; set; }
+
+        /// <summary>
+        /// Ownerships table.
+        /// </summary>
+        public DbSet<OwnershipEntity> Ownership { get; set; }
 
         /// <inheritdoc />
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -207,6 +213,12 @@ namespace joseki.db
                 .WithMany()
                 .HasForeignKey(scan2cve => scan2cve.CveId)
                 .IsRequired();
+
+            #endregion
+
+            #region Ownership
+
+            modelBuilder.Entity<OwnershipEntity>().HasKey(ownership => ownership.Id);
 
             #endregion
         }

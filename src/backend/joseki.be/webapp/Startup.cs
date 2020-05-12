@@ -19,6 +19,7 @@ using Serilog.Events;
 
 using Swashbuckle.AspNetCore.SwaggerGen;
 
+using webapp.Audits.PostProcessors;
 using webapp.Audits.Processors.azsk;
 using webapp.Audits.Processors.polaris;
 using webapp.Audits.Processors.trivy;
@@ -141,6 +142,7 @@ namespace webapp
             services.AddTransient<AzskAuditProcessor>();
             services.AddTransient<PolarisAuditProcessor>();
             services.AddTransient<TrivyAuditProcessor>();
+            services.AddTransient<ExtractOwnershipProcessor>();
 
             services.AddTransient<GetInfrastructureOverviewHandler>();
             services.AddTransient<GetInfrastructureOverviewDiffHandler>();
