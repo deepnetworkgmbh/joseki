@@ -11,6 +11,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
 using webapp.Audits;
+using webapp.Audits.PostProcessors;
 using webapp.Audits.Processors.polaris;
 using webapp.BlobStorage;
 using webapp.Configuration;
@@ -39,7 +40,8 @@ namespace tests.audits
             var dbMock = new Mock<IJosekiDatabase>();
             var queueMock = new Mock<IQueue>();
 
-            var processor = new PolarisAuditProcessor(blobsMock.Object, dbMock.Object, checksCache, queueMock.Object);
+            var postProcessor = new Mock<IAuditPostProcessor>();
+            var processor = new PolarisAuditProcessor(blobsMock.Object, dbMock.Object, checksCache, queueMock.Object, postProcessor.Object);
 
             var container = new ScannerContainer(Path.Combine("audits", "samples", "polaris"))
             {
