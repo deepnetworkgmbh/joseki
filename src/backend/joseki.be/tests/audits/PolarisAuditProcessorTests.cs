@@ -40,7 +40,7 @@ namespace tests.audits
             var dbMock = new Mock<IJosekiDatabase>();
             var queueMock = new Mock<IQueue>();
 
-            var postProcessor = new Mock<IAuditPostProcessor>();
+            var postProcessor = new Mock<ExtractOwnershipProcessor>(context);
             var processor = new PolarisAuditProcessor(blobsMock.Object, dbMock.Object, checksCache, queueMock.Object, postProcessor.Object);
 
             var container = new ScannerContainer(Path.Combine("audits", "samples", "polaris"))

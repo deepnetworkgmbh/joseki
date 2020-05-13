@@ -39,7 +39,7 @@ namespace webapp.Audits.Processors.polaris
         /// <param name="cache">Checks cache object.</param>
         /// <param name="queue">Queue Service implementation.</param>
         /// <param name="postProcessor">ExtractOwnershipProcessor.</param>
-        public PolarisAuditProcessor(IBlobStorageProcessor blobStorage, IJosekiDatabase db, ChecksCache cache, IQueue queue, IAuditPostProcessor postProcessor)
+        public PolarisAuditProcessor(IBlobStorageProcessor blobStorage, IJosekiDatabase db, ChecksCache cache, IQueue queue, ExtractOwnershipProcessor postProcessor)
         {
             this.blobStorage = blobStorage;
             this.db = db;
