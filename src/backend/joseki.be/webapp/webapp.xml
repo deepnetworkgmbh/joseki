@@ -233,7 +233,7 @@
             Az-sk audit processor.
             </summary>
         </member>
-        <member name="M:webapp.Audits.Processors.azsk.AzskAuditProcessor.#ctor(webapp.BlobStorage.IBlobStorageProcessor,webapp.Database.IJosekiDatabase,webapp.Database.Cache.ChecksCache,webapp.Audits.PostProcessors.IAuditPostProcessor)">
+        <member name="M:webapp.Audits.Processors.azsk.AzskAuditProcessor.#ctor(webapp.BlobStorage.IBlobStorageProcessor,webapp.Database.IJosekiDatabase,webapp.Database.Cache.ChecksCache,webapp.Audits.PostProcessors.ExtractOwnershipProcessor)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Audits.Processors.azsk.AzskAuditProcessor"/> class.
             </summary>
@@ -315,7 +315,7 @@
             Polaris audit processor.
             </summary>
         </member>
-        <member name="M:webapp.Audits.Processors.polaris.PolarisAuditProcessor.#ctor(webapp.BlobStorage.IBlobStorageProcessor,webapp.Database.IJosekiDatabase,webapp.Database.Cache.ChecksCache,webapp.Queues.IQueue,webapp.Audits.PostProcessors.IAuditPostProcessor)">
+        <member name="M:webapp.Audits.Processors.polaris.PolarisAuditProcessor.#ctor(webapp.BlobStorage.IBlobStorageProcessor,webapp.Database.IJosekiDatabase,webapp.Database.Cache.ChecksCache,webapp.Queues.IQueue,webapp.Audits.PostProcessors.ExtractOwnershipProcessor)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Audits.Processors.polaris.PolarisAuditProcessor"/> class.
             </summary>
@@ -1010,11 +1010,6 @@
             </summary>
             <param name="services">DI container.</param>
         </member>
-        <member name="M:webapp.Controllers.v0._1.AuditsController.ScanOwnership(System.Int32)">
-            <summary>
-            Test controller for scanning audit ownership.
-            </summary>
-        </member>
         <member name="M:webapp.Controllers.v0._1.AuditsController.GetOverview(System.Nullable{System.DateTime})">
             <summary>
             Returns the overall infrastructure overview for Joseki landing page.
@@ -1107,12 +1102,6 @@
         <member name="M:webapp.Controllers.v0._1.KnowledgebaseController.GetWebsiteMetadataItems">
             <summary>
             Returns all metadata items for UI.
-            </summary>
-            <returns>Knowledgebase items.</returns>
-        </member>
-        <member name="M:webapp.Controllers.v0._1.KnowledgebaseController.SetKnowledgebaseItem(webapp.Models.KnowledgebaseItem)">
-            <summary>
-            saves metadata items for UI.
             </summary>
             <returns>Knowledgebase items.</returns>
         </member>
