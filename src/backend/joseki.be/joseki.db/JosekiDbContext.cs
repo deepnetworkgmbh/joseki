@@ -249,7 +249,7 @@ namespace joseki.db
         /// </summary>
         public class JosekiDbContextFactory : IDesignTimeDbContextFactory<JosekiDbContext>
         {
-            private const string ConnectionString = @"Server=localhost;Database=sqldb-joseki-be;User Id=sa;Password=Passw0rd!;";
+            private const string ConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=local-joseki-db;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
 
             /// <inheritdoc />
             public JosekiDbContext CreateDbContext(string[] args)
