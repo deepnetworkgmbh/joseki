@@ -5,8 +5,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using webapp.Audits.PostProcessors;
+using webapp.Database.Cache;
 using webapp.Database.Models;
 
 namespace tests.audits
@@ -22,7 +24,8 @@ namespace tests.audits
 
             context.Ownership.Count().Should().Be(0, "ownership list should be empty");
 
-            var processor = new ExtractOwnershipProcessor(context);
+            var cache = new OwnershipCache(context, new MemoryCache(new MemoryCacheOptions()));
+            var processor = new ExtractOwnershipProcessor(context, cache);
             var auditMetaPath = Path.Combine("audits", "samples", "azsk_audit.json");
 
             var audit = new Audit
@@ -76,9 +79,11 @@ namespace tests.audits
             // Arrange
             await using var context = JosekiTestsDb.CreateUniqueContext();
 
+            var cache = new OwnershipCache(context, new MemoryCache(new MemoryCacheOptions()));
+            var processor = new ExtractOwnershipProcessor(context, cache);
+
             context.Ownership.Count().Should().Be(0, "ownership list should be empty");
 
-            var processor = new ExtractOwnershipProcessor(context);
             var auditMetaPath = Path.Combine("audits", "samples", "k8s_audit.json");
 
             var audit = new Audit
