@@ -38,11 +38,16 @@ namespace webapp.Database.Cache
         /// In this scenario it is updated daily, so the expiration is set to 1 day.
         /// If the ownership will be updated manually, this cache should be invalidated.
         /// </summary>
-        public async Task<List<OwnershipEntity>> GetEntries()
+        public async Task<List<(string ComponentId, string Owner)>> GetEntries()
         {
-            if (!this.cache.TryGetValue<IEnumerable<OwnershipEntity>>(CacheName, out var entries))
+            if (!this.cache.TryGetValue<List<(string ComponentId, string Owner)>>(CacheName, out var entries))
             {
-                var db_entries = await this.db.Set<OwnershipEntity>().AsNoTracking().ToListAsync();
+                var db_entries = await this.db
+                    .Set<OwnershipEntity>()
+                    .AsNoTracking()
+                    .Select(o => new Tuple<string, string>(o.ComponentId, o.Owner).ToValueTuple())
+                    .ToListAsync();
+
                 entries = this.cache.Set(CacheName, db_entries, absoluteExpirationRelativeToNow: TimeSpan.FromDays(1));
             }
 
@@ -53,7 +58,7 @@ namespace webapp.Database.Cache
         /// Updates the cache with new entries, extend a possible expiration date.
         /// </summary>
         /// <param name="entries">Ownership entries.</param>
-        public void SetEntries(List<OwnershipEntity> entries)
+        public void SetEntries(List<(string ComponentId, string Owner)> entries)
         {
             this.cache.Set(CacheName, entries, absoluteExpirationRelativeToNow: TimeSpan.FromDays(1));
         }
@@ -77,12 +82,12 @@ namespace webapp.Database.Cache
         /// Returns cached entries.
         /// If cache is empty, loads entries from database.
         /// </summary>
-        Task<List<OwnershipEntity>> GetEntries();
+        Task<List<(string ComponentId, string Owner)>> GetEntries();
 
         /// <summary>
         /// Updates the entries with set of provided entries.
         /// </summary>
-        void SetEntries(List<OwnershipEntity> entries);
+        void SetEntries(List<(string ComponentId, string Owner)> entries);
 
         /// <summary>
         /// Clears the current cache, triggering reload.
