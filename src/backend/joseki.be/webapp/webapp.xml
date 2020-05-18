@@ -1354,7 +1354,7 @@
             If the ownership will be updated manually, this cache should be invalidated.
             </summary>
         </member>
-        <member name="M:webapp.Database.Cache.OwnershipCache.SetEntries(System.Collections.Generic.List{webapp.Database.Models.OwnershipEntity})">
+        <member name="M:webapp.Database.Cache.OwnershipCache.SetEntries(System.Collections.Generic.List{System.ValueTuple{System.String,System.String}})">
             <summary>
             Updates the cache with new entries, extend a possible expiration date.
             </summary>
@@ -1377,7 +1377,7 @@
             If cache is empty, loads entries from database.
             </summary>
         </member>
-        <member name="M:webapp.Database.Cache.IOwnershipCache.SetEntries(System.Collections.Generic.List{webapp.Database.Models.OwnershipEntity})">
+        <member name="M:webapp.Database.Cache.IOwnershipCache.SetEntries(System.Collections.Generic.List{System.ValueTuple{System.String,System.String}})">
             <summary>
             Updates the entries with set of provided entries.
             </summary>
@@ -1817,6 +1817,32 @@
         <member name="F:webapp.Database.Models.CheckValue.Succeeded">
             <summary>
             The Component satisfied Check requirements.
+            </summary>
+        </member>
+        <member name="T:webapp.Database.Models.ComponentType">
+            <summary>
+            Component can be either Kubernetes or AzureSubscription.
+            </summary>
+        </member>
+        <member name="T:webapp.Database.Models.ComponentId">
+            <summary>
+            Base class for parsing ComponentId.
+            </summary>
+        </member>
+        <member name="T:webapp.Database.Models.IComponentId">
+            <summary>
+            Interface for ComponentId, returning 3 main segments of the Id.
+            Uses an hierarchial lookup favoring the more detailed Id.
+            </summary>
+        </member>
+        <member name="T:webapp.Database.Models.AzureComponentId">
+            <summary>
+            ComponentId for Azure Subscription.
+            </summary>
+        </member>
+        <member name="T:webapp.Database.Models.KubernetesComponentId">
+            <summary>
+            ComponentId for Kubernetes Cluster.
             </summary>
         </member>
         <member name="T:webapp.Database.Models.CVE">
@@ -2378,32 +2404,6 @@
             <param name="cache">IOwnershipCache is cached Ownership table.</param>
             <param name="componentId">Id string of the component.</param>
             <returns>String as owner (email).</returns>
-        </member>
-        <member name="T:webapp.Handlers.ComponentType">
-            <summary>
-            Component can be either Kubernetes or AzureSubscription.
-            </summary>
-        </member>
-        <member name="T:webapp.Handlers.ComponentId">
-            <summary>
-            Base class for parsing ComponentId.
-            </summary>
-        </member>
-        <member name="T:webapp.Handlers.IComponentId">
-            <summary>
-            Interface for ComponentId, returning 3 main segments of the Id.
-            Uses an hierarchial lookup favoring the more detailed Id.
-            </summary>
-        </member>
-        <member name="T:webapp.Handlers.AzureComponentId">
-            <summary>
-            ComponentId for Azure Subscription.
-            </summary>
-        </member>
-        <member name="T:webapp.Handlers.KubernetesComponentId">
-            <summary>
-            ComponentId for Kubernetes Cluster.
-            </summary>
         </member>
         <member name="T:webapp.Infrastructure.ConfigureSwaggerOptions">
             <summary>
