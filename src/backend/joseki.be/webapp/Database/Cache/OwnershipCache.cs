@@ -43,7 +43,7 @@ namespace webapp.Database.Cache
             if (!this.cache.TryGetValue<IEnumerable<OwnershipEntity>>(CacheName, out var entries))
             {
                 var db_entries = await this.db.Set<OwnershipEntity>().AsNoTracking().ToListAsync();
-                entries = this.cache.Set(CacheName, db_entries, absoluteExpiration: DateTimeOffset.Now.AddDays(1));
+                entries = this.cache.Set(CacheName, db_entries, absoluteExpirationRelativeToNow: TimeSpan.FromDays(1));
             }
 
             return entries.ToList();
@@ -55,7 +55,7 @@ namespace webapp.Database.Cache
         /// <param name="entries">Ownership entries.</param>
         public void SetEntries(List<OwnershipEntity> entries)
         {
-            this.cache.Set(CacheName, entries, absoluteExpiration: DateTimeOffset.Now.AddDays(1));
+            this.cache.Set(CacheName, entries, absoluteExpirationRelativeToNow: TimeSpan.FromDays(1));
         }
 
         /// <summary>
