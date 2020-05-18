@@ -21,27 +21,26 @@ namespace webapp.Handlers
         public static async Task<string> GetOwner(this IOwnershipCache cache, string componentId)
         {
             var entries = await cache.GetEntries();
-
             IComponentId id = ComponentId.ComponentIdFactory(componentId);
 
             // more detailed component Id should be selected,
             // for this reason we first query the identity on object level.
-            OwnershipEntity objectOwner = entries.FirstOrDefault(x => x.ComponentId == id.ObjectLevel);
-            if (objectOwner != null && !string.IsNullOrEmpty(objectOwner.Owner))
+            var objectOwner = entries.FirstOrDefault(x => x.ComponentId == id.ObjectLevel);
+            if (!objectOwner.Equals(default) && !string.IsNullOrEmpty(objectOwner.Owner))
             {
                 return objectOwner.Owner;
             }
 
             // if no owner on object level returned, check the parent (group owner).
-            OwnershipEntity groupOwner = entries.FirstOrDefault(x => x.ComponentId == id.GroupLevel);
-            if (groupOwner != null && !string.IsNullOrEmpty(groupOwner.Owner))
+            var groupOwner = entries.FirstOrDefault(x => x.ComponentId == id.GroupLevel);
+            if (!groupOwner.Equals(default) && !string.IsNullOrEmpty(groupOwner.Owner))
             {
                 return groupOwner.Owner;
             }
 
             // if no owner on group level returned, check root owner.
-            OwnershipEntity rootOwner = entries.FirstOrDefault(x => x.ComponentId == id.RootLevel);
-            if (rootOwner != null && !string.IsNullOrEmpty(rootOwner.Owner))
+            var rootOwner = entries.FirstOrDefault(x => x.ComponentId == id.RootLevel);
+            if (!rootOwner.Equals(default) && !string.IsNullOrEmpty(rootOwner.Owner))
             {
                 return rootOwner.Owner;
             }
