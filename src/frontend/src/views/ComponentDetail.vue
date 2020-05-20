@@ -58,7 +58,7 @@
       </div>
     </div>
     <div v-if="loaded" class="segment shadow" style="flex-direction:column">
-       <div class="segment-header">
+      <div class="segment-header">
         <h1 class="mb-2">Results by Category</h1>
       </div>
       <div v-for="(category,i) in getResultsByCategory()" :key="`category${i}`" class="zigzag">
@@ -79,6 +79,16 @@
       </div>      
     </div>
     <div v-show="loaded" class="segment shadow" style="flex-direction:column">
+      <div class="segment-header">
+        <div style="float:right;font-size:12px;padding:4px;">
+          <span style="cursor:pointer;user-select: none" @click="toggleExpand()">
+            <i :class="allExpanded ? 'icon-toggle-right' : 'icon-toggle-left'" :style="{ color: allExpanded ? '#080' : '#888'}" />
+            <span v-if="!allExpanded"> Expand All </span>
+            <span v-if="allExpanded"> Collapse All </span>
+          </span>
+        </div>
+        <h1 class="mb-2">Results by Collection</h1>
+      </div>
       <div class="component-detail">
         <div v-for="(collection,i) in resultsByCollection" :key="`collection${i}`" class="component-detail-collection">
             <div class="component-detail-collection-row" @click="toggleCollectionChecked(i)">
@@ -114,8 +124,7 @@
                   </div>
                 </div>
                 <div v-if="obj.checked">
-                  <div class="component-detail-collection-row-objects-row-control zigzag"
-                  v-for="(control, c) in obj.controls" :key="`control${i}-${g}-${c}`">
+                  <div v-for="(control, c) in obj.controls" class="component-detail-collection-row-objects-row-control zigzag" :key="`control${i}-${g}-${c}`">
                     <div :class="`component-detail-collection-row-objects-row-control-icon resultBG${control.result}`">
                       <i :class="control.icon" style="font-size:13px"></i> 
                     </div>
@@ -132,6 +141,32 @@
                         <span class="ml-1 mr-1 pt-1" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="control.text">
                           <i class="icon-help-circle tip-icon"></i>
                         </span>
+                    </div>
+                  </div>
+                  <div v-for="(control, c) in obj.controlGroups" class="component-detail-collection-row-objects-row-controlgroup zigzag" :key="`control${i}-${g}-${c}`">
+                    <div class="component-detail-collection-row-objects-row-controlgroup-name">
+                      <b>{{control.name}} ({{ control.items.length }})</b>
+                    </div>
+                    <div v-for="(cg, cgi) in control.items" :key='`cgi${i}-${g}-${c}-${cgi}`' class="component-detail-collection-row-objects-row-controlgroup-items">
+                      <div :class="`component-detail-collection-row-objects-row-controlgroup-icon resultBG${cg.result}`">
+                        <i :class="cg.icon" style="font-size:13px"></i> 
+                      </div>
+                      <div :class="`component-detail-collection-row-objects-row-controlgroup-result resultBG${cg.result}`">
+                        {{ cg.result }}
+                      </div>
+                      <div class="component-detail-collection-row-objects-row-controlgroup-details">
+                        <span v-if="cg.id === 'container_image.CVE_scan' && cg.text !== 'No issues'">                        
+                          <router-link class='small-link' :to="{ name: 'ImageDetail', params: { imageid: cg.tags.imageTag, date: date, component: data.component }}">
+                            see image scan details for <b>{{cg.tags.imageTag}}</b>
+                          </router-link>
+                        </span>
+                        <span v-else>
+                          <router-link class='small-link' :to="{ name: 'CheckDetail', params: { checkid: cg.id, date: date, component: data.component }}">{{ cg.id }}</router-link>  
+                        </span>
+                        <span class="ml-1 mr-1" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="cg.text">
+                          <span class="icon-help-circle tip-icon"></span>
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
