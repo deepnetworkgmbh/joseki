@@ -42,10 +42,11 @@ export default class OverviewDetail extends Vue {
 
     headers: TableColumn[] = [
         new TableColumn('Component', 'component', 11, 'left'),
-        new TableColumn('Category', 'category', 8, 'left'),     
-        new TableColumn('Collection', 'collection', 24, 'left'),
-        new TableColumn('Resource', 'resource', 19, 'left'),    
-        new TableColumn('Control', 'control', 30, 'left'),
+        new TableColumn('Category', 'category', 8, 'left'),
+        new TableColumn('Collection', 'collection', 22, 'left'),
+        new TableColumn('Resource', 'resource', 15, 'left'),
+        new TableColumn('Owner', 'owner', 9, 'left'),
+        new TableColumn('Control', 'control', 27, 'left'),
         new TableColumn('Result', 'result', 8, 'right')
     ]
 
@@ -75,8 +76,8 @@ export default class OverviewDetail extends Vue {
      *
      * @memberof OverviewDetail
      */
-    beforeDestroy() { 
-        window.removeEventListener('resize', this.onResize); 
+    beforeDestroy() {
+        window.removeEventListener('resize', this.onResize);
     }
 
     /**
@@ -94,7 +95,7 @@ export default class OverviewDetail extends Vue {
             .getGeneralOverviewDetail(this.pageSize, this.pageIndex, this.selectedDate, this.filter, this.sort)
             .then(response => {
                 if (response) {
-                    this.data = <CheckResultSet>response;            
+                    this.data = <CheckResultSet>response;
                     let component = new InfrastructureComponent();
                     component.category = 'Overall';
                     component.name = 'Scan Details'
@@ -105,10 +106,10 @@ export default class OverviewDetail extends Vue {
                     this.$forceUpdate();
                 }
             })
-            .catch((error)=> { 
+            .catch((error) => {
                 //console.log(error);
-                this.loadFailed = true; 
-            });        
+                this.loadFailed = true;
+            });
     }
 
     /**
@@ -119,7 +120,7 @@ export default class OverviewDetail extends Vue {
      * @memberof OverviewDetail
      */
     imageScanUrl(imageTag: string) {
-        return '/image-detail/' + encodeURIComponent(imageTag) + '/' + this.selectedDate!.toISODate();    
+        return '/image-detail/' + encodeURIComponent(imageTag) + '/' + this.selectedDate!.toISODate();
     }
 
     /**
@@ -139,12 +140,12 @@ export default class OverviewDetail extends Vue {
      */
     handleResize() {
         this.windowHeight = window.innerHeight
-        this.pageSize = Math.floor((this.windowHeight-180)/22);  
-        let maxPageCount = Math.floor(this.data.totalResults/this.pageSize);
-        if(this.pageIndex > maxPageCount) {
+        this.pageSize = Math.floor((this.windowHeight - 180) / 22);
+        let maxPageCount = Math.floor(this.data.totalResults / this.pageSize);
+        if (this.pageIndex > maxPageCount) {
             this.pageIndex = maxPageCount;
         }
-        this.adjustHeaderWidths();    
+        this.adjustHeaderWidths();
     }
 
     /**
@@ -156,9 +157,9 @@ export default class OverviewDetail extends Vue {
         let navElement = document.getElementById('nav');
         if (!navElement) return;
         this.windowWidth = navElement.clientWidth;
-        for(let i=0;i<this.headers.length;i++) {
+        for (let i = 0; i < this.headers.length; i++) {
             this.headers[i].width = Math.floor(this.windowWidth * this.headers[i].percentage / 100) * 1.3
-        }        
+        }
     }
 
     /**
@@ -180,7 +181,7 @@ export default class OverviewDetail extends Vue {
      */
     getSortData(): string {
         let result: string[] = [];
-        for (let i=0; i<this.headers.length; i++) {
+        for (let i = 0; i < this.headers.length; i++) {
             if (this.headers[i].sortable === false) continue;
             if (this.headers[i].sort === Sorting.none) continue;
             let symbol = (this.headers[i].sort === Sorting.up) ? '-' : '+';
@@ -197,17 +198,17 @@ export default class OverviewDetail extends Vue {
      * @memberof OverviewDetail
      */
     changeOrdering(index: number) {
-        for(let i=0;i<this.headers.length;i++) {
+        for (let i = 0; i < this.headers.length; i++) {
             if (i === index) {
-                switch(this.headers[index].sort) {
-                    case 'UP': 
+                switch (this.headers[index].sort) {
+                    case 'UP':
                         this.headers[index].sort = Sorting.none; break;
                     case 'DOWN':
                         this.headers[index].sort = Sorting.up; break;
                     case 'NONE':
-                        this.headers[index].sort = Sorting.down; break;    
-                }        
-            }else{
+                        this.headers[index].sort = Sorting.down; break;
+                }
+            } else {
                 this.headers[i].sort = Sorting.none;
             }
         }
@@ -222,11 +223,11 @@ export default class OverviewDetail extends Vue {
      * @memberof OverviewDetail
      */
     getComponentIcon(category: string) {
-        if(category === 'Subscription') {
-          return 'icon-azuredevops';
+        if (category === 'Subscription') {
+            return 'icon-azuredevops';
         }
-        if(category === 'Kubernetes') {
-          return 'icon-kubernetes';
+        if (category === 'Kubernetes') {
+            return 'icon-kubernetes';
         }
         return ''
     }
@@ -240,13 +241,13 @@ export default class OverviewDetail extends Vue {
      */
     getHeaderClass(index: number) {
         let header = this.headers[index];
-        switch(header.sort) {
+        switch (header.sort) {
             case 'DOWN': return 'icon-chevron-down';
             case 'UP': return 'icon-chevron-up';
             case 'NONE': return 'icon-minus';
         }
     }
-   
+
     /**
      * Return inline width and text align style using header data.
      *
@@ -255,9 +256,9 @@ export default class OverviewDetail extends Vue {
      * @memberof OverviewDetail
      */
     getColumnWidth(index: number) {
-        return { 
-            maxWidth: this.headers[index].width + 'px', 
-            textAlign: this.headers[index].textAlign 
+        return {
+            maxWidth: this.headers[index].width + 'px',
+            textAlign: this.headers[index].textAlign
         };
     }
 
@@ -306,10 +307,10 @@ export class TableColumn {
     optionsMenuShown: boolean = false
     selectAll: boolean = false;
     width: number = 0;
-    constructor(public label: string, public tag: string, public percentage: number = 0, public textAlign: string = 'left') {}
+    constructor(public label: string, public tag: string, public percentage: number = 0, public textAlign: string = 'left') { }
 
     checkedCount() {
-        return this.options.filter(x=>x.checked === true).length;
+        return this.options.filter(x => x.checked === true).length;
     }
 }
 

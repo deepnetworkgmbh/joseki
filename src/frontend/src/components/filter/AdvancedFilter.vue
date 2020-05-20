@@ -53,6 +53,7 @@
                         <li v-for="(option,j) in getFilteredFilterValues()" :key="`opt${j}`" @click.stop="toggleFilterValueChecked(j)">
                             <input type="checkbox" :checked="option.checked" /> 
                             <span v-html="getHighlightedText(option.label)" style="margin-left:2px"></span>
+                            <i v-if="!option.label" style="color:#777;">undefined </i>
                             <span v-if="selectedFilterType!=='component'" style="color:#777">({{ option.count }})</span>
                         </li>
                         <li v-if="addFilterValues.length===0" style="padding:5px;">Please make a selection</li>
