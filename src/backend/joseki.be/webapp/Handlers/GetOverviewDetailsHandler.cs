@@ -21,14 +21,17 @@ namespace webapp.Handlers
     public class GetOverviewDetailsHandler
     {
         private readonly JosekiDbContext db;
+        private readonly IOwnershipCache ownershipCache;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetOverviewDetailsHandler"/> class.
         /// </summary>
         /// <param name="db">Joseki database object.</param>
-        public GetOverviewDetailsHandler(JosekiDbContext db)
+        /// <param name="ownershipCache">Ownership cache using OwnershipEntity.</param>
+        public GetOverviewDetailsHandler(JosekiDbContext db, IOwnershipCache ownershipCache)
         {
             this.db = db;
+            this.ownershipCache = ownershipCache;
         }
 
         /// <summary>
@@ -133,6 +136,13 @@ namespace webapp.Handlers
                                 filteredChecks.Count(c => c.Resource.Type == filter.type && c.Resource.Name == filter.name)))
                         .ToArray());
 
+            results.TryAdd("owner", allChecks
+                        .Select(x => x.Resource.Owner)
+                        .Distinct()
+                        .OrderBy(x => x)
+                        .Select(filter => new CheckFilter(filter, filteredChecks.Count(c => c.Resource.Owner == filter)))
+                        .ToArray());
+
             results.TryAdd("result", allChecks
                         .Select(x => x.Result.ToString())
                         .Distinct()
@@ -213,6 +223,8 @@ namespace webapp.Handlers
 
                 var message = entity.Message ?? entity.Description;
                 var (collection, resource, tags) = ParseCollectionAndResource(entity.ComponentId);
+                resource.Owner = await this.ownershipCache.GetOwner(entity.ComponentId);
+
                 var check = new OverviewCheck(
                     date,
                     collection,
@@ -262,6 +274,10 @@ namespace webapp.Handlers
 
                     case "control":
                         checks = checks.Where(x => argValues.Contains(x.Control.Id.ToLower()));
+                        break;
+
+                    case "owner":
+                        checks = checks.Where(x => argValues.Contains(x.Resource.Owner.ToLower()));
                         break;
 
                     case "collection":
@@ -344,6 +360,9 @@ namespace webapp.Handlers
                     case "resource":
                         queryableChecks = SortByResource(queryableChecks, ascending);
                         break;
+                    case "owner":
+                        queryableChecks = SortByOwner(queryableChecks, ascending);
+                        break;
                     case "result":
                         queryableChecks = SortByResult(queryableChecks, ascending);
                         break;
@@ -375,6 +394,12 @@ namespace webapp.Handlers
         {
             return ascending ? checks.OrderBy(x => x.Resource.Type).ThenBy(x => x.Resource.Name).AsQueryable()
                              : checks.OrderByDescending(x => x.Resource.Type).ThenByDescending(x => x.Resource.Name).AsQueryable();
+        }
+
+        private static IQueryable<OverviewCheck> SortByOwner(IEnumerable<OverviewCheck> checks, bool ascending)
+        {
+            return ascending ? checks.OrderBy(x => x.Resource.Owner).AsQueryable()
+                             : checks.OrderByDescending(x => x.Resource.Owner).AsQueryable();
         }
 
         private static IQueryable<OverviewCheck> SortByResult(IEnumerable<OverviewCheck> checks, bool ascending)

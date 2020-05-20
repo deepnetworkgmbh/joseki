@@ -23,17 +23,24 @@ namespace webapp.Models
         public string Type { get; set; }
 
         /// <summary>
+        /// Owner of the resource.
+        /// </summary>
+        public string Owner { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Resource"/> class.
         /// Resource constructor.
         /// </summary>
         /// <param name="id">id of Resource.</param>
         /// <param name="type">type of Resource.</param>
         /// <param name="name">name of Resource.</param>
-        public Resource(string type, string name, string id = "")
+        /// <param name="owner">owner email of Resource.</param>
+        public Resource(string type, string name, string id = "", string owner = "")
         {
             this.Id = (id == string.Empty) ? Guid.NewGuid().ToString() : id;
             this.Name = name;
             this.Type = type;
+            this.Owner = owner;
         }
     }
 }

@@ -6,4 +6,6 @@ export class Resource {
   public name: string = '';
   /// Type of the resource.
   public type: string = '';
+  /// Owner of the resource
+  public owner: string = '';
 }

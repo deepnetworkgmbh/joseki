@@ -61,7 +61,7 @@ export class MappingService {
 
             if (results.findIndex(x => x.name === check.collection.name) === -1) {
                 let date = DateTime.fromISO(check.date.toString());
-                let collection = new CheckCollection(check.collection.name, check.collection.type, date);
+                let collection = new CheckCollection(check.collection.name, check.collection.type, check.resource.owner, date);
                 results.push(collection)
             }
 
@@ -73,6 +73,7 @@ export class MappingService {
                 checkObject.id = check.resource.id,
                 checkObject.type = check.resource.type,
                 checkObject.name = check.resource.name,
+                checkObject.owner = check.resource.owner,
                 checkObject.score = 0,
                 checkObject.controls = [],           // for flat control list
                 checkObject.controlGroups = [],      // for grouped control list

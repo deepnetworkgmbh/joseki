@@ -138,6 +138,7 @@ namespace webapp
             services.AddTransient<IInfrastructureScoreCache, InfrastructureScoreCache>();
             services.AddTransient<ChecksCache>();
             services.AddTransient<CveCache>();
+            services.AddTransient<IOwnershipCache, OwnershipCache>();
 
             services.AddTransient<AzskAuditProcessor>();
             services.AddTransient<PolarisAuditProcessor>();

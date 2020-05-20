@@ -4,6 +4,7 @@ import { DateTime } from 'luxon';
 
 import { DataService, ScoreService, MappingService, ChartService } from '@/services/';
 import { InfrastructureComponentSummary, ScoreHistoryItem, SeverityFilter } from '@/models';
+import { CheckCollection } from '@/services/DiffService';
 
 @Component
 export default class ComponentDetail extends Vue {
@@ -22,6 +23,9 @@ export default class ComponentDetail extends Vue {
     service: DataService = new DataService();
     data: InfrastructureComponentSummary = new InfrastructureComponentSummary();
 
+    resultsByCollection: CheckCollection[] = [];
+    allExpanded: boolean = false;
+
     /**
      * make an api call and load Component detail data
      *
@@ -34,6 +38,9 @@ export default class ComponentDetail extends Vue {
             .then(response => {
                 if (response) {
                     this.data = response;
+
+                    this.resultsByCollection =  this.getResultsByCollection(response);
+
                     let index = this.data.scoreHistory.findIndex(x=>x.recordedAt.startsWith(this.date));
                     if(index<0) { index = 0; }
                     this.selectedDate = DateTime.fromISO(this.data.scoreHistory[index].recordedAt);
@@ -46,6 +53,26 @@ export default class ComponentDetail extends Vue {
             })
             .catch(()=> { this.loadFailed = true; });
     }
+
+    toggleCollectionChecked(index: number) {
+        this.resultsByCollection[index].checked = !this.resultsByCollection[index].checked;
+    }
+
+    toggleObjectChecked(index: number, objectIndex: number) {
+        this.resultsByCollection[index].objects[objectIndex].checked = 
+        !this.resultsByCollection[index].objects[objectIndex].checked;
+    }
+
+    toggleExpand() {
+        this.allExpanded = !this.allExpanded;
+        this.resultsByCollection.forEach(element => {
+            element.checked = this.allExpanded;
+            element.objects.forEach(obj => {
+                obj.checked = this.allExpanded;
+            });
+        });
+    }
+    
 
     /**
      * return series for area chart
