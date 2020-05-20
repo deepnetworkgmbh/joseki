@@ -44,7 +44,7 @@ export class DiffMock {
 
     if (left) {
       // removed collection
-      let c0 = new CheckCollection("Removed Collection", "namespace", date);    
+      let c0 = new CheckCollection("Removed Collection", "namespace","", date);    
       c0.score = 68;
       c0.objects = objects[0].slice();
       result.push(c0);
@@ -60,14 +60,14 @@ export class DiffMock {
     }
     
     // changed collection
-    let c1 = new CheckCollection("Changed Collection", "namespace", date);    
+    let c1 = new CheckCollection("Changed Collection", "namespace", "", date);    
     c1.score = left ? 40 : 60;
     c1.objects = left ? [changedObjectA, unchangedObject,...objects[1]] 
                       : [changedObjectB, unchangedObject,...objects[2]]
     result.push(c1);
 
 
-    let c2 = new CheckCollection("Changed 2 Collection (+)", "namespace", date);
+    let c2 = new CheckCollection("Changed 2 Collection (+)", "namespace","", date);
     c2.score = left ? 55: 65;
   
     let co1= new CheckObject();
@@ -104,13 +104,13 @@ export class DiffMock {
 
     if (!left) {
       // added collection
-      let c2 = new CheckCollection("Added Collection", "namespace", date);    
+      let c2 = new CheckCollection("Added Collection", "namespace","", date);    
       c2.score = 68;
       c2.objects = objects[4].slice();
       result.push(c2);
     }
 
-    let c3 = new CheckCollection("Same Collection", "namespace", date);    
+    let c3 = new CheckCollection("Same Collection", "namespace", "",date);    
     c3.score = 100;
     c3.objects = objects[4].slice();    
     result.push(c3);

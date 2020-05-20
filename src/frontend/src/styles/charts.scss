@@ -105,6 +105,12 @@
   cursor: pointer;
 }
 
+.resultNoData { color: #444 }
 .resultSuccess { color: #41C6B9 }
 .resultWarning { color: #F8A462 }  
 .resultFailed { color: #E33035 }
+
+.resultBGNoData { background-color: #ccc; color: #444; }
+.resultBGSuccess { background-color: #41C6B9; color: #fff; }
+.resultBGWarning { background-color: #F8A462;color: #fff; }  
+.resultBGFailed { background-color: #E33035;color: #fff; }

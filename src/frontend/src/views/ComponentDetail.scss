@@ -3,6 +3,17 @@
 	border-radius: 5px;
 	padding: 1px 5px 1px 5px;
 	margin-left: 5px;
+	user-select: none;
+}
+
+.owner-tag {
+	user-select: none;
+	font-size: 10px;
+	background-color: #07e;
+	color:#fff;
+	border-radius: 5px;
+	padding: 1px 5px 1px 5px;
+	margin-left: 5px;
 }
 
 .zigzag:nth-child(odd) {
@@ -18,4 +29,108 @@
 
 .scan-control:nth-child(n+2) {
     margin-bottom: -1px;
+}
+
+.component-detail {
+	border: solid 1px #aaa;
+	border-top:none;
+	width: 100%;
+
+	&-collection {
+		display:flex;
+		flex-direction:column;
+		border-top:solid 1px #aaa;
+
+		&-row {
+			display:flex;
+			flex-direction:row;
+			cursor:pointer;
+
+			&-arrow {
+				width:30px;
+				text-align:center;
+				padding-top:4px;
+			}
+
+			&-name {
+				flex:1;
+				padding:1px;
+				padding-left:6px;
+				border-left:solid 1px #888;
+			}
+
+			&-score {
+				width:70px;
+				text-align:center;
+				padding-top:1px;
+			}
+
+			&-objects {
+				background-color:#eee;
+				margin-left:30px;
+				border:solid 1px #888;
+				border-bottom:none;
+				border-right:none;
+
+				&-row {
+					display:flex;
+					flex-direction:row;
+					cursor:pointer;
+
+					&-arrow {
+						width:31px;
+						border-right:solid 1px #888;
+						text-align:center;
+						padding-top:4px;
+					}
+
+					&-name {
+						flex:1;
+						padding:3px;
+						padding-left:6px;
+					}
+
+					&-score {
+						width:70px;
+						text-align:center;
+						padding-top:1px;
+					}
+
+					&-control {
+						display:flex;
+						flex-direction:row;
+						margin-left:30px;
+						height:25px;
+
+						&-icon {
+							border-top:solid 1px #aaa;
+							border-left:solid 1px #888;
+							width:20px;
+							height:25px;
+							padding-left:7px;
+							padding-top:2px;
+						}
+
+						&-result {
+							width:60px;
+							border-top:solid 1px #aaa;
+							border-left:solid 1px #888;
+							font-size:11px;
+							padding:3px;
+							text-align:center;
+						}
+						
+						&-details {
+							flex:1;
+							border-top:solid 1px #aaa;
+							border-left:solid 1px #888;
+							font-size:11px;
+							padding:3px;
+							padding-top:4px;
+						}
+					}
+				}
+			}
+		}
+	}
 }
