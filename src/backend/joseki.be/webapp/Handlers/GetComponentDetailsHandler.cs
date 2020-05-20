@@ -21,6 +21,7 @@ namespace webapp.Handlers
     {
         private readonly JosekiDbContext db;
         private readonly IInfrastructureScoreCache cache;
+        private readonly IOwnershipCache ownershipCache;
         private readonly GetKnowledgebaseItemsHandler docsHandler;
 
         /// <summary>
@@ -29,11 +30,17 @@ namespace webapp.Handlers
         /// <param name="db">Joseki database object.</param>
         /// <param name="cache">Score cache.</param>
         /// <param name="docsHandler">Knowledgebase items handler.</param>
-        public GetComponentDetailsHandler(JosekiDbContext db, IInfrastructureScoreCache cache, GetKnowledgebaseItemsHandler docsHandler)
+        /// <param name="ownershipCache">Ownership cache using OwnershipEntity.</param>
+        public GetComponentDetailsHandler(
+            JosekiDbContext db,
+            IInfrastructureScoreCache cache,
+            GetKnowledgebaseItemsHandler docsHandler,
+            IOwnershipCache ownershipCache)
         {
             this.db = db;
             this.cache = cache;
             this.docsHandler = docsHandler;
+            this.ownershipCache = ownershipCache;
         }
 
         /// <summary>
@@ -147,6 +154,8 @@ namespace webapp.Handlers
 
                 var message = entity.Message ?? entity.Description;
                 var (collection, resource, tags) = ParseCollectionAndResource(entity.ComponentId);
+                resource.Owner = await this.ownershipCache.GetOwner(entity.ComponentId);
+
                 var check = new Check(
                     date,
                     collection,

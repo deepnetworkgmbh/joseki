@@ -2150,13 +2150,14 @@
             Prepares response to get-component-details request.
             </summary>0
         </member>
-        <member name="M:webapp.Handlers.GetComponentDetailsHandler.#ctor(joseki.db.JosekiDbContext,webapp.Database.Cache.IInfrastructureScoreCache,webapp.Handlers.GetKnowledgebaseItemsHandler)">
+        <member name="M:webapp.Handlers.GetComponentDetailsHandler.#ctor(joseki.db.JosekiDbContext,webapp.Database.Cache.IInfrastructureScoreCache,webapp.Handlers.GetKnowledgebaseItemsHandler,webapp.Database.Cache.IOwnershipCache)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Handlers.GetComponentDetailsHandler"/> class.
             </summary>
             <param name="db">Joseki database object.</param>
             <param name="cache">Score cache.</param>
             <param name="docsHandler">Knowledgebase items handler.</param>
+            <param name="ownershipCache">Ownership cache using OwnershipEntity.</param>
         </member>
         <member name="M:webapp.Handlers.GetComponentDetailsHandler.GetDetails(System.String,System.DateTime)">
             <summary>
@@ -2320,11 +2321,12 @@
             Prepares response to get-overview-details request.
             </summary>
         </member>
-        <member name="M:webapp.Handlers.GetOverviewDetailsHandler.#ctor(joseki.db.JosekiDbContext)">
+        <member name="M:webapp.Handlers.GetOverviewDetailsHandler.#ctor(joseki.db.JosekiDbContext,webapp.Database.Cache.IOwnershipCache)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Handlers.GetOverviewDetailsHandler"/> class.
             </summary>
             <param name="db">Joseki database object.</param>
+            <param name="ownershipCache">Ownership cache using OwnershipEntity.</param>
         </member>
         <member name="M:webapp.Handlers.GetOverviewDetailsHandler.GetDetails(System.String,System.String,System.DateTime,System.Int32,System.Int32)">
             <summary>
@@ -3174,7 +3176,12 @@
             Type of the resource.
             </summary>
         </member>
-        <member name="M:webapp.Models.Resource.#ctor(System.String,System.String,System.String)">
+        <member name="P:webapp.Models.Resource.Owner">
+            <summary>
+            Owner of the resource.
+            </summary>
+        </member>
+        <member name="M:webapp.Models.Resource.#ctor(System.String,System.String,System.String,System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:webapp.Models.Resource"/> class.
             Resource constructor.
@@ -3182,6 +3189,7 @@
             <param name="id">id of Resource.</param>
             <param name="type">type of Resource.</param>
             <param name="name">name of Resource.</param>
+            <param name="owner">owner email of Resource.</param>
         </member>
         <member name="T:webapp.Models.ScoreHistoryItem">
             <summary>
