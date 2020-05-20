@@ -21,7 +21,7 @@ metadata:
   namespace: joseki
   labels:
     app: joseki-frontend
-    owner: umut.celenli@deepnetwork.com
+    owner: umut.celenli
   annotations:
 spec:
   ports:
@@ -42,7 +42,7 @@ metadata:
   labels:
     app: joseki-frontend
     version: '#{fe.imageTag}#'
-    owner: umut.celenli@deepnetwork.com
+    owner: umut.celenli
 spec:
   replicas: 1
   selector:
