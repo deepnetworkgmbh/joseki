@@ -28,7 +28,7 @@
 
 
 .nodata-icon {
-  color: #bbb;  
+  // color: #bbb;  
   font-size: 15px;
   float: left;
   margin-left:-4px;
@@ -36,7 +36,7 @@
 }
 
 .warning-icon {
-  color: $color-high-severity;
+  // color: $color-high-severity;
   font-size: 14px;
   float: left;
   margin-left:-4px;
@@ -44,7 +44,7 @@
 }
 
 .noissues-icon {
-  color: $color-low-severity;
+  // color: $color-low-severity;
   font-size: 14px;
   float: left;
   margin-left:-4px;
@@ -52,7 +52,7 @@
 }
 
 .failed-icon {
-  color: $color-critical;
+  // color: $color-critical;
   font-size: 14px;
   float: left;
   margin-left:-4px;

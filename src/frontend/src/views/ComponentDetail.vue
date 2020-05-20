@@ -58,7 +58,7 @@
       </div>
     </div>
     <div v-if="loaded" class="segment shadow" style="flex-direction:column">
-       <div class="segment-header">
+      <div class="segment-header">
         <h1 class="mb-2">Results by Category</h1>
       </div>
       <div v-for="(category,i) in getResultsByCategory()" :key="`category${i}`" class="zigzag">
@@ -80,34 +80,85 @@
     </div>
     <div v-show="loaded" class="segment shadow" style="flex-direction:column">
       <div class="segment-header">
-        <ResultFilter :severities='severityFilter' />
-        <h1 class="mb-2">Results by Resources</h1>
+        <div style="float:right;font-size:12px;padding:4px;">
+          <span style="cursor:pointer;user-select: none" @click="toggleExpand()">
+            <i :class="allExpanded ? 'icon-toggle-right' : 'icon-toggle-left'" :style="{ color: allExpanded ? '#080' : '#888'}" />
+            <span v-if="!allExpanded"> Expand All </span>
+            <span v-if="allExpanded"> Collapse All </span>
+          </span>
+        </div>
+        <h1 class="mb-2">Results by Collection</h1>
       </div>
-      <ul v-for="(collection,i) in getResultsByCollection(data)" :key="`collection${i}`"  class="zigzag"> 
-          <li style="margin-left:15px;min-height:27px;" class="text-sm">
-            <StatusBar :counters="collection.counters" :severities='severityFilter' style="float:right;margin-top:-15px;" />
-            <input class="expand" type="checkbox" :id="`target${i}`" checked />
-            <label :for="`target${i}`">
-               <strong>{{ collection.type }} :</strong>
-               <Score v-if="severityFilter.AllChecked()" :label='`Score`' :score='collection.score' />             
-               {{ collection.name }}
-            </label>
-            <ul v-for="(obj, g) in collection.objects" :key="`obj${i}-${g}`" style="padding:0;margin:0;margin-left:5px;margin-top:5px;">
-              <li style="margin-left:15px;min-height:18px;line-height:17px;padding-top:2px;">
-                <input class="expand" type="checkbox" :id="`obj${i}-${g}`" />
-                <label :for="`obj${i}-${g}`" class="limited-label">
-                   <strong>{{ obj.type }} :</strong>
-                   <Score v-if="severityFilter.AllChecked()" :label='`Score`' :score='obj.score' />         
-                   {{ obj.name }}
-                </label>
-                <ul v-for="(control, c) in obj.controlGroups" :key="`control${i}-${g}-${c}`" class="scan-control" style="margin-left:8px;">
-                  <li style="padding:2px;padding-left:5px;margin-top:0px;margin-bottom:1px;line-height:20px;">
-                    <b>{{control.name}} ({{ control.items.length }})</b>
-                    <div v-for="(cg, cgi) in control.items" :key='`cgi${i}-${g}-${c}-${cgi}`' style="margin-left:10px;">
-                      <label :for="`control${i}-${g}-${c}`">
-                        <span><i :class="cg.icon" style="font-size:12px"></i> {{ cg.result }} : </span>
+      <div class="component-detail">
+        <div v-for="(collection,i) in resultsByCollection" :key="`collection${i}`" class="component-detail-collection">
+            <div class="component-detail-collection-row" @click="toggleCollectionChecked(i)">
+              <div class="component-detail-collection-row-arrow">
+                <i :class="collection.checked ? 'icon-chevron-down' : 'icon-chevron-right'"></i>
+              </div>
+              <div class="component-detail-collection-row-name">  
+                <strong>{{ collection.type }} :</strong> {{ collection.name }}  
+              </div>
+              <div style="padding-top:1px;">
+                <span v-if="collection.owner" class="owner-tag"><i class="icon-user"></i> {{ collection.owner }}</span>
+                <!-- <StatusBar :counters="collection.counters" :severities='severityFilter' /> -->
+              </div>
+              <div class="component-detail-collection-row-score">
+                <Score v-if="severityFilter.AllChecked()" :label='`Score`' :score='collection.score' />
+              </div>
+            </div>
+            <div v-if="collection.checked">
+              <div class="component-detail-collection-row-objects" v-for="(obj, g) in collection.objects" :key="`obj${i}-${g}`">
+                <div class="component-detail-collection-row-objects-row"  @click="toggleObjectChecked(i, g)">
+                  <div class="component-detail-collection-row-objects-row-arrow">
+                    <i :class="obj.checked ? 'icon-chevron-down' : 'icon-chevron-right'"></i>
+                  </div>
+                  <div class="component-detail-collection-row-objects-row-name">
+                      <strong>{{ obj.type }} : </strong>{{ obj.name }}
+                  </div>
+                  <div style="padding-top:1px;">
+                    <span v-if="collection.owner" class="owner-tag"><i class="icon-user"></i> {{ collection.owner }}</span>
+                    <!-- <StatusBar :counters="collection.counters" :severities='severityFilter' /> -->
+                  </div>
+                  <div class="component-detail-collection-row-objects-row-score">
+                    <Score v-if="severityFilter.AllChecked()" :label='`Score`' :score='collection.score' />
+                  </div>
+                </div>
+                <div v-if="obj.checked">
+                  <div v-for="(control, c) in obj.controls" class="component-detail-collection-row-objects-row-control zigzag" :key="`control${i}-${g}-${c}`">
+                    <div :class="`component-detail-collection-row-objects-row-control-icon resultBG${control.result}`">
+                      <i :class="control.icon" style="font-size:13px"></i> 
+                    </div>
+                    <div :class="`component-detail-collection-row-objects-row-control-result resultBG${control.result}`">
+                      {{ control.result }}
+                    </div>
+                    <div class="component-detail-collection-row-objects-row-control-details">
+                      <span v-if="control.id === 'container_image.CVE_scan' && control.text !== 'No issues'">                        
+                          <a class='small-link' :href="imageScanUrl(control.tags.imageTag)">see details</a>
+                        </span>
+                        <span v-else>
+                          <router-link class='small-link' :to="{ name: 'CheckDetail', params: { checkid: control.id, date: date, component: data.component }}">{{ control.id }}</router-link>  
+                        </span>
+                        <span class="ml-1 mr-1 pt-1" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="control.text">
+                          <i class="icon-help-circle tip-icon"></i>
+                        </span>
+                    </div>
+                  </div>
+                  <div v-for="(control, c) in obj.controlGroups" class="component-detail-collection-row-objects-row-controlgroup zigzag" :key="`control${i}-${g}-${c}`">
+                    <div class="component-detail-collection-row-objects-row-controlgroup-name">
+                      <b>{{control.name}} ({{ control.items.length }})</b>
+                    </div>
+                    <div v-for="(cg, cgi) in control.items" :key='`cgi${i}-${g}-${c}-${cgi}`' class="component-detail-collection-row-objects-row-controlgroup-items">
+                      <div :class="`component-detail-collection-row-objects-row-controlgroup-icon resultBG${cg.result}`">
+                        <i :class="cg.icon" style="font-size:13px"></i> 
+                      </div>
+                      <div :class="`component-detail-collection-row-objects-row-controlgroup-result resultBG${cg.result}`">
+                        {{ cg.result }}
+                      </div>
+                      <div class="component-detail-collection-row-objects-row-controlgroup-details">
                         <span v-if="cg.id === 'container_image.CVE_scan' && cg.text !== 'No issues'">                        
-                          <router-link class='small-link' :to="{ name: 'ImageDetail', params: { imageid: cg.tags.imageTag, date: date, component: data.component }}">see details</router-link>
+                          <router-link class='small-link' :to="{ name: 'ImageDetail', params: { imageid: cg.tags.imageTag, date: date, component: data.component }}">
+                            see image scan details for <b>{{cg.tags.imageTag}}</b>
+                          </router-link>
                         </span>
                         <span v-else>
                           <router-link class='small-link' :to="{ name: 'CheckDetail', params: { checkid: cg.id, date: date, component: data.component }}">{{ cg.id }}</router-link>  
@@ -115,31 +166,14 @@
                         <span class="ml-1 mr-1" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="cg.text">
                           <span class="icon-help-circle tip-icon"></span>
                         </span>
-                      </label>
+                      </div>
                     </div>
-                  </li>
-                </ul>
-                <ul v-for="(control, c) in obj.controls" 
-                  :key="`control${i}-${g}-${c}`" class="scan-control" style="margin-left:8px;">
-                  <li style="padding:2px;padding-left:0;margin-left:15px;margin-top:0px;margin-bottom:2px;line-height:18px;">
-                      <label :for="`control${i}-${g}-${c}`">
-                        <i :class="control.icon" style="font-size:12px"></i> {{ control.result }} :                         
-                        <span v-if="control.id === 'container_image.CVE_scan' && control.text !== 'No issues'">                        
-                          <a class='small-link' :href="imageScanUrl(control.tags.imageTag)">see details</a>
-                        </span>
-                        <span v-else>
-                          <router-link class='small-link' :to="{ name: 'CheckDetail', params: { checkid: control.id, date: date, component: data.component }}">{{ control.id }}</router-link>  
-                        </span>
-                        <span class="ml-1 mr-1" data-balloon-length="xlarge" data-balloon-pos="up" :aria-label="control.text">
-                          <span class="icon-help-circle tip-icon"></span>
-                        </span>
-                      </label>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-        </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>

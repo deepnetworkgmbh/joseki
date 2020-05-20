@@ -32,12 +32,14 @@ namespace tests.audits
             // Arrange
             await using var context = JosekiTestsDb.CreateUniqueContext();
             var parser = new ConfigurationParser("config.sample.yaml");
+
             var checksCache = new ChecksCache(parser, context, new MemoryCache(new MemoryCacheOptions()));
 
             var blobsMock = new Mock<IBlobStorageProcessor>(MockBehavior.Strict);
             var dbMock = new Mock<IJosekiDatabase>();
 
-            var postProcessor = new Mock<ExtractOwnershipProcessor>(context);
+            var ownershipCache = new OwnershipCache(context, new MemoryCache(new MemoryCacheOptions()));
+            var postProcessor = new Mock<ExtractOwnershipProcessor>(context, ownershipCache);
             var processor = new AzskAuditProcessor(blobsMock.Object, dbMock.Object, checksCache, postProcessor.Object);
 
             var container = new ScannerContainer(Path.Combine("audits", "samples", "azsk"))

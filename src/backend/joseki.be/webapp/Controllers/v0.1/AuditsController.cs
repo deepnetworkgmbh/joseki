@@ -255,7 +255,7 @@ namespace webapp.Controllers.v0._1
         [Route("container-image/{imageTag}/history", Name = "get-image-scan-history")]
         [ProducesResponseType(200, Type = typeof(ContainerImageScanResult[]))]
         [ProducesResponseType(500, Type = typeof(string))]
-        public async Task<ObjectResult> GetImageScanHistory([FromRoute]string imageTag)
+        public async Task<ObjectResult> GetImageScanHistory([FromRoute] string imageTag)
         {
             var unescapedTag = HttpUtility.UrlDecode(imageTag);
             try
@@ -281,7 +281,7 @@ namespace webapp.Controllers.v0._1
         [ProducesResponseType(200, Type = typeof(ContainerImageScanResult))]
         [ProducesResponseType(400, Type = typeof(string))]
         [ProducesResponseType(500, Type = typeof(string))]
-        public async Task<ObjectResult> GetImageScanDetail([FromRoute]string imageTag, [FromQuery]DateTime? date = null)
+        public async Task<ObjectResult> GetImageScanDetail([FromRoute] string imageTag, [FromQuery] DateTime? date = null)
         {
             #region input validation
 
@@ -326,7 +326,7 @@ namespace webapp.Controllers.v0._1
         [HttpGet]
         [Route("container-image/{imageTag}/diff", Name = "get-image-scan-diff")]
         [ProducesResponseType(200, Type = typeof(ContainerImageScanResultDiff))]
-        public async Task<ObjectResult> GetImageScanDiff([FromRoute]string imageTag, [FromQuery]DateTime date1, [FromQuery]DateTime date2)
+        public async Task<ObjectResult> GetImageScanDiff([FromRoute] string imageTag, [FromQuery] DateTime date1, [FromQuery] DateTime date2)
         {
             #region input validation
 

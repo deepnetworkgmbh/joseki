@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Serilog;
 using webapp.Database;
+using webapp.Database.Cache;
 using webapp.Database.Models;
 
 namespace webapp.Audits.PostProcessors
@@ -22,14 +23,17 @@ namespace webapp.Audits.PostProcessors
 
         private readonly JosekiDbContext db;
         private readonly JsonSerializerSettings jsonSerializerSettings;
+        private readonly IOwnershipCache cache;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExtractOwnershipProcessor"/> class.
         /// </summary>
         /// <param name="db">Joseki database implementation.</param>
-        public ExtractOwnershipProcessor(JosekiDbContext db)
+        /// <param name="cache">Ownership in memory cache.</param>
+        public ExtractOwnershipProcessor(JosekiDbContext db, IOwnershipCache cache)
         {
             this.db = db;
+            this.cache = cache;
             this.jsonSerializerSettings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
@@ -89,6 +93,9 @@ namespace webapp.Audits.PostProcessors
             }
 
             await this.db.SaveChangesAsync();
+
+            // clear current ownership cache (will trigger reload)
+            this.cache.Invalidate();
         }
 
         /// <summary>

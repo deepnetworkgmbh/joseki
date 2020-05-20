@@ -122,11 +122,12 @@ export class CheckCollection {
     operation?: DiffOperation = DiffOperation.Same;
     empty: boolean = false;
     changes: DiffCounters = new DiffCounters();  
-
-    constructor(public name: string, public type: string, public date: DateTime) {}
+    checked: boolean = false;
+    
+    constructor(public name: string, public type: string, public owner: string, public date: DateTime) {}
 
     public static GetEmpty() : CheckCollection {
-        let empty = new CheckCollection("", "", DateTime.fromJSDate(new Date()));
+        let empty = new CheckCollection("", "", "", DateTime.fromJSDate(new Date()));
         empty.empty = true;
         return empty;
     }
@@ -207,7 +208,8 @@ export class CheckObject {
     operation?: DiffOperation = DiffOperation.Same;
     checked: boolean = false;
     empty: boolean = false;
-
+    owner: string = '';
+    
     public static GetEmpty(id:string) : CheckObject {
         let empty = new CheckObject();
         empty.id = id;
