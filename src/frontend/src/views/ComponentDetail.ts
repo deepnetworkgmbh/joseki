@@ -24,6 +24,7 @@ export default class ComponentDetail extends Vue {
     data: InfrastructureComponentSummary = new InfrastructureComponentSummary();
 
     resultsByCollection: CheckCollection[] = [];
+    allExpanded: boolean = false;
 
     /**
      * make an api call and load Component detail data
@@ -62,6 +63,15 @@ export default class ComponentDetail extends Vue {
         !this.resultsByCollection[index].objects[objectIndex].checked;
     }
 
+    toggleExpand() {
+        this.allExpanded = !this.allExpanded;
+        this.resultsByCollection.forEach(element => {
+            element.checked = this.allExpanded;
+            element.objects.forEach(obj => {
+                obj.checked = this.allExpanded;
+            });
+        });
+    }
     
 
     /**
