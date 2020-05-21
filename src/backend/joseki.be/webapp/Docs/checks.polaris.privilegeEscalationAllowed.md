@@ -1,4 +1,7 @@
 # polaris.privilegeEscalationAllowed
+
+The check performed by [Fairwinds Polaris](https://github.com/fairwindsops/polaris).
+
 Polaris supports a number of checks related to security.
 
 key | default | description
@@ -21,6 +24,7 @@ Securing workloads in Kubernetes is an important part of overall cluster securit
 Much of this configuration can be found in the `securityContext` attribute for both Kubernetes pods and containers. Where configuration is available at both a pod and container level, Polaris validates both.
 
 ## Further Reading
+
 - [Kubernetes Docs: Configure a Security Context for a Pod or Container](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
 - [KubeCon 2018 Keynote: Running with Scissors](https://www.youtube.com/watch?v=ltrV-Qmh3oY)
 - [Kubernetes Security Book](https://kubernetes-security.info/)

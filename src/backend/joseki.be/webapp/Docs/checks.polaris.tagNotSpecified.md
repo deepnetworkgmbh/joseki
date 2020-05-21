@@ -1,4 +1,7 @@
 # polaris.tagNotSpecified
+
+The check performed by [Fairwinds Polaris](https://github.com/fairwindsops/polaris).
+
 Polaris supports a number of checks related to the image specified by pods.
 
 key | default | description

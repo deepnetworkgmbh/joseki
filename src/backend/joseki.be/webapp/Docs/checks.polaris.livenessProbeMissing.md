@@ -1,5 +1,7 @@
 # polaris.livenessProbeMissing
 
+The check performed by [Fairwinds Polaris](https://github.com/fairwindsops/polaris).
+
 Polaris supports validating the presence of readiness and liveness probes in pods.
 
 key | default | description
@@ -20,5 +22,3 @@ Liveness probes are designed to ensure that an application stays in a healthy st
 - [Kubernetes Docs: Configure Liveness and Readiness Probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/)
 - [Utilizing Kubernetes Liveness and Readiness Probes to Automatically Recover From Failure](https://medium.com/spire-labs/utilizing-kubernetes-liveness-and-readiness-probes-to-automatically-recover-from-failure-2fe0314f2b2e)
 - [Kubernetes Liveness and Readiness Probes: How to Avoid Shooting Yourself in the Foot](https://blog.colinbreck.com/kubernetes-liveness-and-readiness-probes-how-to-avoid-shooting-yourself-in-the-foot/)
-## Related
-undefined
