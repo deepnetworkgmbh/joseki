@@ -15,27 +15,33 @@
 	background-color: #eee;
 	border-bottom-left-radius: 5px;
 	border-bottom-right-radius: 5px;
-	text-align: right;
-	margin-top: 10px;
+	text-align: right;	
 }
 
 .table-container {
 	background-color: #eee;
 	width:100%;
-	height:calc(100vh - 300px);
+	height:calc(100vh - 400px);
+}
+.chart-container {
+	width: 97%;
+	margin: auto;
 }
 table {
 	display: flex;
     flex-flow: column;
-    height: 100%;
-	width: 100%;
+    height: calc(100% - 10px);
+	width: 98%;
 	background-color: #eee;
+	margin: auto;
 }
 table thead {
     /* head takes the height it requires, 
     and it's not scaled when table is resized */
     flex: 0 0 auto;
-	width: calc(100% - 0.9em);
+	width: calc(100% - 0.1em);
+	background-color: #aaa;
+	color:#fff;
 }
 table tbody {
     /* body takes all the remaining available space */
@@ -49,7 +55,8 @@ table tbody tr {
 }
 table thead, table tbody tr {
     display: table;
-    table-layout: fixed;
+	table-layout: fixed;
+	line-height: 10px;
 }
 
 table > tbody > tr:hover > td > .show-on-hover {
@@ -58,4 +65,9 @@ table > tbody > tr:hover > td > .show-on-hover {
   
 table > tbody > tr > td >  .show-on-hover {
 	display: none;
+}
+
+table, tr, td {
+	font-size: 11px;
+	border-bottom: solid 1px #ccc;
 }

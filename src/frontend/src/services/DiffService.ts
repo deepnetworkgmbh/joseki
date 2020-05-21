@@ -122,7 +122,7 @@ export class CheckCollection {
     operation?: DiffOperation = DiffOperation.Same;
     empty: boolean = false;
     changes: DiffCounters = new DiffCounters();  
-    checked: boolean = false;
+    checked: boolean = true;
     
     constructor(public name: string, public type: string, public owner: string, public date: DateTime) {}
 
