@@ -1,4 +1,4 @@
-import { CountersSummary, ScoreHistoryItem } from '@/models';
+import { CountersSummary, ScoreHistoryItem, InfrastructureComponentSummary } from '@/models';
 import { DateTime } from 'luxon';
 
 export class ChartService {
@@ -6,6 +6,7 @@ export class ChartService {
 	public static colorFailed = '#E33035';
 	public static colorWarning = '#F8A462';
 	public static colorSuccess = '#41C6B9';
+	public static colorArea = '#0069C6';
 
 	public static groupColors = [ChartService.colorNoData, ChartService.colorFailed, ChartService.colorWarning, ChartService.colorSuccess];
 	public static successThresholdScore = 75;
@@ -56,13 +57,17 @@ export class ChartService {
 	 * @static
 	 * @memberof ChartService
 	 */
-	private static get thresholdAnnotation() {
+	private static getThresholdAnnotation(
+		color: string = '#d2d2d2', 
+		position: string = 'left',
+		offsetX: number = 120
+	) {
 		return [{
 			y: ChartService.successThresholdScore,
 			y2: null,
 			strokeDashArray: 3,
 			borderColor: '#ccc',
-			fillColor: '#d2d2d2',
+			fillColor: color,
 			opacity: 0.3,
 			offsetX: 0,
 			yAxisIndex: 0,
@@ -70,9 +75,9 @@ export class ChartService {
 				borderWidth: 0,
 				text: ChartService.successThresholdScore + '%',
 				textAnchor: 'start',
-				position: 'left',
+				position: position,
 				offsetY:6,
-				offsetX:120,
+				offsetX:offsetX,
 				style: {
 					background: '#ddd', //transparent',
 					fontSize: '8px',
@@ -86,6 +91,39 @@ export class ChartService {
 				}
 			}
 		}]
+	}
+
+	private static getHistoryAreaAnnotation(dates: string[]) {
+		return {
+			x: new Date(dates[0]).getTime(),
+			x2: dates.length <= 1 ? null : new Date(dates[1]).getTime(),
+			offsetX:-1,
+			borderWidth: 1,
+			borderColor: '#F8A462',
+			strokeDashArray: 0,
+		}
+	}
+
+	private static getAreaAnnotation(date: string, score: number, color: string = '#fff') {
+		return {
+			x: new Date(date).getTime(),
+			x2: null,
+			offsetX:-1,
+			borderWidth: 1,
+			borderColor: '#F8A462',
+			strokeDashArray: 0,
+			label: {
+				borderWidth:0,
+				text: `${score} %`,
+				offsetX:-1,
+				style: {
+					background: '#F8A462', //transparent',
+					fontSize: '7px',
+					color:color,
+					padding: { left:3, right:3, top:1, bottom:0 }
+				}
+			},
+		}
 	}
 
 	/**
@@ -134,59 +172,16 @@ export class ChartService {
 	 * @returns {ApexCharts.ApexOptions}
 	 * @memberof ChartService
 	 */
-	public static AreaChartOptions(id:string,scoreHistory: ScoreHistoryItem[], dates: DateTime[], scores: number[], cb: Function) : ApexCharts.ApexOptions {
+	public static AreaChartOptions(id:string, scoreHistory: ScoreHistoryItem[], dates: DateTime[], scores: number[], cb: Function) : ApexCharts.ApexOptions {
 
-		const xAxisAnnotations: any[] = [];
-		xAxisAnnotations.push({
-			x: new Date(dates[0].toISODate()).getTime(),
-			x2: (dates.length === 2 && scores.length === 2) ? new Date(dates[1].toISODate()).getTime() : null,
-			offsetX:-1,
-			strokeDashArray: 0,
-			borderWidth: 1,
-			borderColor: '#F8A462',
-			label: {
-				borderWidth:0,
-				text: `${scores[0]} %`,
-				offsetX:-1,
-				style: {
-					background: '#F8A462', //transparent',
-					fontSize: '7px',
-					color:'#fff',
-					padding: {
-						left:3,
-						right:3,
-						top:1,
-						bottom:0
-					}
-				}
-			},
-		})
-		if (dates.length === 2 && scores.length === 2) {
-			xAxisAnnotations.push({
-				x: new Date(dates[1].toISODate()).getTime(),
-				offsetX:-1,
-				borderWidth: 1,
-				borderColor: '#F8A462',
-				strokeDashArray: 0,
-				label: {
-					borderWidth:0,
-					text: `${scores[1]} %`,
-					offsetX:-1,
-					style: {
-						background: '#F8A462', //transparent',
-						fontSize: '7px',
-						color:'#fff',
-						padding: {
-							left:3,
-							right:3,
-							top:1,
-							bottom:0
-						}
-					}	
-				},
-			})	
+		const xAxisAnnotations: any[] = [];	
+		if (dates.length > 0 && scores.length > 0) {
+			xAxisAnnotations.push(ChartService.getAreaAnnotation(dates[0].toISODate(), scores[0]));
 		}
-
+		if (dates.length > 1 && scores.length > 1) {
+			xAxisAnnotations.push(ChartService.getAreaAnnotation(dates[1].toISODate(), scores[1]));
+		}
+	
 		return <ApexCharts.ApexOptions>{
 			chart: {
 				id: id,
@@ -194,6 +189,7 @@ export class ChartService {
 				sparkline: { enabled: true },
 				events: {
 					markerClick: function(event, chartContext, { seriesIndex, dataPointIndex, config}) {
+						if (scoreHistory === []) return;
 						const index = scoreHistory.length - dataPointIndex - 1;
 						const datestr = scoreHistory[index].recordedAt.split('T')[0];
 						scores[0] = scoreHistory[index].score;
@@ -226,6 +222,8 @@ export class ChartService {
 					show: false
 				},
 				custom: function({series, seriesIndex, dataPointIndex, w}) {
+					if (scoreHistory === []) return;
+
 					const dateStr = scoreHistory[scoreHistory.length -1 - dataPointIndex].recordedAt.split('T')[0];
 					const scoreStr = series[seriesIndex][dataPointIndex] + '%';
 
@@ -237,7 +235,112 @@ export class ChartService {
 			},
 			annotations: {
 				xaxis: xAxisAnnotations,
-				yaxis: ChartService.thresholdAnnotation,
+				yaxis: ChartService.getThresholdAnnotation(),
+			}
+		}
+
+	}
+
+
+	/**
+	 * Return historyarea chart options.
+	 *
+	 * @static
+	 * @param {string} id
+	 * @param {ScoreHistoryItem[]} scoreHistory
+	 * @param {DateTime[]} dates
+	 * @param {number[]} scores
+	 * @param {Function} cb
+	 * @returns {ApexCharts.ApexOptions}
+	 * @memberof ChartService
+	 */
+	public static HistoryAreaChartOptions(id:string, history: InfrastructureComponentSummary[], dates: string[], cb: Function) : ApexCharts.ApexOptions {
+
+		const xAxisAnnotations: any[] = [];	
+		if (dates.length > 0) {
+			xAxisAnnotations.push(ChartService.getHistoryAreaAnnotation(dates));
+		}
+	
+		return <ApexCharts.ApexOptions>{
+			chart: {
+				id: id,
+				type: 'area',
+				sparkline: { enabled: false },
+				toolbar: { show: false },
+				offsetY: -10,
+				events: {
+					markerClick: function(event, chartContext, { seriesIndex, dataPointIndex, config}) {
+						const index = history.length - dataPointIndex - 1;
+						const datestr = history[index].date.split('T')[0];
+						cb(datestr);						
+					}
+				},
+				animations: ChartService.noAnimation
+			},
+			dataLabels: {
+				enabled: false
+			},
+			colors: [ChartService.colorArea, ChartService.colorSuccess, ChartService.colorFailed, ChartService.colorWarning, ChartService.colorNoData],
+			stroke: { width: [1, 2, 2, 2, 2] },
+			legend: {
+				position: "right"
+			},
+			yaxis: [
+				{
+					min: 0,
+					max: 99,
+					forceNiceScale: true,
+					type: 'numeric',
+					labels: {
+						formatter: (value) => { return value + "%" },
+						show: true,
+						style: {
+							fontSize: '9px'
+						}
+					},
+					seriesName: 'mainscore'					
+				},
+				{
+					seriesName: 'score',
+					labels: { show: false }		
+				}
+			],
+			xaxis: {
+				type: 'datetime',
+				crosshairs: { width: 1 },
+				labels: {
+					format: 'dd/MM',
+					style: {
+						fontSize: '9px',
+					},
+					offsetY: -5,
+				},
+				tooltip: {
+					enabled: false
+				}
+			},
+			tooltip: {
+				fixed: {
+					enabled: false
+				},
+				marker: {
+					show: false
+				},
+				custom: function({series, seriesIndex, dataPointIndex, w}) {
+					const dateStr = history[history.length -1 - dataPointIndex].date.split('T')[0];
+					return '<div style="border-radius:2px;padding:2px;font-size:9px;">' +
+					'<span style="color:#666">' + dateStr + '</span>' +
+					'<br>Score: <b>' + series[0][dataPointIndex] + '%' + '</b>' +
+					'<br>Success: <b>' + series[1][dataPointIndex] + '</b>' +
+					'<br>Warning: <b>' + series[3][dataPointIndex] + '</b>' +
+					'<br>Failed: <b>' + series[2][dataPointIndex] + '</b>' +
+					'<br>NoData: <b>' + series[4][dataPointIndex] + '</b>' +
+					'</div>'
+				}
+			},
+			annotations: {
+				xaxis: xAxisAnnotations,
+				yaxis: ChartService.getThresholdAnnotation('#d2d2d2', 'right', -10)
 			}
 		}
 
