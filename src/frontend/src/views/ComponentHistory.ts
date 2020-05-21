@@ -1,8 +1,8 @@
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import router from '@/router';
 
-import { DataService, ScoreService, MetaService } from '@/services/';
-import { InfrastructureComponentSummary, InfrastructureComponent } from '@/models';
+import { DataService, ScoreService, MetaService, ChartService } from '@/services/';
+import { InfrastructureComponentSummary, InfrastructureComponent, ScoreHistoryItem } from '@/models';
 
 /**
  * Component history view lists all the scans occurred for this component.
@@ -35,6 +35,37 @@ export default class ComponentHistory extends Vue {
     }
 
     /**
+     * Returns series data for overall area chart at top right
+     *
+     * @returns
+     * @memberof Overview
+     */
+    getAreaSeries() {
+        return [
+            { name: 'score', type: 'area', data: this.data.map((item) => { return { x: item.date, y: item.current.score }}) },
+            { name: 'success', type: 'line', data: this.data.map((item) => { return { x: item.date, y: item.current.passed }}) },
+            { name: 'failed', type: 'line', data: this.data.map((item) => { return { x: item.date, y: item.current.failed }}) },
+            { name: 'warning', type: 'line', data: this.data.map((item) => { return { x: item.date, y: item.current.warning }}) },
+            { name: 'nodata', type: 'line', data: this.data.map((item) => { return { x: item.date, y: item.current.noData }}) }
+        ]
+    }
+
+    
+    /**
+     * Returns options for area chart at top right
+     *
+     * @returns {ApexCharts.ApexOptions}
+     * @memberof Overview
+     */
+    getAreaChartOptions() : ApexCharts.ApexOptions {
+        return ChartService.HistoryAreaChartOptions("overviewchart", this.data, this.checkedScans, this.dayClicked);
+    }
+
+    dayClicked() {
+
+    }
+
+    /**
      * Makes an api call and gets component history data
      *
      * @memberof ComponentHistory
@@ -45,6 +76,7 @@ export default class ComponentHistory extends Vue {
             .then(response => {
                 if (response) {
                     this.data = response;
+                    console.log(JSON.parse(JSON.stringify(this.data)));
                     this.component = response[0].component;                    
                     this.$emit('componentChanged', this.component);
                     this.loaded = true;
@@ -96,7 +128,7 @@ export default class ComponentHistory extends Vue {
      * @memberof ComponentHistory
      */
     CompareScans() {
-        this.checkedScans.sort();
+        this.checkedScans.sort();        
         let params = this.checkedScans[0].split('T')[0] + '/' + this.checkedScans[1].split('T')[0];
         if (this.component && this.component.category === 'Overall') {
             router.push('/overview-diff/' + params);
