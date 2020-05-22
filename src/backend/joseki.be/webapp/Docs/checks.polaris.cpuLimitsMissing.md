@@ -1,5 +1,7 @@
 # polaris.cpuLimitsMissing
 
+The check performed by [Fairwinds Polaris](https://github.com/fairwindsops/polaris).
+
 Polaris supports a number of checks related to CPU and Memory requests and limits.
 
 ## Presence Checks
@@ -30,9 +32,9 @@ Configuring resource requests and limits for containers running in Kubernetes is
 
 Having these values appropriately configured ensures that:
 
-* Cluster autoscaling can function as intended. New nodes are scheduled once pods are unable to be scheduled on an existing node due to insufficient resources. This will not happen if resource requests are not configured.
+- Cluster autoscaling can function as intended. New nodes are scheduled once pods are unable to be scheduled on an existing node due to insufficient resources. This will not happen if resource requests are not configured.
 
-* Each container has sufficient access to compute resources. Without resource requests, a pod may be scheduled on a node that is already overutilized. Without resource limits, a single poorly behaving pod could utilize the majority of resources on a node, significantly impacting the performance of other pods on the same node.
+- Each container has sufficient access to compute resources. Without resource requests, a pod may be scheduled on a node that is already overutilized. Without resource limits, a single poorly behaving pod could utilize the majority of resources on a node, significantly impacting the performance of other pods on the same node.
 
 ## Further Reading
 

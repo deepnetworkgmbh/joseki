@@ -1,5 +1,7 @@
 # polaris.dangerousCapabilities
 
+The check performed by [Fairwinds Polaris](https://github.com/fairwindsops/polaris).
+
 ## Security Capabilities
 
 Polaris supports a number of checks to ensure pods are running with a limited set of capabilities. Under `security.capabilities`, there are `error` and `warning` sections indicating the severity of failures for the following checks.
