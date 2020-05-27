@@ -19,4 +19,13 @@ export class SeverityFilter {
     AllChecked(): boolean {
         return this.nodata && this.failed && this.warning && this.success;
     }
+
+    Binary(): string[] {
+        return [
+            this.nodata ? 'NoData' : '',
+            this.failed ? 'Failed' : '',
+            this.warning ? 'Warning' : '',
+            this.success ? 'Success' : ''
+        ].filter(x => x !== '')
+    }
 }

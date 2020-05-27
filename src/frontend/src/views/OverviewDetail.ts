@@ -295,7 +295,7 @@ export default class OverviewDetail extends Vue {
      */
     @Watch('filter', { immediate: true })
     private onFilterChanged(newValue: string) {
-        this.filterContainer = new FilterContainer(newValue);
+        this.filterContainer = new FilterContainer('overview', newValue);
         this.loadData();
     }
 }

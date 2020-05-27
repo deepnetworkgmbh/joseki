@@ -17,6 +17,7 @@
     "luxon": "^1.23.0",
     "markdown-it": "^10.0.0",
     "moment": "^2.24.0",
+    "rxjs": "^6.5.5",
     "vue": "^2.6.10",
     "vue-apexcharts": "^1.5.3",
     "vue-class-component": "^7.2.3",

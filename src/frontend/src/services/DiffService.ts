@@ -1,5 +1,8 @@
-import { CountersSummary } from '@/models';
+import { CountersSummary, SeverityFilter } from '@/models';
 import { DateTime } from 'luxon';
+import { FilterContainer } from '@/models/FilterContailer';
+import { v4 as uuidv4 } from 'uuid';
+import ControlGroup from '@/components/controlgroup/ControlGroup';
 
 export enum DiffOperation {
     Added = 'ADDED',
@@ -116,6 +119,7 @@ export class DiffCollection {
 }
 
 export class CheckCollection {
+    _id: string = uuidv4();
     score: number = 0
     counters: CountersSummary = new CountersSummary(undefined)
     objects: CheckObject[] = []
@@ -130,6 +134,26 @@ export class CheckCollection {
         let empty = new CheckCollection("", "", "", DateTime.fromJSDate(new Date()));
         empty.empty = true;
         return empty;
+    }
+
+    getObjects(filterContainer: FilterContainer) : CheckObject[] {
+        // console.log(filterContainer.filters);
+        let result = this.objects;
+        filterContainer.filters.forEach(filter => {
+            switch(filter.label) {
+                case 'owner':
+                    result = result.filter(x => filter.values.includes(x.owner));
+                    break;
+               case 'resource':
+                    result = result.filter(x => filter.values.includes(x.type + ':' + x.name));
+                    break;
+               case 'category':
+                    result = result.filter(x => filter.values.includes(x.type));
+                break;
+            }
+        });        
+        return result;
+
     }
 
     SetChildren(op:DiffOperation) {
@@ -198,6 +222,7 @@ export class CheckCollection {
 
 
 export class CheckObject {
+    _id: string = uuidv4();
     id: string = ''
     type: string = ''
     name: string = ''
@@ -215,6 +240,55 @@ export class CheckObject {
         empty.id = id;
         empty.empty = true;
         return empty;
+    }
+
+    getControls(filterContainer: FilterContainer): CheckControl[] {
+        let result = this.controls;
+        filterContainer.filters.forEach(filter => {
+            switch(filter.label) {
+                case 'result':
+                    result = result.filter(x => filter.values.includes(x.result));
+                    break;
+                case 'control':
+                    result = result.filter(x => filter.values.includes(x.id));
+                    break;
+            }
+        });        
+        return result;
+    }
+
+    getControlGroups(filterContainer: FilterContainer): CheckControlGroup[] {
+        return this.controlGroups.map((cg: CheckControlGroup) => {       
+            let cgItems: CheckControl[] = [];
+            filterContainer.filters.forEach(filter => {
+                switch(filter.label) {
+                    case 'result':
+                        cgItems = cg.items.filter(x => filter.values.includes(x.result));
+                        break;
+                    case 'control':
+                        cgItems = cg.items.filter(x => filter.values.includes(x.id));
+                        break;
+                }
+            });                          
+            return {
+                ...cg,
+                items: cgItems
+            } as unknown as CheckControlGroup
+        });
+       
+        // for(let i=0;i<output.length;i++) {
+        //     filterContainer.filters.forEach(filter => {
+        //         switch(filter.label) {
+        //             case 'result':
+        //                 output[i].items = output[i].items.filter(x => filter.values.includes(x.result));            
+        //                 break;
+        //             case 'control':
+        //                 // result = result.filter(x => filter.values.includes(x.id));
+        //                 break;
+        //         }
+        //     });
+        // }
+        // return output;
     }
 
     SetChildren(op:DiffOperation) {
@@ -321,6 +395,7 @@ export class CheckObject {
 
 
 export class CheckControl {
+    _id: string = uuidv4();
     id: string = ''
     text: string = ''
     result: string = ''
@@ -331,6 +406,7 @@ export class CheckControl {
 }
 
 export class CheckControlGroup {
+    _id: string = uuidv4();
     name: string = ''
     items: CheckControl[] = []
     operation?: DiffOperation = DiffOperation.Same;
