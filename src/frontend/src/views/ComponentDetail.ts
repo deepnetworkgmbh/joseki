@@ -3,8 +3,11 @@ import router from '@/router';
 import { DateTime } from 'luxon';
 
 import { DataService, ScoreService, MappingService, ChartService } from '@/services/';
-import { InfrastructureComponentSummary, ScoreHistoryItem, SeverityFilter } from '@/models';
-import { CheckCollection } from '@/services/DiffService';
+import { InfrastructureComponentSummary, ScoreHistoryItem, SeverityFilter, InfrastructureComponent } from '@/models';
+import { CheckCollection, CheckControlGroup } from '@/services/DiffService';
+import { FilterContainer } from '@/models/FilterContailer';
+import { CheckResultSet } from '@/models/CheckResultSet';
+import { OverviewCheck } from '@/models/Check';
 
 @Component
 export default class ComponentDetail extends Vue {
@@ -15,20 +18,26 @@ export default class ComponentDetail extends Vue {
     @Prop({ default: null })
     date!: string;
 
-    severityFilter: SeverityFilter = new SeverityFilter();
+  
+    filter: string = '';
+    filterContainer!: FilterContainer;
+    
     selectedDate?: DateTime;
     selectedScore: number = 0;
     loaded: boolean = false;
     loadFailed: boolean = false;
     service: DataService = new DataService();
+
     data: InfrastructureComponentSummary = new InfrastructureComponentSummary();
+    checkResultSet: CheckResultSet = new CheckResultSet();
 
     resultsByCollection: CheckCollection[] = [];
     allExpanded: boolean = false;
+    previousTop: number = 0;
 
     /**
      * make an api call and load Component detail data
-     *
+     * TODO: first request returns redundant check list, must be removed.
      * @memberof ComponentDetail
      */
     loadData() {
@@ -36,17 +45,25 @@ export default class ComponentDetail extends Vue {
         this.service
             .getComponentDetailData(decodeURIComponent(this.id), this.selectedDate)
             .then(response => {
-                if (response) {
+                if (response) {          
                     this.data = response;
-
-                    this.resultsByCollection =  this.getResultsByCollection(response);
-
                     let index = this.data.scoreHistory.findIndex(x=>x.recordedAt.startsWith(this.date));
                     if(index<0) { index = 0; }
                     this.selectedDate = DateTime.fromISO(this.data.scoreHistory[index].recordedAt);
                     this.selectedScore = this.data.scoreHistory[index].score;
                     this.$emit('dateChanged', this.selectedDate.toISODate())
                     this.$emit('componentChanged', this.data.component)
+                    this.filter = btoa(`component=${this.data.component.name}`);
+                    this.filterContainer = new FilterContainer('component', this.filter);
+                }
+                return this.service;
+            })
+            .then((service) => service.getGeneralOverviewDetail(0, 0, this.selectedDate, this.filter))           
+            .then(response => {
+                if (response) {
+                    this.checkResultSet = <CheckResultSet>response;
+                    this.resultsByCollection =  MappingService.getResultsByCollection(this.checkResultSet.checks);
+                    console.log(JSON.parse(JSON.stringify(this.resultsByCollection)));
                     this.loaded = true;
                     this.$forceUpdate();
                 }
@@ -54,21 +71,26 @@ export default class ComponentDetail extends Vue {
             .catch(()=> { this.loadFailed = true; });
     }
 
-    toggleCollectionChecked(index: number) {
+    toggleCollectionChecked(index: string) {
+        // console.log(`[Y] ${this.getScrollTop()}`)
+        this.previousTop = this.getScrollTop();        
         this.resultsByCollection[index].checked = !this.resultsByCollection[index].checked;
+        //const index = this.resultsByCollection.findIndex(x => x._id === _id);
+        //this.resultsByCollection[index].checked = !this.resultsByCollection[index].checked;        
     }
 
     toggleObjectChecked(index: number, objectIndex: number) {
+        this.previousTop = this.getScrollTop();        
+        //const objectIndex = this.resultsByCollection[index].objects.findIndex(x => x._id === _id);
         this.resultsByCollection[index].objects[objectIndex].checked = 
         !this.resultsByCollection[index].objects[objectIndex].checked;
     }
 
-    toggleExpand() {
-        this.allExpanded = !this.allExpanded;
+    toggleExpand(lvl1: boolean, lvl2: boolean) {
         this.resultsByCollection.forEach(element => {
-            element.checked = this.allExpanded;
+            element.checked = lvl1;
             element.objects.forEach(obj => {
-                obj.checked = this.allExpanded;
+                obj.checked = lvl2;
             });
         });
     }
@@ -177,14 +199,14 @@ export default class ComponentDetail extends Vue {
      */
     getResultsByCategory(data: InfrastructureComponentSummary) { return MappingService.getResultsByCategory(this.data.checks); }
 
-    /**
-     * returns results grouped by collection
-     *
-     * @param {InfrastructureComponentSummary} data
-     * @returns
-     * @memberof ComponentDetail
-     */
-    getResultsByCollection(data: InfrastructureComponentSummary) { return MappingService.getResultsByCollection(data.checks, this.severityFilter); }
+    // /**
+    //  * returns results grouped by collection
+    //  *
+    //  * @param {InfrastructureComponentSummary} data
+    //  * @returns
+    //  * @memberof ComponentDetail
+    //  */
+    // getResultsByCollection(checks: OverviewCheck[]) { return MappingService.getResultsByCollection(checks); }
 
     /**
      * returns grade from score
@@ -220,6 +242,40 @@ export default class ComponentDetail extends Vue {
         }
         return scan.recordedAt.startsWith(this.selectedDate!.toISODate()) ? 'history-selected' : 'history';
     }
+
+    updated() {
+        // console.log(`previous top: ${this.previousTop}`);
+        // console.log(`unwanted top: ${this.getScrollTop()}`);        
+        window.scrollTo(0, this.previousTop);
+    }
+
+    private getScrollTop() {       
+        return window.scrollY;
+    }
+
+    onFilterChangedFromAF(filter: string) {
+        this.previousTop = this.getScrollTop();
+        this.filterContainer = new FilterContainer('component', filter);
+        this.filter = filter;
+        this.loadFailed = false;
+        this.service.getGeneralOverviewDetail(0, 0, this.selectedDate, this.filter)
+            .then(response => {
+                if (response) {
+                    console.log(`[222]`);
+                    this.checkResultSet = <CheckResultSet>response;
+                    this.resultsByCollection =  MappingService.getResultsByCollection(this.checkResultSet.checks);
+                    console.log(JSON.parse(JSON.stringify(this.resultsByCollection)));
+                    this.loaded = true;
+
+                    const flen = this.filterContainer.filters.length;
+                    this.toggleExpand(true, flen > 1);
+       
+                    this.$forceUpdate();
+                }
+            })
+            .catch(()=> { this.loadFailed = true; });
+    }
+
 
     /**
      * Watcher for date, emits dateChanged for breadcrumbs and loads data

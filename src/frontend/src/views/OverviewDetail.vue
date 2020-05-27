@@ -4,8 +4,7 @@
     <div
       v-if="loaded"
       class="shadow"
-      style="min-height:300px;padding:4px;background-color:#fff;border-radius:4px;"
-    >
+      style="min-height:300px;padding:4px;background-color:#fff;border-radius:4px;">
       <table class="table">
         <thead>
           <tr class="table-header">

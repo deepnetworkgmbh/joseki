@@ -6,16 +6,6 @@
 	user-select: none;
 }
 
-.owner-tag {
-	user-select: none;
-	font-size: 10px;
-	background-color: #07e;
-	color:#fff;
-	border-radius: 5px;
-	padding: 1px 5px 1px 5px;
-	margin-left: 5px;
-}
-
 .zigzag:nth-child(odd) {
 	background-color: #f8f8f8;
 }
@@ -35,6 +25,10 @@
 	border: solid 1px #aaa;
 	border-top:none;
 	width: 100%;
+
+	&-search {
+		border-top:solid 1px #bbb;
+	}
 
 	&-collection {
 		display:flex;

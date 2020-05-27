@@ -7,9 +7,12 @@ import router from '@/router';
 
 @Component
 export default class AdvancedFilter extends Vue {
-
+    
     @Prop()
     filter!:string;
+
+    @Prop({ default: 'overview'})
+    channel!: 'overview' | 'component';
 
     filterContainer?: FilterContainer;
     service: DataService = new DataService();
@@ -32,6 +35,12 @@ export default class AdvancedFilter extends Vue {
 
     mode: 'edit' | 'add' = 'add';
 
+    created() {
+        if (this.channel === 'component') {
+            this.onlyWithValues = true;
+        }
+    }
+
     deleteFilter(index: number) {
         if(this.filterContainer) {
             this.filterContainer.removeFilterByIndex(index);
@@ -46,7 +55,7 @@ export default class AdvancedFilter extends Vue {
 
     @Watch('filter', { immediate: true }) 
     onFilterChanged(newValue: string) {             
-        this.filterContainer = new FilterContainer(newValue);
+        this.filterContainer = new FilterContainer(this.channel, newValue);
         this.loadData(this.filterContainer.getFilterString());
         this.$forceUpdate();
     }
@@ -104,12 +113,22 @@ export default class AdvancedFilter extends Vue {
         }
     }
  
-
     loadData(currentFilter: string, callback?: Function, omitPrevious = false) {
         this.service
             .getGeneralOverviewSearch(DateTime.fromISO(this.$route.params.date), currentFilter)  //
             .then(newHeaderData => {
                 if (newHeaderData) {   
+                    // console.log(newHeaderData);
+                    // TODO: Temp fix for replacing SubscriptionCore to subscription
+                    if (this.channel === 'component') {
+                        for(let k=0;k<newHeaderData.category.length;k++) {
+                            if (newHeaderData.category[k].name === 'SubscriptionCore') {
+                                newHeaderData.category[k].name = 'subscription';
+                            }
+                        }      
+                        delete newHeaderData.collection;                  
+                        delete newHeaderData.control;                  
+                    }
                     this.headerData = newHeaderData;
                     let currentFilterTypes = this.filterContainer!.filters.map(x=> x.label);
                     this.addFilterTypes = omitPrevious ? Object.keys(newHeaderData).filter(x=> currentFilterTypes.indexOf(x) === -1)
@@ -135,6 +154,7 @@ export default class AdvancedFilter extends Vue {
     showMenuInEditMode(index: number) {
         this.getMenuXPosition(index);
         let filter = this.filterContainer!.filters[index];
+        if(!filter.deletable) return;
         let filterString = this.filterContainer!.getFilterString(index);
         this.loadData(filterString, () => {
             this.mode = 'edit';
@@ -184,7 +204,9 @@ export default class AdvancedFilter extends Vue {
         const elementId = (filterIndex === -1) ? 'add-filter-button' : `edit-filter-button-${filterIndex}`;
         let element = document.getElementById(elementId);
         this.addMenuX = Math.round(element!.getBoundingClientRect().left)-400;
+        console.log(`[addmenuX] ${this.addMenuX}`);
         if (this.addMenuX > 430) { this.addMenuX = 430 }
+        if (this.addMenuX < 0) { this.addMenuX = 0 }
     }
 
     getFilterTypeClass(option : string) {
@@ -198,6 +220,7 @@ export default class AdvancedFilter extends Vue {
 export class Filter {
     label: string = '';
     values: string[] = [];
+    deletable: boolean = true;
 }
 
 export class CheckLabel {

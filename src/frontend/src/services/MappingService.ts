@@ -3,6 +3,7 @@ import { CheckCollection, CheckControl, CheckControlGroup, CheckObject } from '.
 import { DateTime } from 'luxon'
 import { SeverityFilter } from '@/models/SeverityFilter'
 import { ScoreService } from './ScoreService'
+import { OverviewCheck } from '@/models/Check'
 
 export class MappingService {
     public static getResultsByCategory(checks: Check[]): any[] {
@@ -50,14 +51,12 @@ export class MappingService {
         return results
     }
 
-    public static getResultsByCollection(checks: Check[], severityFilter?: SeverityFilter): CheckCollection[] {
+    public static getResultsByCollection(checks: OverviewCheck[]): CheckCollection[] {
         var results: CheckCollection[] = []
 
         // walk over all checks and group them by collections.
         for (let i = 0; i < checks.length; i++) {
             let check = checks[i];
-
-            if (severityFilter && !severityFilter.Check(check.result)) continue;
 
             if (results.findIndex(x => x.name === check.collection.name) === -1) {
                 let date = DateTime.fromISO(check.date.toString());
@@ -147,7 +146,7 @@ export class MappingService {
         }
 
         // sort groups by name
-        results.sort((a, b) => (a.score < b.score ? 1 : a.score > b.score ? -1 : 0))
+        // results.sort((a, b) => (a.score < b.score ? 1 : a.score > b.score ? -1 : 0))
 
         //console.log(`[] collections result `, results)
         return results

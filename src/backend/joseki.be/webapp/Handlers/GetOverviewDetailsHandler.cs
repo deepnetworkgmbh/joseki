@@ -57,7 +57,9 @@ namespace webapp.Handlers
                 result.TotalResults = checks.Count;
                 result.SortBy = sortBy;
                 result.FilterBy = filterBy;
-                result.Checks = SortCheckList(checks, sortBy)
+                result.Checks = (pageSize == 0)
+                              ? SortCheckList(checks, sortBy).ToArray()
+                              : SortCheckList(checks, sortBy)
                                     .Skip(pageSize * pageIndex)
                                     .Take(pageSize)
                                     .ToArray();
