@@ -3,8 +3,8 @@ import { Filter } from '@/components/filter/AdvancedFilter';
 export class FilterContainer {
 
     filters: Filter[] = [];
-
-    constructor(filterString: string) {
+    
+    constructor(private channel: string, filterString: string) {
         console.log(`[fc] creating new container from string ${filterString}`);
         this.filters = [];
         let filterStr = atob(filterString);
@@ -16,6 +16,11 @@ export class FilterContainer {
             filter.label = obj[0];
             filter.values = obj[1].split(',');
             console.log(`[fc] [${obj[0]}] =`, obj[1]);
+
+            if (channel === 'component' && filter.label === 'component') {
+                filter.deletable = false;
+            }
+            
             this.filters.push(filter);
         }
 

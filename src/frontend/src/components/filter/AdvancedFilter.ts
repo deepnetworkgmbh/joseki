@@ -7,9 +7,12 @@ import router from '@/router';
 
 @Component
 export default class AdvancedFilter extends Vue {
-
+    
     @Prop()
     filter!:string;
+
+    @Prop({ default: 'overview'})
+    channel!: 'overview' | 'component';
 
     filterContainer?: FilterContainer;
     service: DataService = new DataService();
@@ -32,6 +35,12 @@ export default class AdvancedFilter extends Vue {
 
     mode: 'edit' | 'add' = 'add';
 
+    created() {
+        if (this.channel === 'component') {
+            this.onlyWithValues = true;
+        }
+    }
+
     deleteFilter(index: number) {
         if(this.filterContainer) {
             this.filterContainer.removeFilterByIndex(index);
@@ -46,7 +55,7 @@ export default class AdvancedFilter extends Vue {
 
     @Watch('filter', { immediate: true }) 
     onFilterChanged(newValue: string) {             
-        this.filterContainer = new FilterContainer(newValue);
+        this.filterContainer = new FilterContainer(this.channel, newValue);
         this.loadData(this.filterContainer.getFilterString());
         this.$forceUpdate();
     }
@@ -104,12 +113,23 @@ export default class AdvancedFilter extends Vue {
         }
     }
  
-
     loadData(currentFilter: string, callback?: Function, omitPrevious = false) {
+
+        // is this filter being rendered in a component detail view?
+        const isComponentChannel = this.channel === 'component';
+
         this.service
-            .getGeneralOverviewSearch(DateTime.fromISO(this.$route.params.date), currentFilter)  //
+            .getGeneralOverviewSearch(DateTime.fromISO(this.$route.params.date), currentFilter, isComponentChannel) 
             .then(newHeaderData => {
                 if (newHeaderData) {   
+
+                    if (isComponentChannel) {
+                        // remove owner filter if no owner defined
+                        const owners = newHeaderData.owner.filter(x => x.count > 0);
+                        if (owners.length === 1 && owners[0].name === '') {
+                            delete newHeaderData.owner;
+                        }
+                    }
                     this.headerData = newHeaderData;
                     let currentFilterTypes = this.filterContainer!.filters.map(x=> x.label);
                     this.addFilterTypes = omitPrevious ? Object.keys(newHeaderData).filter(x=> currentFilterTypes.indexOf(x) === -1)
@@ -135,6 +155,7 @@ export default class AdvancedFilter extends Vue {
     showMenuInEditMode(index: number) {
         this.getMenuXPosition(index);
         let filter = this.filterContainer!.filters[index];
+        if(!filter.deletable) return;
         let filterString = this.filterContainer!.getFilterString(index);
         this.loadData(filterString, () => {
             this.mode = 'edit';
@@ -184,7 +205,9 @@ export default class AdvancedFilter extends Vue {
         const elementId = (filterIndex === -1) ? 'add-filter-button' : `edit-filter-button-${filterIndex}`;
         let element = document.getElementById(elementId);
         this.addMenuX = Math.round(element!.getBoundingClientRect().left)-400;
+        console.log(`[addmenuX] ${this.addMenuX}`);
         if (this.addMenuX > 430) { this.addMenuX = 430 }
+        if (this.addMenuX < 0) { this.addMenuX = 0 }
     }
 
     getFilterTypeClass(option : string) {
@@ -198,6 +221,7 @@ export default class AdvancedFilter extends Vue {
 export class Filter {
     label: string = '';
     values: string[] = [];
+    deletable: boolean = true;
 }
 
 export class CheckLabel {
