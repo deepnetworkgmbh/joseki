@@ -3,6 +3,10 @@ import { CheckCollection, CheckControl, CheckControlGroup, CheckObject } from '.
 import { DateTime } from 'luxon'
 import { SeverityFilter } from '@/models/SeverityFilter'
 import { ScoreService } from './ScoreService'
+import { OverviewCheck } from '@/models/Check'
+
+// TODO: This type will merge soon
+export type AnyCheck = Check | OverviewCheck;
 
 export class MappingService {
     public static getResultsByCategory(checks: Check[]): any[] {
@@ -50,14 +54,15 @@ export class MappingService {
         return results
     }
 
-    public static getResultsByCollection(checks: Check[], severityFilter?: SeverityFilter): CheckCollection[] {
+    
+
+
+    public static getResultsByCollection(checks: AnyCheck[]): CheckCollection[] {
         var results: CheckCollection[] = []
 
         // walk over all checks and group them by collections.
         for (let i = 0; i < checks.length; i++) {
             let check = checks[i];
-
-            if (severityFilter && !severityFilter.Check(check.result)) continue;
 
             if (results.findIndex(x => x.name === check.collection.name) === -1) {
                 let date = DateTime.fromISO(check.date.toString());
@@ -111,6 +116,7 @@ export class MappingService {
             control.id = check.control.id;
             control.text = check.control.message;
             control.result = check.result;
+            control.category = check.category;
             control.icon = ScoreService.getControlIcon(check.result);
             control.order = ScoreService.getSeverityScore(check.result);
             control.tags = check.tags;
@@ -135,11 +141,11 @@ export class MappingService {
             results[i].score = results[i].counters.calculateScore()
 
             for (let j = 0; j < results[i].objects.length; j++) {
-                results[i].objects[j].controls.sort((a, b) => (a.order < b.order ? -1 : a.order > b.order ? 1 : 0));
+                results[i].objects[j].controls.sort(MappingService.sortByOrder);
                 results[i].objects[j].score = results[i].objects[j].counters.calculateScore();
 
                 for (let k = 0; k < results[i].objects[j].controlGroups.length; k++) {
-                    results[i].objects[j].controlGroups[k].items.sort((a, b) => (a.order < b.order ? -1 : a.order > b.order ? 1 : 0))
+                    results[i].objects[j].controlGroups[k].items.sort(MappingService.sortByOrder)
                 }
             }
             results[i].objects.sort((a, b) => (a.score < b.score ? 1 : a.score > b.score ? -1 : 0))
@@ -147,12 +153,16 @@ export class MappingService {
         }
 
         // sort groups by name
-        results.sort((a, b) => (a.score < b.score ? 1 : a.score > b.score ? -1 : 0))
-
-        //console.log(`[] collections result `, results)
+        // results.sort((a, b) => (a.score < b.score ? 1 : a.score > b.score ? -1 : 0))
         return results
     }
 
-
+    private static sortByOrder(a: CheckControl, b: CheckControl) {
+        if (a.order < b.order) return -1;
+        if (a.order > b.order) return 1;
+        if (a.category < b.category) return -1;
+        if (a.category > b.category) return 1;
+        return 0;
+    }
 }
 

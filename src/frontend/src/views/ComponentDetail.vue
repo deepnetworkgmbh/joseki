@@ -80,16 +80,12 @@
     </div>
     <div v-show="loaded" class="segment shadow" style="flex-direction:column">
       <div class="segment-header">
-        <div style="float:right;font-size:12px;padding:4px;">
-          <span style="cursor:pointer;user-select: none" @click="toggleExpand()">
-            <i :class="allExpanded ? 'icon-toggle-right' : 'icon-toggle-left'" :style="{ color: allExpanded ? '#080' : '#888'}" />
-            <span v-if="!allExpanded"> Expand All </span>
-            <span v-if="allExpanded"> Collapse All </span>
-          </span>
-        </div>
         <h1 class="mb-2">Results by Collection</h1>
       </div>
       <div class="component-detail">
+        <div class="component-detail-search" style="height:30px;padding:2px;padding-top:5px;background-color:#eee;">
+          <AdvancedFilter style="float:left" :channel="'component'" :filter="filter" @filterUpdated="onFilterChangedFromAF" />
+        </div>
         <div v-for="(collection,i) in resultsByCollection" :key="`collection${i}`" class="component-detail-collection">
             <div class="component-detail-collection-row" @click="toggleCollectionChecked(i)">
               <div class="component-detail-collection-row-arrow">
@@ -103,7 +99,7 @@
                 <!-- <StatusBar :counters="collection.counters" :severities='severityFilter' /> -->
               </div>
               <div class="component-detail-collection-row-score">
-                <Score v-if="severityFilter.AllChecked()" :label='`Score`' :score='collection.score' />
+                <Score v-if="getShowScore()" :label='`Score`' :score='collection.score' />
               </div>
             </div>
             <div v-if="collection.checked">
@@ -116,11 +112,10 @@
                       <strong>{{ obj.type }} : </strong>{{ obj.name }}
                   </div>
                   <div style="padding-top:1px;">
-                    <span v-if="collection.owner" class="owner-tag"><i class="icon-user"></i> {{ collection.owner }}</span>
-                    <!-- <StatusBar :counters="collection.counters" :severities='severityFilter' /> -->
+                    <span v-if="collection.owner" class="owner-tag"><i class="icon-user"></i> {{ collection.owner }}</span>                
                   </div>
                   <div class="component-detail-collection-row-objects-row-score">
-                    <Score v-if="severityFilter.AllChecked()" :label='`Score`' :score='collection.score' />
+                    <Score v-if="getShowScore()" :label='`Score`' :score='obj.score' />
                   </div>
                 </div>
                 <div v-if="obj.checked">
@@ -131,6 +126,9 @@
                     <div :class="`component-detail-collection-row-objects-row-control-result resultBG${control.result}`">
                       {{ control.result }}
                     </div>
+                      <div class="component-detail-collection-row-objects-row-control-category">
+                        {{ control.category }}
+                      </div>
                     <div class="component-detail-collection-row-objects-row-control-details">
                       <span v-if="control.id === 'container_image.CVE_scan' && control.text !== 'No issues'">                        
                           <a class='small-link' :href="imageScanUrl(control.tags.imageTag)">see details</a>
@@ -153,6 +151,9 @@
                       </div>
                       <div :class="`component-detail-collection-row-objects-row-controlgroup-result resultBG${cg.result}`">
                         {{ cg.result }}
+                      </div>
+                      <div class="component-detail-collection-row-objects-row-controlgroup-category">
+                        {{ cg.category }}
                       </div>
                       <div class="component-detail-collection-row-objects-row-controlgroup-details">
                         <span v-if="cg.id === 'container_image.CVE_scan' && cg.text !== 'No issues'">                        

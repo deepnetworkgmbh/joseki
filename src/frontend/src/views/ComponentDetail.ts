@@ -3,8 +3,10 @@ import router from '@/router';
 import { DateTime } from 'luxon';
 
 import { DataService, ScoreService, MappingService, ChartService } from '@/services/';
-import { InfrastructureComponentSummary, ScoreHistoryItem, SeverityFilter } from '@/models';
-import { CheckCollection } from '@/services/DiffService';
+import { InfrastructureComponentSummary, ScoreHistoryItem, SeverityFilter, InfrastructureComponent } from '@/models';
+import { CheckCollection, CheckControlGroup } from '@/services/DiffService';
+import { FilterContainer } from '@/models/FilterContailer';
+import { CheckResultSet } from '@/models/CheckResultSet';
 
 @Component
 export default class ComponentDetail extends Vue {
@@ -15,20 +17,24 @@ export default class ComponentDetail extends Vue {
     @Prop({ default: null })
     date!: string;
 
-    severityFilter: SeverityFilter = new SeverityFilter();
+    filter: string = '';
+    filterContainer!: FilterContainer;
+    
     selectedDate?: DateTime;
     selectedScore: number = 0;
     loaded: boolean = false;
     loadFailed: boolean = false;
+    allExpanded: boolean = false;
+    previousTop: number = 0;
+
     service: DataService = new DataService();
     data: InfrastructureComponentSummary = new InfrastructureComponentSummary();
-
+    checkResultSet: CheckResultSet = new CheckResultSet();
     resultsByCollection: CheckCollection[] = [];
-    allExpanded: boolean = false;
-
+ 
     /**
      * make an api call and load Component detail data
-     *
+     * TODO: first request returns redundant check list, must be removed.
      * @memberof ComponentDetail
      */
     loadData() {
@@ -36,17 +42,24 @@ export default class ComponentDetail extends Vue {
         this.service
             .getComponentDetailData(decodeURIComponent(this.id), this.selectedDate)
             .then(response => {
-                if (response) {
+                if (response) {          
                     this.data = response;
-
-                    this.resultsByCollection =  this.getResultsByCollection(response);
-
                     let index = this.data.scoreHistory.findIndex(x=>x.recordedAt.startsWith(this.date));
                     if(index<0) { index = 0; }
                     this.selectedDate = DateTime.fromISO(this.data.scoreHistory[index].recordedAt);
                     this.selectedScore = this.data.scoreHistory[index].score;
                     this.$emit('dateChanged', this.selectedDate.toISODate())
                     this.$emit('componentChanged', this.data.component)
+                    this.filter = btoa(`component=${this.data.component.name}`);
+                    this.filterContainer = new FilterContainer('component', this.filter);
+                }
+                return this.service;
+            })
+            .then((service) => service.getGeneralOverviewDetail(0, 0, this.selectedDate, this.filter))           
+            .then(response => {
+                if (response) {
+                    this.checkResultSet = <CheckResultSet>response;
+                    this.resultsByCollection =  MappingService.getResultsByCollection(this.checkResultSet.checks);                   
                     this.loaded = true;
                     this.$forceUpdate();
                 }
@@ -54,26 +67,29 @@ export default class ComponentDetail extends Vue {
             .catch(()=> { this.loadFailed = true; });
     }
 
-    toggleCollectionChecked(index: number) {
+    // toggle collection expand/collapse 
+    toggleCollectionChecked(index: string) {
+        this.previousTop = window.scrollY;        
         this.resultsByCollection[index].checked = !this.resultsByCollection[index].checked;
     }
 
+    // toggle object expand/collapse
     toggleObjectChecked(index: number, objectIndex: number) {
+        this.previousTop = window.scrollY;        
         this.resultsByCollection[index].objects[objectIndex].checked = 
         !this.resultsByCollection[index].objects[objectIndex].checked;
     }
 
-    toggleExpand() {
-        this.allExpanded = !this.allExpanded;
+    // toggle expand/collapse whole result set
+    toggleExpand(lvl1: boolean, lvl2: boolean) {
         this.resultsByCollection.forEach(element => {
-            element.checked = this.allExpanded;
+            element.checked = lvl1;
             element.objects.forEach(obj => {
-                obj.checked = this.allExpanded;
+                obj.checked = lvl2;
             });
         });
     }
     
-
     /**
      * return series for area chart
      *
@@ -114,6 +130,12 @@ export default class ComponentDetail extends Vue {
         return ChartService.PieChartOptions("pie-overall", this.data.current, this.pieClicked)
     }
 
+    /**
+     * event handler for pie-chart click
+     *
+     * @param {string} status
+     * @memberof ComponentDetail
+     */
     pieClicked(status: string) {
         let filterBy = btoa(`result=${status}&component=${this.data.component.name}`);
         router.push(`/overview-detail/${this.selectedDate!.toISODate()}/${filterBy}`); 
@@ -169,6 +191,17 @@ export default class ComponentDetail extends Vue {
     }
 
     /**
+     * Don't show score calculation when filter modifies the results.
+     *
+     * @readonly
+     * @type {boolean}
+     * @memberof ComponentDetail
+     */
+    getShowScore(): boolean {
+        return this.filterContainer.filters.length === 1;
+    }
+
+    /**
      * returns results grouped by category
      *
      * @param {InfrastructureComponentSummary} data
@@ -176,15 +209,6 @@ export default class ComponentDetail extends Vue {
      * @memberof ComponentDetail
      */
     getResultsByCategory(data: InfrastructureComponentSummary) { return MappingService.getResultsByCategory(this.data.checks); }
-
-    /**
-     * returns results grouped by collection
-     *
-     * @param {InfrastructureComponentSummary} data
-     * @returns
-     * @memberof ComponentDetail
-     */
-    getResultsByCollection(data: InfrastructureComponentSummary) { return MappingService.getResultsByCollection(data.checks, this.severityFilter); }
 
     /**
      * returns grade from score
@@ -219,6 +243,37 @@ export default class ComponentDetail extends Vue {
             return 'history-not-scanned';
         }
         return scan.recordedAt.startsWith(this.selectedDate!.toISODate()) ? 'history-selected' : 'history';
+    }
+
+    updated() {
+        // move the scrollTop to the previous position
+        // this is for toggling elements on scan result list
+        window.scrollTo(0, this.previousTop);
+    }
+
+    /**
+     * Handle the filter change on scan result list
+     *
+     * @param {string} filter
+     * @memberof ComponentDetail
+     */
+    onFilterChangedFromAF(filter: string) {
+        this.previousTop = window.scrollY;
+        this.filterContainer = new FilterContainer('component', filter);
+        this.filter = filter;
+        this.loadFailed = false;
+        this.service.getGeneralOverviewDetail(0, 0, this.selectedDate, this.filter)
+            .then(response => {
+                if (response) {
+                    this.checkResultSet = <CheckResultSet>response;
+                    this.resultsByCollection =  MappingService.getResultsByCollection(this.checkResultSet.checks);
+                    console.log(JSON.parse(JSON.stringify(this.resultsByCollection)));
+                    const flen = this.filterContainer.filters.length;
+                    this.toggleExpand(true, flen > 1);      
+                    this.loaded = true;
+                }
+            })
+            .catch(()=> { this.loadFailed = true; });
     }
 
     /**

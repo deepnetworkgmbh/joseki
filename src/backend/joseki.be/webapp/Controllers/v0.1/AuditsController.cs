@@ -436,7 +436,7 @@ namespace webapp.Controllers.v0._1
         [ProducesResponseType(200, Type = typeof(Dictionary<string, CheckFilter[]>))]
         [ProducesResponseType(400, Type = typeof(string))]
         [ProducesResponseType(500, Type = typeof(string))]
-        public async Task<ObjectResult> GetOverviewSearch(string filterBy, DateTime? date = null)
+        public async Task<ObjectResult> GetOverviewSearch(string filterBy, DateTime? date = null, bool omitEmpty = false)
         {
             #region input validation
 
@@ -464,7 +464,7 @@ namespace webapp.Controllers.v0._1
             try
             {
                 var handler = this.services.GetService<GetOverviewDetailsHandler>();
-                var details = await handler.GetAutoCompleteData(filterBy, detailsDate);
+                var details = await handler.GetAutoCompleteData(filterBy, detailsDate, omitEmpty);
                 return this.StatusCode(200, details);
             }
             catch (Exception ex)

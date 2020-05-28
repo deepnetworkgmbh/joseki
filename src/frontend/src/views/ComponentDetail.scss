@@ -6,16 +6,6 @@
 	user-select: none;
 }
 
-.owner-tag {
-	user-select: none;
-	font-size: 10px;
-	background-color: #07e;
-	color:#fff;
-	border-radius: 5px;
-	padding: 1px 5px 1px 5px;
-	margin-left: 5px;
-}
-
 .zigzag:nth-child(odd) {
 	background-color: #f8f8f8;
 }
@@ -35,6 +25,10 @@
 	border: solid 1px #aaa;
 	border-top:none;
 	width: 100%;
+
+	&-search {
+		border-top:solid 1px #bbb;
+	}
 
 	&-collection {
 		display:flex;
@@ -102,6 +96,16 @@
 						margin-left:30px;
 						height:25px;
 
+						&-category {
+							background-color: #eee;
+							border-top:solid 1px #aaa;
+							border-left:solid 1px #888;
+							font-size: 11px;
+							width: 100px;
+							text-align: center;
+							padding-top:4px;
+						}
+
 						&-icon {
 							border-top:solid 1px #aaa;
 							border-left:solid 1px #888;
@@ -135,6 +139,16 @@
 						flex-direction:column;
 						margin-left:30px;
 						
+						&-category {
+							background-color: #eee;
+							border-top:solid 1px #aaa;
+							border-left:solid 1px #888;
+							font-size: 11px;
+							width: 100px;
+							text-align: center;
+							padding-top:4px;
+						}
+
 						&-name {
 							padding-left:4px;
 							width: 100%;

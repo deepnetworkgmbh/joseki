@@ -1,5 +1,6 @@
-import { CountersSummary } from '@/models';
+import { CountersSummary, SeverityFilter } from '@/models';
 import { DateTime } from 'luxon';
+import { v4 as uuidv4 } from 'uuid';
 
 export enum DiffOperation {
     Added = 'ADDED',
@@ -116,6 +117,7 @@ export class DiffCollection {
 }
 
 export class CheckCollection {
+    _id: string = uuidv4();
     score: number = 0
     counters: CountersSummary = new CountersSummary(undefined)
     objects: CheckObject[] = []
@@ -198,6 +200,7 @@ export class CheckCollection {
 
 
 export class CheckObject {
+    _id: string = uuidv4();
     id: string = ''
     type: string = ''
     name: string = ''
@@ -321,8 +324,10 @@ export class CheckObject {
 
 
 export class CheckControl {
+    _id: string = uuidv4();
     id: string = ''
     text: string = ''
+    category: string = ''
     result: string = ''
     icon: string = ''
     order: number = 0
@@ -331,6 +336,7 @@ export class CheckControl {
 }
 
 export class CheckControlGroup {
+    _id: string = uuidv4();
     name: string = ''
     items: CheckControl[] = []
     operation?: DiffOperation = DiffOperation.Same;
