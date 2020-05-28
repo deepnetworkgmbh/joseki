@@ -62,7 +62,10 @@ export class DataService {
    * @returns {(Promise<void | CheckResultSet>)}
    * @memberof DataService
    */
-  public async getGeneralOverviewDetail(pageSize: number, pageIndex: number, date?: DateTime, filterBy?: string, sortBy?: string): Promise<void | CheckResultSet> {
+  public async getGeneralOverviewDetail(
+    pageSize: number, pageIndex: number, date?: DateTime, filterBy?: string, sortBy?: string
+  ): Promise<void | CheckResultSet> {
+  
     let suffix = (date === undefined) ? '?api-version=' + this.apiVersion
       : '?date=' + date!.toISODate() + '&api-version=' + this.apiVersion;
 
@@ -93,7 +96,7 @@ export class DataService {
    * @returns {(Promise<void | any>)}
    * @memberof DataService
    */
-  public async getGeneralOverviewSearch(date?: DateTime, filterBy?: string): Promise<void | any> {
+  public async getGeneralOverviewSearch(date?: DateTime, filterBy?: string, omitEmpty?: boolean): Promise<void | any> {
     let suffix = (date === undefined) ? '?api-version=' + this.apiVersion
       : '?date=' + date!.toISODate() + '&api-version=' + this.apiVersion;
 
@@ -102,6 +105,11 @@ export class DataService {
     } else {
       suffix += '&filterBy=*';
     }
+
+    if (omitEmpty) {
+      suffix += '&omitEmpty=true';
+    }
+
     let url = this.baseUrl + "/audits/overview/search/" + suffix;
     console.log(`[] calling ${url}`);
     return axios.get(url)

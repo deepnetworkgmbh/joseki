@@ -1,8 +1,6 @@
 import { CountersSummary, SeverityFilter } from '@/models';
 import { DateTime } from 'luxon';
-import { FilterContainer } from '@/models/FilterContailer';
 import { v4 as uuidv4 } from 'uuid';
-import ControlGroup from '@/components/controlgroup/ControlGroup';
 
 export enum DiffOperation {
     Added = 'ADDED',
@@ -136,26 +134,6 @@ export class CheckCollection {
         return empty;
     }
 
-    getObjects(filterContainer: FilterContainer) : CheckObject[] {
-        // console.log(filterContainer.filters);
-        let result = this.objects;
-        filterContainer.filters.forEach(filter => {
-            switch(filter.label) {
-                case 'owner':
-                    result = result.filter(x => filter.values.includes(x.owner));
-                    break;
-               case 'resource':
-                    result = result.filter(x => filter.values.includes(x.type + ':' + x.name));
-                    break;
-               case 'category':
-                    result = result.filter(x => filter.values.includes(x.type));
-                break;
-            }
-        });        
-        return result;
-
-    }
-
     SetChildren(op:DiffOperation) {
         for(let i=0;i<this.objects.length;i++) {
             this.objects[i].operation = op;
@@ -240,55 +218,6 @@ export class CheckObject {
         empty.id = id;
         empty.empty = true;
         return empty;
-    }
-
-    getControls(filterContainer: FilterContainer): CheckControl[] {
-        let result = this.controls;
-        filterContainer.filters.forEach(filter => {
-            switch(filter.label) {
-                case 'result':
-                    result = result.filter(x => filter.values.includes(x.result));
-                    break;
-                case 'control':
-                    result = result.filter(x => filter.values.includes(x.id));
-                    break;
-            }
-        });        
-        return result;
-    }
-
-    getControlGroups(filterContainer: FilterContainer): CheckControlGroup[] {
-        return this.controlGroups.map((cg: CheckControlGroup) => {       
-            let cgItems: CheckControl[] = [];
-            filterContainer.filters.forEach(filter => {
-                switch(filter.label) {
-                    case 'result':
-                        cgItems = cg.items.filter(x => filter.values.includes(x.result));
-                        break;
-                    case 'control':
-                        cgItems = cg.items.filter(x => filter.values.includes(x.id));
-                        break;
-                }
-            });                          
-            return {
-                ...cg,
-                items: cgItems
-            } as unknown as CheckControlGroup
-        });
-       
-        // for(let i=0;i<output.length;i++) {
-        //     filterContainer.filters.forEach(filter => {
-        //         switch(filter.label) {
-        //             case 'result':
-        //                 output[i].items = output[i].items.filter(x => filter.values.includes(x.result));            
-        //                 break;
-        //             case 'control':
-        //                 // result = result.filter(x => filter.values.includes(x.id));
-        //                 break;
-        //         }
-        //     });
-        // }
-        // return output;
     }
 
     SetChildren(op:DiffOperation) {
@@ -398,6 +327,7 @@ export class CheckControl {
     _id: string = uuidv4();
     id: string = ''
     text: string = ''
+    category: string = ''
     result: string = ''
     icon: string = ''
     order: number = 0
