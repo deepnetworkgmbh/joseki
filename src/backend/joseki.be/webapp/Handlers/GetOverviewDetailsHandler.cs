@@ -77,8 +77,9 @@ namespace webapp.Handlers
         /// </summary>
         /// <param name="filterBy">The filtering parameters as a string, concated by ,.</param>
         /// <param name="date">The date to get details for.</param>
+        /// <param name="omitEmpty">Filter out the checks with no result in their segment.</param>
         /// <returns>string array.</returns>
-        public async Task<Dictionary<string, CheckFilter[]>> GetAutoCompleteData(string filterBy, DateTime date)
+        public async Task<Dictionary<string, CheckFilter[]>> GetAutoCompleteData(string filterBy, DateTime date, bool omitEmpty = false)
         {
             // get all scan results
             var allChecks = await this.GetChecks(date);
@@ -151,6 +152,16 @@ namespace webapp.Handlers
                         .OrderBy(x => x)
                         .Select(filter => new CheckFilter(filter, filteredChecks.Count(c => c.Result.ToString() == filter)))
                         .ToArray());
+
+            // Small optimization for reducing the search results by not returning empty checks results.
+            // Used by Component Detail Scan Result filtering.
+            if (omitEmpty)
+            {
+                foreach (var checkGroup in results.Keys.ToList())
+                {
+                    results[checkGroup] = results[checkGroup].Where(x => x.Count > 0).ToArray();
+                }
+            }
 
             return results;
         }

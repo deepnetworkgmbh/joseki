@@ -99,7 +99,7 @@
                 <!-- <StatusBar :counters="collection.counters" :severities='severityFilter' /> -->
               </div>
               <div class="component-detail-collection-row-score">
-                <Score :label='`Score`' :score='collection.score' />
+                <Score v-if="getShowScore()" :label='`Score`' :score='collection.score' />
               </div>
             </div>
             <div v-if="collection.checked">
@@ -115,7 +115,7 @@
                     <span v-if="collection.owner" class="owner-tag"><i class="icon-user"></i> {{ collection.owner }}</span>                
                   </div>
                   <div class="component-detail-collection-row-objects-row-score">
-                    <Score :label='`Score`' :score='collection.score' />
+                    <Score v-if="getShowScore()" :label='`Score`' :score='obj.score' />
                   </div>
                 </div>
                 <div v-if="obj.checked">
@@ -126,6 +126,9 @@
                     <div :class="`component-detail-collection-row-objects-row-control-result resultBG${control.result}`">
                       {{ control.result }}
                     </div>
+                      <div class="component-detail-collection-row-objects-row-control-category">
+                        {{ control.category }}
+                      </div>
                     <div class="component-detail-collection-row-objects-row-control-details">
                       <span v-if="control.id === 'container_image.CVE_scan' && control.text !== 'No issues'">                        
                           <a class='small-link' :href="imageScanUrl(control.tags.imageTag)">see details</a>
@@ -148,6 +151,9 @@
                       </div>
                       <div :class="`component-detail-collection-row-objects-row-controlgroup-result resultBG${cg.result}`">
                         {{ cg.result }}
+                      </div>
+                      <div class="component-detail-collection-row-objects-row-controlgroup-category">
+                        {{ cg.category }}
                       </div>
                       <div class="component-detail-collection-row-objects-row-controlgroup-details">
                         <span v-if="cg.id === 'container_image.CVE_scan' && cg.text !== 'No issues'">                        

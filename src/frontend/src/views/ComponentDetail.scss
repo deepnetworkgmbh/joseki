@@ -96,6 +96,16 @@
 						margin-left:30px;
 						height:25px;
 
+						&-category {
+							background-color: #eee;
+							border-top:solid 1px #aaa;
+							border-left:solid 1px #888;
+							font-size: 11px;
+							width: 100px;
+							text-align: center;
+							padding-top:4px;
+						}
+
 						&-icon {
 							border-top:solid 1px #aaa;
 							border-left:solid 1px #888;
@@ -129,6 +139,16 @@
 						flex-direction:column;
 						margin-left:30px;
 						
+						&-category {
+							background-color: #eee;
+							border-top:solid 1px #aaa;
+							border-left:solid 1px #888;
+							font-size: 11px;
+							width: 100px;
+							text-align: center;
+							padding-top:4px;
+						}
+
 						&-name {
 							padding-left:4px;
 							width: 100%;

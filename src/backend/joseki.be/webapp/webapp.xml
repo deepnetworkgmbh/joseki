@@ -1069,7 +1069,7 @@
             </summary>
             <returns>the overview summary detail.</returns>
         </member>
-        <member name="M:webapp.Controllers.v0._1.AuditsController.GetOverviewSearch(System.String,System.Nullable{System.DateTime})">
+        <member name="M:webapp.Controllers.v0._1.AuditsController.GetOverviewSearch(System.String,System.Nullable{System.DateTime},System.Boolean)">
             <summary>
             Returns autocomplete data.
             </summary>
@@ -2339,12 +2339,13 @@
             <param name="pageIndex">Index of each result set.</param>
             <returns>list of CheckResultSet.</returns>
         </member>
-        <member name="M:webapp.Handlers.GetOverviewDetailsHandler.GetAutoCompleteData(System.String,System.DateTime)">
+        <member name="M:webapp.Handlers.GetOverviewDetailsHandler.GetAutoCompleteData(System.String,System.DateTime,System.Boolean)">
             <summary>
             Returns autocomplete data for selected date.
             </summary>
             <param name="filterBy">The filtering parameters as a string, concated by ,.</param>
             <param name="date">The date to get details for.</param>
+            <param name="omitEmpty">Filter out the checks with no result in their segment.</param>
             <returns>string array.</returns>
         </member>
         <member name="M:webapp.Handlers.GetOverviewDetailsHandler.GetChecks(System.DateTime)">

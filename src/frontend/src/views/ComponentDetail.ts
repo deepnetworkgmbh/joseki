@@ -7,7 +7,6 @@ import { InfrastructureComponentSummary, ScoreHistoryItem, SeverityFilter, Infra
 import { CheckCollection, CheckControlGroup } from '@/services/DiffService';
 import { FilterContainer } from '@/models/FilterContailer';
 import { CheckResultSet } from '@/models/CheckResultSet';
-import { OverviewCheck } from '@/models/Check';
 
 @Component
 export default class ComponentDetail extends Vue {
@@ -18,7 +17,6 @@ export default class ComponentDetail extends Vue {
     @Prop({ default: null })
     date!: string;
 
-  
     filter: string = '';
     filterContainer!: FilterContainer;
     
@@ -26,15 +24,14 @@ export default class ComponentDetail extends Vue {
     selectedScore: number = 0;
     loaded: boolean = false;
     loadFailed: boolean = false;
-    service: DataService = new DataService();
-
-    data: InfrastructureComponentSummary = new InfrastructureComponentSummary();
-    checkResultSet: CheckResultSet = new CheckResultSet();
-
-    resultsByCollection: CheckCollection[] = [];
     allExpanded: boolean = false;
     previousTop: number = 0;
 
+    service: DataService = new DataService();
+    data: InfrastructureComponentSummary = new InfrastructureComponentSummary();
+    checkResultSet: CheckResultSet = new CheckResultSet();
+    resultsByCollection: CheckCollection[] = [];
+ 
     /**
      * make an api call and load Component detail data
      * TODO: first request returns redundant check list, must be removed.
@@ -62,8 +59,7 @@ export default class ComponentDetail extends Vue {
             .then(response => {
                 if (response) {
                     this.checkResultSet = <CheckResultSet>response;
-                    this.resultsByCollection =  MappingService.getResultsByCollection(this.checkResultSet.checks);
-                    console.log(JSON.parse(JSON.stringify(this.resultsByCollection)));
+                    this.resultsByCollection =  MappingService.getResultsByCollection(this.checkResultSet.checks);                   
                     this.loaded = true;
                     this.$forceUpdate();
                 }
@@ -71,21 +67,20 @@ export default class ComponentDetail extends Vue {
             .catch(()=> { this.loadFailed = true; });
     }
 
+    // toggle collection expand/collapse 
     toggleCollectionChecked(index: string) {
-        // console.log(`[Y] ${this.getScrollTop()}`)
-        this.previousTop = this.getScrollTop();        
+        this.previousTop = window.scrollY;        
         this.resultsByCollection[index].checked = !this.resultsByCollection[index].checked;
-        //const index = this.resultsByCollection.findIndex(x => x._id === _id);
-        //this.resultsByCollection[index].checked = !this.resultsByCollection[index].checked;        
     }
 
+    // toggle object expand/collapse
     toggleObjectChecked(index: number, objectIndex: number) {
-        this.previousTop = this.getScrollTop();        
-        //const objectIndex = this.resultsByCollection[index].objects.findIndex(x => x._id === _id);
+        this.previousTop = window.scrollY;        
         this.resultsByCollection[index].objects[objectIndex].checked = 
         !this.resultsByCollection[index].objects[objectIndex].checked;
     }
 
+    // toggle expand/collapse whole result set
     toggleExpand(lvl1: boolean, lvl2: boolean) {
         this.resultsByCollection.forEach(element => {
             element.checked = lvl1;
@@ -95,7 +90,6 @@ export default class ComponentDetail extends Vue {
         });
     }
     
-
     /**
      * return series for area chart
      *
@@ -136,6 +130,12 @@ export default class ComponentDetail extends Vue {
         return ChartService.PieChartOptions("pie-overall", this.data.current, this.pieClicked)
     }
 
+    /**
+     * event handler for pie-chart click
+     *
+     * @param {string} status
+     * @memberof ComponentDetail
+     */
     pieClicked(status: string) {
         let filterBy = btoa(`result=${status}&component=${this.data.component.name}`);
         router.push(`/overview-detail/${this.selectedDate!.toISODate()}/${filterBy}`); 
@@ -191,6 +191,17 @@ export default class ComponentDetail extends Vue {
     }
 
     /**
+     * Don't show score calculation when filter modifies the results.
+     *
+     * @readonly
+     * @type {boolean}
+     * @memberof ComponentDetail
+     */
+    getShowScore(): boolean {
+        return this.filterContainer.filters.length === 1;
+    }
+
+    /**
      * returns results grouped by category
      *
      * @param {InfrastructureComponentSummary} data
@@ -198,15 +209,6 @@ export default class ComponentDetail extends Vue {
      * @memberof ComponentDetail
      */
     getResultsByCategory(data: InfrastructureComponentSummary) { return MappingService.getResultsByCategory(this.data.checks); }
-
-    // /**
-    //  * returns results grouped by collection
-    //  *
-    //  * @param {InfrastructureComponentSummary} data
-    //  * @returns
-    //  * @memberof ComponentDetail
-    //  */
-    // getResultsByCollection(checks: OverviewCheck[]) { return MappingService.getResultsByCollection(checks); }
 
     /**
      * returns grade from score
@@ -244,38 +246,35 @@ export default class ComponentDetail extends Vue {
     }
 
     updated() {
-        // console.log(`previous top: ${this.previousTop}`);
-        // console.log(`unwanted top: ${this.getScrollTop()}`);        
+        // move the scrollTop to the previous position
+        // this is for toggling elements on scan result list
         window.scrollTo(0, this.previousTop);
     }
 
-    private getScrollTop() {       
-        return window.scrollY;
-    }
-
+    /**
+     * Handle the filter change on scan result list
+     *
+     * @param {string} filter
+     * @memberof ComponentDetail
+     */
     onFilterChangedFromAF(filter: string) {
-        this.previousTop = this.getScrollTop();
+        this.previousTop = window.scrollY;
         this.filterContainer = new FilterContainer('component', filter);
         this.filter = filter;
         this.loadFailed = false;
         this.service.getGeneralOverviewDetail(0, 0, this.selectedDate, this.filter)
             .then(response => {
                 if (response) {
-                    console.log(`[222]`);
                     this.checkResultSet = <CheckResultSet>response;
                     this.resultsByCollection =  MappingService.getResultsByCollection(this.checkResultSet.checks);
                     console.log(JSON.parse(JSON.stringify(this.resultsByCollection)));
-                    this.loaded = true;
-
                     const flen = this.filterContainer.filters.length;
-                    this.toggleExpand(true, flen > 1);
-       
-                    this.$forceUpdate();
+                    this.toggleExpand(true, flen > 1);      
+                    this.loaded = true;
                 }
             })
             .catch(()=> { this.loadFailed = true; });
     }
-
 
     /**
      * Watcher for date, emits dateChanged for breadcrumbs and loads data
