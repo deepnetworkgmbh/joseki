@@ -1,17 +1,19 @@
 @import "@/styles/colors.scss";
 
 .statusbar {
+	background-color: #aaa;
+	user-select: none;
 	float: right;
 	width: 200px;
-	height: 16px;
+	height: 18px;
 	border: solid 1px #999;
 	border-radius: 50px;
 	margin:0;
-	margin-top:2px;
-	margin-right: 0px;
+	// margin-top:2px;
+	// margin-right: 0px;
 	padding:1px;	
-	box-sizing:content-box;
-	font-size: 9px;
+	box-sizing: content-box;
+	font-size: 12px;
 	font-weight: bold;
 	color:#fff;
 	white-space: nowrap; 
@@ -20,122 +22,73 @@
 	&-nodata {
 		background-color: #666;
 		background: linear-gradient(0deg, rgba(136,136,136,1) 0%, rgba(204,204,204,1) 100%);
-		height: 16px;
+		height: 18px;
 		float: left;
 		text-align: center;
-		padding-top: 1px;
+		
 		&-start {
-			border-top-left-radius: 50px;
-			border-bottom-left-radius: 50px;
+			border-top-left-radius: 100px;
+			border-bottom-left-radius: 100px;
 		}
 		&-end {
-			border-top-right-radius: 50px;
-			border-bottom-right-radius: 50px;
+			border-top-right-radius: 100px;
+			border-bottom-right-radius: 100px;
 		}
 	}
 
 	&-failed {
 		background-color: #f00;
 		background: linear-gradient(0deg, rgba(174,25,0,1) 0%, rgba(234,95,0,1) 100%);
-		height: 16px;
+		height: 18px;
 		float: left;
 		text-align: center;
-		padding-top: 1px;
+		
 
 		&-start {
-			border-top-left-radius: 50px;
-			border-bottom-left-radius: 50px;
+			border-top-left-radius: 100px;
+			border-bottom-left-radius: 100px;
 		}
 		&-end {
-			border-top-right-radius: 50px;
-			border-bottom-right-radius: 50px;
+			border-top-right-radius: 100px;
+			border-bottom-right-radius: 100px;
 		}
 	}
 
 	&-warning {
-		background-color: #fc0;
-		//background: linear-gradient(0deg, rgba(178,139,10,1) 0%, rgba(257,197,23,1) 100%);
-		background: linear-gradient(0deg, rgba(159,94,41,1) 0%, rgba(255,160,83,1) 100%);;
-		height: 16px;
+		background-color: #fc0;	
+		background: linear-gradient(0deg, rgba(159,94,41,1) 0%, rgba(255,160,83,1) 100%);
+		height: 18px;
 		float: left;
 		text-align: center;
-		padding-top: 1px;
+	
 
 		&-start {
-			border-top-left-radius: 50px;
-			border-bottom-left-radius: 50px;
+			border-top-left-radius: 100px;
+			border-bottom-left-radius: 100px;
 		}
 		&-end {
-			border-top-right-radius: 50px;
-			border-bottom-right-radius: 50px;
+			border-top-right-radius: 100px;
+			border-bottom-right-radius: 100px;
 		}
 	}
 
 	&-passed {
 		background-color: #080;
-		//background: linear-gradient(0deg, rgba(0,131,0,1) 0%, rgba(0,189,0,1) 100%);
-		background: linear-gradient(0deg, rgba(0,138,126,1) 0%, rgba(0,185,169,1) 100%);;
-		height: 16px;
+		background: linear-gradient(0deg, rgba(0,138,126,1) 0%, rgba(0,185,169,1) 100%);
+		height: 18px;
 		float: left;
 		text-align: center;
-		padding-top: 1px;
+		
 
 		&-start {
-			border-top-left-radius: 50px;
-			border-bottom-left-radius: 50px;
+			border-top-left-radius: 100px;
+			border-bottom-left-radius: 100px;
 		}
 		&-end {
-			border-top-right-radius: 50px;
-			border-bottom-right-radius: 50px;
+			border-top-right-radius: 100px;
+			border-bottom-right-radius: 100px;
 		}
 	}
 
 
 }
-
-// .status-bar {
-// 	padding-top: 7px;
-// 	float: right;
-// }
-
-// .status-bar .status {
-// 	float: right;
-// 	animation: fadeIn 2s;
-// }
-
-// .status {
-// 	width: 200px;
-// }
-
-// .status div {
-// 	border-radius: 9px;
-// }
-
-// .nodata {
-// 	background-color: $color-no-data;
-// 	float: left;
-// }
-
-// .passing {
-// 	background-color: $color-low-severity;
-// 	float: left;
-// }
-
-// .warning {
-// 	background-color: $color-high-severity;
-// 	float: left;
-// }
-
-// .failing {
-// 	background-color: $color-critical;
-// 	width: 100%;
-// }
-
-// @keyframes fadeIn {
-// 	0% {
-// 		opacity: 0;
-// 	}
-// 	100% {
-// 		opacity: 1;
-// 	}
-// }

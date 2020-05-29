@@ -87,9 +87,8 @@ export default class StatusBar extends Vue {
     return result;
   }
 
-  getLabel(i:number): string {
-    return '';
-    // return this.widths[i]> 10 ? this.array[i].toString() : '';
+  getLabel(i:number): string {    
+    return this.widths[i]> 10 ? this.array[i].toString() : '';
   }
 
   meta(key: string) { return MetaService.Get(key) }
