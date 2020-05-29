@@ -68,11 +68,11 @@
             <input class="expand" type="checkbox" v-bind:id="`cat${i}`" />
             <label class="text-base" v-bind:for="`cat${i}`">
               <strong>{{category.category}}</strong>
-              <Score :label='`Score`' :score='category.score' />              
+              <Score :label='`Score`' :score='category.score' class="shadow" />              
             </label>
             <ul>
-               <div style="padding:4px;padding-left:10px;padding-right:220px;text-align:justify" 
-                   v-html="getCategoryMeta(category.category)" v-linkified:options="{ className: 'external-link' }" />              
+               <div style="padding:4px;padding-left:10px;padding-right:220px;text-align:justify" class="small-content"
+                   v-html="getCategoryMeta(category.category)" />              
             </ul>
           </li>
         </ul>
@@ -94,12 +94,9 @@
               <div class="component-detail-collection-row-name">  
                 <strong>{{ collection.type }} :</strong> {{ collection.name }}  
               </div>
-              <div style="padding-top:1px;">
-                <span v-if="collection.owner" class="owner-tag"><i class="icon-user"></i> {{ collection.owner }}</span>
-                <!-- <StatusBar :counters="collection.counters" :severities='severityFilter' /> -->
-              </div>
               <div class="component-detail-collection-row-score">
-                <Score v-if="getShowScore()" :label='`Score`' :score='collection.score' />
+                <span v-if="collection.owner" class="owner-tag shadow"><i class="icon-user" style="padding:2px"></i> {{ collection.owner }}</span>
+                <Score v-if="getShowScore()" :label='`Score`' :score='collection.score' class="shadow" />
               </div>
             </div>
             <div v-if="collection.checked">
@@ -111,11 +108,9 @@
                   <div class="component-detail-collection-row-objects-row-name">
                       <strong>{{ obj.type }} : </strong>{{ obj.name }}
                   </div>
-                  <div style="padding-top:1px;">
-                    <span v-if="collection.owner" class="owner-tag"><i class="icon-user"></i> {{ collection.owner }}</span>                
-                  </div>
                   <div class="component-detail-collection-row-objects-row-score">
-                    <Score v-if="getShowScore()" :label='`Score`' :score='obj.score' />
+                    <span v-if="collection.owner" class="owner-tag shadow"><i class="icon-user" style="padding:2px"></i> {{ collection.owner }}</span>                
+                    <Score v-if="getShowScore()" :label='`Score`' :score='obj.score' class="shadow" />
                   </div>
                 </div>
                 <div v-if="obj.checked">

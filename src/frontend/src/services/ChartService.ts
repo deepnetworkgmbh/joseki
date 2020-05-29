@@ -74,20 +74,16 @@ export class ChartService {
 			label: {
 				borderWidth: 0,
 				text: ChartService.successThresholdScore + '%',
-				textAnchor: 'start',
+				textAnchor: 'middle',
 				position: position,
-				offsetY:6,
+				offsetY:10,
 				offsetX:offsetX,
 				style: {
 					background: '#ddd', //transparent',
-					fontSize: '8px',
+					fontSize: '9px',
+					fontWeight: 900,
 					color:'#888',
-					padding: {
-						left:0,
-						right:0,
-						top:0,
-						bottom:0
-					}
+					padding: { left:3, right:3, top:1, bottom:1 }
 				}
 			}
 		}]
@@ -118,7 +114,8 @@ export class ChartService {
 				offsetX:-1,
 				style: {
 					background: '#F8A462', //transparent',
-					fontSize: '7px',
+					fontSize: '8px',
+					fontWeight: 900,
 					color:color,
 					padding: { left:3, right:3, top:1, bottom:0 }
 				}
@@ -403,14 +400,15 @@ export class ChartService {
 									offsetY: 5
 								},
 								value: {
-									show: false
+									show: false,
 								},
 								total: {
 									color: summary === undefined ? ChartService.colorNoData : ChartService.getColorByScore(summary.score),
 									show: true,
 									showAlways: true,
 									label: summary === undefined ? '0' : summary.score + '%',
-									fontSize: '13px'
+									fontSize: '14px',
+									fontWeight: 900	
 								}
 							}
 						}
@@ -452,6 +450,13 @@ export class ChartService {
 					}
 				}
 			},
+			dataLabels: {
+				style: {
+					fontSize: small ? '16px' : '23px',
+					fontFamily: 'Helvetica, Arial, sans-serif',
+					fontWeight: 'bold'
+				}
+			},
 			legend: {
 				show: small ? false : true,
 				offsetY: 10
@@ -464,7 +469,7 @@ export class ChartService {
 					offsetX: small ? 0 : 45,
 					customScale: small ? 1 : 0.8,
 					dataLabels: {
-						offset:-10
+						offset: small ? -5 : -10
 					}
 				},
 			},
