@@ -7,6 +7,7 @@ import { InfrastructureComponentSummary, ScoreHistoryItem, SeverityFilter, Infra
 import { CheckCollection, CheckControlGroup } from '@/services/DiffService';
 import { FilterContainer } from '@/models/FilterContailer';
 import { CheckResultSet } from '@/models/CheckResultSet';
+import  MarkdownIt  from 'markdown-it';
 
 @Component
 export default class ComponentDetail extends Vue {
@@ -31,7 +32,12 @@ export default class ComponentDetail extends Vue {
     data: InfrastructureComponentSummary = new InfrastructureComponentSummary();
     checkResultSet: CheckResultSet = new CheckResultSet();
     resultsByCollection: CheckCollection[] = [];
- 
+    md: MarkdownIt;
+
+    created() {
+        this.md = new MarkdownIt();
+    }
+
     /**
      * make an api call and load Component detail data
      * TODO: first request returns redundant check list, must be removed.
@@ -150,6 +156,7 @@ export default class ComponentDetail extends Vue {
      * @memberof ComponentDetail
      */
     dayClicked(date: string, component: string) {
+        this.previousTop = window.scrollY; 
         router.push('/component-detail/' + encodeURIComponent(this.data.component.id) + '/' + date);
     }
 
@@ -226,9 +233,10 @@ export default class ComponentDetail extends Vue {
      * @returns
      * @memberof ComponentDetail
      */
-    getCategoryMeta(category: string) {
+    getCategoryMeta(category: string): string {
         let index = this.data.categorySummaries.findIndex(x => x.category === category);
-        return (index > -1) ? this.data.categorySummaries[index].description : '';
+        if (index === -1) { return '' }
+        return this.md.render(this.data.categorySummaries[index].description);
     }
 
     /**

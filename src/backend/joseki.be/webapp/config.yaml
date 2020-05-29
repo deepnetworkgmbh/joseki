@@ -1,0 +1,28 @@
+database:
+  connectionString: Server=localhost;Database=sqldb-joseki-be;User Id=sa;Password=Passw0rd!;
+
+cache:
+  polarisCheckTtl: 2
+  azureCheckTtl: 4
+  cveTtl: 8
+  defaultTtl: 10
+  imageScanTtl: 12
+
+watchmen:
+  scannerContainersPeriodicitySeconds: 1800
+  archiverPeriodicityHours: 24
+  archiveTtlDays: 90
+  infraScorePeriodicityHours: 12
+
+azureBlob:
+  basePath: https://ACCOUNT_NAME.blob.core.windows.net
+  sas: token
+  connectionString: DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};EndpointSuffix=core.windows.net
+  accountName: ACCOUNT_NAME
+  accountKey: ACCOUNT_KEY
+
+azureQueue:
+  connectionString: DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};EndpointSuffix=core.windows.net
+  imageScanRequestsQueue: image-scan-requests
+  accountName: ACCOUNT_NAME
+  accountKey: ACCOUNT_KEY

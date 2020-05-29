@@ -54,8 +54,8 @@
 			}
 
 			&-score {
-				width:70px;
-				text-align:center;
+				flex: 1;
+				text-align:right;
 				padding-top:1px;
 			}
 
@@ -85,8 +85,8 @@
 					}
 
 					&-score {
-						width:70px;
-						text-align:center;
+						flex: 1;
+						text-align:right;
 						padding-top:1px;
 					}
 
@@ -200,4 +200,72 @@
 			}
 		}
 	}
+}
+
+.small-content {
+    
+    p {
+        margin-bottom: 14px;
+        font-size: 14px;
+    }
+    h1 {
+		font-size: 14px;
+		font-weight: bold;
+    };
+    h2 {
+        font-size: 14px;
+		font-weight: bold;
+    };
+
+    table {
+        width:95%;
+        margin: auto;
+        margin-bottom: 15px;
+
+        thead {
+            background-color: #eee;
+            font-size: 12px;
+            tr {
+                th {
+                    text-align: left;
+                }
+            }
+
+        }
+        tbody {
+            font-size: 11px;
+
+            tr {
+
+                td {
+                    text-align: left;
+                }
+
+            }
+        }
+    };
+
+    code {
+        font-weight: bold;
+    }
+
+    ul {
+        margin-top:10px;
+
+        li {
+            list-style: disc;
+            margin-left:25px;
+            line-height:19px;
+
+            a {
+                color:#3182ce;
+                font-size: 13px;
+            }
+        }
+    }
+
+    a {
+        font-weight: bold;
+        color:#3182ce;
+    }
 }
