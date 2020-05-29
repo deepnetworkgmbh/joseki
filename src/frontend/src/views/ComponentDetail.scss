@@ -54,7 +54,7 @@
 			}
 
 			&-score {
-				flex: 1;
+				flex: 0 auto;
 				text-align:right;
 				padding-top:1px;
 			}
@@ -79,7 +79,7 @@
 					}
 
 					&-name {
-						flex:1;
+						flex: 0 auto;
 						padding:3px;
 						padding-left:6px;
 					}
