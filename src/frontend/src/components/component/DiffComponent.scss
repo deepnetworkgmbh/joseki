@@ -45,7 +45,7 @@
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		overflow: hidden;
-		font-size: 12px;
+		font-size: 13px;
 	}
 
 	&-category {
@@ -54,6 +54,7 @@
 		overflow: hidden;
 		font-size: 11px;
 		color: #444;
+		margin-top:-2px;
 	}
 
 	&-icon {

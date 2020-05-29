@@ -7,20 +7,26 @@
 	font-size: 10px;
 	color: white;
 	user-select: none;
-	
+
+	background: linear-gradient(0deg, rgba(255,0,0,1) 0%, rgba(194,25,0,1) 100%);
+
 	&-0 {
 		background-color: red;
+		background: linear-gradient(0deg, rgba(234,45,0,1) 0%, rgba(194,25,0,1) 100%);
 	}
 
 	&-25 {
 		background-color: rgb(219, 103, 35);
+		background: linear-gradient(0deg, rgba(234,95,0,1) 0%, rgba(159,94,41,1) 100%);
 	}
 
 	&-50 {
 		background-color: orange;
+		background: linear-gradient(0deg, rgba(159,94,41,1) 0%, rgba(255,160,83,1) 100%);
 	}
 
 	&-75 {
 		background-color: green;
+		background: linear-gradient(0deg, rgba(0,138,126,1) 0%, rgba(0,185,169,1) 100%);
 	}
 }
