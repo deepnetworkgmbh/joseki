@@ -37,7 +37,7 @@ jobs:
         dockerfile: ${{ env.DOCKERFILE_PATH }}
 
     - name: build dockerimage
-      uses: docker/build-push-action@v1.0
+      uses: docker/build-push-action@v1.1.0
       with:
         path: ${{ env.SERVICE_ROOT }}
         dockerfile: ${{ env.DOCKERFILE_PATH }}
@@ -47,7 +47,7 @@ jobs:
         push: false
 
     - name: scan image for CVEs
-      uses: 'docker://aquasec/trivy:0.5.2'
+      uses: 'docker://aquasec/trivy:0.9.1'
       with:
         args: --exit-code 1 --severity CRITICAL "${{ env.DOCKER_REPOSITORY }}:${{ env.DEV_TAG }}"
 
