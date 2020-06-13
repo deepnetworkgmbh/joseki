@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1.201-alpine3.11 AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1.301-alpine3.12 AS build
 WORKDIR /app/src
 COPY /src .
 RUN dotnet build joseki.image-scanner.sln -c Release
@@ -13,14 +13,27 @@ FROM build AS publish-webapp
 WORKDIR /app/src
 RUN dotnet publish webapp/webapp.csproj -c Release -o /app/publish --no-restore --no-build
 
+# Download and expand the trivy '.tar.gz' archive
+RUN apk add --no-cache curl=~7.69.1
 
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1.3-alpine3.11 AS webapp
+RUN curl -L https://github.com/aquasecurity/trivy/releases/download/v0.9.1/trivy_0.9.1_Linux-64bit.tar.gz -o /tmp/trivy.tar.gz
+RUN mkdir -p /tmp/trivy_dir
+RUN tar zxf /tmp/trivy.tar.gz -C /tmp/trivy_dir
+
+
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1.5-alpine3.12 AS webapp
 WORKDIR /app
 COPY --from=publish-webapp /app/publish .
 
-COPY /dll/trivy /usr/local/bin/trivy
+# Copy trivy binary
+RUN mkdir -p /usr/local/bin/trivy
+COPY --from=publish-webapp /tmp/trivy_dir/trivy /usr/local/bin/trivy
+
+# Set execute permissions
+RUN chmod +x /usr/local/bin/trivy
+
 ENV TRIVY_BINARY_PATH=/usr/local/bin/trivy
-ENV TRIVY_VERSION=0.6.0
+ENV TRIVY_VERSION=0.9.1
 
 # Change to 8080 because 80 requires elevated privileges
 ENV ASPNETCORE_URLS="http://*:8080"
