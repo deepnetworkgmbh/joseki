@@ -24,7 +24,7 @@ jobs:
         echo "::set-env name=DOCKER_REPOSITORY::deepnetwork/joseki-frontend"
 
     - name: lint dockerfile
-      uses: brpaz/hadolint-action@2d3af3e
+      uses: brpaz/hadolint-action@v1.1.0
       with:
         dockerfile: ${{ env.DOCKERFILE_PATH }}
 
