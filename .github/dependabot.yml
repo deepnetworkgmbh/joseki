@@ -1,0 +1,96 @@
+version: 2
+updates:
+
+  # Maintain dependencies for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    assignees:
+      - v1r7u
+      - detaybey
+
+  # Maintain dependencies for Backend application
+  - package_manager: "docker"
+    directory: "src/backend"
+    schedule:
+      interval: "weekly"
+    default_reviewers:
+    - v1r7u
+    - detaybey
+
+  - package_manager: "nuget"
+    directory: "src/backend/joseki.be"
+    schedule:
+      interval: "weekly"
+    default_reviewers:
+    - v1r7u
+    - detaybey
+
+  # Maintain dependencies for Frontend application
+  - package_manager: "docker"
+    directory: "src/frontend"
+    schedule:
+      interval: "weekly"
+    default_reviewers:
+    - v1r7u
+    - detaybey
+
+  - package_manager: "npm"
+    directory: "src/frontend"
+    schedule:
+      interval: "weekly"
+    default_reviewers:
+    - v1r7u
+    - detaybey
+
+  # Maintain dependencies for az-sk scanner application
+  - package_manager: "docker"
+    directory: "src/scanners/az-sk"
+    schedule:
+      interval: "weekly"
+    default_reviewers:
+    - v1r7u
+    - detaybey
+
+  - package_manager: "nuget"
+    directory: "src/scanners/az-sk/src"
+    schedule:
+      interval: "weekly"
+    default_reviewers:
+    - v1r7u
+    - detaybey
+
+  # Maintain dependencies for trivy scanner application
+  - package_manager: "docker"
+    directory: "src/scanners/trivy"
+    schedule:
+      interval: "weekly"
+    default_reviewers:
+    - v1r7u
+    - detaybey
+
+  - package_manager: "nuget"
+    directory: "src/scanners/trivy/src"
+    schedule:
+      interval: "weekly"
+    default_reviewers:
+    - v1r7u
+    - detaybey
+
+  # Maintain dependencies for polaris scanner application
+  - package_manager: "docker"
+    directory: "src/scanners/polaris"
+    schedule:
+      interval: "weekly"
+    default_reviewers:
+    - v1r7u
+    - detaybey
+
+  - package_manager: "gomod"
+    directory: "src/scanners/polaris"
+    schedule:
+      interval: "weekly"
+    default_reviewers:
+    - v1r7u
+    - detaybey
