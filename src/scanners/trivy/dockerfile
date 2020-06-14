@@ -26,7 +26,6 @@ WORKDIR /app
 COPY --from=publish-webapp /app/publish .
 
 # Copy trivy binary
-RUN mkdir -p /usr/local/bin/trivy
 COPY --from=publish-webapp /tmp/trivy_dir/trivy /usr/local/bin/trivy
 
 # Set execute permissions
