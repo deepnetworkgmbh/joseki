@@ -11,7 +11,7 @@
     "apexcharts": "^3.19.2",
     "axios": "^0.19.2",
     "balloon-css": "^1.0.4",
-    "linkifyjs": "^2.1.9",
+    "linkify-it": "^3.0.2",
     "luxon": "^1.24.1",
     "markdown-it": "^11.0.0",
     "uuid": "^8.1.0",
