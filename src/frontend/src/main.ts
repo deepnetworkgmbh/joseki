@@ -4,9 +4,9 @@ import router from "./router";
 
 import "@/styles/main.scss";
 
-import moment from 'moment';
+import { DateTime } from 'luxon';
 Vue.filter('formatDate', (value) => {
-  if (value) { return moment(String(value)).format('YYYY/MM/DD') }
+  if (value) { return DateTime.local().toFormat('yyyy/MM/dd') }
 });
 
 import linkify from 'vue-linkify'
