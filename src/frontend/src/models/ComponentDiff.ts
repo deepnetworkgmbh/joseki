@@ -51,8 +51,8 @@ export class DiffMock {
     }
 
     let unchangedObject = objects[3][1];
-    let changedObjectA = _.cloneDeep(objects.slice()[3].slice()[0]);
-    let changedObjectB = _.cloneDeep(objects.slice()[3].slice()[0]);
+    let changedObjectA = JSON.parse(JSON.stringify(objects[3][0]))
+    let changedObjectB = JSON.parse(JSON.stringify(objects[3][0]))
 
     if (!left) {
       changedObjectB.controlGroups[0].items[0].result = "NoData";

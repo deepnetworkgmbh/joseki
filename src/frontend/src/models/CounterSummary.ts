@@ -27,7 +27,7 @@ export class CountersSummary {
   }
 
   public calculateScore(): number {
-    var result = Math.round(100 * this.passed * 2 / ((this.failed * 2) + (this.passed * 2) + this.warning));
+    let result = Math.round(100 * this.passed * 2 / ((this.failed * 2) + (this.passed * 2) + this.warning));
     return isNaN(result) ? 0 : result;
   }
 
