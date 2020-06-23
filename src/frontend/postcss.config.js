@@ -2,7 +2,6 @@
 
 const tailwindcss = require('tailwindcss')
 const autoprefixer = require('autoprefixer')
-const purgecss = require('@fullhuman/postcss-purgecss')
 
 class TailwindExtractor {
   static extract (content) {
