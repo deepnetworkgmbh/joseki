@@ -14,7 +14,7 @@
     "linkifyjs": "^2.1.9",
     "lodash": "^4.17.15",
     "lodash.clonedeep": "^4.5.0",
-    "luxon": "^1.23.0",
+    "luxon": "^1.24.1",
     "markdown-it": "^10.0.0",
     "moment": "^2.26.0",
     "rxjs": "^6.5.5",
