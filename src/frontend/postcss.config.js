@@ -14,7 +14,7 @@ module.exports = {
     tailwindcss('./tailwind.js'),
     autoprefixer({
       add: true,
-      grid: true
+      grid: false
     })   
   ]
 }
