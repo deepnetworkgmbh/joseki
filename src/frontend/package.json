@@ -16,7 +16,6 @@
     "lodash.clonedeep": "^4.5.0",
     "luxon": "^1.24.1",
     "markdown-it": "^10.0.0",
-    "rxjs": "^6.5.5",
     "uuid": "^8.1.0",
     "vue": "^2.6.10",
     "vue-apexcharts": "^1.5.3",
