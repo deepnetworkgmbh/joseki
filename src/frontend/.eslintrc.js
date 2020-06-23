@@ -15,7 +15,8 @@ module.exports = {
     'css.lint.emptyRules': 'off',
     'scss.lint.emptyRules': 'off',
     'less.lint.emptyRules': 'off',
-    'prefer-const': 'off'
+    'prefer-const': 'off',
+    'no-var': 'off'
   },
   parserOptions: {
     parser: '@typescript-eslint/parser'
