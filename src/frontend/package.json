@@ -13,7 +13,7 @@
     "balloon-css": "^1.0.4",
     "linkifyjs": "^2.1.9",
     "luxon": "^1.24.1",
-    "markdown-it": "^10.0.0",
+    "markdown-it": "^11.0.0",
     "uuid": "^8.1.0",
     "vue": "^2.6.10",
     "vue-apexcharts": "^1.5.3",
