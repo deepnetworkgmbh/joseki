@@ -4,8 +4,17 @@ import { ScoreService } from './ScoreService';
 import { DateTime } from 'luxon';
 import { ConfigService } from './ConfigService';
 import { CheckResultSet } from '@/models/CheckResultSet';
+import AuthService from './AuthService';
 
 export class DataService {
+
+  constructor() {
+    // axios.defaults.baseURL = 'http://localhost:1010/'
+    AuthService.getInstance().AccessToken.subscribe((token)=>{
+      console.log('[data] setting bearer token');
+      axios.defaults.headers.common = {'Authorization': `bearer ${token}`};
+    })
+  }
 
   /**
    * Return base url for api access.

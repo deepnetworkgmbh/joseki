@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,6 +19,7 @@ namespace webapp.Controllers.v0._1
     [ApiController]
     [ApiVersion("0.1")]
     [Route("api/knowledgebase")]
+    [Authorize]
     public class KnowledgebaseController : Controller
     {
         private static readonly ILogger Logger = Log.ForContext<KnowledgebaseController>();

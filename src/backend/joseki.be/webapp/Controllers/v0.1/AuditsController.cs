@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-
 using Serilog;
-
 using webapp.Database.Models;
 using webapp.Exceptions;
 using webapp.Handlers;
@@ -21,6 +19,7 @@ namespace webapp.Controllers.v0._1
     [ApiController]
     [ApiVersion("0.1")]
     [Route("api/audits")]
+    [Authorize]
     public class AuditsController : Controller
     {
         private static readonly ILogger Logger = Log.ForContext<AuditsController>();

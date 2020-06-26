@@ -2145,6 +2145,16 @@
             Initializes a new instance of the <see cref="T:webapp.Exceptions.JosekiException"/> class.
             </summary>
         </member>
+        <member name="T:webapp.Handlers.AllowAnonymousAuthorizationHandler">
+            <summary>
+            This authorization handler will bypass all requirements.
+            </summary>
+        </member>
+        <member name="M:webapp.Handlers.AllowAnonymousAuthorizationHandler.HandleAsync(Microsoft.AspNetCore.Authorization.AuthorizationHandlerContext)">
+            <summary>
+            Handles authorization request.
+            </summary>
+        </member>
         <member name="T:webapp.Handlers.GetComponentDetailsHandler">
             <summary>
             Prepares response to get-component-details request.
@@ -2407,6 +2417,19 @@
             <param name="cache">IOwnershipCache is cached Ownership table.</param>
             <param name="componentId">Id string of the component.</param>
             <returns>String as owner (email).</returns>
+        </member>
+        <member name="T:webapp.Infrastructure.AuthConfigChecker">
+            <summary>
+            This class checks the available configuration and validates
+            if necessary authentication information is provided.
+            </summary>
+        </member>
+        <member name="M:webapp.Infrastructure.AuthConfigChecker.Check(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Check the available configuration.
+            </summary>
+            <param name="configuration">App configuration.</param>
+            <returns>Return true if the application has auth configuration enabled.</returns>
         </member>
         <member name="T:webapp.Infrastructure.ConfigureSwaggerOptions">
             <summary>
