@@ -1,7 +1,11 @@
 <template>
   <div id="nav">
     <div v-if="authEnabled()">
-      <button class="btn btn-mini" @click="signout()" style="float:right;">Sign Out</button>
+      <button class="btn btn-mini btn-signout" @click="signout()">Sign Out</button>
+      <div style="float:right">
+        <p class="username">{{ user.name }}</p>
+        <p class="useremail">{{ user.email }}</p>
+      </div>
     </div>
     <div class="logo" style="cursor:pointer;">
       <router-link to="/">

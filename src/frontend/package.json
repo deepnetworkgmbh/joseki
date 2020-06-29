@@ -13,6 +13,7 @@
     "apexcharts": "^3.19.2",
     "axios": "^0.19.2",
     "balloon-css": "^1.0.4",
+    "jsonwebtoken": "^8.5.1",
     "linkify-it": "^3.0.2",
     "luxon": "^1.24.1",
     "markdown-it": "^11.0.0",

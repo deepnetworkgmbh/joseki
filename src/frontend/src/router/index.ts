@@ -10,6 +10,7 @@ import ComponentDiff from '@/views/ComponentDiff.vue';
 import CheckDetail from '@/views/CheckDetail.vue';
 import { ConfigService } from '@/services';
 import HomeComponent from '@/views/HomeComponent.vue';
+import AuthService from '@/services/AuthService';
 
 Vue.use(VueRouter);
 
@@ -78,5 +79,12 @@ const router: VueRouter = new VueRouter({
     }
   ]
 });
+
+router.beforeEach((to, from, next) => {
+  if (ConfigService.AuthEnabled && to.name !== 'LandingPage' && AuthService.getInstance().IsLoggedIn.value === 0)  {
+    next({ name: 'LandingPage' })
+  }
+  next()
+})
 
 export default router;
