@@ -26,3 +26,10 @@ azureQueue:
   imageScanRequestsQueue: image-scan-requests
   accountName: ACCOUNT_NAME
   accountKey: ACCOUNT_KEY
+
+azureAD:
+  instance: https://login.microsoftonline.com/
+  domain: yourdomain.onmicrosoft.com
+  tenantId: 00000000-0000-0000-0000-000000000000
+  clientId: 00000000-0000-0000-0000-000000000000
+  clientSecret: client-secret-here

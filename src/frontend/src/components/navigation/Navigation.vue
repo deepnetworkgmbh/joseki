@@ -1,6 +1,6 @@
 <template>
   <div id="nav">
-    <div>
+    <div v-if="authEnabled()">
       <button class="btn btn-mini" @click="signout()" style="float:right;">Sign Out</button>
     </div>
     <div class="logo" style="cursor:pointer;">

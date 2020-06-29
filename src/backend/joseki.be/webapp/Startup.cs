@@ -62,9 +62,6 @@ namespace webapp
         /// <param name="services">Services collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddProtectedWebApi(this.Configuration)
-                    .AddInMemoryTokenCaches();
-
             // TODO: add explicit CORS origins
             services.AddCors(options =>
             {
@@ -175,10 +172,16 @@ namespace webapp
 
             services.AddHostedService<InfraScoreCacheReloaderJob>();
 
-            // if (AuthConfigChecker.Check(this.Configuration))
-            // {
-            //    services.AddSingleton<IAuthorizationHandler, AllowAnonymousAuthorizationHandler>();
-            // }
+            var authEnabled = this.Configuration["DEV_JOSEKI_AUTH_ENABLED"];
+            if (authEnabled != null && bool.Parse(authEnabled) == true)
+            {
+                services.AddProtectedWebApi(this.Configuration)
+                        .AddInMemoryTokenCaches();
+            }
+            else
+            {
+                services.AddSingleton<IAuthorizationHandler, AllowAnonymousAuthorizationHandler>();
+            }
         }
 
         /// <summary>

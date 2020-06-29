@@ -29,6 +29,11 @@
         /// Azure Storage Queue related configuration.
         /// </summary>
         public AzureQueueConfig AzureQueue { get; set; }
+
+        /// <summary>
+        /// Azure Active Directiory configuration.
+        /// </summary>
+        public AzureADConfig AzureAD { get; set; }
     }
 
     /// <summary>
@@ -163,5 +168,36 @@
         /// The name of Image Scan Requests queue.
         /// </summary>
         public string ImageScanRequestsQueue { get; set; }
+    }
+
+    /// <summary>
+    /// Azure Active Directory configuration for Authentication.
+    /// </summary>
+    public class AzureADConfig
+    {
+        /// <summary>
+        /// Authorization instance (login.microsoftonline.com).
+        /// </summary>
+        public string Instance { get; set; }
+
+        /// <summary>
+        /// Domain for the application.
+        /// </summary>
+        public string Domain { get; set; }
+
+        /// <summary>
+        /// TenantId of the registered app.
+        /// </summary>
+        public string TenantId { get; set; }
+
+        /// <summary>
+        /// ClientId (appId) of the registered app.
+        /// </summary>
+        public string ClientId { get; set; }
+
+        /// <summary>
+        /// Client secret of the registered app.
+        /// </summary>
+        public string ClientSecret { get; set; }
     }
 }

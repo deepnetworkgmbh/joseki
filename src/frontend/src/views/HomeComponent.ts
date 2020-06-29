@@ -1,5 +1,6 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
 import AuthService from '@/services/AuthService';
+import { ConfigService } from '@/services';
 
 /**
  * Landing page with login option
@@ -12,15 +13,27 @@ import AuthService from '@/services/AuthService';
 export default class HomeComponent extends Vue {
 
     created() { 
-        AuthService.getInstance().IsLoggedIn.subscribe((loggedIn)=>{
-            if(loggedIn === 1) {
-                this.$router.push('overview/2020-06-19');
-            }
-        })
+        if (ConfigService.AuthEnabled) {
+            AuthService.getInstance().IsLoggedIn.subscribe((loggedIn)=>{
+                if(loggedIn === 1) {
+                    this.goHome();
+                }
+            })
+        }else{
+            this.goHome();
+        }        
+    }
+
+    goHome() {
+        this.$router.push('overview/2020-06-19');
     }
 
     isAuthenticated() {
-        return this.$msal.isAuthenticated()
+        if (ConfigService.AuthEnabled) {
+            return this.$msal.isAuthenticated()
+        }else{
+            return true;
+        }
     }
 
 

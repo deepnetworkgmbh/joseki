@@ -54,23 +54,25 @@ import msal from 'vue-msal'
   await ConfigService.Init();
   await MetaService.Init();
 
-  Vue.use(msal, {
-    auth: {
-      clientId: ConfigService.ClientID,
-      tenantId: ConfigService.TenantID,
-      redirectUri: 'http://localhost:8080/home',
-      onAuthentication: (ctx, error, response) => {
-        console.log(`====auth======`)
-        console.log(response)
-        console.log(`====auth======`)
-      },
-      onToken: (ctx, error, response) => {
-        console.log(`====token======`)
-        console.log(response)
-        console.log(`====token======`)
+  if (ConfigService.AuthEnabled) {
+    Vue.use(msal, {
+      auth: {
+        clientId: ConfigService.ClientID,
+        tenantId: ConfigService.TenantID,
+        redirectUri: 'http://localhost:8080/home',
+        onAuthentication: (ctx, error, response) => {
+          console.log(`====auth======`)
+          console.log(response)
+          console.log(`====auth======`)
+        },
+        onToken: (ctx, error, response) => {
+          console.log(`====token======`)
+          console.log(response)
+          console.log(`====token======`)
+        }
       }
-    }
-  });
+    });  
+  }
 
   new Vue({ router, render: h => h(App) }).$mount("#app");
 
