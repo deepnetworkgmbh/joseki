@@ -60,7 +60,7 @@ CLIENT_ID=$(az ad app create -o tsv \
     --display-name $APP_NAME \
     --available-to-other-tenants false \
     --oauth2-allow-implicit-flow true  \
-    --reply-urls http://localhost:4200 https://joseki.dev http://localhost:5000 \
+    --reply-urls http://localhost:8080/home \
     --app-roles @approles.json \
     --credential-description "App Secret" \
     --password "${CLIENT_SECRET}" \
