@@ -54,7 +54,7 @@ if [ "$BLOB_STORAGE_NAME" = "" ] ||
 fi
 
 echo ""
-echo "Deploying backend service to namespace $K8S_NAMESPACE"
+echo "Deploying backend service ($IMAGE_TAG) to namespace $K8S_NAMESPACE"
 echo ""
 
 BLOB_STORAGE_KEY=$(az storage account keys list --account-name "$BLOB_STORAGE_NAME" --query [0].value -o tsv)

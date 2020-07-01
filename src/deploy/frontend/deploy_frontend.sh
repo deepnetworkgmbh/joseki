@@ -40,7 +40,7 @@ do
 done
 
 echo ""
-echo "Deploying frontend service to namespace $K8S_NAMESPACE"
+echo "Deploying frontend service ($IMAGE_TAG) to namespace $K8S_NAMESPACE"
 echo ""
 
 AUTH_ENABLED=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "AUTH-ENABLED" --query value -o tsv)
