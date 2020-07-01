@@ -14,10 +14,11 @@ SP_ID=""
 SP_PASSWORD=""
 TENANT_ID=""
 K8S_SUBNET_ID=""
-
+APP_DOMAIN=""
+CLIENT_ID=""
 
 usage() {
-  echo "Usage: $0 -i K8S_SUBNET_ID -s SUBSCRIPTIONS [ -i SP_ID ] [ -p SP_PASSWORD ] [ -t TENANT_ID ] [ -b BASE_NAME ] [ -l LOCATION ] [ -n K8S_NAMESPACE ]" 1>&2 
+  echo "Usage: $0 -k K8S_SUBNET_ID -s SUBSCRIPTIONS [ -i SP_ID ] [ -p SP_PASSWORD ] [ -t TENANT_ID ] [ -b BASE_NAME ] [ -l LOCATION ] [ -n K8S_NAMESPACE ] [ -d APP_DOMAIN ]" 1>&2 
   echo ""
   echo "The script creates all Joseki components in a single run: Azure infrastructure and k8s objects"
   echo ""
@@ -31,7 +32,8 @@ usage() {
   echo "-b (optional) - base name for all Azure resources. If empty, used default 'joseki' value"
   echo "-l (optional) - Azure resources location. If empty, used default 'westeurope' value"
   echo "-n (optional) - Kubernetes namespaces to deploy services to. If empty, used default 'joseki' value"
-  echo ""
+  echo "-d (optional) - Azure AD App Domain. If empty, auth is disabled."
+  echo "-c (optional) - Azure AD App Client ID."
 }
 
 exit_abnormal() {
@@ -39,7 +41,7 @@ exit_abnormal() {
   exit 1
 }
 
-while getopts b:l:n:k:s:i:p:t: option
+while getopts b:l:n:k:s:i:p:t:d:c: option
 do
     case "${option}" in
         b) BASE_NAME=${OPTARG};;
@@ -50,6 +52,8 @@ do
         i) SP_ID=${OPTARG};;
         p) SP_PASSWORD=${OPTARG};;
         t) TENANT_ID=${OPTARG};;
+        d) APP_DOMAIN=${OPTARG};;
+        c) CLIENT_ID=${OPTARG};;
         *) # If unknown (any other) option:
           exit_abnormal
           ;;
@@ -90,10 +94,18 @@ SQLSERVER_NAME=$(< $ENV_FILE grep SQLSERVER_NAME | cut -d' ' -f2)
 SQLDB_NAME=$(< $ENV_FILE grep SQLDB_NAME | cut -d' ' -f2)
 KEY_VAULT_NAME=$(< $ENV_FILE grep KEY_VAULT_NAME | cut -d' ' -f2)
 
+# Read ClientID from ENV to see if a successful registration was done
+CLIENT_ID=$(< $ENV_FILE grep CLIENT_ID | cut -d' ' -f2)
+
 EXISTING_NS=$(kubectl get ns "$K8S_NAMESPACE" -o name --ignore-not-found)
 if [ -z "$EXISTING_NS" ]; then
   echo "Creating namespace $K8S_NAMESPACE"
   kubectl create ns "$K8S_NAMESPACE"
+fi
+
+# Call registerapp.sh if APP_DOMAIN is provided but there is no previous successful execution.
+if [[ "$APP_DOMAIN" != "" && "$CLIENT_ID" == "" ]]; then
+  (cd ./auth && ./registerapp.sh -b "$BASE_NAME" -k "$KEY_VAULT_NAME" -t "$TENANT_ID" -d "$APP_DOMAIN" -f "./../$ENV_FILE")
 fi
 
 (cd ./trivy && ./deploy_trivy_scanner.sh -t "0.3.0" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -i "$TRIVY_SCANNER_ID")
