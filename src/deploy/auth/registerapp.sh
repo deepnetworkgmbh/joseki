@@ -99,5 +99,5 @@ if [ "$ENV_FILE" != "" ]; then
   {
     echo "AD-DOMAIN $DOMAIN
 CLIENT_ID $CLIENT_ID"
-  } > "$ENV_FILE"
+  } >> "$ENV_FILE"
 fi
