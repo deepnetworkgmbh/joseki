@@ -8,10 +8,16 @@ set -e
 
 IMAGE_TAG="edge"
 K8S_NAMESPACE="joseki"
+KEY_VAULT_NAME=""
+CLIENT_ID=""
+TENANT_ID=""
+AD_DOMAIN=""
+AUTH_ENABLED="false"
 
 usage() {
-  echo "Usage: $0 [ -t IMAGE_TAG ] [ -n K8S_NAMESPACE ] " 1>&2 
+  echo "Usage: $0 -k KEY_VAULT_NAME [ -t IMAGE_TAG ] [ -n K8S_NAMESPACE ] " 1>&2 
   echo ""
+  echo "-k (required) - Key Vault name"
   echo "-t (optional) - docker image tag. If is not given, the default 'edge' value is used"
   echo "-n (optional) - kubernetes namespace to deploy scanner too. If is not given, the default 'joseki' value is used"
 }
@@ -21,9 +27,10 @@ exit_abnormal() {
   exit 1
 }
 
-while getopts t:n: option
+while getopts k:t:n: option
 do
     case "${option}" in
+        k) KEY_VAULT_NAME=${OPTARG};;
         t) IMAGE_TAG=${OPTARG};;
         n) K8S_NAMESPACE=${OPTARG};;
         *) # If unknown (any other) option:
@@ -35,6 +42,8 @@ done
 echo ""
 echo "Deploying frontend service to namespace $K8S_NAMESPACE"
 echo ""
+
+AUTH_ENABLED=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "AUTH-ENABLED" --query value -o tsv)
 
 rm -rf ./working_dir; mkdir ./working_dir
 cp "./k8s/templates/config.json.tmpl" ./working_dir/config.json
