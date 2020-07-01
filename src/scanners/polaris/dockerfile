@@ -8,6 +8,6 @@ RUN go mod download
 COPY . .
 RUN go build -o scanner-polaris .
 
-RUN apk --no-cache add ca-certificates=20191127-r3
+RUN apk --no-cache add ca-certificates~=20191127
 
 ENTRYPOINT ["./scanner-polaris"]
