@@ -18,8 +18,8 @@ FROM mcr.microsoft.com/dotnet/core/runtime:3.1.5-alpine3.12 AS cliapp
 
 # install the requirements for powershell
 RUN apk add --no-cache \
-    ca-certificates=~20191127-r3 \
-    less=~551-r0 \
+    ca-certificates=~20191127 \
+    less=~551 \
     ncurses-terminfo-base=~6.2 \
     krb5-libs=~1.18.2 \
     libgcc=~9.3.0 \
@@ -49,7 +49,7 @@ RUN chmod +x /opt/microsoft/powershell/7/pwsh
 RUN ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/powershell
 
 # Install az-sk module
-ENV AZSK_VERSION=4.9.0
+ENV AZSK_VERSION=4.10.0
 RUN powershell -Command Install-Module AzSK -RequiredVersion "$AZSK_VERSION" -Force
 
 WORKDIR /app
