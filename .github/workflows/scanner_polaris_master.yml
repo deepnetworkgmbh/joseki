@@ -75,8 +75,8 @@ jobs:
         CONFIG_PATH=examples/k8s/polaris/scanner-polaris-config.yaml
         echo "$POLARIS_CONFIG_DATA" | base64 --decode > $CONFIG_PATH
 
-        sed -i 's|#{polaris.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/polaris/kustomization.yaml
-        sed -i 's|#{polaris.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/polaris/scanner-polaris.yaml
+        sed -i '' 's|#{polaris.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/polaris/kustomization.yaml
+        sed -i '' 's|#{polaris.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/polaris/scanner-polaris.yaml
 
         # apply rbac yaml and kustomized objects
         kubectl apply -f examples/k8s/polaris/rbac.yaml

@@ -94,9 +94,9 @@ jobs:
         CONFIG_PATH=examples/k8s/azsk/scanner-azsk-config.yaml
         echo "$AZSK_CONFIG_DATA" | base64 --decode > $CONFIG_PATH
 
-        sed -i 's|#{azsk.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/azsk/kustomization.yaml
-        sed -i 's|#{azsk.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/azsk/scanner-azsk.yaml
-        sed -i 's|#{azsk.subscriptions}#|'"$SUBSCRIPTIONS"'|' examples/k8s/azsk/scanner-azsk.yaml
+        sed -i '' 's|#{azsk.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/azsk/kustomization.yaml
+        sed -i '' 's|#{azsk.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/azsk/scanner-azsk.yaml
+        sed -i '' 's|#{azsk.subscriptions}#|'"$SUBSCRIPTIONS"'|' examples/k8s/azsk/scanner-azsk.yaml
 
         # apply rbac yaml and kustomized objects
         kubectl apply -f examples/k8s/azsk/rbac.yaml

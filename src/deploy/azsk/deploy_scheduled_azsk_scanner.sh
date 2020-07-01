@@ -93,24 +93,24 @@ cp "./k8s/templates/kustomization.yaml.tmpl" ./working_dir/kustomization.yaml
 cp "./k8s/templates/rbac.yaml.tmpl" ./working_dir/rbac.yaml
 cp "./k8s/templates/scanner_azsk_cron.yaml.tmpl" ./working_dir/scanner_azsk.yaml
 
-sed -i 's|${azsk.scannerId}|'"$SCANNER_ID"'|' ./working_dir/config_scanner.yaml
-sed -i 's|${azsk.storageAccountName}|'"$BLOB_STORAGE_NAME"'|' ./working_dir/config_scanner.yaml
-sed -i 's|${azsk.containerName}|'"$CONTAINER_NAME"'|' ./working_dir/config_scanner.yaml
-sed -i 's|${azsk.storageAccountSas}|'"${STORAGE_SAS//&/\\&}"'|' ./working_dir/config_scanner.yaml
-sed -i 's|${azsk.tennantId}|'"$TENANT_ID"'|' ./working_dir/config_scanner.yaml
-sed -i 's|${azsk.spId}|'"$SP_ID"'|' ./working_dir/config_scanner.yaml
-sed -i 's|${azsk.spPassword}|'"${SP_PASSWORD//&/\\&}"'|' ./working_dir/config_scanner.yaml
+sed -i '' 's|${azsk.scannerId}|'"$SCANNER_ID"'|' ./working_dir/config_scanner.yaml
+sed -i '' 's|${azsk.storageAccountName}|'"$BLOB_STORAGE_NAME"'|' ./working_dir/config_scanner.yaml
+sed -i '' 's|${azsk.containerName}|'"$CONTAINER_NAME"'|' ./working_dir/config_scanner.yaml
+sed -i '' 's|${azsk.storageAccountSas}|'"${STORAGE_SAS//&/\\&}"'|' ./working_dir/config_scanner.yaml
+sed -i '' 's|${azsk.tennantId}|'"$TENANT_ID"'|' ./working_dir/config_scanner.yaml
+sed -i '' 's|${azsk.spId}|'"$SP_ID"'|' ./working_dir/config_scanner.yaml
+sed -i '' 's|${azsk.spPassword}|'"${SP_PASSWORD//&/\\&}"'|' ./working_dir/config_scanner.yaml
 
-sed -i 's|${azsk.scannerName}|'"$SCANNER_NAME"'|' ./working_dir/scanner_azsk.yaml
-sed -i 's|${azsk.imageTag}|'"$IMAGE_TAG"'|' ./working_dir/scanner_azsk.yaml
-sed -i 's|${azsk.subscriptions}|'"$SUBSCRIPTIONS_ARGS"'|' ./working_dir/scanner_azsk.yaml
-sed -i 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/scanner_azsk.yaml
+sed -i '' 's|${azsk.scannerName}|'"$SCANNER_NAME"'|' ./working_dir/scanner_azsk.yaml
+sed -i '' 's|${azsk.imageTag}|'"$IMAGE_TAG"'|' ./working_dir/scanner_azsk.yaml
+sed -i '' 's|${azsk.subscriptions}|'"$SUBSCRIPTIONS_ARGS"'|' ./working_dir/scanner_azsk.yaml
+sed -i '' 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/scanner_azsk.yaml
 
-sed -i 's|${azsk.scannerName}|'"$SCANNER_NAME"'|' ./working_dir/kustomization.yaml
-sed -i 's|${azsk.imageTag}|'"$IMAGE_TAG"'|' ./working_dir/kustomization.yaml
-sed -i 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/kustomization.yaml
+sed -i '' 's|${azsk.scannerName}|'"$SCANNER_NAME"'|' ./working_dir/kustomization.yaml
+sed -i '' 's|${azsk.imageTag}|'"$IMAGE_TAG"'|' ./working_dir/kustomization.yaml
+sed -i '' 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/kustomization.yaml
 
-sed -i 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/rbac.yaml
+sed -i '' 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/rbac.yaml
 
 kubectl apply -f ./working_dir/rbac.yaml
 kubectl apply -k ./working_dir
