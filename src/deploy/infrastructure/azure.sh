@@ -59,16 +59,16 @@ fi
 
 if [ "$SQL_ADMIN" = "" ]; then
   echo "Generating random SQL_ADMIN username..."
-  SQL_ADMIN=$(< /dev/urandom tr -dc 'a-zA-Z' | fold -w 16 | head -n 1)
+  SQL_ADMIN=$(< /dev/urandom LC_CTYPE=C tr -dc 'a-zA-Z' | fold -w 16 | head -n 1)
 fi
 
 TAGS="application=joseki"
 RG_NAME="rg-$BASE_NAME"
-SALT=$(< /dev/urandom tr -dc 'a-z0-9' | fold -w 4 | head -n 1)
+SALT=$(< /dev/urandom LC_CTYPE=C tr -dc 'a-z0-9' | fold -w 4 | head -n 1)
 
 SQLSERVER_NAME="sql-$BASE_NAME-$SALT"
 SQLDB_NAME="sqldb-$BASE_NAME"
-SQL_PASSWORD=$(< /dev/urandom tr -dc 'a-zA-Z0-9!$%#' | fold -w 64 | head -n 1)
+SQL_PASSWORD=$(< /dev/urandom LC_CTYPE=C tr -dc 'a-zA-Z0-9!$%#' | fold -w 64 | head -n 1)
 
 STORAGE_ACCOUNT_NAME="st$BASE_NAME$SALT"
 QUEUE_SCAN_REQUEST="image-scan-requests"
