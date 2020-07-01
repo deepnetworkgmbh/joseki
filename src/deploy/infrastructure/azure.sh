@@ -78,9 +78,14 @@ KEY_VAULT_NAME="kv-$BASE_NAME-$SALT"
 
 
 ### RESOURCE GROUP
-echo "Creating Resource Group $RG_NAME in $LOCATION"
-az group create --location "$LOCATION" --name "$RG_NAME" --tags "$TAGS"
-
+# Check if resoure group exists
+RGEXISTS=$(az group exists -n $RG_NAME)
+if [ "$RGEXISTS" = "false" ]; then
+  echo "Creating Resource Group $RG_NAME in $LOCATION"
+  az group create --location "$LOCATION" --name "$RG_NAME" --tags "$TAGS"
+else
+  echo "Resource Group $RG_NAME exists."
+fi
 
 ### SQL DATABASE
 echo "Creating SQL Server $SQLSERVER_NAME with database $SQLDB_NAME"
