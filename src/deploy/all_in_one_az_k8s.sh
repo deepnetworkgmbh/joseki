@@ -9,6 +9,9 @@ BASE_NAME="joseki"
 LOCATION="westeurope"
 K8S_NAMESPACE="joseki"
 
+FRONTEND_VERSION=$(< "../frontend/version")
+BACKEND_VERSION=$(< "../backend/version")
+
 SUBSCRIPTIONS=""
 SP_ID=""
 SP_PASSWORD=""
@@ -87,6 +90,7 @@ else
   POLARIS_SCANNER_ID=$(< $ENV_FILE grep POLARIS_SCANNER_ID | cut -d' ' -f2)
   AZSK_SCANNER_ID=$(< $ENV_FILE grep AZSK_SCANNER_ID | cut -d' ' -f2)
   TRIVY_SCANNER_ID=$(< $ENV_FILE grep TRIVY_SCANNER_ID | cut -d' ' -f2)
+
 fi
 
 STORAGE_ACCOUNT_NAME=$(< $ENV_FILE grep STORAGE_ACCOUNT_NAME | cut -d' ' -f2)
@@ -116,6 +120,6 @@ fi
 (cd ./polaris && ./deploy_scheduled_polaris_scanner.sh -t "0.3.0" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -i "$POLARIS_SCANNER_ID")
 (cd ./polaris && ./deploy_polaris_scanner_job.sh -t "0.3.0" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -i "$POLARIS_SCANNER_ID")
 
-(cd ./backend && ./deploy_backend.sh  -t "0.3.0" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -s "$SQLSERVER_NAME" -d "$SQLDB_NAME" -k "$KEY_VAULT_NAME")
+(cd ./backend && ./deploy_backend.sh  -t "$BACKEND_VERSION" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -s "$SQLSERVER_NAME" -d "$SQLDB_NAME" -k "$KEY_VAULT_NAME")
 
-(cd ./frontend && ./deploy_frontend.sh -t "0.3.2" -n "$K8S_NAMESPACE")
+(cd ./frontend && ./deploy_frontend.sh -t "$FRONTEND_VERSION" -n "$K8S_NAMESPACE" -k "$KEY_VAULT_NAME")
