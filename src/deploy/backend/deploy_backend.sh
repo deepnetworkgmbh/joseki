@@ -96,6 +96,8 @@ fi
 
 sed -i '' 's|${be.imageTag}|'"$IMAGE_TAG"'|' ./working_dir/be.yaml
 sed -i '' 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/be.yaml
+sed -i '' 's|${be.authEnabled}|'"$AUTH_ENABLED"'|' ./working_dir/be.yaml
+
 
 sed -i '' 's|${be.imageTag}|'"$IMAGE_TAG"'|' ./working_dir/kustomization.yaml
 sed -i '' 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/kustomization.yaml
