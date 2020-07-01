@@ -93,11 +93,8 @@ az keyvault secret set --vault-name "$KEY_VAULT_NAME" --name "AD-DOMAIN" --value
 az keyvault secret set --vault-name "$KEY_VAULT_NAME" --name "AD-INSTANCE" --value "$INSTANCE"
 az keyvault secret set --vault-name "$KEY_VAULT_NAME" --name "AUTH-ENABLED" --value "true"
 
-if [ "$ENV_FILE" != "" ]; then
+if [[ "$ENV_FILE" != "" && -f "$ENV_FILE" ]]; then
   ### SAVES ENV_FILE
-  touch "$ENV_FILE"
-  {
-    echo "AD-DOMAIN $DOMAIN
-CLIENT_ID $CLIENT_ID"
-  } >> "$ENV_FILE"
+  echo "AD-DOMAIN $DOMAIN" >> $ENV_FILE
+  echo "CLIENT_ID $CLIENT_ID" >> $ENV_FILE
 fi
