@@ -10,6 +10,6 @@ configMapGenerator:
   namespace: joseki
   behavior: replace
   files:
-  - scanner-polaris-config.yaml
-  - polaris-config.yaml
+  - config_scanner.yaml
+  - config_polaris.yaml
 

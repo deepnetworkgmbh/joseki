@@ -8,9 +8,9 @@ metadata:
     app: scanner-polaris
     module: scanners
 data:
-  scanner-polaris-config.yaml:  |
+  config_scanner.yaml:  |
     to-be-replaced
-  polaris-config.yaml:  |
+  config_polaris.yaml:  |
     to-be-replaced
 
 ---
@@ -33,15 +33,15 @@ spec:
           - name: scanner-polaris
             image: 'deepnetwork/joseki-scanner-polaris:#{polaris.imageTag}#'
             imagePullPolicy: Always
-            args: ["--config", "/app/scanner-polaris-config.yaml"]
+            args: ["--config", "/app/config_scanner.yaml"]
             volumeMounts:
               - name: config
-                mountPath: /app/scanner-polaris-config.yaml
-                subPath: scanner-polaris-config.yaml
+                mountPath: /app/config_scanner.yaml
+                subPath: config_scanner.yaml
                 readOnly: true
               - name: config
-                mountPath: /app/polaris-config.yaml
-                subPath: polaris-config.yaml
+                mountPath: /app/config_polaris.yaml
+                subPath: config_polaris.yaml
                 readOnly: true
             env:
               - name: SCANNER_VERSION
