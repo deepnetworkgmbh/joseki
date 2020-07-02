@@ -60,16 +60,16 @@ import msal from 'vue-msal'
         clientId: ConfigService.ClientID,
         tenantId: ConfigService.TenantID,
         redirectUri: 'http://localhost:8080/home',
-        onAuthentication: (ctx, error, response) => {
-          console.log(`====auth======`)
-          console.log(response)
-          console.log(`====auth======`)
-        },
-        onToken: (ctx, error, response) => {
-          console.log(`====token======`)
-          console.log(response)
-          console.log(`====token======`)
-        }
+        // onAuthentication: (ctx, error, response) => {
+        //   console.log(`====auth======`)
+        //   console.log(response)
+        //   console.log(`====auth======`)
+        // },
+        // onToken: (ctx, error, response) => {
+        //   console.log(`====token======`)
+        //   console.log(response)
+        //   console.log(`====token======`)
+        // }
       }
     });  
   }

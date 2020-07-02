@@ -25,7 +25,7 @@ export default class HomeComponent extends Vue {
     }
 
     goHome() {
-        this.$router.push('overview/2020-06-19');
+        this.$router.push('overview');
     }
 
     isAuthenticated() {
