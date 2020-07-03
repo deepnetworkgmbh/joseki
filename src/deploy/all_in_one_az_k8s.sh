@@ -83,9 +83,9 @@ then
   KEY_VAULT_NAME=$(< $ENV_FILE grep KEY_VAULT_NAME | cut -d' ' -f2)
   (cd ./infrastructure && ./service_principal.sh -k "$KEY_VAULT_NAME" -s "$SUBSCRIPTIONS" -i "$SP_ID" -i "$SP_PASSWORD" -i "$TENANT_ID")
 
-  POLARIS_SCANNER_ID=$(cat /proc/sys/kernel/random/uuid || /usr/bin/uuidgen | tr "[:upper:]" "[:lower:]")
-  AZSK_SCANNER_ID=$(cat /proc/sys/kernel/random/uuid || /usr/bin/uuidgen | tr "[:upper:]" "[:lower:]")
-  TRIVY_SCANNER_ID=$(cat /proc/sys/kernel/random/uuid || /usr/bin/uuidgen | tr "[:upper:]" "[:lower:]")
+  POLARIS_SCANNER_ID=$(/usr/bin/uuidgen | tr "[:upper:]" "[:lower:]")
+  AZSK_SCANNER_ID=$(/usr/bin/uuidgen | tr "[:upper:]" "[:lower:]")
+  TRIVY_SCANNER_ID=$(/usr/bin/uuidgen | tr "[:upper:]" "[:lower:]")
   echo "POLARIS_SCANNER_ID $POLARIS_SCANNER_ID
 AZSK_SCANNER_ID $AZSK_SCANNER_ID
 TRIVY_SCANNER_ID $TRIVY_SCANNER_ID" >> "$ENV_FILE"
