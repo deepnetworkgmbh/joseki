@@ -12,17 +12,35 @@ export default class App extends Vue {
   wide: boolean = false;
   // list of views that use full-width
   wideControls = ['OverviewDetail'];
+  acceptedRoles = ['JosekiReader', 'JosekiAdmin'];
 
   created() {
     const clientId = ConfigService.ClientID;
+ 
     if (ConfigService.AuthEnabled && this.$msal.isAuthenticated()) {
+      const roles = this.$msal.data.user["idToken"].roles;
+      if (roles === undefined) {
+        console.log(`[app] you don't have any Joseki roles assigned`);
+        AuthService.getInstance().NoRoleAssigned.next(true);
+        return;
+      }
+
+      const hasAcceptableRole = this.acceptedRoles.some(r=> roles.indexOf(r) >= 0)
+      if (!hasAcceptableRole) {
+        AuthService.getInstance().NoRoleAssigned.next(true);
+        console.log(`[app] you don't have any Joseki roles assigned`);
+        return;
+      }
+
+      console.log('[app] user roles', roles);
+      AuthService.getInstance().Roles.next(roles)
       console.log('[app] getting access token');
       this.$msal
           .acquireToken({ scopes: [`api://${clientId}/user_impersonation`]})
           .then((result)=> { 
               AuthService.getInstance().AccessToken.next(result.toString());
-              AuthService.getInstance().IsLoggedIn.next(1);
-              console.log('[app] setting access token');
+              AuthService.getInstance().IsLoggedIn.next(true);
+              console.log('[app] setting access token', result.toString());
           });
     }
   }

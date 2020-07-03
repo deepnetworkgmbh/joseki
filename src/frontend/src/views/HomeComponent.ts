@@ -1,6 +1,7 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
 import AuthService from '@/services/AuthService';
 import { ConfigService } from '@/services';
+import { Subscription } from 'rxjs';
 
 /**
  * Landing page with login option
@@ -12,19 +13,28 @@ import { ConfigService } from '@/services';
 @Component
 export default class HomeComponent extends Vue {
 
+    loggedSubscription?: Subscription;
+    noRoleSubscription?: Subscription;
+    hasNoRole: boolean = false;
+
     created() { 
         if (ConfigService.AuthEnabled) {
-            AuthService.getInstance().IsLoggedIn.subscribe((loggedIn)=>{
-                if(loggedIn === 1) {
-                    this.goHome();
+            this.noRoleSubscription = AuthService.getInstance().NoRoleAssigned.subscribe((hasNoRole)=>{
+                if(hasNoRole) {
+                    this.hasNoRole = true;
+                }
+            })
+            this.loggedSubscription = AuthService.getInstance().IsLoggedIn.subscribe((loggedIn)=>{
+                if(loggedIn) {
+                    this.goToOverview();
                 }
             })
         }else{
-            this.goHome();
+            this.goToOverview();
         }        
     }
 
-    goHome() {
+    goToOverview() {
         this.$router.push('overview');
     }
 
@@ -45,5 +55,11 @@ export default class HomeComponent extends Vue {
 
     logout() {
         this.$msal.signOut();
+    }
+
+    destroyed() {
+        if (this.loggedSubscription) {
+            this.loggedSubscription.unsubscribe();
+        }
     }
 }

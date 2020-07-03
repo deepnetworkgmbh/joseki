@@ -81,7 +81,7 @@ const router: VueRouter = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (ConfigService.AuthEnabled && to.name !== 'LandingPage' && AuthService.getInstance().IsLoggedIn.value === 0)  {
+  if (ConfigService.AuthEnabled && to.name !== 'LandingPage' && AuthService.getInstance().IsLoggedIn.value === false)  {
     next({ name: 'LandingPage' })
   }
   next()

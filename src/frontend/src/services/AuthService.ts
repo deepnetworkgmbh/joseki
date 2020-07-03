@@ -7,11 +7,14 @@ export default class AuthService {
 
     public User: BehaviorSubject<User> = new BehaviorSubject(new User());
     public AccessToken: BehaviorSubject<string> = new BehaviorSubject('');
-    public IsLoggedIn: BehaviorSubject<number> = new BehaviorSubject(0);
+    public IsLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    public NoRoleAssigned: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     
+    public Roles: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+
     private static instance: AuthService;
     
-    private constructor() {
+    private constructor() {  
       this.AccessToken.subscribe((token)=> {
         var decoded = jwt.decode(token);
         if(decoded) {
