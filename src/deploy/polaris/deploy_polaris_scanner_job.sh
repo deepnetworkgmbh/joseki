@@ -71,20 +71,20 @@ cp "./k8s/templates/kustomization.yaml.tmpl" ./working_dir/kustomization.yaml
 cp "./k8s/templates/rbac.yaml.tmpl" ./working_dir/rbac.yaml
 cp "./k8s/templates/scanner_polaris_job.yaml.tmpl" ./working_dir/scanner_polaris.yaml
 
-sed -i '' 's|${SCANNER_ID}|'"$SCANNER_ID"'|' ./working_dir/config_scanner.yaml
-sed -i '' 's|${BLOB_NAME}|'"$BLOB_STORAGE_NAME"'|' ./working_dir/config_scanner.yaml
-sed -i '' 's|${CONTAINER_NAME}|'"$CONTAINER_NAME"'|' ./working_dir/config_scanner.yaml
-sed -i '' 's|${SAS_TOKEN}|'"${STORAGE_SAS//&/\\&}"'|' ./working_dir/config_scanner.yaml
+sed -i 's|${SCANNER_ID}|'"$SCANNER_ID"'|' ./working_dir/config_scanner.yaml
+sed -i 's|${BLOB_NAME}|'"$BLOB_STORAGE_NAME"'|' ./working_dir/config_scanner.yaml
+sed -i 's|${CONTAINER_NAME}|'"$CONTAINER_NAME"'|' ./working_dir/config_scanner.yaml
+sed -i 's|${SAS_TOKEN}|'"${STORAGE_SAS//&/\\&}"'|' ./working_dir/config_scanner.yaml
 
-sed -i '' 's|${polaris.scannerName}|'"$SCANNER_NAME"'|' ./working_dir/scanner_polaris.yaml
-sed -i '' 's|${polaris.imageTag}|'"$IMAGE_TAG"'|' ./working_dir/scanner_polaris.yaml
-sed -i '' 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/scanner_polaris.yaml
+sed -i 's|${polaris.scannerName}|'"$SCANNER_NAME"'|' ./working_dir/scanner_polaris.yaml
+sed -i 's|${polaris.imageTag}|'"$IMAGE_TAG"'|' ./working_dir/scanner_polaris.yaml
+sed -i 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/scanner_polaris.yaml
 
-sed -i '' 's|${polaris.scannerName}|'"$SCANNER_NAME"'|' ./working_dir/kustomization.yaml
-sed -i '' 's|${polaris.imageTag}|'"$IMAGE_TAG"'|' ./working_dir/kustomization.yaml
-sed -i '' 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/kustomization.yaml
+sed -i 's|${polaris.scannerName}|'"$SCANNER_NAME"'|' ./working_dir/kustomization.yaml
+sed -i 's|${polaris.imageTag}|'"$IMAGE_TAG"'|' ./working_dir/kustomization.yaml
+sed -i 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/kustomization.yaml
 
-sed -i '' 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/rbac.yaml
+sed -i 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/rbac.yaml
 
 kubectl apply -f ./working_dir/rbac.yaml
 kubectl apply -k ./working_dir

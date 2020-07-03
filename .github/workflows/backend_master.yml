@@ -93,8 +93,8 @@ jobs:
         CONFIG_PATH=examples/k8s/backend/config.yaml
         echo "$BE_CONFIG_DATA" | base64 --decode > $CONFIG_PATH
 
-        sed -i '' 's|#{be.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/backend/kustomization.yaml
-        sed -i '' 's|#{be.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/backend/be.yaml
+        sed -i 's|#{be.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/backend/kustomization.yaml
+        sed -i 's|#{be.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/backend/be.yaml
 
         kubectl apply -f examples/k8s/backend/rbac.yaml
         kubectl apply -k examples/k8s/backend

@@ -72,13 +72,13 @@ cp "./k8s/templates/kustomization.yaml.tmpl" ./working_dir/kustomization.yaml
 cp "./k8s/templates/rbac.yaml.tmpl" ./working_dir/rbac.yaml
 cp "./k8s/templates/be.yaml.tmpl" ./working_dir/be.yaml
 
-sed -i '' 's|${be.sqlServer}|'"$SQL_SERVER_NAME"'|' ./working_dir/config.yaml
-sed -i '' 's|${be.sqlDb}|'"$SQL_DB_NAME"'|' ./working_dir/config.yaml
-sed -i '' 's|${be.sqlUsername}|'"$SQL_USERNAME"'|' ./working_dir/config.yaml
-sed -i '' 's|${be.sqlPassword}|'"$SQL_PASSWORD"'|' ./working_dir/config.yaml
-sed -i '' 's|${be.blobStorageName}|'"$BLOB_STORAGE_NAME"'|' ./working_dir/config.yaml
-sed -i '' 's|${be.blobStorageKey}|'"$BLOB_STORAGE_KEY"'|' ./working_dir/config.yaml
-sed -i '' 's|${be.blobStorageSas}|'"${BLOB_STORAGE_SAS//&/\\&}"'|' ./working_dir/config.yaml
+sed -i 's|${be.sqlServer}|'"$SQL_SERVER_NAME"'|' ./working_dir/config.yaml
+sed -i 's|${be.sqlDb}|'"$SQL_DB_NAME"'|' ./working_dir/config.yaml
+sed -i 's|${be.sqlUsername}|'"$SQL_USERNAME"'|' ./working_dir/config.yaml
+sed -i 's|${be.sqlPassword}|'"$SQL_PASSWORD"'|' ./working_dir/config.yaml
+sed -i 's|${be.blobStorageName}|'"$BLOB_STORAGE_NAME"'|' ./working_dir/config.yaml
+sed -i 's|${be.blobStorageKey}|'"$BLOB_STORAGE_KEY"'|' ./working_dir/config.yaml
+sed -i 's|${be.blobStorageSas}|'"${BLOB_STORAGE_SAS//&/\\&}"'|' ./working_dir/config.yaml
 
 if [ "$AUTH_ENABLED" = "true" ]; then
   CLIENT_ID=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "CLIENT-ID" --query value -o tsv)
@@ -87,22 +87,22 @@ if [ "$AUTH_ENABLED" = "true" ]; then
   AD_DOMAIN=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "AD-DOMAIN" --query value -o tsv)
   AD_INSTANCE=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "AD-INSTANCE" --query value -o tsv)
 
-  sed -i '' 's|${be.azInstance}|'"${AD_INSTANCE//&/\\&}"'|' ./working_dir/config.yaml
-  sed -i '' 's|${be.azDomain}|'"${AD_DOMAIN//&/\\&}"'|' ./working_dir/config.yaml
-  sed -i '' 's|${be.azTenantId}|'"${TENANT_ID//&/\\&}"'|' ./working_dir/config.yaml
-  sed -i '' 's|${be.azClientId}|'"${CLIENT_ID//&/\\&}"'|' ./working_dir/config.yaml
-  sed -i '' 's|${be.azClientSecret}|'"${CLIENT_SECRET//&/\\&}"'|' ./working_dir/config.yaml
+  sed -i 's|${be.azInstance}|'"${AD_INSTANCE//&/\\&}"'|' ./working_dir/config.yaml
+  sed -i 's|${be.azDomain}|'"${AD_DOMAIN//&/\\&}"'|' ./working_dir/config.yaml
+  sed -i 's|${be.azTenantId}|'"${TENANT_ID//&/\\&}"'|' ./working_dir/config.yaml
+  sed -i 's|${be.azClientId}|'"${CLIENT_ID//&/\\&}"'|' ./working_dir/config.yaml
+  sed -i 's|${be.azClientSecret}|'"${CLIENT_SECRET//&/\\&}"'|' ./working_dir/config.yaml
 fi
 
-sed -i '' 's|${be.imageTag}|'"$IMAGE_TAG"'|' ./working_dir/be.yaml
-sed -i '' 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/be.yaml
-sed -i '' 's|${be.authEnabled}|'"$AUTH_ENABLED"'|' ./working_dir/be.yaml
+sed -i 's|${be.imageTag}|'"$IMAGE_TAG"'|' ./working_dir/be.yaml
+sed -i 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/be.yaml
+sed -i 's|${be.authEnabled}|'"$AUTH_ENABLED"'|' ./working_dir/be.yaml
 
 
-sed -i '' 's|${be.imageTag}|'"$IMAGE_TAG"'|' ./working_dir/kustomization.yaml
-sed -i '' 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/kustomization.yaml
+sed -i 's|${be.imageTag}|'"$IMAGE_TAG"'|' ./working_dir/kustomization.yaml
+sed -i 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/kustomization.yaml
 
-sed -i '' 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/rbac.yaml
+sed -i 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/rbac.yaml
 
 kubectl apply -f ./working_dir/rbac.yaml
 kubectl apply -k ./working_dir

@@ -20,8 +20,8 @@ To provision a fake scanner perform three actions:
 
     ```bash
     IMAGE_TAG=edge
-    sed -i '' 's|#{azsk.imageTag}#|'"$IMAGE_TAG"'|' ./kustomization.yaml
-    sed -i '' 's|#{azsk.imageTag}#|'"$IMAGE_TAG"'|' ./testdata_generator.yaml
+    sed -i 's|#{azsk.imageTag}#|'"$IMAGE_TAG"'|' ./kustomization.yaml
+    sed -i 's|#{azsk.imageTag}#|'"$IMAGE_TAG"'|' ./testdata_generator.yaml
 
     kubectl create configmap azsk-test-data --from-file ./../../../src/scanners/az-sk/azsk_test_data.tar.xz
     kubectl apply -k .

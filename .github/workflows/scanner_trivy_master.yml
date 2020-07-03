@@ -93,8 +93,8 @@ jobs:
         CONFIG_PATH=examples/k8s/trivy/scanner-trivy-config.yaml
         echo "$TRIVY_CONFIG_DATA" | base64 --decode > $CONFIG_PATH
 
-        sed -i '' 's|#{trivy.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/trivy/kustomization.yaml
-        sed -i '' 's|#{trivy.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/trivy/scanner-trivy.yaml
+        sed -i 's|#{trivy.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/trivy/kustomization.yaml
+        sed -i 's|#{trivy.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/trivy/scanner-trivy.yaml
 
         kubectl apply -f examples/k8s/trivy/rbac.yaml
         kubectl apply -k examples/k8s/trivy

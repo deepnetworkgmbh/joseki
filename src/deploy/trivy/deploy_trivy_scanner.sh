@@ -67,20 +67,20 @@ cp "./k8s/templates/kustomization.yaml.tmpl" ./working_dir/kustomization.yaml
 cp "./k8s/templates/rbac.yaml.tmpl" ./working_dir/rbac.yaml
 cp "./k8s/templates/scanner_trivy.yaml.tmpl" ./working_dir/scanner_trivy.yaml
 
-sed -i '' 's|${trivy.scannerId}|'"$SCANNER_ID"'|' ./working_dir/config_scanner.yaml
-sed -i '' 's|${trivy.storageAccountName}|'"$BLOB_STORAGE_NAME"'|' ./working_dir/config_scanner.yaml
-sed -i '' 's|${trivy.containerName}|'"$CONTAINER_NAME"'|' ./working_dir/config_scanner.yaml
-sed -i '' 's|${trivy.storageAccountSas}|'"${STORAGE_SAS//&/\\&}"'|' ./working_dir/config_scanner.yaml
-sed -i '' 's|${trivy.mainQueueSas}|'"${MAIN_QUEUE_SAS//&/\\&}"'|' ./working_dir/config_scanner.yaml
-sed -i '' 's|${trivy.quarantineQueueSas}|'"${QUARANTINE_QUEUE_SAS//&/\\&}"'|' ./working_dir/config_scanner.yaml
+sed -i 's|${trivy.scannerId}|'"$SCANNER_ID"'|' ./working_dir/config_scanner.yaml
+sed -i 's|${trivy.storageAccountName}|'"$BLOB_STORAGE_NAME"'|' ./working_dir/config_scanner.yaml
+sed -i 's|${trivy.containerName}|'"$CONTAINER_NAME"'|' ./working_dir/config_scanner.yaml
+sed -i 's|${trivy.storageAccountSas}|'"${STORAGE_SAS//&/\\&}"'|' ./working_dir/config_scanner.yaml
+sed -i 's|${trivy.mainQueueSas}|'"${MAIN_QUEUE_SAS//&/\\&}"'|' ./working_dir/config_scanner.yaml
+sed -i 's|${trivy.quarantineQueueSas}|'"${QUARANTINE_QUEUE_SAS//&/\\&}"'|' ./working_dir/config_scanner.yaml
 
-sed -i '' 's|${trivy.imageTag}|'"$IMAGE_TAG"'|' ./working_dir/scanner_trivy.yaml
-sed -i '' 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/scanner_trivy.yaml
+sed -i 's|${trivy.imageTag}|'"$IMAGE_TAG"'|' ./working_dir/scanner_trivy.yaml
+sed -i 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/scanner_trivy.yaml
 
-sed -i '' 's|${trivy.imageTag}|'"$IMAGE_TAG"'|' ./working_dir/kustomization.yaml
-sed -i '' 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/kustomization.yaml
+sed -i 's|${trivy.imageTag}|'"$IMAGE_TAG"'|' ./working_dir/kustomization.yaml
+sed -i 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/kustomization.yaml
 
-sed -i '' 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/rbac.yaml
+sed -i 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/rbac.yaml
 
 kubectl apply -f ./working_dir/rbac.yaml
 kubectl apply -k ./working_dir

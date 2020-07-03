@@ -51,8 +51,8 @@ cp "./k8s/templates/kustomization.yaml.tmpl" ./working_dir/kustomization.yaml
 cp "./k8s/templates/rbac.yaml.tmpl" ./working_dir/rbac.yaml
 cp "./k8s/templates/fe.yaml.tmpl" ./working_dir/fe.yaml
 
-sed -i '' 's|${fe.apiUrl}|http://localhost:5001/api|' ./working_dir/config.json
-sed -i '' 's|${fe.timezone}|Europe/Berlin|' ./working_dir/config.json
+sed -i 's|${fe.apiUrl}|http://localhost:5001/api|' ./working_dir/config.json
+sed -i 's|${fe.timezone}|Europe/Berlin|' ./working_dir/config.json
 
 if [ "$AUTH_ENABLED" = "true" ]; then
   CLIENT_ID=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "CLIENT-ID" --query value -o tsv)
@@ -60,18 +60,18 @@ if [ "$AUTH_ENABLED" = "true" ]; then
   AD_DOMAIN=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "AD-DOMAIN" --query value -o tsv) 
 fi
 
-sed -i '' 's|${fe.authEnabled}|'"${AUTH_ENABLED//&/\\&}"'|' ./working_dir/config.json
-sed -i '' 's|${fe.domain}|'"${AD_DOMAIN//&/\\&}"'|' ./working_dir/config.json
-sed -i '' 's|${fe.tenantId}|'"${TENANT_ID//&/\\&}"'|' ./working_dir/config.json
-sed -i '' 's|${fe.clientId}|'"${CLIENT_ID//&/\\&}"'|' ./working_dir/config.json
+sed -i 's|${fe.authEnabled}|'"${AUTH_ENABLED//&/\\&}"'|' ./working_dir/config.json
+sed -i 's|${fe.domain}|'"${AD_DOMAIN//&/\\&}"'|' ./working_dir/config.json
+sed -i 's|${fe.tenantId}|'"${TENANT_ID//&/\\&}"'|' ./working_dir/config.json
+sed -i 's|${fe.clientId}|'"${CLIENT_ID//&/\\&}"'|' ./working_dir/config.json
 
-sed -i '' 's|${fe.imageTag}|'"$IMAGE_TAG"'|' ./working_dir/fe.yaml
-sed -i '' 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/fe.yaml
+sed -i 's|${fe.imageTag}|'"$IMAGE_TAG"'|' ./working_dir/fe.yaml
+sed -i 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/fe.yaml
 
-sed -i '' 's|${fe.imageTag}|'"$IMAGE_TAG"'|' ./working_dir/kustomization.yaml
-sed -i '' 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/kustomization.yaml
+sed -i 's|${fe.imageTag}|'"$IMAGE_TAG"'|' ./working_dir/kustomization.yaml
+sed -i 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/kustomization.yaml
 
-sed -i '' 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/rbac.yaml
+sed -i 's|${joseki.namespace}|'"$K8S_NAMESPACE"'|' ./working_dir/rbac.yaml
 
 kubectl apply -f ./working_dir/rbac.yaml
 kubectl apply -k ./working_dir

@@ -76,8 +76,8 @@ jobs:
         CONFIG_PATH=examples/k8s/frontend/config.json
         echo "$FE_CONFIG_DATA" | base64 --decode > $CONFIG_PATH
 
-        sed -i '' 's|#{fe.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/frontend/kustomization.yaml
-        sed -i '' 's|#{fe.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/frontend/fe.yaml
+        sed -i 's|#{fe.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/frontend/kustomization.yaml
+        sed -i 's|#{fe.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/frontend/fe.yaml
 
         kubectl apply -f examples/k8s/frontend/rbac.yaml
         kubectl apply -k examples/k8s/frontend
