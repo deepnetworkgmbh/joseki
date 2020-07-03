@@ -11,6 +11,9 @@ K8S_NAMESPACE="joseki"
 
 FRONTEND_VERSION=$(< "../frontend/version")
 BACKEND_VERSION=$(< "../backend/version")
+SCANNER_TRIVY_VERSION=$(< "../scanners/trivy/version")
+SCANNER_AZSK_VERSION=$(< "../scanners/az-sk/version")
+SCANNER_POLARIS_VERSION=$(< "../scanners/polaris/version")
 
 SUBSCRIPTIONS=""
 SP_ID=""
@@ -112,13 +115,13 @@ if [[ "$APP_DOMAIN" != "" && "$CLIENT_ID" == "" ]]; then
   (cd ./auth && ./registerapp.sh -b "$BASE_NAME" -k "$KEY_VAULT_NAME" -t "$TENANT_ID" -d "$APP_DOMAIN" -f "./../$ENV_FILE")
 fi
 
-(cd ./trivy && ./deploy_trivy_scanner.sh -t "0.3.0" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -i "$TRIVY_SCANNER_ID")
+(cd ./trivy && ./deploy_trivy_scanner.sh -t "$SCANNER_TRIVY_VERSION" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -i "$TRIVY_SCANNER_ID")
 
-(cd ./azsk && ./deploy_scheduled_azsk_scanner.sh -t "0.3.0" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -k "$KEY_VAULT_NAME" -s "$SUBSCRIPTIONS" -i "$AZSK_SCANNER_ID")
-(cd ./azsk && ./deploy_azsk_scanner_job.sh -t "0.3.0" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -k "$KEY_VAULT_NAME" -s "$SUBSCRIPTIONS" -i "$AZSK_SCANNER_ID")
+(cd ./azsk && ./deploy_scheduled_azsk_scanner.sh -t "$SCANNER_AZSK_VERSION" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -k "$KEY_VAULT_NAME" -s "$SUBSCRIPTIONS" -i "$AZSK_SCANNER_ID")
+(cd ./azsk && ./deploy_azsk_scanner_job.sh -t "$SCANNER_AZSK_VERSION" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -k "$KEY_VAULT_NAME" -s "$SUBSCRIPTIONS" -i "$AZSK_SCANNER_ID")
 
-(cd ./polaris && ./deploy_scheduled_polaris_scanner.sh -t "0.3.0" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -i "$POLARIS_SCANNER_ID")
-(cd ./polaris && ./deploy_polaris_scanner_job.sh -t "0.3.0" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -i "$POLARIS_SCANNER_ID")
+(cd ./polaris && ./deploy_scheduled_polaris_scanner.sh -t "$SCANNER_POLARIS_VERSION" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -i "$POLARIS_SCANNER_ID")
+(cd ./polaris && ./deploy_polaris_scanner_job.sh -t "$SCANNER_POLARIS_VERSION" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -i "$POLARIS_SCANNER_ID")
 
 (cd ./backend && ./deploy_backend.sh  -t "$BACKEND_VERSION" -n "$K8S_NAMESPACE" -b "$STORAGE_ACCOUNT_NAME" -s "$SQLSERVER_NAME" -d "$SQLDB_NAME" -k "$KEY_VAULT_NAME")
 
