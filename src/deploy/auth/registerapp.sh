@@ -87,11 +87,11 @@ OAUTHPERMISSIONID=$(az ad app show --id $CLIENT_ID --query "oauth2Permissions[0]
 az ad app permission add --id $CLIENT_ID --api $CLIENT_ID --api-permissions $OAUTHPERMISSIONID=Scope
 az ad app permission grant --id $CLIENT_ID --api $CLIENT_ID
 
-az keyvault secret set --vault-name "$KEY_VAULT_NAME" --name "CLIENT-ID" --value "$CLIENT_ID"
-az keyvault secret set --vault-name "$KEY_VAULT_NAME" --name "CLIENT-SECRET" --value "$CLIENT_SECRET"
+az keyvault secret set --vault-name "$KEY_VAULT_NAME" --name "AD-CLIENT-ID" --value "$CLIENT_ID"
+az keyvault secret set --vault-name "$KEY_VAULT_NAME" --name "AD-CLIENT-SECRET" --value "$CLIENT_SECRET"
 az keyvault secret set --vault-name "$KEY_VAULT_NAME" --name "AD-DOMAIN" --value "$DOMAIN"
 az keyvault secret set --vault-name "$KEY_VAULT_NAME" --name "AD-INSTANCE" --value "$INSTANCE"
-az keyvault secret set --vault-name "$KEY_VAULT_NAME" --name "AUTH-ENABLED" --value "true"
+az keyvault secret set --vault-name "$KEY_VAULT_NAME" --name "AD-AUTH-ENABLED" --value "true"
 
 if [[ "$ENV_FILE" != "" && -f "$ENV_FILE" ]]; then
   ### SAVES ENV_FILE

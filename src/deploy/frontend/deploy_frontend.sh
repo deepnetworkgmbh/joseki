@@ -43,7 +43,7 @@ echo ""
 echo "Deploying frontend service ($IMAGE_TAG) to namespace $K8S_NAMESPACE"
 echo ""
 
-AUTH_ENABLED=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "AUTH-ENABLED" --query value -o tsv)
+AUTH_ENABLED=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "AD-AUTH-ENABLED" --query value -o tsv)
 
 rm -rf ./working_dir; mkdir ./working_dir
 cp "./k8s/templates/config.json.tmpl" ./working_dir/config.json
@@ -55,7 +55,7 @@ sed -i 's|${fe.apiUrl}|http://localhost:5001/api|' ./working_dir/config.json
 sed -i 's|${fe.timezone}|Europe/Berlin|' ./working_dir/config.json
 
 if [ "$AUTH_ENABLED" = "true" ]; then
-  CLIENT_ID=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "CLIENT-ID" --query value -o tsv)
+  CLIENT_ID=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "AD-CLIENT-ID" --query value -o tsv)
   TENANT_ID=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "TENANT-ID" --query value -o tsv)
   AD_DOMAIN=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "AD-DOMAIN" --query value -o tsv) 
 fi

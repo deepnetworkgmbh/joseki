@@ -64,7 +64,7 @@ BLOB_STORAGE_SAS=$(az storage account generate-sas --account-name "$BLOB_STORAGE
 SQL_USERNAME=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "SQLADMIN" --query value -o tsv)
 SQL_PASSWORD=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "SQLPASSWORD" --query value -o tsv)
 
-AUTH_ENABLED=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "AUTH-ENABLED" --query value -o tsv)
+AUTH_ENABLED=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "AD-AUTH-ENABLED" --query value -o tsv)
 
 rm -rf ./working_dir; mkdir ./working_dir
 cp "./k8s/templates/config.yaml.tmpl" ./working_dir/config.yaml
@@ -81,8 +81,8 @@ sed -i 's|${be.blobStorageKey}|'"$BLOB_STORAGE_KEY"'|' ./working_dir/config.yaml
 sed -i 's|${be.blobStorageSas}|'"${BLOB_STORAGE_SAS//&/\\&}"'|' ./working_dir/config.yaml
 
 if [ "$AUTH_ENABLED" = "true" ]; then
-  CLIENT_ID=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "CLIENT-ID" --query value -o tsv)
-  CLIENT_SECRET=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "CLIENT-SECRET" --query value -o tsv)
+  CLIENT_ID=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "AD-CLIENT-ID" --query value -o tsv)
+  CLIENT_SECRET=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "AD-CLIENT-SECRET" --query value -o tsv)
   TENANT_ID=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "TENANT-ID" --query value -o tsv)
   AD_DOMAIN=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "AD-DOMAIN" --query value -o tsv)
   AD_INSTANCE=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "AD-INSTANCE" --query value -o tsv)
