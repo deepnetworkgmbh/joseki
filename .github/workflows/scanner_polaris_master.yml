@@ -72,7 +72,7 @@ jobs:
         echo "$KUBE_CONFIG_DATA" | base64 --decode > /tmp/config
         export KUBECONFIG=/tmp/config
 
-        CONFIG_PATH=examples/k8s/polaris/scanner-polaris-config.yaml
+        CONFIG_PATH=examples/k8s/polaris/config_scanner.yaml
         echo "$POLARIS_CONFIG_DATA" | base64 --decode > $CONFIG_PATH
 
         sed -i 's|#{polaris.imageTag}#|'"$IMAGE_TAG"'|' examples/k8s/polaris/kustomization.yaml
