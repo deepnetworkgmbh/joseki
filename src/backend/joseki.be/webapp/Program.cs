@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
+using webapp.Infrastructure;
 
 namespace webapp
 {
@@ -56,6 +57,8 @@ namespace webapp
                         configuration["ASPNETCORE_ENVIRONMENT"],
                         Environments.Production,
                         StringComparison.OrdinalIgnoreCase);
+
+                    config.ConfigureAzureAD(hostingContext, configuration);
                 })
                 .UseSerilog((ctx, config) =>
                 {

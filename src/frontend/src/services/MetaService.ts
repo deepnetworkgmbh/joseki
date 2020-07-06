@@ -44,7 +44,8 @@ export class MetaService {
                        localStorage.setItem('metadata', JSON.stringify(model));
                        //console.log('new meta stored.');
                     }
-                });                
+                })
+                .catch((err)=> console.log(err));                
     }
     
     /**

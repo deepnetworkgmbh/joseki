@@ -1,7 +1,35 @@
 import { Component, Vue } from "vue-property-decorator";
+import { ConfigService } from '@/services';
+import AuthService, { User } from '@/services/AuthService';
+import { Subscription } from 'rxjs';
 
 @Component
 export default class Navigation extends Vue {
+
+    user: User = new User();
+    userSubscription!: Subscription;
+
+    created() {
+        if(this.authEnabled()) {
+            this.userSubscription = AuthService.getInstance().User.subscribe((user)=> {
+                this.user = user;
+            });    
+        }
+    }
+
+    destroyed() {
+        if(this.authEnabled() && this.userSubscription) {
+            this.userSubscription.unsubscribe();
+        }
+    }
+
+    authEnabled() {
+        return ConfigService.AuthEnabled;
+    }
+
+    signout() {
+        this.$msal.signOut();
+    }
 
     returnClusterOverviewActive(){
         if(this.$route.path === '/cluster-overview') {

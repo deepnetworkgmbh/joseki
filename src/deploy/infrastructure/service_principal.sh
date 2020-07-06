@@ -65,6 +65,7 @@ else
     SCOPES="$SCOPES/subscriptions/$id "
   done
 
+  SALT=$(< /dev/urandom LC_CTYPE=C tr -dc 'a-z0-9' | fold -w 4 | head -n 1)
   echo "Creating 'azsk-scanner-$SALT' Service Principal within scope '$SCOPES'"
   create_sp_cmd="az ad sp create-for-rbac -n azsk-scanner-$SALT --role Reader --scopes $SCOPES -o tsv"
   SP=$($create_sp_cmd)

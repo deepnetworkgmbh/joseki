@@ -1,6 +1,5 @@
 import Vue from "vue";
 import App from "./App.vue";
-import router from "./router";
 
 import "@/styles/main.scss";
 
@@ -46,11 +45,35 @@ Vue.component('Paginator', Paginator);
 
 import { MetaService } from './services/MetaService';
 import { ConfigService } from './services/ConfigService';
+import router from "./router";
 
+import msal from 'vue-msal'
+
+// "api://2121a278-69af-4036-a7e5-575c5af6b808/user_impersonation"
 (async () => {
-
   await ConfigService.Init();
   await MetaService.Init();
+
+  if (ConfigService.AuthEnabled) {
+    Vue.use(msal, {
+      auth: {
+        clientId: ConfigService.ClientID,
+        tenantId: ConfigService.TenantID,
+        redirectUri: 'http://localhost:8080/home',
+        // onAuthentication: (ctx, error, response) => {
+        //   console.log(`====auth======`)
+        //   console.log(response)
+        //   console.log(`====auth======`)
+        // },
+        // onToken: (ctx, error, response) => {
+        //   console.log(`====token======`)
+        //   console.log(response)
+        //   console.log(`====token======`)
+        // }
+      }
+    });  
+  }
+
   new Vue({ router, render: h => h(App) }).$mount("#app");
 
 })()

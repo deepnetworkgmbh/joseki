@@ -1,4 +1,8 @@
 {
     "API_URL":"http://localhost:5001/api",
-    "TIMEZONE":"Europe/Berlin"
+    "TIMEZONE":"Europe/Berlin",
+    "AUTHENABLED": false,
+    "CLIENT_ID": "00000000-0000-0000-0000-000000000000",
+    "TENANT_ID": "00000000-0000-0000-0000-000000000000",
+    "DOMAIN": "domain.onmicrosoft.com"
 }
