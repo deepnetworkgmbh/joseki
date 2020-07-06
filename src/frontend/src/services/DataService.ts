@@ -11,8 +11,10 @@ export class DataService {
   constructor() {
     // axios.defaults.baseURL = 'http://localhost:1010/'
     AuthService.getInstance().AccessToken.subscribe((token)=>{
-      console.log('[data] setting bearer token');
-      axios.defaults.headers.common = {'Authorization': `bearer ${token}`};
+      if (ConfigService.AuthEnabled) {
+        console.log('[data] setting bearer token');
+        axios.defaults.headers.common = {'Authorization': `bearer ${token}`};  
+      }
     })
   }
 
