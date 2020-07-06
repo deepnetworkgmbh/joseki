@@ -2,7 +2,7 @@ using System.IO;
 using System.Text.Json.Serialization;
 
 using joseki.db;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -14,7 +14,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-
+using Microsoft.Identity.Web;
+using Microsoft.Identity.Web.TokenCacheProviders.InMemory;
 using Serilog.Events;
 
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -66,7 +67,11 @@ namespace webapp
             {
                 options.AddPolicy(
                     this.myAllowSpecificOrigins,
-                    builder => { builder.WithOrigins("*"); });
+                    builder =>
+                    {
+                        builder.WithOrigins("*");
+                        builder.WithHeaders("*");
+                    });
             });
             services.AddControllers()
                 .AddJsonOptions(options =>
@@ -166,6 +171,17 @@ namespace webapp
             }
 
             services.AddHostedService<InfraScoreCacheReloaderJob>();
+
+            var authEnabled = this.Configuration["DEV_JOSEKI_AUTH_ENABLED"];
+            if (authEnabled != null && bool.Parse(authEnabled) == true)
+            {
+                services.AddProtectedWebApi(this.Configuration)
+                        .AddInMemoryTokenCaches();
+            }
+            else
+            {
+                services.AddSingleton<IAuthorizationHandler, AllowAnonymousAuthorizationHandler>();
+            }
         }
 
         /// <summary>
@@ -201,6 +217,8 @@ namespace webapp
 
             app.UseHttpsRedirection();
             app.UseRouting();
+
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

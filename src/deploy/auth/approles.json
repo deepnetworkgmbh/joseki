@@ -1,0 +1,29 @@
+{
+	"accessTokenAcceptedVersion": 2,
+    "appRoles": [
+		{
+			"allowedMemberTypes": [
+				"User"
+			],
+			"description": "User has administrative access",
+			"displayName": "JosekiAdmin",
+			"id": "c20e145e-5459-4a6c-a074-b942bbd4cfe1",
+			"isEnabled": true,
+			"lang": null,
+			"origin": "Application",
+			"value": "JosekiAdmin"
+		},
+		{
+			"allowedMemberTypes": [
+				"User"
+			],
+			"description": "User can do read-only operations",
+			"displayName": "JosekiReader",
+			"id": "1b4f816e-5eaf-48b9-8613-7923830595a1",
+			"isEnabled": true,
+			"lang": null,
+			"origin": "Application",
+			"value": "JosekiReader"
+		}
+	]
+}

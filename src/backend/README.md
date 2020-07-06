@@ -42,6 +42,7 @@ Joseki has quite flexible configuration, which consist of *Database* and *Blob S
 In most cases, during the development process access to real *Blob Storage* service is not required. The rest of configuration Joseki reads from config file. Use these environment variable to tune local environment:
 
 - `DEV_JOSEKI_BLOB_STORAGE_ENABLED=false` to switch off blob-storage related code;
+- `DEV_JOSEKI_AUTH_ENABLED=false` to enable/disable authentication,
 - `JOSEKI_CONFIG_FILE_PATH` to specify absolute path to configuration file;
 - `ASPNETCORE_ENVIRONMENT=Development` to turn-off database migration.
 
@@ -62,7 +63,7 @@ To start: `dotnet run --project ./joseki.be/webapp/webapp.csproj --launch-profil
 To run the application:
 
 ```bash
-docker build --target webapp --build-arg var_environment=Development -t joseki-be:latest .
+docker build --target webapp --build-arg var_environment=Development -t joseki-backend:latest .
 JOSEKI_CONFIG_FILE_PATH=full_path_to_config_file
 docker run -v $JOSEKI_CONFIG_FILE_PATH:/app/config.yaml -e JOSEKI_CONFIG_FILE_PATH=/app/config.yaml -e DEV_JOSEKI_BLOB_STORAGE_ENABLED=false -p 5001:8080 --rm -it joseki-be:latest
 ```

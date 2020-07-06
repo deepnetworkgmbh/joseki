@@ -871,6 +871,11 @@
             Azure Storage Queue related configuration.
             </summary>
         </member>
+        <member name="P:webapp.Configuration.JosekiConfiguration.AzureAD">
+            <summary>
+            Azure Active Directiory configuration.
+            </summary>
+        </member>
         <member name="T:webapp.Configuration.DatabaseConfig">
             <summary>
             Database related configuration.
@@ -998,6 +1003,36 @@
         <member name="P:webapp.Configuration.AzureQueueConfig.ImageScanRequestsQueue">
             <summary>
             The name of Image Scan Requests queue.
+            </summary>
+        </member>
+        <member name="T:webapp.Configuration.AzureADConfig">
+            <summary>
+            Azure Active Directory configuration for Authentication.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzureADConfig.Instance">
+            <summary>
+            Authorization instance (login.microsoftonline.com).
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzureADConfig.Domain">
+            <summary>
+            Domain for the application.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzureADConfig.TenantId">
+            <summary>
+            TenantId of the registered app.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzureADConfig.ClientId">
+            <summary>
+            ClientId (appId) of the registered app.
+            </summary>
+        </member>
+        <member name="P:webapp.Configuration.AzureADConfig.ClientSecret">
+            <summary>
+            Client secret of the registered app.
             </summary>
         </member>
         <member name="T:webapp.Controllers.v0._1.AuditsController">
@@ -2145,6 +2180,16 @@
             Initializes a new instance of the <see cref="T:webapp.Exceptions.JosekiException"/> class.
             </summary>
         </member>
+        <member name="T:webapp.Handlers.AllowAnonymousAuthorizationHandler">
+            <summary>
+            This authorization handler will bypass all requirements.
+            </summary>
+        </member>
+        <member name="M:webapp.Handlers.AllowAnonymousAuthorizationHandler.HandleAsync(Microsoft.AspNetCore.Authorization.AuthorizationHandlerContext)">
+            <summary>
+            Handles authorization request.
+            </summary>
+        </member>
         <member name="T:webapp.Handlers.GetComponentDetailsHandler">
             <summary>
             Prepares response to get-component-details request.
@@ -2407,6 +2452,16 @@
             <param name="cache">IOwnershipCache is cached Ownership table.</param>
             <param name="componentId">Id string of the component.</param>
             <returns>String as owner (email).</returns>
+        </member>
+        <member name="T:webapp.Infrastructure.AzureADAppSettings">
+            <summary>
+            Configure appsettings.json on runtime because Microsoft.Identity.Web requires it to be configured.
+            </summary>
+        </member>
+        <member name="M:webapp.Infrastructure.AzureADAppSettings.ConfigureAzureAD(Microsoft.Extensions.Configuration.IConfigurationBuilder,Microsoft.Extensions.Hosting.HostBuilderContext,Microsoft.Extensions.Configuration.IConfigurationRoot)">
+            <summary>
+            Use JosekiSettings to inject AzureAD settings into appsettings.json.
+            </summary>
         </member>
         <member name="T:webapp.Infrastructure.ConfigureSwaggerOptions">
             <summary>

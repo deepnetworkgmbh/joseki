@@ -59,16 +59,16 @@ fi
 
 if [ "$SQL_ADMIN" = "" ]; then
   echo "Generating random SQL_ADMIN username..."
-  SQL_ADMIN=$(< /dev/urandom tr -dc 'a-zA-Z' | fold -w 16 | head -n 1)
+  SQL_ADMIN=$(< /dev/urandom LC_CTYPE=C tr -dc 'a-zA-Z' | fold -w 16 | head -n 1)
 fi
 
 TAGS="application=joseki"
 RG_NAME="rg-$BASE_NAME"
-SALT=$(< /dev/urandom tr -dc 'a-z0-9' | fold -w 4 | head -n 1)
+SALT=$(< /dev/urandom LC_CTYPE=C tr -dc 'a-z0-9' | fold -w 4 | head -n 1)
 
 SQLSERVER_NAME="sql-$BASE_NAME-$SALT"
 SQLDB_NAME="sqldb-$BASE_NAME"
-SQL_PASSWORD=$(< /dev/urandom tr -dc 'a-zA-Z0-9!$%#' | fold -w 64 | head -n 1)
+SQL_PASSWORD=$(< /dev/urandom LC_CTYPE=C tr -dc 'a-zA-Z0-9!$%#' | fold -w 64 | head -n 1)
 
 STORAGE_ACCOUNT_NAME="st$BASE_NAME$SALT"
 QUEUE_SCAN_REQUEST="image-scan-requests"
@@ -78,9 +78,14 @@ KEY_VAULT_NAME="kv-$BASE_NAME-$SALT"
 
 
 ### RESOURCE GROUP
-echo "Creating Resource Group $RG_NAME in $LOCATION"
-az group create --location "$LOCATION" --name "$RG_NAME" --tags "$TAGS"
-
+# Check if resoure group exists
+RGEXISTS=$(az group exists -n $RG_NAME)
+if [ "$RGEXISTS" = "false" ]; then
+  echo "Creating Resource Group $RG_NAME in $LOCATION"
+  az group create --location "$LOCATION" --name "$RG_NAME" --tags "$TAGS"
+else
+  echo "Resource Group $RG_NAME exists."
+fi
 
 ### SQL DATABASE
 echo "Creating SQL Server $SQLSERVER_NAME with database $SQLDB_NAME"
