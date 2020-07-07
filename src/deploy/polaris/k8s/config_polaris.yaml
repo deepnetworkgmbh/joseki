@@ -1,11 +1,14 @@
 checks:
+  # reliability
+  multipleReplicasForDeployment: ignore
+  priorityClassNotSet: ignore
   # resources
   cpuRequestsMissing: warning
   cpuLimitsMissing: warning
   memoryRequestsMissing: warning
   memoryLimitsMissing: warning
   # images
-  tagNotSpecified: error
+  tagNotSpecified: danger
   pullPolicyNotAlways: ignore
   # healthChecks
   readinessProbeMissing: warning
@@ -14,111 +17,70 @@ checks:
   hostNetworkSet: warning
   hostPortSet: warning
   # security
-  hostIPCSet: error
-  hostPIDSet: error
-  notReadOnlyRootFileSystem: warning
-  privilegeEscalationAllowed: error
+  hostIPCSet: danger
+  hostPIDSet: danger
+  notReadOnlyRootFilesystem: warning
+  privilegeEscalationAllowed: danger
   runAsRootAllowed: warning
-  runAsPrivileged: error
-  dangerousCapabilities: error
+  runAsPrivileged: danger
+  dangerousCapabilities: danger
   insecureCapabilities: warning
-controllersToScan:
-  - Deployments
-  - StatefulSets
-  - DaemonSets
-  - CronJobs
-  - Jobs
-  - ReplicationControllers
+
 exemptions:
   - controllerNames:
-      - dns-controller
-      - datadog-datadog
-      - kube-flannel-ds
-      - kube2iam
-      - aws-iam-authenticator
-      - datadog
-      - kube2iam
+      - kube-apiserver
+      - kube-proxy
+      - kube-scheduler
+      - kube-controller-manager
+      - kube-dns
     rules:
+      - hostPortSet
       - hostNetworkSet
-  - controllerNames:
-      - aws-iam-authenticator
-      - aws-cluster-autoscaler
-      - kube-state-metrics
-      - dns-controller
-      - external-dns
-      - dnsmasq
-      - autoscaler
-      - kubernetes-dashboard
-      - install-cni
-      - kube2iam
-    rules:
       - readinessProbeMissing
       - livenessProbeMissing
-  - controllerNames:
-      - aws-iam-authenticator
-      - nginx-ingress-controller
-      - nginx-ingress-default-backend
-      - aws-cluster-autoscaler
-      - kube-state-metrics
-      - dns-controller
-      - external-dns
-      - kubedns
-      - dnsmasq
-      - autoscaler
-      - tiller
-      - kube2iam
-    rules:
-      - runAsRootAllowed
-  - controllerNames:
-      - aws-iam-authenticator
-      - nginx-ingress-controller
-      - nginx-ingress-default-backend
-      - aws-cluster-autoscaler
-      - kube-state-metrics
-      - dns-controller
-      - external-dns
-      - kubedns
-      - dnsmasq
-      - autoscaler
-      - tiller
-      - kube2iam
-    rules:
-      - notReadOnlyRootFileSystem
-  - controllerNames:
-      - cert-manager
-      - dns-controller
-      - kubedns
-      - dnsmasq
-      - autoscaler
-      - insights-agent-goldilocks-vpa-install
-    rules:
       - cpuRequestsMissing
       - cpuLimitsMissing
       - memoryRequestsMissing
       - memoryLimitsMissing
-  - controllerNames:
-      - kube2iam
-      - kube-flannel-ds
-    rules:
+      - runAsRootAllowed
       - runAsPrivileged
-  - controllerNames:
-      - kube-hunter
-    rules:
+      - notReadOnlyRootFilesystem
       - hostPIDSet
+
   - controllerNames:
-      - polaris
-      - kube-hunter
-      - goldilocks
-      - insights-agent-goldilocks-vpa-install
+      - cert-manager
     rules:
-      - notReadOnlyRootFileSystem
-  - controllerNames:
-      - insights-agent-goldilocks-controller
-    rules:
-      - livenessProbeMissing
+      - notReadOnlyRootFilesystem
+      - runAsRootAllowed
       - readinessProbeMissing
+      - livenessProbeMissing
+      - cpuRequestsMissing
+      - cpuLimitsMissing
+      - memoryRequestsMissing
+      - memoryLimitsMissing
+
   - controllerNames:
-      - insights-agent-goldilocks-vpa-install
-      - kube-hunter
+      - nginx-ingress-controller
+    rules:
+      - privilegeEscalationAllowed
+      - insecureCapabilities
+      - runAsRootAllowed
+
+  - controllerNames:
+      - kubernetes-dashboard
+    rules:
+      - readinessProbeMissing
+      - livenessProbeMissing
+
+  - controllerNames:
+      - nginx-ingress-default-backend
+      - tiller
     rules:
       - runAsRootAllowed
+
+  - controllerNames:
+      - nginx-ingress-controller
+      - nginx-ingress-default-backend
+      - tiller
+    rules:
+      - notReadOnlyRootFilesystem

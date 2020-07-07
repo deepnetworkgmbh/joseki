@@ -307,7 +307,7 @@ namespace webapp.Audits.Processors.polaris
         {
             return value switch
             {
-                "error" => CheckSeverity.High,
+                "danger" => CheckSeverity.High,
                 "warning" => CheckSeverity.Medium,
                 _ => CheckSeverity.Unknown
             };
