@@ -36,10 +36,10 @@ namespace webapp.Handlers
                             .AsNoTracking()
                             .Select(c => new ComponentsWithRoles
                             {
-                                Id = c.ComponentId,
+                                Id = c.Id,
                                 Name = c.ComponentName,
                                 UserRoles = this.db.ComponentUserRoleRelations
-                                                .Where(x => x.ComponentId == c.ComponentId)
+                                                .Where(x => x.ComponentId == c.Id)
                                                 .Select(r => new UserRolePair
                                                 {
                                                     UserId = r.UserId,
