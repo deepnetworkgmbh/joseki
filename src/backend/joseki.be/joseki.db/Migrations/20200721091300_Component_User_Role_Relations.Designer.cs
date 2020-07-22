@@ -3,17 +3,19 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using joseki.db;
 
 namespace joseki.db.Migrations
 {
+#pragma warning disable 612, 618, CS1591
     [DbContext(typeof(JosekiDbContext))]
-    partial class JosekiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200721091300_Component_User_Role_Relations")]
+    partial class Component_User_Role_Relations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
-#pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
@@ -483,7 +485,7 @@ namespace joseki.db.Migrations
                         .WithOne("MetadataKube")
                         .HasForeignKey("joseki.db.entities.MetadataKubeEntity", "AuditId");
                 });
-#pragma warning restore 612, 618
         }
     }
+#pragma warning restore 612, 618, CS1591
 }
