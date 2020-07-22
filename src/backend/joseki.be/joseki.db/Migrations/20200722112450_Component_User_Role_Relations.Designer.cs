@@ -11,7 +11,7 @@ namespace joseki.db.Migrations
 {
 #pragma warning disable 612, 618, CS1591
     [DbContext(typeof(JosekiDbContext))]
-    [Migration("20200721091300_Component_User_Role_Relations")]
+    [Migration("20200722112450_Component_User_Role_Relations")]
     partial class Component_User_Role_Relations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -155,9 +155,8 @@ namespace joseki.db.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("ComponentId")
-                        .HasColumnType("nvarchar(36)")
-                        .HasMaxLength(36);
+                    b.Property<int>("ComponentId")
+                        .HasColumnType("int");
 
                     b.Property<string>("RoleId")
                         .HasColumnType("nvarchar(36)")

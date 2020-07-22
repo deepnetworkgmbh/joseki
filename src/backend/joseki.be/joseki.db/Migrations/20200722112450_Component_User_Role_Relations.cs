@@ -15,7 +15,7 @@ namespace joseki.db.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(maxLength: 36, nullable: true),
                     RoleId = table.Column<string>(maxLength: 36, nullable: true),
-                    ComponentId = table.Column<string>(maxLength: 36, nullable: true)
+                    ComponentId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {

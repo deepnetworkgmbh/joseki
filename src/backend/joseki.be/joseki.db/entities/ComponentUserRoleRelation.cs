@@ -29,7 +29,6 @@ namespace joseki.db.entities
         /// <summary>
         /// The Id of the component.
         /// </summary>
-        [MaxLength(36)]
-        public string ComponentId { get; set; }
+        public int ComponentId { get; set; }
     }
 }

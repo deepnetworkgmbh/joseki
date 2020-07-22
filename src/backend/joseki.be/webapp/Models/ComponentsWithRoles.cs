@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using joseki.db.entities;
 
 namespace webapp.Models
 {
@@ -7,8 +8,21 @@ namespace webapp.Models
     /// <summary>
     /// Infrastructure component with user role definition.
     /// </summary>
-    public class ComponentsWithRoles : InfrastructureComponent
+    public class ComponentsWithRoles
     {
+        /// <summary>
+        /// Id of the component.
+        /// </summary>
+        public int Id { get; set; }
+
+        /// <summary>
+        /// Name of the component.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Assigned user roles.
+        /// </summary>
         public List<UserRolePair> UserRoles { get; set; }
     }
 
