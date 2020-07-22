@@ -9,7 +9,6 @@ export default class AuthService {
     public AccessToken: BehaviorSubject<string> = new BehaviorSubject('');
     public IsLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     public NoRoleAssigned: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-    
     public Roles: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
 
     private static instance: AuthService;

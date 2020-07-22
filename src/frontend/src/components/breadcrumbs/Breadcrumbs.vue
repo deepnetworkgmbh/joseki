@@ -33,6 +33,10 @@
             <span class="slash">/</span>
         </p>
         <AdvancedFilter v-if="showFilter" style="float:left" :filter="filter" @filterUpdated="onFilterChangedFromAF" />
+        <p v-if="showAdmin">
+            <span class="slash">/</span>            
+            Administration
+        </p>
     </div>
 </template>
 <script lang="ts" src="./Breadcrumbs.ts"></script>

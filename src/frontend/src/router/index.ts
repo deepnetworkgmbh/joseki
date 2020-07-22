@@ -10,6 +10,7 @@ import ComponentDiff from '@/views/ComponentDiff.vue';
 import CheckDetail from '@/views/CheckDetail.vue';
 import { ConfigService } from '@/services';
 import HomeComponent from '@/views/HomeComponent.vue';
+import Administration from '@/views/Administration.vue';
 import AuthService from '@/services/AuthService';
 
 Vue.use(VueRouter);
@@ -75,6 +76,12 @@ const router: VueRouter = new VueRouter({
       path: "/check-detail/:checkid",
       name: "CheckDetail",
       component: CheckDetail,
+      props: true
+    },
+    {
+      path: "/admin",
+      name: "Administration",
+      component: Administration,
       props: true
     }
   ]

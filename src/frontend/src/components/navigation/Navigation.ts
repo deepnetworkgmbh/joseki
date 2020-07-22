@@ -7,14 +7,23 @@ import { Subscription } from 'rxjs';
 export default class Navigation extends Vue {
 
     user: User = new User();
+    roles: string[] = [];
     userSubscription!: Subscription;
+    roleSubscription!: Subscription;
 
     created() {
         if(this.authEnabled()) {
             this.userSubscription = AuthService.getInstance().User.subscribe((user)=> {
                 this.user = user;
             });    
+            this.roleSubscription = AuthService.getInstance().Roles.subscribe((roles)=> {
+                this.roles = roles;
+            });    
         }
+    }
+
+    get IsAdmin() {
+        return this.roles.indexOf('JosekiAdmin') !== -1;
     }
 
     destroyed() {
