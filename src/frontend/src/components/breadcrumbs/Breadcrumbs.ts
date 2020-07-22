@@ -23,6 +23,7 @@ export default class Breadcrumbs extends Vue {
     showImage: boolean = false;
     showFilter: boolean = false;
     showCheck: boolean = false;
+    showAdmin: boolean = false;
 
     getIcon(): string {
         if(this.component) {
@@ -85,98 +86,77 @@ export default class Breadcrumbs extends Vue {
     }
 
     handleRouteChange() {
+
+        this.showComponent = false;
+        this.showHistory = false;
+        this.showDiff = false;
+        this.showImage = false;
+        this.showFilter = false;
+        this.showCheck = false;
+        this.showDate = false;
+
         switch(this.$route.name) {
             case 'GeneralOverview': 
                 {
                     let date = this.$route.params.date;
                     this.showComponent = true;
                     this.showDate = true;
-                    this.showHistory = false;
-                    this.showDiff = false;
-                    this.showImage = false;
-                    this.showFilter = false;
-                    this.showCheck = false;
                     break;            
                 }
             case 'ComponentDetail': 
                 {
                     this.showComponent = true;
                     this.showDate = true;
-                    this.showHistory = false;
-                    this.showDiff = false;
-                    this.showImage = false;
-                    this.showFilter = false;
-                    this.showCheck = false;
                     break;
                 }
             case 'ComponentHistory': 
                 {
-                    this.showDate = false;
                     this.showComponent = true;
                     this.showHistory = true;
-                    this.showDiff = false;
-                    this.showImage = false;
-                    this.showFilter = false;
-                    this.showCheck = false;
                     break;
                 }
             case 'ComponentDiff': 
                 {
-                    this.showDate = false;
+
                     this.showComponent = true;
-                    this.showHistory = false;
                     this.showDiff = true;
                     this.diffdates = this.$route.params.date + ' / ' + this.$route.params.date2;
-                    this.showImage = false;
-                    this.showFilter = false;
-                    this.showCheck = false;
                     break;
                 }
             case 'OverviewDiff': 
                 {
-                    this.showDate = false;
                     this.showComponent = true;
-                    this.showHistory = false;
                     this.showDiff = true;
                     this.diffdates = this.$route.params.date + ' / ' + this.$route.params.date2;
-                    this.showImage = false;                 
-                    this.showFilter = false;
-                    this.showCheck = false;
                     break;
                 }
             case 'OverviewDetail': 
                 {
-                    this.showDate = true;
                     this.showComponent = true;
-                    this.showHistory = false;
-                    this.showDiff = false;
+                    this.showDate = true;
                     this.diffdates = '';
-                    this.showImage = false;                 
                     this.showFilter = this.$route.params.filter !== undefined;
                     this.filter = this.$route.params.filter;                    
-                    this.showCheck = false;
                     break;
                 }
             case 'ImageDetail':
                 {
                     this.showDate = true;
                     this.showComponent = true;
-                    this.showHistory = false;
-                    this.showDiff = false;
                     this.showImage = true;
                     this.imageid = this.$route.params.imageid;
-                    this.showFilter = false;
-                    this.showCheck = false;
                     break;
                 }
+            case 'Administration':
+                {
+                    this.showAdmin = true;
+                    break;
+                }
+
             case 'CheckDetail':
                 {
                     this.showDate = true;
                     this.showComponent = true;
-                    this.showHistory = false;
-                    this.showDiff = false;
-                    this.showImage = false;
-                    this.showFilter = false;
                     this.showCheck = true;
                     this.checkid = this.$route.params.checkid;
                     break;

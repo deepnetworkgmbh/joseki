@@ -5,6 +5,8 @@ import { DateTime } from 'luxon';
 import { ConfigService } from './ConfigService';
 import { CheckResultSet } from '@/models/CheckResultSet';
 import AuthService from './AuthService';
+import { JosekiUser } from '@/models/JosekiUser';
+import { ComponentWithRoles, ComponentPermissionsWithUsersAndRoles } from '@/models/ComponentWithRoles';
 
 export class DataService {
 
@@ -39,6 +41,66 @@ export class DataService {
    */
   private get apiVersion(): string {
     return '0.1'
+  }
+
+  /**
+   * Return list of users under active directory.
+   *
+   * @readonly
+   * @private
+   * @memberof DataService
+   */
+  public async getUserList(): Promise<void | JosekiUser[]> {
+    
+    let result: JosekiUser[] = []
+    let suffix = '?api-version=' + this.apiVersion;          
+    let url = this.baseUrl + "/accesscontrol/users" + suffix;
+    console.log(`[] calling ${url}`);
+
+    return axios
+      .get(url)
+      .then((response) => { result = response.data })
+      .then(() => result)
+      .catch((err) => console.log(err));
+       
+  }
+
+
+  /**
+   * Return list components, and user roles assigned per component.
+   *
+   * @readonly
+   * @private
+   * @memberof DataService
+   */
+  public async getComponentListWithRoles(): Promise<void | ComponentPermissionsWithUsersAndRoles> {
+    
+    let result = new ComponentPermissionsWithUsersAndRoles();
+    let suffix = '?api-version=' + this.apiVersion;          
+    let url = this.baseUrl + "/accesscontrol/components" + suffix;
+    console.log(`[] calling ${url}`);
+
+    return axios
+      .get(url)
+      .then((response) => { result = response.data; console.log(result) })
+      .then(() => result)
+      .catch((err) => console.log(err));
+       
+  }
+
+  public async setComponentPermissions(components: ComponentWithRoles[]): Promise<void | boolean> {
+
+    let result = false;
+    let suffix = '?api-version=' + this.apiVersion;          
+    let url = this.baseUrl + "/accesscontrol/setPermissions" + suffix;
+    console.log(`[] calling ${url}`);
+
+    return axios
+      .post(url, components)
+      .then((response) => { result = response.data.success })
+      .then(() => result)
+      .catch((err) => console.log(err));
+
   }
 
   /**

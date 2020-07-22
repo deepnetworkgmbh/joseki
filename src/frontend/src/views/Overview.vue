@@ -27,16 +27,30 @@
         </div>
       </div>
       <div class="w-2/4" style="height:420px;">
-        <apexchart :options="getPieChartOptions()" :series="getPieChartSeries()"></apexchart>
+        <apexchart v-if="!noScanHistory" :options="getPieChartOptions()" :series="getPieChartSeries()"></apexchart>
+        <div v-if="noScanHistory" style="font-size:10px;color:#444;padding:10px;"> 
+          <h1 style="font-size:16px;">Where is my Scan data?</h1> 
+          If this is a fresh install, please give it some time until scanners kick off.<br>
+          <br>
+          If not, one of the following happened;<br>       
+          - <b>scanner</b> failed to perform the audit itself. To check it, take a look at scanner logs;<br>
+          - <b>backend</b> failed to parse scan results. In such a case, dive into <b>backend</b> logs for clues.<br>
+          <br>
+          Also, you can check raw audit results at blob storage. <br>
+          <b>meta</b> file in the audit folder describes the result of the audit: _failed_, _succeeded_, and the scan related metadata.
+          <br>
+          <br>
+          This page will automatically check any scan result every 10 seconds.
+        </div>
       </div>
       <div class="w-1/4 border-l border-gray-300 top-right-panel" style="z-index:10;">
-        <div class="w-auto p-2 ml-1 mb-2">
+        <div v-if="!noScanHistory" class="w-auto p-2 ml-1 mb-2">
           <div class='text-center text-xs font-bold'>Scan History</div>
           <div style="width:100%;height:70px;">
             <apexchart height="70" :options="getAreaChartOptions()" :series="getAreaSeries()"></apexchart>
           </div>
         </div>
-        <div class="m-3 mt-0">
+        <div v-if="!noScanHistory" class="m-3 mt-0">
           <div class='text-center text-xs font-bold border-b border-gray-500'>Last 7 scans</div>
           <table class="w-full text-xs p-4">
             <tbody>
@@ -51,6 +65,9 @@
               <span class="px-4"><span class="icon-more-vertical pr-1"></span>See Scan History</span>
             </button>
           </div>
+        </div>
+        <div v-if="noScanHistory" style="padding:10px;font-size:9px;">
+          No scan history yet.<br>          
         </div>
       </div>
     </div>

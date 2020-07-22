@@ -1,25 +1,35 @@
 @import "@/styles/colors.scss";
 
 #nav {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
 
-  & > .logo {
+  .logo {
+    flex:1;
     width:150px;
     color: $color-link;
     font-size: 22px;
     font-weight: 600;
   }
 
-  & > .links a {
-    color: $color-link;
-    margin-left: 15px;
-    cursor: pointer;
-    font-size:12px;
+  .menu {
+    flex:1;
+    text-align:center;
 
-    &.router-link-exact-active {
-      padding-bottom: 2px;
-      border-bottom: solid 2px $color-link-visited;
+    & > a {
+      font-size: 11px;
+      font-weight: bold;
+      color: $color-link;
     }
   }
+
+  .user-info {
+    margin-top: 0px;
+    padding-top: 3px;
+    flex:1;
+  }
+  
 }
 
 .username {

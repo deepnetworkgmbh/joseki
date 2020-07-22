@@ -1,0 +1,67 @@
+.admin-container {
+    min-height:80vh;    
+    padding:10px;
+    flex-direction:column;
+    background-color:#eee;    
+}
+
+.tab-list {
+    @apply flex;
+    @apply border-b;
+    font-size: 11px;
+
+    & > li {
+        margin-right: 4px;
+        padding-right: 0;
+        margin-left: 0;
+    }
+}
+
+.tab-selected {
+    @apply bg-white;
+    @apply inline-block;
+    @apply border-l;
+    @apply border-t;
+    @apply border-r;
+    @apply rounded-t;
+    @apply py-1;
+    @apply px-2;
+    @apply text-blue-700;
+    @apply font-semibold;
+    @apply shadow;
+}
+
+.tab-neutral {
+    @apply bg-white;
+    @apply inline-block;
+    @apply rounded-t;
+    @apply py-1;
+    @apply px-2;
+    @apply text-blue-500;
+    @apply font-semibold;
+    @apply text-blue-800;
+    @apply shadow;
+}
+
+
+thead, tbody tr {
+    display:table;
+    width:100%;
+    table-layout:fixed;/* even columns width , fix width of table too*/
+}
+
+tbody {
+    max-height:70vh;
+    overflow:auto;
+    display:block;
+    table-layout:fixed;
+}
+
+.usercell {
+    min-width: 200px;
+}
+
+.role_select{
+    width: 90px;
+    background-color: #fff;
+}

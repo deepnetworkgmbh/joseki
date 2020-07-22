@@ -25,6 +25,7 @@ export default class Overview extends Vue {
     loadFailed: boolean = false;
     service: DataService = new DataService();
     data!: InfrastructureOverview;
+    noScanHistory: boolean = false;
 
     /**
      * Make an api call for getting the general overview data
@@ -39,16 +40,23 @@ export default class Overview extends Vue {
             .then(response => {
                 if (response) {
                     this.data = response;
-                    if(this.data.components.length>0) {
-                        let index = this.data.overall.scoreHistory.findIndex(x=>x.recordedAt.startsWith(this.date));
-                        if(index<0) { index = 0; }
-                        this.selectedDate = DateTime.fromISO(this.data.overall.scoreHistory[index].recordedAt);
-                        this.selectedScore = this.data.overall.scoreHistory[index].score;
+                    if (this.data.overall.scoreHistory.length <= 1) {
+                        this.noScanHistory = true;
+                        this.selectedDate = DateTime.fromISO(this.data.overall.date);
                         this.$emit('dateChanged', this.selectedDate.toISODate())
-                        this.$emit('componentChanged', this.data.overall.component)
+                        setTimeout(this.loadData, 10* 1000);
                     }else {
-                        this.selectedScore = 0;
-                        this.selectedDate = DateTime.utc();
+                        if(this.data.components.length>0) {
+                            let index = this.data.overall.scoreHistory.findIndex(x=>x.recordedAt.startsWith(this.date));
+                            if(index<0) { index = 0; }
+                            this.selectedDate = DateTime.fromISO(this.data.overall.scoreHistory[index].recordedAt);
+                            this.selectedScore = this.data.overall.scoreHistory[index].score;
+                            this.$emit('dateChanged', this.selectedDate.toISODate())
+                            this.$emit('componentChanged', this.data.overall.component)    
+                        }else {
+                            this.selectedScore = 0;
+                            this.selectedDate = DateTime.utc();
+                        }
                     }
                     this.loaded = true;
                     this.$forceUpdate();
