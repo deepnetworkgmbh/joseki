@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-
 using webapp.Database;
 using webapp.Database.Cache;
 using webapp.Models;
@@ -30,10 +31,16 @@ namespace webapp.Handlers
         /// Returns overall infrastructure overview object.
         /// </summary>
         /// <param name="date">date to calculate overview.</param>
+        /// <param name="filterComponentIds">list of component id's that current user can access.</param>
         /// <returns>Infrastructure overview.</returns>
-        public async Task<InfrastructureOverview> GetOverview(DateTime date)
+        public async Task<InfrastructureOverview> GetOverview(DateTime date, List<string> filterComponentIds = null)
         {
             var audits = await this.db.GetAuditedComponentsWithHistory(date);
+
+            if (filterComponentIds != null)
+            {
+                audits = audits.Where(x => filterComponentIds.Contains(x.ComponentId)).ToArray();
+            }
 
             return await this.cache.GetInfrastructureOverview(date, audits);
         }
