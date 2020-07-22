@@ -630,11 +630,12 @@
             <param name="db">Joseki database.</param>
             <param name="cache">Score cache.</param>
         </member>
-        <member name="M:webapp.Handlers.GetInfrastructureOverviewHandler.GetOverview(System.DateTime)">
+        <member name="M:webapp.Handlers.GetInfrastructureOverviewHandler.GetOverview(System.DateTime,System.Collections.Generic.List{System.String})">
             <summary>
             Returns overall infrastructure overview object.
             </summary>
             <param name="date">date to calculate overview.</param>
+            <param name="filterComponentIds">list of component id's that current user can access.</param>
             <returns>Infrastructure overview.</returns>
         </member>
         <member name="T:webapp.Handlers.GetKnowledgebaseItemsHandler">
@@ -917,6 +918,16 @@
             Container for static Joseki App roles.
             </summary>
         </member>
+        <member name="P:webapp.Authentication.JosekiAppRoles.AdminRole">
+            <summary>
+            Admin role, has access to all components.
+            </summary>
+        </member>
+        <member name="P:webapp.Authentication.JosekiAppRoles.ReaderRole">
+            <summary>
+            Reader role, has only access to assigned components.
+            </summary>
+        </member>
         <member name="M:webapp.Authentication.JosekiAppRoles.GetJosekiAppRoles">
             <summary>
             Returns all list of app roles.
@@ -926,6 +937,38 @@
         <member name="M:webapp.Authentication.JosekiAppRoles.GetUserRoles(Microsoft.Graph.IUserAppRoleAssignmentsCollectionPage)">
             <summary>
             Returns list of user's app roles.
+            </summary>
+        </member>
+        <member name="T:webapp.Authentication.UserAccessControlHandler">
+            <summary>
+            User access control handler.
+            </summary>
+        </member>
+        <member name="M:webapp.Authentication.UserAccessControlHandler.#ctor(Microsoft.Extensions.Configuration.IConfiguration,Microsoft.AspNetCore.Http.IHttpContextAccessor,joseki.db.JosekiDbContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Authentication.UserAccessControlHandler"/> class.
+            </summary>
+        </member>
+        <member name="M:webapp.Authentication.UserAccessControlHandler.IsAuthEnabled">
+            <summary>
+            Returns if Auth is enabled.
+            </summary>
+        </member>
+        <member name="M:webapp.Authentication.UserAccessControlHandler.GetUid">
+            <summary>
+            Returns the unique identifier of the user in the context.
+            </summary>
+        </member>
+        <member name="M:webapp.Authentication.UserAccessControlHandler.GetRoles">
+            <summary>
+            Returns the roles of the user in the context.
+            </summary>
+        </member>
+        <member name="M:webapp.Authentication.UserAccessControlHandler.GetFilteredComponentIds">
+            <summary>
+            Must be called when user has JosekiReader role,
+            If the user has JosekiAdmin role , filtering is not used.
+            Returns list of component Id's filtered with the assigned permissions.
             </summary>
         </member>
         <member name="T:webapp.Authentication.JosekiAppRole">
@@ -3297,6 +3340,21 @@
         <member name="T:webapp.Models.ComponentsWithRoles">
             <summary>
             Infrastructure component with user role definition.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.ComponentsWithRoles.Id">
+            <summary>
+            Id of the component.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.ComponentsWithRoles.Name">
+            <summary>
+            Name of the component.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.ComponentsWithRoles.UserRoles">
+            <summary>
+            Assigned user roles.
             </summary>
         </member>
         <member name="T:webapp.Models.UserRolePair">

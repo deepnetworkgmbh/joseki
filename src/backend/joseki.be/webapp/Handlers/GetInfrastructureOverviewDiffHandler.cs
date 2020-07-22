@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using webapp.Database;
@@ -31,11 +33,12 @@ namespace webapp.Handlers
         /// </summary>
         /// <param name="date1">The first date to calculate overview.</param>
         /// <param name="date2">The second date to calculate overview.</param>
+        /// <param name="filterComponentIds">list of component id's that current user can access.</param>
         /// <returns>Infrastructure overview diff.</returns>
-        public async Task<InfrastructureOverviewDiff> GetDiff(DateTime date1, DateTime date2)
+        public async Task<InfrastructureOverviewDiff> GetDiff(DateTime date1, DateTime date2, List<string> filterComponentIds = null)
         {
-            var infra1 = await this.GetInfrastructureOverview(date1);
-            var infra2 = await this.GetInfrastructureOverview(date2);
+            var infra1 = await this.GetInfrastructureOverview(date1, filterComponentIds);
+            var infra2 = await this.GetInfrastructureOverview(date2, filterComponentIds);
 
             return new InfrastructureOverviewDiff
             {
@@ -46,9 +49,14 @@ namespace webapp.Handlers
             };
         }
 
-        private async Task<InfrastructureOverview> GetInfrastructureOverview(DateTime date)
+        private async Task<InfrastructureOverview> GetInfrastructureOverview(DateTime date, List<string> filterComponentIds = null)
         {
             var audits = await this.db.GetAuditedComponentsWithHistory(date);
+
+            if (filterComponentIds != null)
+            {
+                audits = audits.Where(x => filterComponentIds.Contains(x.ComponentId)).ToArray();
+            }
 
             return await this.cache.GetInfrastructureOverview(date, audits);
         }

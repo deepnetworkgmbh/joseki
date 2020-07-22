@@ -24,6 +24,7 @@ using webapp.Audits.PostProcessors;
 using webapp.Audits.Processors.azsk;
 using webapp.Audits.Processors.polaris;
 using webapp.Audits.Processors.trivy;
+using webapp.Authentication;
 using webapp.BackgroundJobs;
 using webapp.BlobStorage;
 using webapp.Configuration;
@@ -157,12 +158,17 @@ namespace webapp
             services.AddTransient<GetImageScanHandler>();
             services.AddTransient<GetKnowledgebaseItemsHandler>();
             services.AddTransient<GetOverviewDetailsHandler>();
+
             services.AddTransient<ComponentPermissionsHandler>();
+            services.AddTransient<UserAccessControlHandler>();
 
             services.AddScoped<ScannerContainersWatchman>();
             services.AddScoped<SchedulerAssistant>();
             services.AddScoped<ArchiveWatchman>();
             services.AddScoped<InfraScoreCacheWatchman>();
+
+            // to be able to access httpContext on service level.
+            services.AddHttpContextAccessor();
 
             var blobsEnabled = this.Configuration["DEV_JOSEKI_BLOB_STORAGE_ENABLED"];
             if (blobsEnabled == null || bool.Parse(blobsEnabled))

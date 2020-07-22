@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using webapp.Authentication;
 using webapp.Database.Models;
 using webapp.Exceptions;
 using webapp.Handlers;
@@ -25,6 +26,11 @@ namespace webapp.Controllers.v0._1
         private static readonly ILogger Logger = Log.ForContext<AuditsController>();
 
         private readonly IServiceProvider services;
+        private readonly UserAccessControlHandler accessControlHandler;
+        private readonly bool authEnabled;
+        private readonly bool isReader;
+        private readonly bool isAdmin;
+        private readonly List<string> accessibleComponentIdList;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuditsController"/> class.
@@ -33,6 +39,30 @@ namespace webapp.Controllers.v0._1
         public AuditsController(IServiceProvider services)
         {
             this.services = services;
+            this.accessControlHandler = this.services.GetService<UserAccessControlHandler>();
+            this.authEnabled = this.accessControlHandler.IsAuthEnabled();
+
+            if (this.authEnabled)
+            {
+                var roles = this.accessControlHandler.GetRoles();
+                this.isAdmin = roles.Contains(JosekiAppRoles.AdminRole.Name);
+                this.isReader = roles.Contains(JosekiAppRoles.ReaderRole.Name);
+                if (this.isAdmin)
+                {
+                    // user is admin, return a null list
+                    this.accessibleComponentIdList = null;
+                }
+                else
+                {
+                    this.accessibleComponentIdList = this.isReader
+
+                        // user is reader, return list of component id's thats user have access.
+                        ? this.accessControlHandler.GetFilteredComponentIds().Result
+
+                        // user is neither reader nor admin, return an empty list
+                        : new List<string>();
+                }
+            }
         }
 
         /// <summary>
@@ -52,7 +82,7 @@ namespace webapp.Controllers.v0._1
                     date = DateTime.UtcNow;
                 }
 
-                var overview = await handler.GetOverview(date.Value);
+                var overview = await handler.GetOverview(date.Value, this.accessibleComponentIdList);
                 return this.StatusCode(200, overview);
             }
             catch (Exception ex)
@@ -101,7 +131,7 @@ namespace webapp.Controllers.v0._1
             {
                 var handler = this.services.GetService<GetInfrastructureOverviewDiffHandler>();
 
-                var overview = await handler.GetDiff(date1, date2);
+                var overview = await handler.GetDiff(date1, date2, this.accessibleComponentIdList);
                 return this.StatusCode(200, overview);
             }
             catch (Exception ex)
@@ -416,7 +446,7 @@ namespace webapp.Controllers.v0._1
             try
             {
                 var handler = this.services.GetService<GetOverviewDetailsHandler>();
-                var details = await handler.GetDetails(sortBy, filterBy, detailsDate, pageSize, pageIndex);
+                var details = await handler.GetDetails(sortBy, filterBy, detailsDate, pageSize, pageIndex, this.accessibleComponentIdList);
                 return this.StatusCode(200, details);
             }
             catch (Exception ex)
@@ -463,7 +493,7 @@ namespace webapp.Controllers.v0._1
             try
             {
                 var handler = this.services.GetService<GetOverviewDetailsHandler>();
-                var details = await handler.GetAutoCompleteData(filterBy, detailsDate, omitEmpty);
+                var details = await handler.GetAutoCompleteData(filterBy, detailsDate, omitEmpty, this.accessibleComponentIdList);
                 return this.StatusCode(200, details);
             }
             catch (Exception ex)
