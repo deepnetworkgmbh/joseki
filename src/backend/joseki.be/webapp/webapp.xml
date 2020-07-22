@@ -491,6 +491,478 @@
             Represents azsk scanner.
             </summary>
         </member>
+        <member name="T:webapp.Handlers.AllowAnonymousAuthorizationHandler">
+            <summary>
+            This authorization handler will bypass all requirements.
+            </summary>
+        </member>
+        <member name="M:webapp.Handlers.AllowAnonymousAuthorizationHandler.HandleAsync(Microsoft.AspNetCore.Authorization.AuthorizationHandlerContext)">
+            <summary>
+            Handles authorization request.
+            </summary>
+        </member>
+        <member name="T:webapp.Handlers.ComponentPermissionsHandler">
+            <summary>
+            Returns the list of components joint with the granular user roles.
+            </summary>
+        </member>
+        <member name="M:webapp.Handlers.ComponentPermissionsHandler.#ctor(joseki.db.JosekiDbContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Handlers.ComponentPermissionsHandler"/> class.
+            </summary>
+            <param name="db">Joseki database object.</param>
+        </member>
+        <member name="M:webapp.Handlers.ComponentPermissionsHandler.GetUserPermissionsOnComponents">
+            <summary>
+            Returns list of components with user roles.
+            </summary>
+        </member>
+        <member name="M:webapp.Handlers.ComponentPermissionsHandler.SetUserPermissionsOnComponents(System.Collections.Generic.List{webapp.Models.ComponentsWithRoles})">
+            <summary>
+            Updates component-user-role relations.
+            </summary>
+            <param name="update">List of updated components with new user-role definition.</param>
+        </member>
+        <member name="T:webapp.Handlers.GetComponentDetailsHandler">
+            <summary>
+            Prepares response to get-component-details request.
+            </summary>0
+        </member>
+        <member name="M:webapp.Handlers.GetComponentDetailsHandler.#ctor(joseki.db.JosekiDbContext,webapp.Database.Cache.IInfrastructureScoreCache,webapp.Handlers.GetKnowledgebaseItemsHandler,webapp.Database.Cache.IOwnershipCache)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Handlers.GetComponentDetailsHandler"/> class.
+            </summary>
+            <param name="db">Joseki database object.</param>
+            <param name="cache">Score cache.</param>
+            <param name="docsHandler">Knowledgebase items handler.</param>
+            <param name="ownershipCache">Ownership cache using OwnershipEntity.</param>
+        </member>
+        <member name="M:webapp.Handlers.GetComponentDetailsHandler.GetDetails(System.String,System.DateTime)">
+            <summary>
+            Returns infrastructure history for requested component.
+            </summary>
+            <param name="componentId">Component identifier.</param>
+            <param name="date">The date to get details for.</param>
+            <returns>Component details.</returns>
+        </member>
+        <member name="T:webapp.Handlers.GetImageScanHandler">
+            <summary>
+            Prepares response to get-image-scan-details request.
+            </summary>0
+        </member>
+        <member name="M:webapp.Handlers.GetImageScanHandler.#ctor(joseki.db.JosekiDbContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Handlers.GetImageScanHandler"/> class.
+            </summary>
+            <param name="db">Joseki database object.</param>
+        </member>
+        <member name="M:webapp.Handlers.GetImageScanHandler.GetHistory(System.String)">
+            <summary>
+            Returns Image Scan details history for requested Tag.
+            </summary>
+            <param name="imageTag">Image full tag.</param>
+            <returns>Image scan details.</returns>
+        </member>
+        <member name="M:webapp.Handlers.GetImageScanHandler.GetDetails(System.String,System.DateTime)">
+            <summary>
+            Returns Image Scan details for requested Tag and Date.
+            </summary>
+            <param name="imageTag">Image full tag.</param>
+            <param name="date">The date to get details for.</param>
+            <returns>Image scan details.</returns>
+        </member>
+        <member name="M:webapp.Handlers.GetImageScanHandler.GetCounters(System.String,System.DateTime)">
+            <summary>
+            Returns only CVE counters for Image Scan at requested Date.
+            </summary>
+            <param name="imageTag">Image full tag.</param>
+            <param name="date">The date to get details for.</param>
+            <returns>Image scan details.</returns>
+        </member>
+        <member name="T:webapp.Handlers.GetInfrastructureHistoryHandler">
+            <summary>
+            Prepares response to get-infrastructure-history request.
+            </summary>
+        </member>
+        <member name="M:webapp.Handlers.GetInfrastructureHistoryHandler.#ctor(joseki.db.JosekiDbContext,webapp.Database.Cache.IInfrastructureScoreCache)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Handlers.GetInfrastructureHistoryHandler"/> class.
+            </summary>
+            <param name="db">Joseki database object.</param>
+            <param name="cache">Score cache.</param>
+        </member>
+        <member name="M:webapp.Handlers.GetInfrastructureHistoryHandler.GetHistory(System.String)">
+            <summary>
+            Returns infrastructure history for requested component.
+            </summary>
+            <param name="componentId">Component identifier.</param>
+            <returns>Infrastructure history.</returns>
+        </member>
+        <member name="T:webapp.Handlers.GetInfrastructureOverviewDiffHandler">
+            <summary>
+            Prepares response to get-overall-infrastructure-diff request.
+            </summary>
+        </member>
+        <member name="M:webapp.Handlers.GetInfrastructureOverviewDiffHandler.#ctor(webapp.Database.IJosekiDatabase,webapp.Database.Cache.IInfrastructureScoreCache)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Handlers.GetInfrastructureOverviewDiffHandler"/> class.
+            </summary>
+            <param name="db">Joseki database.</param>
+            <param name="cache">Score cache.</param>
+        </member>
+        <member name="M:webapp.Handlers.GetInfrastructureOverviewDiffHandler.GetDiff(System.DateTime,System.DateTime)">
+            <summary>
+            Returns overall infrastructure overview objects for two dates.
+            </summary>
+            <param name="date1">The first date to calculate overview.</param>
+            <param name="date2">The second date to calculate overview.</param>
+            <returns>Infrastructure overview diff.</returns>
+        </member>
+        <member name="T:webapp.Handlers.GetInfrastructureOverviewHandler">
+            <summary>
+            Prepares response to get-overall-infrastructure request.
+            </summary>
+        </member>
+        <member name="M:webapp.Handlers.GetInfrastructureOverviewHandler.#ctor(webapp.Database.IJosekiDatabase,webapp.Database.Cache.IInfrastructureScoreCache)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Handlers.GetInfrastructureOverviewHandler"/> class.
+            </summary>
+            <param name="db">Joseki database.</param>
+            <param name="cache">Score cache.</param>
+        </member>
+        <member name="M:webapp.Handlers.GetInfrastructureOverviewHandler.GetOverview(System.DateTime)">
+            <summary>
+            Returns overall infrastructure overview object.
+            </summary>
+            <param name="date">date to calculate overview.</param>
+            <returns>Infrastructure overview.</returns>
+        </member>
+        <member name="T:webapp.Handlers.GetKnowledgebaseItemsHandler">
+            <summary>
+            Encapsulates GET operations for Knowledgebase item.
+            </summary>
+        </member>
+        <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.#ctor(joseki.db.JosekiDbContext,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Handlers.GetKnowledgebaseItemsHandler"/> class.
+            </summary>
+            <param name="db">Joseki database object.</param>
+            <param name="rootPath">Root path for the files.</param>
+        </member>
+        <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.GetItemById(System.String)">
+            <summary>
+            Tries to get item from the file identifier.
+            </summary>
+            <param name="id">Knowledgebase item identifier.</param>
+            <returns>Knowledgebase item content or default NotFound entity.</returns>
+        </member>
+        <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.GetItemsByIds(System.String[])">
+            <summary>
+            Tries to get items from the Docs folder by their public identifiers.
+            </summary>
+            <param name="ids">Knowledgebase item identifiers.</param>
+            <returns>Found knowledgebase items.</returns>
+        </member>
+        <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.GetAll">
+            <summary>
+            Returns all knowledgebase items from Docs.
+            </summary>
+            <returns>All Knowledgebase items.</returns>
+        </member>
+        <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.GetMetadataItems">
+            <summary>
+            Returns all metadata items from Docs.
+            </summary>
+            <returns>Metadata items.</returns>
+        </member>
+        <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.AddItem(webapp.Models.KnowledgebaseItem)">
+            <summary>
+            Creates a file under path for item.
+            </summary>
+            <param name="item">KnowledgebaseItem.</param>
+        </member>
+        <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.UpdateItem(webapp.Models.KnowledgebaseItem)">
+            <summary>
+            Updates a file under path for item.
+            </summary>
+            <param name="item">KnowledgebaseItem.</param>
+        </member>
+        <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.ExtractIdFromPath(System.String)">
+            <summary>
+            Extracts id of document from requested path.
+            </summary>
+            <param name="path">Path of the document.</param>
+            <returns>id of the document.</returns>
+        </member>
+        <member name="T:webapp.Handlers.GetOverviewDetailsHandler">
+            <summary>
+            Prepares response to get-overview-details request.
+            </summary>
+        </member>
+        <member name="M:webapp.Handlers.GetOverviewDetailsHandler.#ctor(joseki.db.JosekiDbContext,webapp.Database.Cache.IOwnershipCache)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Handlers.GetOverviewDetailsHandler"/> class.
+            </summary>
+            <param name="db">Joseki database object.</param>
+            <param name="ownershipCache">Ownership cache using OwnershipEntity.</param>
+        </member>
+        <member name="M:webapp.Handlers.GetOverviewDetailsHandler.GetDetails(System.String,System.String,System.DateTime,System.Int32,System.Int32)">
+            <summary>
+            Returns CheckResult set for requested date, filtered and sorted.
+            </summary>
+            <param name="sortBy">The ordering parameters as a string, concated by ,.</param>
+            <param name="filterBy">The filtering parameters as a string, concated by ,.</param>
+            <param name="date">The date to get details for.</param>
+            <param name="pageSize">Size of each result set.</param>
+            <param name="pageIndex">Index of each result set.</param>
+            <returns>list of CheckResultSet.</returns>
+        </member>
+        <member name="M:webapp.Handlers.GetOverviewDetailsHandler.GetAutoCompleteData(System.String,System.DateTime,System.Boolean)">
+            <summary>
+            Returns autocomplete data for selected date.
+            </summary>
+            <param name="filterBy">The filtering parameters as a string, concated by ,.</param>
+            <param name="date">The date to get details for.</param>
+            <param name="omitEmpty">Filter out the checks with no result in their segment.</param>
+            <returns>string array.</returns>
+        </member>
+        <member name="M:webapp.Handlers.GetOverviewDetailsHandler.GetChecks(System.DateTime)">
+            <summary>
+            Returns autocomplete data for selected field.
+            </summary>
+            <param name="date">The date to get details for.</param>
+            <returns>string array.</returns>
+        </member>
+        <member name="M:webapp.Handlers.GetOverviewDetailsHandler.SortCheckList(System.Collections.Generic.List{webapp.Models.OverviewCheck},System.String)">
+            <summary>
+            Sorts check list according to sortBy.
+            (currently only sorted by one column).
+            </summary>
+            <param name="checks">List of OverviewChecks.</param>
+            <param name="sortBy">string containing sort information.</param>
+            <returns>Sorted list of OverviewChecks.</returns>
+        </member>
+        <member name="T:webapp.Handlers.InfraScoreExtensions">
+            <summary>
+            Common Infra-Score extensions.
+            </summary>
+        </member>
+        <member name="M:webapp.Handlers.InfraScoreExtensions.GetInfrastructureOverview(webapp.Database.Cache.IInfrastructureScoreCache,System.DateTime,webapp.Database.Models.Audit[])">
+            <summary>
+            Composes an infrastructure overview object for a requested date and provided audits.
+            </summary>
+            <param name="cache">Extended cache object.</param>
+            <param name="date">The date to calculate overview for.</param>
+            <param name="audits">List of audits to include into overview.</param>
+            <returns>Complete infrastructure-overview object.</returns>
+        </member>
+        <member name="M:webapp.Handlers.InfraScoreExtensions.GetInfrastructureHistory(webapp.Database.Cache.IInfrastructureScoreCache,System.String,System.String)">
+            <summary>
+            Composes a component history array.
+            </summary>
+            <param name="cache">Extended cache object.</param>
+            <param name="componentId">Component identifier.</param>
+            <param name="componentName">Component name.</param>
+            <returns>Complete component history object.</returns>
+        </member>
+        <member name="M:webapp.Handlers.InfraScoreExtensions.GetCategory(System.String)">
+            <summary>
+            Gets component category by identifier.
+            </summary>
+            <param name="componentId">Component unique identifier.</param>
+            <returns>Component category.</returns>
+        </member>
+        <member name="T:webapp.Handlers.OwnershipExtensions">
+            <summary>
+            IOwnershipCache extension to query component ownership.
+            </summary>
+        </member>
+        <member name="M:webapp.Handlers.OwnershipExtensions.GetOwner(webapp.Database.Cache.IOwnershipCache,System.String)">
+            <summary>
+            Returns an owner using a componentId.
+            Uses IOwnershipCache to speed up lookup.
+            </summary>
+            <param name="cache">IOwnershipCache is cached Ownership table.</param>
+            <param name="componentId">Id string of the component.</param>
+            <returns>String as owner (email).</returns>
+        </member>
+        <member name="T:webapp.Infrastructure.AzureADAppSettings">
+            <summary>
+            Configure appsettings.json on runtime because Microsoft.Identity.Web requires it to be configured.
+            </summary>
+        </member>
+        <member name="M:webapp.Infrastructure.AzureADAppSettings.ConfigureAzureAD(Microsoft.Extensions.Configuration.IConfigurationBuilder,Microsoft.Extensions.Hosting.HostBuilderContext,Microsoft.Extensions.Configuration.IConfigurationRoot)">
+            <summary>
+            Use JosekiSettings to inject AzureAD settings into appsettings.json.
+            </summary>
+        </member>
+        <member name="T:webapp.Infrastructure.ConfigureSwaggerOptions">
+            <summary>
+            Configures the Swagger generation options.
+            </summary>
+            <remarks>This allows API versioning to define a Swagger document per API version after the
+            <see cref="T:Microsoft.AspNetCore.Mvc.ApiExplorer.IApiVersionDescriptionProvider"/> service has been resolved from the service container.</remarks>
+        </member>
+        <member name="M:webapp.Infrastructure.ConfigureSwaggerOptions.#ctor(Microsoft.AspNetCore.Mvc.ApiExplorer.IApiVersionDescriptionProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Infrastructure.ConfigureSwaggerOptions"/> class.
+            </summary>
+            <param name="provider">The <see cref="T:Microsoft.AspNetCore.Mvc.ApiExplorer.IApiVersionDescriptionProvider">provider</see> used to generate Swagger documents.</param>
+        </member>
+        <member name="M:webapp.Infrastructure.ConfigureSwaggerOptions.Configure(Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions)">
+            <inheritdoc />
+        </member>
+        <member name="T:webapp.Infrastructure.HttpRequestLoggingMiddleware">
+            <summary>
+            Writes logs in common format for any incoming HTTP request.
+            </summary>
+        </member>
+        <member name="M:webapp.Infrastructure.HttpRequestLoggingMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Infrastructure.HttpRequestLoggingMiddleware"/> class.
+            </summary>
+            <param name="next">Next <see cref="T:Microsoft.AspNetCore.Http.RequestDelegate"/> to execute. </param>
+        </member>
+        <member name="M:webapp.Infrastructure.HttpRequestLoggingMiddleware.Invoke(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            Executes a middleware.
+            </summary>
+            <param name="httpContext">Current <see cref="T:Microsoft.AspNetCore.Http.HttpContext"/>.</param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous operation.</returns>
+        </member>
+        <member name="M:webapp.Infrastructure.HttpRequestLoggingMiddleware.GetElapsedMilliseconds(System.Int64,System.Int64)">
+            <summary>
+            Get elapsed milliseconds based on elapsed ticks.
+            </summary>
+            <param name="start">Ticks on a start.</param>
+            <param name="stop">Ticks in the end.</param>
+            <returns>Elapsed milliseconds.</returns>
+        </member>
+        <member name="T:webapp.Infrastructure.JosekiStateManager">
+            <summary>
+            Knows when Joseki is Ready and Healthy.
+            </summary>
+        </member>
+        <member name="M:webapp.Infrastructure.JosekiStateManager.ArchiverIsInitialized">
+            <summary>
+            Marks Archiver as initialized.
+            </summary>
+        </member>
+        <member name="M:webapp.Infrastructure.JosekiStateManager.ScannerContainersIsInitialized">
+            <summary>
+            Marks Scanner Containers watchman as initialized.
+            </summary>
+        </member>
+        <member name="M:webapp.Infrastructure.JosekiStateManager.ScoreCacheIsInitialized">
+            <summary>
+            Marks Infrastructure Score cache as initialized.
+            </summary>
+        </member>
+        <member name="P:webapp.Infrastructure.JosekiStateManager.Ready">
+            <summary>
+            Joseki is ready to receive traffic, when infra-score cache is pre-loaded.
+            </summary>
+        </member>
+        <member name="P:webapp.Infrastructure.JosekiStateManager.Live">
+            <summary>
+            Joseki is not in "live" state, if any watchman is not properly started.
+            </summary>
+        </member>
+        <member name="T:webapp.Infrastructure.Watchman">
+            <summary>
+            Indicates what watchmen were started.
+            </summary>
+        </member>
+        <member name="F:webapp.Infrastructure.Watchman.None">
+            <summary>
+            No pre-processors has been finished.
+            </summary>
+        </member>
+        <member name="F:webapp.Infrastructure.Watchman.ScoreCache">
+            <summary>
+            Infrastructure score cache is warmed up.
+            </summary>
+        </member>
+        <member name="F:webapp.Infrastructure.Watchman.Archiver">
+            <summary>
+            Archiver is started.
+            </summary>
+        </member>
+        <member name="F:webapp.Infrastructure.Watchman.ScannerContainers">
+            <summary>
+            Scanner Containers watchman is started.
+            </summary>
+        </member>
+        <member name="F:webapp.Infrastructure.Watchman.All">
+            <summary>
+            All are initialized.
+            </summary>
+        </member>
+        <member name="T:webapp.Infrastructure.SwaggerDefaultValues">
+            <summary>
+            Represents the Swagger/Swashbuckle operation filter used to document the implicit API version parameter.
+            </summary>
+            <remarks>This <see cref="T:Swashbuckle.AspNetCore.SwaggerGen.IOperationFilter"/> is only required due to bugs in the <see cref="T:Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator"/>.
+            Once they are fixed and published, this class can be removed.</remarks>
+        </member>
+        <member name="M:webapp.Infrastructure.SwaggerDefaultValues.Apply(Microsoft.OpenApi.Models.OpenApiOperation,Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext)">
+            <summary>
+            Applies the filter to the specified operation using the given context.
+            </summary>
+            <param name="operation">The operation to apply the filter to.</param>
+            <param name="context">The current operation filter context.</param>
+        </member>
+        <member name="T:webapp.Authentication.JosekiAppRoles">
+            <summary>
+            Container for static Joseki App roles.
+            </summary>
+        </member>
+        <member name="M:webapp.Authentication.JosekiAppRoles.GetJosekiAppRoles">
+            <summary>
+            Returns all list of app roles.
+            Role Guids are staticly defined and being used in App registration on Azure AD.
+            </summary>
+        </member>
+        <member name="M:webapp.Authentication.JosekiAppRoles.GetUserRoles(Microsoft.Graph.IUserAppRoleAssignmentsCollectionPage)">
+            <summary>
+            Returns list of user's app roles.
+            </summary>
+        </member>
+        <member name="T:webapp.Authentication.JosekiAppRole">
+            <summary>
+            Joseki App Role.
+            </summary>
+        </member>
+        <member name="P:webapp.Authentication.JosekiAppRole.Id">
+            <summary>
+            Id of role.
+            </summary>
+        </member>
+        <member name="P:webapp.Authentication.JosekiAppRole.Name">
+            <summary>
+            Name of role.
+            </summary>
+        </member>
+        <member name="T:webapp.Authentication.JosekiUser">
+            <summary>
+            Active Directory User.
+            </summary>
+        </member>
+        <member name="P:webapp.Authentication.JosekiUser.Id">
+            <summary>
+            Id of user.
+            </summary>
+        </member>
+        <member name="P:webapp.Authentication.JosekiUser.Name">
+            <summary>
+            Name of user.
+            </summary>
+        </member>
+        <member name="P:webapp.Authentication.JosekiUser.AppRoles">
+            <summary>
+            User's joseki app roles.
+            </summary>
+        </member>
         <member name="T:webapp.BackgroundJobs.ArchiverJob">
             <summary>
             The object is responsible for moving processed audits to Archive.
@@ -1033,6 +1505,38 @@
         <member name="P:webapp.Configuration.AzureADConfig.ClientSecret">
             <summary>
             Client secret of the registered app.
+            </summary>
+        </member>
+        <member name="T:webapp.Controllers.v0_1.AccessControlController">
+            <summary>
+            Azure AD endpoints.
+            </summary>
+        </member>
+        <member name="M:webapp.Controllers.v0_1.AccessControlController.#ctor(webapp.Configuration.ConfigurationParser,System.IServiceProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:webapp.Controllers.v0_1.AccessControlController"/> class.
+            </summary>
+            <param name="config">ConfigurationParser.</param>
+            <param name="services">DI container.</param>
+        </member>
+        <member name="M:webapp.Controllers.v0_1.AccessControlController.GetAllUsers">
+            <summary>
+            Return all users in an active directory.
+            </summary>
+        </member>
+        <member name="M:webapp.Controllers.v0_1.AccessControlController.GetAllComponents">
+            <summary>
+            Return all components with user permissions.
+            </summary>
+        </member>
+        <member name="M:webapp.Controllers.v0_1.AccessControlController.SetPermissions(System.Collections.Generic.List{webapp.Models.ComponentsWithRoles})">
+            <summary>
+            Set user/component/role relations.
+            </summary>
+        </member>
+        <member name="M:webapp.Controllers.v0_1.AccessControlController.GetUsers">
+            <summary>
+            Return list of users in azure ad.
             </summary>
         </member>
         <member name="T:webapp.Controllers.v0._1.AuditsController">
@@ -2356,9 +2860,9 @@
         </member>
         <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.ExtractIdFromFileName(System.String)">
             <summary>
-            Extracts id of document from requested file name.
+            Extracts id of document from requested path.
             </summary>
-            <param name="fileName">File name.</param>
+            <param name="path">Path of the document.</param>
             <returns>id of the document.</returns>
         </member>
         <member name="T:webapp.Handlers.GetOverviewDetailsHandler">
@@ -2789,6 +3293,16 @@
             </summary>
             <param name="type">type of collection.</param>
             <param name="name">name of collection.</param>
+        </member>
+        <member name="T:webapp.Models.ComponentsWithRoles">
+            <summary>
+            Infrastructure component with user role definition.
+            </summary>
+        </member>
+        <member name="T:webapp.Models.UserRolePair">
+            <summary>
+            User-Role pair to be used within ComponentsWithRoles.
+            </summary>
         </member>
         <member name="T:webapp.Models.ContainerImageScanResult">
             <summary>
