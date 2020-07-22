@@ -10,6 +10,36 @@ namespace webapp.Authentication
     public static class JosekiAppRoles
     {
         /// <summary>
+        /// Admin role, has access to all components.
+        /// </summary>
+        public static JosekiAppRole AdminRole
+        {
+            get
+            {
+                return new JosekiAppRole
+                {
+                    Id = "c20e145e-5459-4a6c-a074-b942bbd4cfe1",
+                    Name = "JosekiAdmin",
+                };
+            }
+        }
+
+        /// <summary>
+        /// Reader role, has only access to assigned components.
+        /// </summary>
+        public static JosekiAppRole ReaderRole
+        {
+            get
+            {
+                return new JosekiAppRole
+                {
+                    Id = "1b4f816e-5eaf-48b9-8613-7923830595a1",
+                    Name = "JosekiReader",
+                };
+            }
+        }
+
+        /// <summary>
         /// Returns all list of app roles.
         /// Role Guids are staticly defined and being used in App registration on Azure AD.
         /// </summary>
@@ -17,16 +47,8 @@ namespace webapp.Authentication
         {
             return new List<JosekiAppRole>
             {
-                new JosekiAppRole
-                {
-                    Id = "1b4f816e-5eaf-48b9-8613-7923830595a1",
-                    Name = "JosekiReader",
-                },
-                new JosekiAppRole
-                {
-                    Id = "c20e145e-5459-4a6c-a074-b942bbd4cfe1",
-                    Name = "JosekiAdmin",
-                },
+                AdminRole,
+                ReaderRole,
             };
         }
 
