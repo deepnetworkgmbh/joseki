@@ -77,6 +77,11 @@ namespace joseki.db
         /// </summary>
         public DbSet<OwnershipEntity> Ownership { get; set; }
 
+        /// <summary>
+        /// Holds the component-user-role relations.
+        /// </summary>
+        public DbSet<ComponentUserRoleRelation> ComponentUserRoleRelations { get; set; }
+
         /// <inheritdoc />
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
@@ -221,6 +226,12 @@ namespace joseki.db
             modelBuilder.Entity<OwnershipEntity>().HasKey(ownership => ownership.Id);
 
             #endregion
+
+            #region UserComponentRoleRelation
+
+            modelBuilder.Entity<ComponentUserRoleRelation>().HasKey(userRoleRelation => userRoleRelation.Id);
+
+            #endregion
         }
 
         private void SetCreatedDate()
@@ -249,7 +260,8 @@ namespace joseki.db
         /// </summary>
         public class JosekiDbContextFactory : IDesignTimeDbContextFactory<JosekiDbContext>
         {
-            private const string ConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=local-joseki-db;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+            private const string ConnectionString = @"Server=tcp:sql-joseki-xk9o.database.windows.net,1433;Initial Catalog=sqldb-joseki;Persist Security Info=False;User ID=CyDXjCgPtjpxdxFN;Password=QaVgO#reaCAcy44RX#8qW4u3viBifiq0LOPPxUvpMx5OYvtwibSSHsjp5O8$7ss9;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
+";
 
             /// <inheritdoc />
             public JosekiDbContext CreateDbContext(string[] args)

@@ -221,6 +221,32 @@
             The Component satisfied Check requirements.
             </summary>
         </member>
+        <member name="T:joseki.db.entities.ComponentUserRoleRelation">
+            <summary>
+            Holds the Component - User - Role relation information.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.ComponentUserRoleRelation.Id">
+            <summary>
+            Id of the record.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.ComponentUserRoleRelation.UserId">
+            <summary>
+            The id of the user who has the role on component
+            provided from Azure AD.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.ComponentUserRoleRelation.RoleId">
+            <summary>
+            The id of the app role.
+            </summary>
+        </member>
+        <member name="P:joseki.db.entities.ComponentUserRoleRelation.ComponentId">
+            <summary>
+            The Id of the component.
+            </summary>
+        </member>
         <member name="T:joseki.db.entities.CveEntity">
             <summary>
             The object describes a single CVE (Common Vulnerabilities and Exposures).
@@ -618,6 +644,11 @@
         <member name="P:joseki.db.JosekiDbContext.Ownership">
             <summary>
             Ownerships table.
+            </summary>
+        </member>
+        <member name="P:joseki.db.JosekiDbContext.ComponentUserRoleRelations">
+            <summary>
+            Holds the component-user-role relations.
             </summary>
         </member>
         <member name="M:joseki.db.JosekiDbContext.SaveChangesAsync(System.Threading.CancellationToken)">
