@@ -36,14 +36,6 @@ updates:
     - v1r7u
     - detaybey
 
-  - package-ecosystem: "npm"
-    directory: "src/frontend"
-    schedule:
-      interval: "weekly"
-    assignees:
-    - v1r7u
-    - detaybey
-
   # Maintain dependencies for az-sk scanner application
   - package-ecosystem: "docker"
     directory: "src/scanners/az-sk"
