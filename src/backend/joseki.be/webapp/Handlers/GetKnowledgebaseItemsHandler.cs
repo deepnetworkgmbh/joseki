@@ -37,8 +37,8 @@ namespace webapp.Handlers
         /// <returns>Knowledgebase item content or default NotFound entity.</returns>
         public async Task<KnowledgebaseItem> GetItemById(string id)
         {
-            var path = $"{this.rootPath}/{id}.md";
-            var content = string.Empty;
+            var path = Path.Combine(this.rootPath, $"{id}.md");
+            string content;
 
             // check if md file exists
             if (File.Exists(path))
@@ -69,7 +69,7 @@ namespace webapp.Handlers
                 }
 
                 // check if template path exists
-                var templatePath = $"{this.rootPath}/{this.fallbackTemplateId}.md";
+                var templatePath = Path.Combine(this.rootPath, $"{this.fallbackTemplateId}.md");
                 if (!File.Exists(templatePath))
                 {
                     return KnowledgebaseItem.NotFound;
@@ -121,7 +121,7 @@ namespace webapp.Handlers
 
             foreach (string file in files)
             {
-                var id = this.ExtractIdFromPath(file);
+                var id = ExtractIdFromFileName(Path.GetFileName(file));
                 var item = await this.GetItemById(id);
                 result.Add(item);
             }
@@ -141,7 +141,7 @@ namespace webapp.Handlers
 
             foreach (string file in files)
             {
-                var id = this.ExtractIdFromPath(file);
+                var id = ExtractIdFromFileName(Path.GetFileName(file));
                 var item = await this.GetItemById(id);
                 result.Add(item);
             }
@@ -155,7 +155,7 @@ namespace webapp.Handlers
         /// <param name="item">KnowledgebaseItem.</param>
         public async Task AddItem(KnowledgebaseItem item)
         {
-            var path = $"{this.rootPath}/{item.Id}.md";
+            var path = Path.Combine(this.rootPath, $"{item.Id}.md");
             if (!File.Exists(path))
             {
                 await File.WriteAllTextAsync(path, item.Content);
@@ -168,19 +168,19 @@ namespace webapp.Handlers
         /// <param name="item">KnowledgebaseItem.</param>
         public async Task UpdateItem(KnowledgebaseItem item)
         {
-            var path = $"{this.rootPath}/{item.Id}.md";
+            var path = Path.Combine(this.rootPath, $"{item.Id}.md");
             await File.WriteAllTextAsync(path, item.Content);
         }
 
         /// <summary>
-        /// Extracts id of document from requested path.
+        /// Extracts id of document from requested file name.
         /// </summary>
-        /// <param name="path">Path of the document.</param>
+        /// <param name="fileName">File name.</param>
         /// <returns>id of the document.</returns>
-        private string ExtractIdFromPath(string path)
+        private static string ExtractIdFromFileName(string fileName)
         {
-            Regex pattern = new Regex(this.rootPath + "/(?<documentid>.*).md");
-            Match match = pattern.Match(path);
+            Regex pattern = new Regex("(?<documentid>.*).md");
+            Match match = pattern.Match(fileName);
             return match.Groups["documentid"].Value;
         }
     }

@@ -2354,11 +2354,11 @@
             </summary>
             <param name="item">KnowledgebaseItem.</param>
         </member>
-        <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.ExtractIdFromPath(System.String)">
+        <member name="M:webapp.Handlers.GetKnowledgebaseItemsHandler.ExtractIdFromFileName(System.String)">
             <summary>
-            Extracts id of document from requested path.
+            Extracts id of document from requested file name.
             </summary>
-            <param name="path">Path of the document.</param>
+            <param name="fileName">File name.</param>
             <returns>id of the document.</returns>
         </member>
         <member name="T:webapp.Handlers.GetOverviewDetailsHandler">
