@@ -17,7 +17,7 @@ namespace tests.handlers
     [TestClass]
     public class GetKnowledgebaseItemsHandlerTests
     {
-        private static readonly string BaseTestPath = "../../../testfiles/";
+        private static readonly string BaseTestPath = "./testfiles/";
 
         [TestMethod]
         public async Task GetAllReturnsNothingForEmptyDatabase()

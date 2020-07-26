@@ -113,5 +113,5 @@ func (config *Config) GetScannerVersion() string {
 }
 
 func (config *Config) GetPolarisVersion() string {
-	return "0.6.0"
+	return "1.1.0"
 }

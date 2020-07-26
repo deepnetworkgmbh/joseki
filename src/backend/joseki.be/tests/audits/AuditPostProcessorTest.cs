@@ -101,7 +101,7 @@ namespace tests.audits
 
             var list = context.Ownership.ToList();
 
-            context.Ownership.Count().Should().Be(40, "ownership list should have 40 items");
+            context.Ownership.Count().Should().Be(2, "ownership list should have 2 items");
         }
     }
 }

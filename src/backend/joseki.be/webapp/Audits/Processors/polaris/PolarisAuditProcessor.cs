@@ -320,29 +320,48 @@ namespace webapp.Audits.Processors.polaris
 
             // 1. Create Dictionary<ImageTag, List<ComponentId>> from k8sMeta
             var imageToComponents = new Dictionary<string, List<string>>();
-            if (k8sMeta["Deployments"] is JArray deployments)
-            {
-                this.GetImagesFromResourcesGroup(clusterId, deployments, "deployment", imageToComponents);
-            }
 
-            if (k8sMeta["StatefulSets"] is JArray statefulSets)
+            foreach (var resource in k8sMeta["Controllers"])
             {
-                this.GetImagesFromResourcesGroup(clusterId, statefulSets, "statefulset", imageToComponents);
-            }
+                var objectKind = resource["Kind"].Value<string>().ToLowerInvariant();
+                var nsName = resource["ObjectMeta"]["metadata"]["namespace"].Value<string>();
+                var objectName = resource["ObjectMeta"]["metadata"]["name"].Value<string>();
 
-            if (k8sMeta["DaemonSets"] is JArray daemonSets)
-            {
-                this.GetImagesFromResourcesGroup(clusterId, daemonSets, "daemonset", imageToComponents);
-            }
+                if (resource["PodSpec"]["initContainers"] is JArray initContainers)
+                {
+                    for (var i = 0; i < initContainers.Count; i++)
+                    {
+                        var containerName = initContainers[i]["name"] != null
+                            ? initContainers[i]["name"].Value<string>()
+                            : $"{objectName}-container{i + 1}";
+                        var imageTag = initContainers[i]["image"].Value<string>();
 
-            if (k8sMeta["Jobs"] is JArray jobs)
-            {
-                this.GetImagesFromResourcesGroup(clusterId, jobs, "job", imageToComponents);
-            }
+                        var componentId =
+                            $"/k8s/{clusterId}/ns/{nsName}/{objectKind}/{objectName}/container/{containerName}/image/{imageTag}";
+                        if (!imageToComponents.TryAdd(imageTag, new List<string> { componentId }))
+                        {
+                            imageToComponents[imageTag].Add(componentId);
+                        }
+                    }
+                }
 
-            if (k8sMeta["CronJobs"] is JArray cronJobs)
-            {
-                this.GetImagesFromCronJobs(clusterId, cronJobs, imageToComponents);
+                if (resource["PodSpec"]["containers"] is JArray containers)
+                {
+                    for (var i = 0; i < containers.Count; i++)
+                    {
+                        var containerName = containers[i]["name"] != null
+                            ? containers[i]["name"].Value<string>()
+                            : $"{objectName}-container{i + 1}";
+                        var imageTag = containers[i]["image"].Value<string>();
+
+                        var componentId =
+                            $"/k8s/{clusterId}/ns/{nsName}/{objectKind}/{objectName}/container/{containerName}/image/{imageTag}";
+                        if (!imageToComponents.TryAdd(imageTag, new List<string> { componentId }))
+                        {
+                            imageToComponents[imageTag].Add(componentId);
+                        }
+                    }
+                }
             }
 
             // 2. query latest image-scan results for image-tags
@@ -397,92 +416,6 @@ namespace webapp.Audits.Processors.polaris
             }
 
             return checkResults.ToArray();
-        }
-
-        private void GetImagesFromResourcesGroup(string clusterId, JArray resourceGroup, string objectKind, Dictionary<string, List<string>> dict)
-        {
-            foreach (var resource in resourceGroup)
-            {
-                var nsName = resource["metadata"]["namespace"].Value<string>();
-                var objectName = resource["metadata"]["name"].Value<string>();
-
-                if (resource["spec"]["template"]["spec"]["initContainers"] is JArray initContainers)
-                {
-                    for (var i = 0; i < initContainers.Count; i++)
-                    {
-                        var containerName = initContainers[i]["name"] != null
-                            ? initContainers[i]["name"].Value<string>()
-                            : $"{objectName}-container{i + 1}";
-                        var imageTag = initContainers[i]["image"].Value<string>();
-
-                        var componentId = $"/k8s/{clusterId}/ns/{nsName}/{objectKind}/{objectName}/container/{containerName}/image/{imageTag}";
-                        if (!dict.TryAdd(imageTag, new List<string> { componentId }))
-                        {
-                            dict[imageTag].Add(componentId);
-                        }
-                    }
-                }
-
-                if (resource["spec"]["template"]["spec"]["containers"] is JArray containers)
-                {
-                    for (var i = 0; i < containers.Count; i++)
-                    {
-                        var containerName = containers[i]["name"] != null
-                            ? containers[i]["name"].Value<string>()
-                            : $"{objectName}-container{i + 1}";
-                        var imageTag = containers[i]["image"].Value<string>();
-
-                        var componentId = $"/k8s/{clusterId}/ns/{nsName}/{objectKind}/{objectName}/container/{containerName}/image/{imageTag}";
-                        if (!dict.TryAdd(imageTag, new List<string> { componentId }))
-                        {
-                            dict[imageTag].Add(componentId);
-                        }
-                    }
-                }
-            }
-        }
-
-        private void GetImagesFromCronJobs(string clusterId, JArray resourceGroup, Dictionary<string, List<string>> dict)
-        {
-            foreach (var resource in resourceGroup)
-            {
-                var nsName = resource["metadata"]["namespace"].Value<string>();
-                var objectName = resource["metadata"]["name"].Value<string>();
-
-                if (resource["spec"]["jobTemplate"]["spec"]["template"]["spec"]["initContainers"] is JArray initContainers)
-                {
-                    for (var i = 0; i < initContainers.Count; i++)
-                    {
-                        var containerName = initContainers[i]["name"] != null
-                            ? initContainers[i]["name"].Value<string>()
-                            : $"{objectName}-container{i + 1}";
-                        var imageTag = initContainers[i]["image"].Value<string>();
-
-                        var componentId = $"/k8s/{clusterId}/ns/{nsName}/cronjob/{objectName}/container/{containerName}/image/{imageTag}";
-                        if (!dict.TryAdd(imageTag, new List<string> { componentId }))
-                        {
-                            dict[imageTag].Add(componentId);
-                        }
-                    }
-                }
-
-                if (resource["spec"]["jobTemplate"]["spec"]["template"]["spec"]["containers"] is JArray containers)
-                {
-                    for (var i = 0; i < containers.Count; i++)
-                    {
-                        var containerName = containers[i]["name"] != null
-                            ? containers[i]["name"].Value<string>()
-                            : $"{objectName}-container{i + 1}";
-                        var imageTag = containers[i]["image"].Value<string>();
-
-                        var componentId = $"/k8s/{clusterId}/ns/{nsName}/cronjob/{objectName}/container/{containerName}/image/{imageTag}";
-                        if (!dict.TryAdd(imageTag, new List<string> { componentId }))
-                        {
-                            dict[imageTag].Add(componentId);
-                        }
-                    }
-                }
-            }
         }
     }
 }

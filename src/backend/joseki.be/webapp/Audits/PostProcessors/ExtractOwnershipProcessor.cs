@@ -151,7 +151,6 @@ namespace webapp.Audits.PostProcessors
             var clusterId = json["audit"]["cluster-id"];
 
             // we're interested in Namespaces, Deployments, StatefulSets, DaemonSets, Jobs, CronJobs
-            #region Namespaces
             foreach (var nsobj in json["cluster"]["Namespaces"])
             {
                 metadata meta = JsonConvert.DeserializeObject<metadata>(nsobj.metadata.ToString());
@@ -161,67 +160,17 @@ namespace webapp.Audits.PostProcessors
                     ComponentId = $"/k8s/{clusterId}/ns/{meta.name}",
                 });
             }
-            #endregion
 
-            #region Deployments
-            foreach (var nsobj in json["cluster"]["Deployments"])
+            foreach (var controller in json["cluster"]["Controllers"])
             {
-                metadata meta = JsonConvert.DeserializeObject<metadata>(nsobj.metadata.ToString());
+                var kind = controller.Kind.ToString().ToLowerInvariant();
+                metadata meta = JsonConvert.DeserializeObject<metadata>(controller.ObjectMeta.metadata.ToString());
                 ownershipList.Add(new OwnershipInfo
                 {
                     Owner = meta.Owner,
-                    ComponentId = $"/k8s/{clusterId}/ns/{meta._namespace}/deployment/{meta.name}",
+                    ComponentId = $"/k8s/{clusterId}/ns/{meta._namespace}/${kind}/{meta.name}",
                 });
             }
-            #endregion
-
-            #region StatefulSets
-            foreach (var nsobj in json["cluster"]["StatefulSets"])
-            {
-                metadata meta = JsonConvert.DeserializeObject<metadata>(nsobj.metadata.ToString());
-                ownershipList.Add(new OwnershipInfo
-                {
-                    Owner = meta.Owner,
-                    ComponentId = $"/k8s/{clusterId}/ns/{meta._namespace}/statefulset/{meta.name}",
-                });
-            }
-            #endregion
-
-            #region DaemonSets
-            foreach (var nsobj in json["cluster"]["DaemonSets"])
-            {
-                metadata meta = JsonConvert.DeserializeObject<metadata>(nsobj.metadata.ToString());
-                ownershipList.Add(new OwnershipInfo
-                {
-                    Owner = meta.Owner,
-                    ComponentId = $"/k8s/{clusterId}/ns/{meta._namespace}/daemonset/{meta.name}",
-                });
-            }
-            #endregion
-
-            #region Jobs
-            foreach (var nsobj in json["cluster"]["Jobs"])
-            {
-                metadata meta = JsonConvert.DeserializeObject<metadata>(nsobj.metadata.ToString());
-                ownershipList.Add(new OwnershipInfo
-                {
-                    Owner = meta.Owner,
-                    ComponentId = $"/k8s/{clusterId}/ns/{meta._namespace}/job/{meta.name}",
-                });
-            }
-            #endregion
-
-            #region CronJobs
-            foreach (var nsobj in json["cluster"]["CronJobs"])
-            {
-                metadata meta = JsonConvert.DeserializeObject<metadata>(nsobj.metadata.ToString());
-                ownershipList.Add(new OwnershipInfo
-                {
-                    Owner = meta.Owner,
-                    ComponentId = $"/k8s/{clusterId}/ns/{meta._namespace}/cronjob/{meta.name}",
-                });
-            }
-            #endregion
 
             return ownershipList;
         }
