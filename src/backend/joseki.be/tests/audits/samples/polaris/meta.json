@@ -1,10 +1,10 @@
 {
 	"audit-id": "3aab7985-5756-4cd6-8e3f-3353aa4b98a4",
 	"cluster-id": "3aab7985-d1a2-161d-8236-3353aa4b98a4",
-	"scanner-version": "0.2.0",
-	"timestamp": 1583892004,
+	"scanner-version": "0.3.2-sha-a73b8efb",
+	"timestamp": 1595556010,
 	"result": "succeeded",
-	"polaris-version": "0.6.0",
+	"polaris-version": "1.1.0",
 	"polaris-audit-path": "audit.json",
 	"k8s-meta-path": "k8s-meta.json"
 }

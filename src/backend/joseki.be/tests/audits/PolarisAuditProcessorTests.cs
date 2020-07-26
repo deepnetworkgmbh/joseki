@@ -25,8 +25,8 @@ namespace tests.audits
     [TestClass]
     public class PolarisAuditProcessorTests
     {
-        private const int UniqueImageTagCount = 7;
-        private const int ExpectedCheckResults = 145;
+        private const int UniqueImageTagCount = 8;
+        private const int ExpectedCheckResults = 124;
 
         [TestMethod]
         public async Task ProcessAuditHappyPath()
@@ -88,7 +88,7 @@ namespace tests.audits
         private static bool VerifyHappyPathAudit(Audit audit, ScannerContainer container)
         {
             const string auditId = "3aab7985-5756-4cd6-8e3f-3353aa4b98a4";
-            var auditDate = DateTimeOffset.FromUnixTimeSeconds(1583892004).DateTime;
+            var auditDate = DateTimeOffset.FromUnixTimeSeconds(1595556010).DateTime;
 
             audit.Id.Should().Be(auditId);
             audit.Date.Should().BeCloseTo(auditDate, TimeSpan.FromMinutes(1));
