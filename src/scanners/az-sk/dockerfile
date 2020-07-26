@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1.301-alpine3.12 AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1.302-alpine3.12 AS build
 WORKDIR /app/src
 COPY /src .
 RUN dotnet build joseki.azsk-scanner.sln -c Release
@@ -14,7 +14,7 @@ WORKDIR /app/src
 RUN dotnet publish cli/cli.csproj -c Release -o /app/publish --no-restore --no-build
 
 
-FROM mcr.microsoft.com/dotnet/core/runtime:3.1.5-alpine3.12 AS cliapp
+FROM mcr.microsoft.com/dotnet/core/runtime:3.1.6-alpine3.12 AS cliapp
 
 # install the requirements for powershell
 RUN apk add --no-cache \
@@ -34,7 +34,7 @@ RUN apk add --no-cache \
     curl=~7.69.1
 
 # Download the powershell '.tar.gz' archive
-RUN curl -L https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/powershell-7.0.2-linux-alpine-x64.tar.gz -o /tmp/powershell.tar.gz
+RUN curl -L https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell-7.0.3-linux-alpine-x64.tar.gz -o /tmp/powershell.tar.gz
 
 # Create the target folder where powershell will be placed
 RUN mkdir -p /opt/microsoft/powershell/7
@@ -49,7 +49,7 @@ RUN chmod +x /opt/microsoft/powershell/7/pwsh
 RUN ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/powershell
 
 # Install az-sk module
-ENV AZSK_VERSION=4.10.0
+ENV AZSK_VERSION=4.11.0
 RUN powershell -Command Install-Module AzSK -RequiredVersion "$AZSK_VERSION" -Force
 
 WORKDIR /app
