@@ -1004,6 +1004,11 @@
             Name of user.
             </summary>
         </member>
+        <member name="P:webapp.Authentication.JosekiUser.Email">
+            <summary>
+            Email of user.
+            </summary>
+        </member>
         <member name="P:webapp.Authentication.JosekiUser.AppRoles">
             <summary>
             User's joseki app roles.
@@ -1580,7 +1585,7 @@
             Set user/component/role relations.
             </summary>
         </member>
-        <member name="M:webapp.Controllers.v0_1.AccessControlController.GetUsers">
+        <member name="M:webapp.Controllers.v0_1.AccessControlController.GetUsers(System.Boolean)">
             <summary>
             Return list of users in azure ad.
             </summary>

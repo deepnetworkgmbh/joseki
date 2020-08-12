@@ -55,6 +55,7 @@ sed -i 's|${fe.apiUrl}|http://localhost:5001/api|' ./working_dir/config.json
 sed -i 's|${fe.timezone}|Europe/Berlin|' ./working_dir/config.json
 
 if [ "$AUTH_ENABLED" = "true" ]; then
+  echo "AUTH is ENABLED"
   CLIENT_ID=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "AD-CLIENT-ID" --query value -o tsv)
   TENANT_ID=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "TENANT-ID" --query value -o tsv)
   AD_DOMAIN=$(az keyvault secret show --vault-name "$KEY_VAULT_NAME" --name "AD-DOMAIN" --query value -o tsv) 

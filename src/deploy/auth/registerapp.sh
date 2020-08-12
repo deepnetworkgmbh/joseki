@@ -71,6 +71,7 @@ echo "CLIENT_ID is ${CLIENT_ID}"
 # create a service principal for app
 echo "Creating Service Principal"
 az ad sp create --id $CLIENT_ID
+az keyvault set-policy -n "$KEY_VAULT_NAME" --spn "$CLIENT_ID" --secret-permissions get list set
 
 # update owner of web application
 echo "Updating owner"
@@ -85,7 +86,6 @@ az ad app update --id $CLIENT_ID --identifier-uris "api://${CLIENT_ID}"
 echo "Adding API Scope for $APP_NAME"
 OAUTHPERMISSIONID=$(az ad app show --id $CLIENT_ID --query "oauth2Permissions[0].id" -o tsv)
 az ad app permission add --id $CLIENT_ID --api $CLIENT_ID --api-permissions $OAUTHPERMISSIONID=Scope
-az ad app permission grant --id $CLIENT_ID --api $CLIENT_ID
 
 az keyvault secret set --vault-name "$KEY_VAULT_NAME" --name "AD-CLIENT-ID" --value "$CLIENT_ID"
 az keyvault secret set --vault-name "$KEY_VAULT_NAME" --name "AD-CLIENT-SECRET" --value "$CLIENT_SECRET"
@@ -98,3 +98,5 @@ if [[ "$ENV_FILE" != "" && -f "$ENV_FILE" ]]; then
   echo "AD-DOMAIN $DOMAIN" >> $ENV_FILE
   echo "CLIENT_ID $CLIENT_ID" >> $ENV_FILE
 fi
+
+az ad app permission grant --id $CLIENT_ID --api $CLIENT_ID
