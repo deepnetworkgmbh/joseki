@@ -36,20 +36,23 @@
                 </table>
             </div>
             <div v-if="tabId===1">
+                <div style="overflow-x:scroll;">                
                 <table class="w-full" style="font-size:12px;">
                     <thead>
                         <tr style="background-color:#eee;">
-                            <th style="border:solid 1px #444;">Component</th>
+                            <th style="border:solid 1px #444;width:150px;">Component</th>
                             <th v-for="user in accesscontrol.users" :key="user.id" class="usercell" style="border:solid 1px #444;">
                                 {{ user.name }}
+                                <br>
+                                <i v-if="hasAdmin(user)">Admin</i>
                             </th>
                         </tr>
                     </thead>
                     <tbody class="w-full" style="border-collapse:collapse;">
                         <tr v-for="component in accesscontrol.components" :key="component.id">
-                            <td class="text-center" style="border:solid 1px #444;background-color:#eee;border-top:none;">{{ component.name }}</td>
+                            <td class="text-center" style="border:solid 1px #444;background-color:#eee;border-top:none;width:150px;">{{ component.name }}</td>
                             <td class="text-center usercell" style="border-right:solid 1px #444;" v-for="user in accesscontrol.users" :key="user.id">
-                                <select @change="handleRoleChange($event, component.id, user.id)">
+                                <select v-if="!hasAdmin(user)" @change="handleRoleChange($event, component.id, user.id)">
                                     <option value="none" 
                                             :selected="hasRole(component, user, 'none')">None</option> 
                                     <option v-for="role in accesscontrol.roles" 
@@ -60,10 +63,15 @@
                                         {{ role.name }}
                                     </option>
                                 </select>
+                                <span v-else>JosekiAdmin</span>
                             </td>
                         </tr>                        
                     </tbody>
                 </table>
+                <span style="font-size:10px;">
+                    * JosekiAdmin overrides granular access.
+                </span>
+                </div>
             </div>     
             <div style="text-align:right;padding:4px;">
                 <button class="btn" :disabled="!changed" @click="updatePermissions()">Update Permissions</button>   

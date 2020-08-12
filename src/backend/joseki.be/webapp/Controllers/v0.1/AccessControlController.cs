@@ -67,7 +67,7 @@ namespace webapp.Controllers.v0_1
             try
             {
                 var handler = this.services.GetService<ComponentPermissionsHandler>();
-                var users = await this.GetUsers();
+                var users = await this.GetUsers(true);
                 var components = await handler.GetUserPermissionsOnComponents();
                 var roles = JosekiAppRoles.GetJosekiAppRoles();
 
@@ -115,7 +115,7 @@ namespace webapp.Controllers.v0_1
         /// <summary>
         /// Return list of users in azure ad.
         /// </summary>
-        private async Task<List<JosekiUser>> GetUsers()
+        private async Task<List<JosekiUser>> GetUsers(bool onlyWithAccess = false)
         {
             var users = new List<JosekiUser>();
             try
@@ -130,23 +130,41 @@ namespace webapp.Controllers.v0_1
                 GraphServiceClient graphClient = new GraphServiceClient(authProvider);
 
                 var result = await graphClient.Users
-                    .Request() // .Select("Id, displayName")
+                    .Request()
+                    .Select("Id, displayName, mail")
                     .GetAsync();
 
                 foreach (var userdata in result.CurrentPage)
                 {
+                    if (string.IsNullOrEmpty(userdata.Mail))
+                    {
+                        continue;
+                    }
+
                     // get user's app roles
                     var appRoleAssignments = await graphClient.Users[userdata.Id]
                         .AppRoleAssignments
                         .Request()
                         .GetAsync();
 
+                    var josekiRoles = JosekiAppRoles.GetUserRoles(appRoleAssignments);
+
+                    if (onlyWithAccess)
+                    {
+                        if (josekiRoles.Count == 0)
+                        {
+                            continue;
+                        }
+                    }
+
                     var user = new JosekiUser()
                     {
                         Id = userdata.Id,
                         Name = userdata.DisplayName,
-                        AppRoles = JosekiAppRoles.GetUserRoles(appRoleAssignments),
+                        Email = userdata.Mail,
+                        AppRoles = josekiRoles,
                     };
+
                     users.Add(user);
                 }
             }

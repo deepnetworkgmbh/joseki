@@ -56,6 +56,9 @@ export default class Administration extends Vue {
         });
     }
 
+    hasAdmin(user: JosekiUser): boolean {
+        return user.appRoles.some(x => x === 'JosekiAdmin');
+    }
 
     setTab(tabIndex) {
         this.tabId = tabIndex;

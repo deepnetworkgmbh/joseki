@@ -19,6 +19,11 @@ namespace webapp.Authentication
         public string Name { get; set; }
 
         /// <summary>
+        /// Email of user.
+        /// </summary>
+        public string Email { get; set; }
+
+        /// <summary>
         /// User's joseki app roles.
         /// </summary>
         public List<string> AppRoles { get; set; }
