@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1.302-alpine3.12 AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1.401-alpine3.12 AS build
 WORKDIR /app/src
 COPY ./joseki.be .
 RUN dotnet build joseki.be.sln -c Release
