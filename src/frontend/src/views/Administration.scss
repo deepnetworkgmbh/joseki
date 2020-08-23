@@ -47,7 +47,7 @@
 thead, tbody tr {
     display:table;
     width:100%;
-    table-layout:auto;
+    table-layout:fixed;/* even columns width , fix width of table too*/
 }
 
 tbody {
