@@ -5,7 +5,7 @@ import "@/styles/main.scss";
 
 import { DateTime } from 'luxon';
 Vue.filter('formatDate', (value) => {
-  if (value) { return DateTime.local().toFormat('yyyy/MM/dd') }
+  if (value) { return DateTime.fromISO(String(value)).toFormat('yyyy/MM/dd') }
 });
 
 import linkify from 'vue-linkify'
