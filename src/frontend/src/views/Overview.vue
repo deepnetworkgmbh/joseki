@@ -55,7 +55,7 @@
           <table class="w-full text-xs p-4">
             <tbody>
               <tr v-for="(scan,i) in getShortHistory()" :key="`scan${i}`" @click="dayClicked(scan.recordedAt.split('T')[0])" :class='getHistoryClass(scan)'>
-                <td>{{ scan.recordedAt | formatDate }}</td>
+                <td class="w-1">{{ scan.recordedAt | formatDate }}</td>
                 <td class="w-1 text-right">{{scan.score}}%</td>
               </tr>
             </tbody>
