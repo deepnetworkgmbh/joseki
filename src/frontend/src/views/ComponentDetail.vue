@@ -44,7 +44,7 @@
               <tr v-for="(scan,i) in shortHistory" :key="`scan${i}`" 
               @click="scan.score > 0 ? dayClicked(scan.recordedAt.split('T')[0], data.component.id) : undefined" 
               :class='getHistoryClass(scan)'>
-                <td>{{ scan.recordedAt | formatDate }}</td>
+                <td class="w-1">{{ scan.recordedAt | formatDate }}</td>
                 <td class="w-1 text-right">{{scan.score}}%</td>
               </tr>
             </tbody>
