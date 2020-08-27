@@ -1,0 +1,4 @@
+*       text  eol=crlf
+*.sh    text  eol=lf
+*.png   -text
+*.ico   -text
