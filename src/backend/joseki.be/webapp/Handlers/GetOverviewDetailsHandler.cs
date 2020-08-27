@@ -335,7 +335,7 @@ namespace webapp.Handlers
 
             if (filterComponentIds != null)
             {
-                return checks.Where(x => filterComponentIds.Contains(x.Component.Id)).ToList();
+                return checks.Where(x => filterComponentIds.Contains(x.Component.IdRaw)).ToList();
             }
 
             return checks.ToList();

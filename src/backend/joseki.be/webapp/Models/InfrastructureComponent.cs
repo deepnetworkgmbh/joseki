@@ -23,13 +23,19 @@ namespace webapp.Models
         /// <param name="id">Component identifier.</param>
         public InfrastructureComponent(string id)
         {
+            this.IdRaw = id;
             this.Id = HttpUtility.UrlEncode(id);
         }
 
         /// <summary>
-        /// The unique Id of a component.
+        /// Url encoded component unique Id.
         /// </summary>
         public string Id { get; set; }
+
+        /// <summary>
+        /// Raw representation of the component unique id.
+        /// </summary>
+        public string IdRaw { get; internal set; }
 
         /// <summary>
         /// The name of the component: dev-cluster, subscription-1, etc.
