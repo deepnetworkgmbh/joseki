@@ -3,6 +3,7 @@ export class ConfigService {
 
     public static Timezone: string;
     public static ApiUrl: string;
+    public static ApplicationUrl: string;
     public static ClientID: string;
     public static TenantID: string;
     public static Domain: string;
@@ -13,11 +14,13 @@ export class ConfigService {
         const json = await runtimeConfig.json();
         ConfigService.Timezone = json.TIMEZONE;
         ConfigService.ApiUrl = json.API_URL;
+        ConfigService.ApplicationUrl = ConfigService.ApiUrl.replace('/api', '/home');
+        ConfigService.AuthEnabled = json.AUTHENABLED;
+
         console.log(`[ApiUrl=${ConfigService.ApiUrl}]`);
+        console.log(`[ApplicationUrl=${ConfigService.ApplicationUrl}]`);
         console.log(`[Timezone=${ConfigService.Timezone}]`);
 
-        ConfigService.AuthEnabled = json.AUTHENABLED;
-        console.log(`[Timezone=${ConfigService.Timezone}]`);
         if (ConfigService.AuthEnabled) {
             ConfigService.ClientID = json.CLIENT_ID;
             ConfigService.TenantID = json.TENANT_ID;
