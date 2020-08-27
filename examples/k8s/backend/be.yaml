@@ -95,6 +95,8 @@ spec:
             value: "/app/config.yaml"
           - name: SCANNER_VERSION
             value: "#{be.imageTag}#"
+          - name: DEV_JOSEKI_AUTH_ENABLED
+            value: true
       serviceAccountName: joseki-be
       securityContext:
         fsGroup: 10001
