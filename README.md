@@ -32,7 +32,7 @@ Joseki web application provides a visual overview of the audited infrastructure:
 - comparison of a single infrastructure component state at two given dates
   ![Component diff page](./docs_files/ui/02_component_diff_page.png)
 - docker image scan overview
-  ![Image scan details](./docs_files/ui/03_image_scane_details.png)
+  ![Image scan details](./docs_files/ui/03_image_scan_details.png)
 - filterable table with all check results for a given date
   ![filterable check results](./docs_files/ui/04_checks_table.png)
 - check-results history, component-details pages for each separate infrastructure component, and others.
@@ -53,13 +53,11 @@ More technical details you could find in the [Technical design](./TECH_DESIGN.md
 
 ## Installation
 
-To install the application to your environment, please follow the [Deployment guide](./DEPLOYMENT.md).
+You can deploy the product to your infrastructure using the [Deployment guide](./DEPLOYMENT.md). If you need help or have questions – open github issues, contact us via `joseki@deepnetwork.com` or individual contributors.
 
 ## Feedback
 
-The project is still in its early days, and users should consider it as a _proof-of-concept_ solution rather than _production-ready_.
-
-We would :heart: to hear your feedback! Do not hesitate to open new issues, leave comments to existing ones, or contact us via `joseki@deepnetwork.com`
+We would :heart: to hear your feedback, so you are welcome to share your thoughts and views!
 
 ## FAQ
 
