@@ -37,7 +37,7 @@ jobs:
         dockerfile: ${{ env.DOCKERFILE_PATH }}
 
     - name: build dockerimage
-      uses: docker/build-push-action@v1.1.0
+      uses: docker/build-push-action@v2
       with:
         path: ${{ env.SERVICE_ROOT }}
         dockerfile: ${{ env.DOCKERFILE_PATH }}
