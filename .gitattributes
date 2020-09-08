@@ -2,3 +2,7 @@
 *.sh    text  eol=lf
 *.png   -text
 *.ico   -text
+*.ttf     -text diff
+*.eot     -text diff
+*.woff    -text diff
+*.woff2   -text diff
