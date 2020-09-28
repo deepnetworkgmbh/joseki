@@ -3204,7 +3204,12 @@
         </member>
         <member name="P:webapp.Models.InfrastructureComponent.Id">
             <summary>
-            The unique Id of a component.
+            Url encoded component unique Id.
+            </summary>
+        </member>
+        <member name="P:webapp.Models.InfrastructureComponent.IdRaw">
+            <summary>
+            Raw representation of the component unique id.
             </summary>
         </member>
         <member name="P:webapp.Models.InfrastructureComponent.Name">
