@@ -48,7 +48,7 @@ jobs:
         docker run --rm --mount type=bind,source=${{ env.TESTS_DIR }},target=/app/testresults ${{ env.TESTS_TAG }}
 
     - name: publish test results
-      uses: actions/upload-artifact@v2.1.4
+      uses: actions/upload-artifact@v2.2.0
       with:
         name: test_results
         path: '${{ env.TESTS_DIR }}/test_results.xml'
