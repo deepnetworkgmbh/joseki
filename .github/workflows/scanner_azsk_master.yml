@@ -19,22 +19,22 @@ jobs:
 
     - name: Set env vars
       run: |
-        echo "::set-env name=SERVICE_ROOT::src/scanners/az-sk/"
-        echo "::set-env name=DOCKERFILE_PATH::src/scanners/az-sk/dockerfile"
+        echo "SERVICE_ROOT=src/scanners/az-sk/" >> $GITHUB_ENV
+        echo "DOCKERFILE_PATH=src/scanners/az-sk/dockerfile" >> $GITHUB_ENV
 
         docker_repository="deepnetwork/joseki-scanner-azsk"
-        echo "::set-env name=DOCKER_REPOSITORY::$docker_repository"
+        echo "DOCKER_REPOSITORY=$docker_repository" >> $GITHUB_ENV
 
         version=$(cat src/scanners/az-sk/version)
         SHA8=$(echo $GITHUB_SHA | cut -c1-8)
         tag_dev="$version-sha-$SHA8"
-        echo "::set-env name=VERSION_TAG::$version"
-        echo "::set-env name=DEV_TAG::$tag_dev"
+        echo "VERSION_TAG=$version" >> $GITHUB_ENV
+        echo "DEV_TAG=$tag_dev" >> $GITHUB_ENV
 
         tests_tag="$docker_repository:$tag_dev.tests"
         tests_dir="$HOME/azsk_testresults"
-        echo "::set-env name=TESTS_TAG::$tests_tag"
-        echo "::set-env name=TESTS_DIR::$tests_dir"
+        echo "TESTS_TAG=$tests_tag" >> $GITHUB_ENV
+        echo "TESTS_DIR=$tests_dir" >> $GITHUB_ENV
 
     - name: lint dockerfile
       uses: brpaz/hadolint-action@v1.1.0

@@ -19,9 +19,9 @@ jobs:
 
     - name: Set env vars
       run: |
-        echo "::set-env name=SERVICE_ROOT::src/scanners/polaris/"
-        echo "::set-env name=DOCKERFILE_PATH::src/scanners/polaris/dockerfile"
-        echo "::set-env name=DOCKER_REPOSITORY::deepnetwork/joseki-scanner-polaris"
+        echo "SERVICE_ROOT=src/scanners/polaris/" >> $GITHUB_ENV
+        echo "DOCKERFILE_PATH=src/scanners/polaris/dockerfile" >> $GITHUB_ENV
+        echo "DOCKER_REPOSITORY=deepnetwork/joseki-scanner-polaris" >> $GITHUB_ENV
 
     - name: lint dockerfile
       uses: brpaz/hadolint-action@v1.1.0
