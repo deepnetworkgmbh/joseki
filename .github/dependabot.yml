@@ -7,8 +7,9 @@ updates:
     schedule:
       interval: "weekly"
     assignees:
-      - v1r7u
-      - detaybey
+    - v1r7u
+    - detaybey
+    open-pull-requests-limit: 0
 
   # Maintain dependencies for Backend application
   - package-ecosystem: "docker"
@@ -18,6 +19,7 @@ updates:
     assignees:
     - v1r7u
     - detaybey
+    open-pull-requests-limit: 0
 
   - package-ecosystem: "nuget"
     directory: "src/backend/joseki.be"
@@ -26,6 +28,7 @@ updates:
     assignees:
     - v1r7u
     - detaybey
+    open-pull-requests-limit: 0
 
   # Maintain dependencies for Frontend application
   - package-ecosystem: "docker"
@@ -35,6 +38,7 @@ updates:
     assignees:
     - v1r7u
     - detaybey
+    open-pull-requests-limit: 0
 
   # Maintain dependencies for az-sk scanner application
   - package-ecosystem: "docker"
@@ -44,6 +48,7 @@ updates:
     assignees:
     - v1r7u
     - detaybey
+    open-pull-requests-limit: 0
 
   - package-ecosystem: "nuget"
     directory: "src/scanners/az-sk/src"
@@ -52,6 +57,7 @@ updates:
     assignees:
     - v1r7u
     - detaybey
+    open-pull-requests-limit: 0
 
   # Maintain dependencies for trivy scanner application
   - package-ecosystem: "docker"
@@ -61,6 +67,7 @@ updates:
     assignees:
     - v1r7u
     - detaybey
+    open-pull-requests-limit: 0
 
   - package-ecosystem: "nuget"
     directory: "src/scanners/trivy/src"
@@ -69,6 +76,7 @@ updates:
     assignees:
     - v1r7u
     - detaybey
+    open-pull-requests-limit: 0
 
   # Maintain dependencies for polaris scanner application
   - package-ecosystem: "docker"
@@ -78,6 +86,7 @@ updates:
     assignees:
     - v1r7u
     - detaybey
+    open-pull-requests-limit: 0
 
   - package-ecosystem: "gomod"
     directory: "src/scanners/polaris"
@@ -86,3 +95,4 @@ updates:
     assignees:
     - v1r7u
     - detaybey
+    open-pull-requests-limit: 0
